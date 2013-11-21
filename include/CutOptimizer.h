@@ -29,7 +29,7 @@
  * Usage:
  *    CutOptimizer co;
  *    TMatrixD *result = co.Optimize(sig, bkg, 2);
- * The first and sencond arguments are the signal and background TH1's for a
+ * The first and second arguments are the signal and background TH1's for a
  * 2-sided cut specified by the third argument. A fourth argument can specify if
  * the intervals should be "even" or "odd" (default is both). A user can also give
  * a rebin value as the fifth argument as well as an xlow and xhigh value to
