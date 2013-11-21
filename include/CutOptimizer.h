@@ -25,6 +25,8 @@
  * m=100->500):
  *      |   0     50  |
  *      | 240    500  |
+ *
+ * Caution: user's responsibility to delete returned matrix
  * 
  * Usage:
  *    CutOptimizer co;

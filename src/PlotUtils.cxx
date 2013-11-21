@@ -27,17 +27,9 @@ T* buildTH1 (TString name, TString title = "",
   return histo;
 }
 
-//template TH1D* buildTH1<TH1D> (TString name, TString title = "",
-//                               Int_t nbins = 10, Double_t lowbin = 0, 
-//                               Double_t highbin = 10, TString xtitle = "", 
-//                               TString ytitle = "");
-//template TH1F* buildTH1<TH1F> (TString name, TString title = "",
-//                               Int_t nbins = 10, Double_t lowbin = 0, 
-//                               Double_t highbin = 10, TString xtitle = "", 
-//                               TString ytitle = "");
-
 /**
  * Create a TH1D object
+ * Caution: user's responsibility to delete returned object
  **/
 TH1D* buildTH1D (TString name, TString title = "",
                  Int_t nbins = 10, Double_t lowbin = 0, Double_t highbin = 10,
@@ -47,6 +39,7 @@ TH1D* buildTH1D (TString name, TString title = "",
 
 /**
  * Create a TH1F object
+ * Caution: user's responsibility to delete returned object
  **/
 TH1F* buildTH1F (TString name, TString title = "",
                  Int_t nbins = 10, Double_t lowbin = 0, Double_t highbin = 10,
@@ -56,6 +49,7 @@ TH1F* buildTH1F (TString name, TString title = "",
 
 /**
  * Create a TH1I object
+ * Caution: user's responsibility to delete returned object
  **/
 TH1I* buildTH1I (TString name, TString title = "",
                  Int_t nbins = 10, Double_t lowbin = 0, Double_t highbin = 10,
@@ -65,6 +59,7 @@ TH1I* buildTH1I (TString name, TString title = "",
 
 /**
  * Create a TH1C object
+ * Caution: user's responsibility to delete returned object
  **/
 TH1C* buildTH1C (TString name, TString title = "",
                  Int_t nbins = 10, Double_t lowbin = 0, Double_t highbin = 10,
@@ -74,6 +69,7 @@ TH1C* buildTH1C (TString name, TString title = "",
 
 /**
  * Create a TH1S object
+ * Caution: user's responsibility to delete returned object
  **/
 TH1S* buildTH1S (TString name, TString title = "",
                  Int_t nbins = 10, Double_t lowbin = 0, Double_t highbin = 10,
@@ -99,6 +95,7 @@ T* buildTH2 (TString name, TString title = "",
 
 /**
  * Create a TH2D object
+ * Caution: user's responsibility to delete returned object
  **/
 TH2D* buildTH2D (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
@@ -110,6 +107,7 @@ TH2D* buildTH2D (TString name, TString title = "",
 
 /**
  * Create a TH2F object
+ * Caution: user's responsibility to delete returned object
  **/
 TH2F* buildTH2F (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
@@ -121,6 +119,7 @@ TH2F* buildTH2F (TString name, TString title = "",
 
 /**
  * Create a TH2C object
+ * Caution: user's responsibility to delete returned object
  **/
 TH2C* buildTH2C (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
@@ -132,6 +131,7 @@ TH2C* buildTH2C (TString name, TString title = "",
 
 /**
  * Create a TH2I object
+ * Caution: user's responsibility to delete returned object
  **/
 TH2I* buildTH2I (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
@@ -143,6 +143,7 @@ TH2I* buildTH2I (TString name, TString title = "",
 
 /**
  * Create a TH2S object
+ * Caution: user's responsibility to delete returned object
  **/
 TH2S* buildTH2S (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
@@ -171,6 +172,7 @@ T* buildTH3 (TString name, TString title = "",
 
 /**
  * Create a TH3D object
+ * Caution: user's responsibility to delete returned object
  **/
 TH3D* buildTH3D (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
@@ -183,6 +185,7 @@ TH3D* buildTH3D (TString name, TString title = "",
 
 /**
  * Create a TH3F object
+ * Caution: user's responsibility to delete returned object
  **/
 TH3F* buildTH3F (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
@@ -195,6 +198,7 @@ TH3F* buildTH3F (TString name, TString title = "",
 
 /**
  * Create a TH3C object
+ * Caution: user's responsibility to delete returned object
  **/
 TH3C* buildTH3C (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
@@ -207,6 +211,7 @@ TH3C* buildTH3C (TString name, TString title = "",
 
 /**
  * Create a TH3I object
+ * Caution: user's responsibility to delete returned object
  **/
 TH3I* buildTH3I (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
@@ -219,6 +224,7 @@ TH3I* buildTH3I (TString name, TString title = "",
 
 /**
  * Create a TH3S object
+ * Caution: user's responsibility to delete returned object
  **/
 TH3S* buildTH3S (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
