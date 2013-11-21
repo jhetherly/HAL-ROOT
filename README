@@ -1,5 +1,5 @@
 Introduction
-This is Jeff Hetherly's custom ROOT library. It contains several functions and classes
+This is my personal custom ROOT library. It contains several functions and classes
 that aid in analyzing high energy physics data. All macros are meant to be used in their
 compiled form and may be too complex for the CINT interpreter. To aid in the compilation
 of all the source code, a macro entitled 'CompileSource.C' can be executed from the
