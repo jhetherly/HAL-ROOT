@@ -11,6 +11,7 @@
 namespace HAL {
 /*
  * Construct a TLorentzVector from pT, eta, phi, and energy
+ * Caution: user's responsibility to delete returned object
  * */
 TLorentzVector* makeTLVFromPtEtaPhiE (double pT, double eta,
                                       double phi, double e) {
@@ -21,6 +22,7 @@ TLorentzVector* makeTLVFromPtEtaPhiE (double pT, double eta,
 
 /*
  * Construct a TLorentzVector from pT, eta, phi, and mass
+ * Caution: user's responsibility to delete returned object
  * */
 TLorentzVector* makeTLVFromPtEtaPhiM (double pT, double eta,
                                       double phi, double m) {
@@ -31,6 +33,7 @@ TLorentzVector* makeTLVFromPtEtaPhiM (double pT, double eta,
 
 /*
  * Fetch a TH1 object from a file
+ * Caution: user's responsibility to delete returned object
  * */
 TH1* getTH1FromFileName (TString file_name, TString histo_name) {
   TFile file(file_name.Data());
