@@ -12,9 +12,10 @@ namespace HAL {
   
 class Integrator {
 public:
-  Integrator(const Double_t &tolerance);
+  Integrator(const Double_t &tolerance = 1.0e-12);
   template <class T>
-  Double_t integrate (T&, const Double_t &a, const Double_t &b);
+  Double_t Integrate (T&, const Double_t &lower_bound, const Double_t &upper_bound);
+  Bool_t OutOfTolerance () {return out_of_tolerance;}
 
 private:
   Double_t TOL, toler;

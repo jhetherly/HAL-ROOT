@@ -7,8 +7,8 @@ namespace HAL {
 
 Integrator::Integrator(const Double_t &tol) :
   TOL(tol), terminate(kTRUE), out_of_tolerance(kFALSE) {
-  const Double_t EPS = 1.0e-12;
-  if (TOL < 10.0*EPS) TOL = 10.0*EPS;
+  const Double_t EPS = 1.0e-16;
+  if (TOL < EPS) TOL = EPS;
 }
 
 const Double_t Integrator::alpha = TMath::Sqrt(2.0/3.0);
@@ -22,7 +22,7 @@ const Double_t Integrator::x[12] = {0, -Integrator::x1, -Integrator::alpha, -Int
                                     Integrator::x1};
 
 template <class T>
-Double_t Integrator::integrate(T &f, const Double_t &a, const Double_t &b) {
+Double_t Integrator::Integrate(T &f, const Double_t &a, const Double_t &b) {
   Double_t m, h, fa, fb, i1, i2, is, erri1, erri2, r, y[13];
   m = 0.5*(a + b);
   h = 0.5*(b - a);
@@ -78,12 +78,12 @@ Double_t Integrator::int_helper(T &f, const Double_t &a, const Double_t &b, cons
               int_helper(f, mrr, b, fmrr, fb, is);
 }
 
+#endif // if not __CINT__
+
 // Explicitly instantiate for TF1
 // (as far as the .so is concerned this class is only valid for TF1's)
-template Double_t Integrator::integrate(TF1&, const Double_t &a, const Double_t &b);
+template Double_t Integrator::Integrate(TF1&, const Double_t &a, const Double_t &b);
 template Double_t Integrator::int_helper(TF1&, const Double_t&, const Double_t&, const Double_t&,
                                          const Double_t&, const Double_t&);
-
-#endif // if not __CINT__
 
 } // end namespace HAL

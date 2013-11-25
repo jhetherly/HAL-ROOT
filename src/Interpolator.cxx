@@ -85,7 +85,7 @@ Double_t PolyInterp::rawinterp(const Int_t &jl, const Double_t &x) {
   return y;
 }
 
-Double_t Poly2DInterp::interp (const Double_t &x1p, const Double_t &x2p) {
+Double_t Poly2DInterp::Interp (const Double_t &x1p, const Double_t &x2p) {
   Int_t k;
   Int_t x1jlo = x1terp.cor ? x1terp.hunt(x1p) : x1terp.locate(x1p);
   Int_t x2jlo = x2terp.cor ? x2terp.hunt(x2p) : x2terp.locate(x2p);
