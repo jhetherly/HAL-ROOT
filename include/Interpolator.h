@@ -5,7 +5,7 @@
 
 /*
  * This is adapted from Numerical Recipes in C++
- * This is an n-point Lagrangian interpolator.
+ * These are n-point Lagrangian 1D and 2D interpolators.
  * */
 
 #ifndef HAL_INTERPOLATE
@@ -59,8 +59,8 @@ public:
       x1terp(x1_values, NULL, x1_size, mm), x2terp(x2_values, NULL, x2_size, nn) {}
 
   Double_t Interp (const Double_t &x1_value, const Double_t &x2_value);
-  Double_t GetX1Error () {return x1terp.GetError();}
-  Double_t GetX2Error () {return x2terp.GetError();}
+  Double_t GetX1Error () {return x1terp.dy;}
+  Double_t GetX2Error () {return x2terp.dy;}
 
 private:
   Int_t m, n, mm, nn;

@@ -2,7 +2,9 @@
 
 /*
  * This is adapted from Numerical Recipes in C++
- * It's an adaptive step size integrator.
+ * This adaptive step size integrator is more acurate than ROOT's
+ * native TF1::Integral method. Example usage and a comparison to
+ * ROOT can be found in tests/TestIntegrator.C.
  * */
 
 #ifndef HAL_INTEGRATOR

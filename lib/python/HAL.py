@@ -4,6 +4,7 @@ gSystem.Load( 'libAlgorithms.so' )
 gSystem.Load( 'libAnalysisUtils.so' )
 gSystem.Load( 'libCutOptimizer.so' )
 gSystem.Load( 'libPlotUtils.so' )
+gSystem.Load( 'libIntegrator.so' )
 
 from ROOT import HAL
 # functions
@@ -36,4 +37,6 @@ from ROOT.HAL import standardHistogramStackFormat
 # Classes
 # libCutOptimizer.so
 from ROOT.HAL import CutOptimizer
+# libIntegrator.so
+from ROOT.HAL import Integrator 
 
