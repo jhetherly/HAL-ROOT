@@ -29,7 +29,7 @@
  * Caution: user's responsibility to delete returned matrix
  * 
  * Usage:
- *    CutOptimizer co;
+ *    HAL::CutOptimizer co;
  *    TMatrixD *result = co.Optimize(sig, bkg, 2);
  * The first and second arguments are the signal and background TH1's for a
  * 2-sided cut specified by the third argument. A fourth argument can specify if

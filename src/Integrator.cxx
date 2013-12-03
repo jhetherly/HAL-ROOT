@@ -1,4 +1,3 @@
-#include <TF1.h>
 #include <Integrator.h>
 
 namespace HAL {

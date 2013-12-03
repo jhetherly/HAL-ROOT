@@ -1,7 +1,7 @@
 TestCutOptimizer(Int_t n = 2)
 {
-  gSystem->Load("libCutOptimizer");
   gSystem->Load("libAnalysisUtils");
+  gSystem->Load("libCutOptimizer");
 
   std::cout << "\nTesting Optimize(sig, bkg, " << n << ")" << std::endl;
   TH1D *sig = HAL::getTH1FromFileName("aux/SigDRll240_processed.root", "DR ll");
