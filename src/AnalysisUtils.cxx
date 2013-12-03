@@ -1,14 +1,8 @@
-#include <TLorentzVector.h>
-#include <TH1.h>
-#include <TFile.h>
-#include <TString.h>
-#include <Particle.h>
+#include "AnalysisUtils.h"
 
-// /////////////////////////////////////
-// General utility functions
-// /////////////////////////////////////
+namespace HAL
+{
 
-namespace HAL {
 /*
  * Construct a TLorentzVector from pT, eta, phi, and energy
  * Caution: user's responsibility to delete returned object
@@ -42,4 +36,4 @@ TH1* getTH1FromFileName (TString file_name, TString histo_name) {
   return result;
 }
 
-}
+} /* HAL */ 
