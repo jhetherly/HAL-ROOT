@@ -1,33 +1,48 @@
 CompileSource ()
 {
   TString currentDir(gSystem->pwd());
-
   TString incDir("include");
   TString srcDir("src");
-  TString srcSuffix("cxx");
-  TString libPrefix("lib");
   TString buildDir("lib");
-  TString buildOptions("Okfc");
+  TString incSuffix("h");
+  TString srcSuffix("cxx");
+  TString objSuffix("o");
   TString includePathString;
   TString srcPathString;
   TString buildPathString;
-  TObjArray sourceList;
+  TString includePathFlag;
+  TString includeListString;
+  TString sourceListString;
+  TString objectListString;
+  TString libraryName("libHAL.so");
+  TString linkdefFile("HAL_LinkDef.h");
+  TString runCintCommand("rootcint -f $BuildDir/HAL_dict.cxx -c -p $IncludePath ");
+  TString makeLibCommands(gSystem->GetMakeSharedLib());
+  TString runCintResult;
+  TString makeLibResult;
   TList *files;
-  Int_t result = 0;
 
+  // Create full paths
   srcPathString = srcDir;
   srcPathString = gSystem->PrependPathName(currentDir.Data(), srcPathString);
   includePathString = incDir;
   includePathString = gSystem->PrependPathName(currentDir.Data(), includePathString);
-  includePathString.Prepend("-I");
+  includePathFlag = includePathString;
+  includePathFlag.Prepend("-I");
   buildPathString = buildDir;
   buildPathString = gSystem->PrependPathName(currentDir.Data(), buildPathString);
 
-  gSystem->AddIncludePath(includePathString.Data());
-  gSystem->SetBuildDir(buildPathString.Data(), kTRUE);
+  // Set up environment for compiling and linking libraries
+  gSystem->AddIncludePath(includePathFlag.Data());
+  gSystem->Setenv("IncludePath", gSystem->ExpandPathName(gSystem->GetIncludePath()));
+  gSystem->Setenv("BuildDir", srcPathString.Data());
+  gSystem->Setenv("LinkedLibs", gSystem->GetFromPipe("root-config --glibs"));
+  gSystem->Setenv("SharedLib", libraryName.Data());
+  gSystem->Setenv("Opt", "");
 
-  // Get the list of source files (files in the src dir and affixed with srcSufix)
-  TSystemDirectory dir(srcPathString.Data(), srcPathString.Data());
+  // Create list of include files for cint
+  includePathString = gSystem->PrependPathName(includePathString.Data(), "HAL");
+  TSystemDirectory dir(includePathString.Data(), includePathString.Data());
   files = dir.GetListOfFiles();
   if (files) {
     TSystemFile *file;
@@ -35,31 +50,68 @@ CompileSource ()
     TIter next(files);
     while ((file=(TSystemFile*)next())) {
       fname = file->GetName();
-      if (!file->IsDirectory() && fname.EndsWith(srcSuffix.Data()))
-        sourceList.Add(new TObjString(fname.Remove(fname.Last('.'), fname.Length()).Data()));
+      if (!file->IsDirectory() && fname.EndsWith(incSuffix.Data()) && !fname.Contains("LinkDef") && !fname.Contains("HAL")) {
+        includeListString = includeListString.Append(gSystem->PrependPathName(includePathString.Data(), fname));
+        includeListString = includeListString.Append(" ");
+      }
     }
   }
+  includeListString = includeListString.Append(gSystem->PrependPathName(includePathString.Data(), linkdefFile));
+  runCintCommand = runCintCommand.Append(includeListString.Data());
 
-  // Loop through source files and compile in the directory given in buildPathString
-  for (Int_t i = 0; i < sourceList.GetEntries(); ++i) {
-    TString libName = ((TObjString*) sourceList[i])->GetString();
-    TString fullSrcName;
-    TString fullLibName;
-
-    fullSrcName = libName;
-    fullSrcName.Append(".").Append(srcSuffix.Data());
-    fullSrcName = gSystem->PrependPathName(srcDir.Data(), fullSrcName);
-    fullLibName = libPrefix;
-    fullLibName.Append(libName.Data());
-
-    result += gSystem->CompileMacro(fullSrcName.Data(), buildOptions.Data(), fullLibName.Data());
+  // Make dictionary
+  std::cout << "Building HAL's CINT dictionary..." << std::endl;
+  runCintResult = gSystem->GetFromPipe(gSystem->ExpandPathName(runCintCommand.Data()));
+  if (runCintResult.CompareTo("")) {
+    std::cout << "Something prevented rootcint from making dictionary smoothly." <<
+      " I will try to make the shared library regardless." << std::endl;
+    std::cout << runCintResult << std::endl;
   }
+  else
+    std::cout << "Success!" << std::endl;
+  
+  // Get the list of source (and object) files (files in the src dir and affixed with srcSufix)
+  dir.SetDirectory(srcPathString.Data());
+  files = dir.GetListOfFiles();
+  if (files) {
+    TSystemFile *file;
+    TString fname;
+    TIter next(files);
+    while ((file=(TSystemFile*)next())) {
+      fname = file->GetName();
+      if (!file->IsDirectory() && fname.EndsWith(srcSuffix.Data())) {
+        sourceListString = sourceListString.Append(gSystem->PrependPathName(srcPathString.Data(), fname));
+        sourceListString = sourceListString.Append(" ");
+        fname = file->GetName();
+        objectListString = objectListString.Append(gSystem->PrependPathName(buildPathString.Data(), fname));
+        objectListString = objectListString.Append(" ");
+      }
+    }
+  }
+  // Change all cxx affixes to o
+  objectListString = objectListString.ReplaceAll(srcSuffix.Data(), objSuffix.Data());
 
-  if (result == sourceList.GetEntries()) {
-    std::cout << "All source files compiled successfully! Link to " << 
-      buildPathString.Data() << " to access the libraries."  << std::endl;
+  // Finish setting up environment variables
+  gSystem->Setenv("BuildDir", buildPathString.Data());
+  gSystem->Setenv("SourceFiles", sourceListString.Data());
+  gSystem->Setenv("ObjectFiles", objectListString.Data());
+  objSuffix.Prepend(".");
+  gSystem->SetObjExt(objSuffix.Data());
+  // Make the library
+  std::cout << "Creating the HAL shared library..." << std::endl;
+  makeLibResult = gSystem->GetFromPipe(gSystem->ExpandPathName(makeLibCommands.Data()));
+  if (makeLibResult.CompareTo("")) {
+    std::cout << "Compilation or linking may have ran into problems." << std::endl;
+    std::cout << makeLibResult << std::endl;
+  }
+  else
+    std::cout << "Success!" << std::endl;
+
+  if (!runCintResult.CompareTo("") && !makeLibResult.CompareTo("")) {
+    std::cout << "All source files compiled successfully!" << std::endl <<"Link to " << 
+      buildPathString.Data() << " to access the library."  << std::endl;
   }
   else {
-    std::cout << "Unable to compile all the source files." << std::endl;
+    std::cout << "There may have been a problem making the library." << std::endl;
   }
 }

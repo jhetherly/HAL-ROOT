@@ -1,7 +1,122 @@
-#include <PlotUtils.h>
+#include <HAL/PlotUtils.h>
 
 namespace HAL
 {
+
+TH1D* buildTH1D (TString name, TString title,
+                 Int_t nbins, Double_t lowbin, Double_t highbin,
+                 TString xtitle, TString ytitle) {
+  return buildTH1<TH1D> (name, title, nbins, lowbin, highbin, xtitle, ytitle);
+}
+
+TH1F* buildTH1F (TString name, TString title,
+                 Int_t nbins, Double_t lowbin, Double_t highbin,
+                 TString xtitle, TString ytitle) {
+  return buildTH1<TH1F> (name, title, nbins, lowbin, highbin, xtitle, ytitle);
+}
+
+TH1I* buildTH1I (TString name, TString title,
+                 Int_t nbins, Double_t lowbin, Double_t highbin,
+                 TString xtitle, TString ytitle) {
+  return buildTH1<TH1I> (name, title, nbins, lowbin, highbin, xtitle, ytitle);
+}
+
+TH1C* buildTH1C (TString name, TString title,
+                 Int_t nbins, Double_t lowbin, Double_t highbin,
+                 TString xtitle, TString ytitle) {
+  return buildTH1<TH1C> (name, title, nbins, lowbin, highbin, xtitle, ytitle);
+}
+
+TH1S* buildTH1S (TString name, TString title,
+                 Int_t nbins, Double_t lowbin, Double_t highbin,
+                 TString xtitle, TString ytitle) {
+  return buildTH1<TH1S> (name, title, nbins, lowbin, highbin, xtitle, ytitle);
+}
+
+TH2D* buildTH2D (TString name, TString title,
+                 Int_t nxbins, Double_t lowxbin, Double_t highxbin,
+                 Int_t nybins, Double_t lowybin, Double_t highybin, 
+                 TString xtitle, TString ytitle, TString ztitle) {
+  return buildTH2<TH2D> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin, 
+                         xtitle, ytitle, ztitle);
+}
+
+TH2F* buildTH2F (TString name, TString title,
+                 Int_t nxbins, Double_t lowxbin, Double_t highxbin,
+                 Int_t nybins, Double_t lowybin, Double_t highybin, 
+                 TString xtitle, TString ytitle, TString ztitle) {
+  return buildTH2<TH2F> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin, 
+                         xtitle, ytitle, ztitle);
+}
+
+TH2C* buildTH2C (TString name, TString title,
+                 Int_t nxbins, Double_t lowxbin, Double_t highxbin,
+                 Int_t nybins, Double_t lowybin, Double_t highybin, 
+                 TString xtitle, TString ytitle, TString ztitle) {
+  return buildTH2<TH2C> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin, 
+                         xtitle, ytitle, ztitle);
+}
+
+TH2I* buildTH2I (TString name, TString title,
+                 Int_t nxbins, Double_t lowxbin, Double_t highxbin,
+                 Int_t nybins, Double_t lowybin, Double_t highybin, 
+                 TString xtitle, TString ytitle, TString ztitle) {
+  return buildTH2<TH2I> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin, 
+                         xtitle, ytitle, ztitle);
+}
+
+TH2S* buildTH2S (TString name, TString title,
+                 Int_t nxbins, Double_t lowxbin, Double_t highxbin,
+                 Int_t nybins, Double_t lowybin, Double_t highybin, 
+                 TString xtitle, TString ytitle, TString ztitle) {
+  return buildTH2<TH2S> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin, 
+                         xtitle, ytitle, ztitle);
+}
+
+TH3D* buildTH3D (TString name, TString title,
+                 Int_t nxbins, Double_t lowxbin, Double_t highxbin,
+                 Int_t nybins, Double_t lowybin, Double_t highybin, 
+                 Int_t nzbins, Double_t lowzbin, Double_t highzbin,
+                 TString xtitle, TString ytitle, TString ztitle) {
+  return buildTH3<TH3D> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin,
+                         nzbins, lowzbin, highzbin, xtitle, ytitle, ztitle);
+}
+
+TH3F* buildTH3F (TString name, TString title,
+                 Int_t nxbins, Double_t lowxbin, Double_t highxbin,
+                 Int_t nybins, Double_t lowybin, Double_t highybin, 
+                 Int_t nzbins, Double_t lowzbin, Double_t highzbin,
+                 TString xtitle, TString ytitle, TString ztitle) {
+  return buildTH3<TH3F> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin,
+                         nzbins, lowzbin, highzbin, xtitle, ytitle, ztitle);
+}
+
+TH3C* buildTH3C (TString name, TString title,
+                 Int_t nxbins, Double_t lowxbin, Double_t highxbin,
+                 Int_t nybins, Double_t lowybin, Double_t highybin, 
+                 Int_t nzbins, Double_t lowzbin, Double_t highzbin,
+                 TString xtitle, TString ytitle, TString ztitle) {
+  return buildTH3<TH3C> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin,
+                         nzbins, lowzbin, highzbin, xtitle, ytitle, ztitle);
+}
+
+TH3I* buildTH3I (TString name, TString title,
+                 Int_t nxbins, Double_t lowxbin, Double_t highxbin,
+                 Int_t nybins, Double_t lowybin, Double_t highybin, 
+                 Int_t nzbins, Double_t lowzbin, Double_t highzbin,
+                 TString xtitle, TString ytitle, TString ztitle) {
+  return buildTH3<TH3I> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin,
+                         nzbins, lowzbin, highzbin, xtitle, ytitle, ztitle);
+}
+
+TH3S* buildTH3S (TString name, TString title,
+                 Int_t nxbins, Double_t lowxbin, Double_t highxbin,
+                 Int_t nybins, Double_t lowybin, Double_t highybin, 
+                 Int_t nzbins, Double_t lowzbin, Double_t highzbin,
+                 TString xtitle, TString ytitle, TString ztitle) {
+  return buildTH3<TH3S> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin,
+                         nzbins, lowzbin, highzbin, xtitle, ytitle, ztitle);
+}
 
 void standardLegendFormat (TLegend *l, Int_t shadow,
                            Color_t fill, Int_t textAlign) {

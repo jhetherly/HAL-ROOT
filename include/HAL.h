@@ -1,0 +1,14 @@
+#include <HAL/Algorithms.h>
+#include <HAL/Algorithm.h>
+#include <HAL/ReconstructionAlgorithm.h>
+#include <HAL/CutAlgorithm.h>
+#include <HAL/Analysis.h>
+#include <HAL/AnalysisData.h>
+#include <HAL/AnalysisSelector.h>
+#include <HAL/AnalysisUtils.h>
+#include <HAL/CutOptimizer.h>
+#include <HAL/Integrator.h>
+#include <HAL/Interpolator.h>
+#include <HAL/Object.h>
+#include <HAL/Particle.h>
+#include <HAL/PlotUtils.h>

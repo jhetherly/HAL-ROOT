@@ -36,9 +36,7 @@ T* buildTH1 (TString name, TString title = "",
  **/
 TH1D* buildTH1D (TString name, TString title = "",
                  Int_t nbins = 10, Double_t lowbin = 0, Double_t highbin = 10,
-                 TString xtitle = "", TString ytitle = "") {
-  return buildTH1<TH1D> (name, title, nbins, lowbin, highbin, xtitle, ytitle);
-}
+                 TString xtitle = "", TString ytitle = ""); 
 
 /**
  * Create a TH1F object
@@ -46,9 +44,7 @@ TH1D* buildTH1D (TString name, TString title = "",
  **/
 TH1F* buildTH1F (TString name, TString title = "",
                  Int_t nbins = 10, Double_t lowbin = 0, Double_t highbin = 10,
-                 TString xtitle = "", TString ytitle = "") {
-  return buildTH1<TH1F> (name, title, nbins, lowbin, highbin, xtitle, ytitle);
-}
+                 TString xtitle = "", TString ytitle = ""); 
 
 /**
  * Create a TH1I object
@@ -56,9 +52,7 @@ TH1F* buildTH1F (TString name, TString title = "",
  **/
 TH1I* buildTH1I (TString name, TString title = "",
                  Int_t nbins = 10, Double_t lowbin = 0, Double_t highbin = 10,
-                 TString xtitle = "", TString ytitle = "") {
-  return buildTH1<TH1I> (name, title, nbins, lowbin, highbin, xtitle, ytitle);
-}
+                 TString xtitle = "", TString ytitle = ""); 
 
 /**
  * Create a TH1C object
@@ -66,9 +60,7 @@ TH1I* buildTH1I (TString name, TString title = "",
  **/
 TH1C* buildTH1C (TString name, TString title = "",
                  Int_t nbins = 10, Double_t lowbin = 0, Double_t highbin = 10,
-                 TString xtitle = "", TString ytitle = "") {
-  return buildTH1<TH1C> (name, title, nbins, lowbin, highbin, xtitle, ytitle);
-}
+                 TString xtitle = "", TString ytitle = ""); 
 
 /**
  * Create a TH1S object
@@ -76,9 +68,7 @@ TH1C* buildTH1C (TString name, TString title = "",
  **/
 TH1S* buildTH1S (TString name, TString title = "",
                  Int_t nbins = 10, Double_t lowbin = 0, Double_t highbin = 10,
-                 TString xtitle = "", TString ytitle = "") {
-  return buildTH1<TH1S> (name, title, nbins, lowbin, highbin, xtitle, ytitle);
-}
+                 TString xtitle = "", TString ytitle = ""); 
 
 /**
  * Create a TH2 object
@@ -103,10 +93,7 @@ T* buildTH2 (TString name, TString title = "",
 TH2D* buildTH2D (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
                  Int_t nybins = 10, Double_t lowybin = 0, Double_t highybin = 10, 
-                 TString xtitle = "", TString ytitle = "", TString ztitle = "") {
-  return buildTH2<TH2D> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin, 
-                         xtitle, ytitle, ztitle);
-}
+                 TString xtitle = "", TString ytitle = "", TString ztitle = ""); 
 
 /**
  * Create a TH2F object
@@ -115,10 +102,7 @@ TH2D* buildTH2D (TString name, TString title = "",
 TH2F* buildTH2F (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
                  Int_t nybins = 10, Double_t lowybin = 0, Double_t highybin = 10, 
-                 TString xtitle = "", TString ytitle = "", TString ztitle = "") {
-  return buildTH2<TH2F> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin, 
-                         xtitle, ytitle, ztitle);
-}
+                 TString xtitle = "", TString ytitle = "", TString ztitle = ""); 
 
 /**
  * Create a TH2C object
@@ -127,10 +111,7 @@ TH2F* buildTH2F (TString name, TString title = "",
 TH2C* buildTH2C (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
                  Int_t nybins = 10, Double_t lowybin = 0, Double_t highybin = 10, 
-                 TString xtitle = "", TString ytitle = "", TString ztitle = "") {
-  return buildTH2<TH2C> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin, 
-                         xtitle, ytitle, ztitle);
-}
+                 TString xtitle = "", TString ytitle = "", TString ztitle = ""); 
 
 /**
  * Create a TH2I object
@@ -139,10 +120,7 @@ TH2C* buildTH2C (TString name, TString title = "",
 TH2I* buildTH2I (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
                  Int_t nybins = 10, Double_t lowybin = 0, Double_t highybin = 10, 
-                 TString xtitle = "", TString ytitle = "", TString ztitle = "") {
-  return buildTH2<TH2I> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin, 
-                         xtitle, ytitle, ztitle);
-}
+                 TString xtitle = "", TString ytitle = "", TString ztitle = ""); 
 
 /**
  * Create a TH2S object
@@ -151,10 +129,7 @@ TH2I* buildTH2I (TString name, TString title = "",
 TH2S* buildTH2S (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
                  Int_t nybins = 10, Double_t lowybin = 0, Double_t highybin = 10, 
-                 TString xtitle = "", TString ytitle = "", TString ztitle = "") {
-  return buildTH2<TH2S> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin, 
-                         xtitle, ytitle, ztitle);
-}
+                 TString xtitle = "", TString ytitle = "", TString ztitle = ""); 
 
 /**
  * Create a TH3 object
@@ -181,10 +156,7 @@ TH3D* buildTH3D (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
                  Int_t nybins = 10, Double_t lowybin = 0, Double_t highybin = 10, 
                  Int_t nzbins = 10, Double_t lowzbin = 0, Double_t highzbin = 10,
-                 TString xtitle = "", TString ytitle = "", TString ztitle = "") {
-  return buildTH3<TH3D> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin,
-                         nzbins, lowzbin, highzbin, xtitle, ytitle, ztitle);
-}
+                 TString xtitle = "", TString ytitle = "", TString ztitle = ""); 
 
 /**
  * Create a TH3F object
@@ -194,10 +166,7 @@ TH3F* buildTH3F (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
                  Int_t nybins = 10, Double_t lowybin = 0, Double_t highybin = 10, 
                  Int_t nzbins = 10, Double_t lowzbin = 0, Double_t highzbin = 10,
-                 TString xtitle = "", TString ytitle = "", TString ztitle = "") {
-  return buildTH3<TH3F> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin,
-                         nzbins, lowzbin, highzbin, xtitle, ytitle, ztitle);
-}
+                 TString xtitle = "", TString ytitle = "", TString ztitle = ""); 
 
 /**
  * Create a TH3C object
@@ -207,10 +176,7 @@ TH3C* buildTH3C (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
                  Int_t nybins = 10, Double_t lowybin = 0, Double_t highybin = 10, 
                  Int_t nzbins = 10, Double_t lowzbin = 0, Double_t highzbin = 10,
-                 TString xtitle = "", TString ytitle = "", TString ztitle = "") {
-  return buildTH3<TH3C> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin,
-                         nzbins, lowzbin, highzbin, xtitle, ytitle, ztitle);
-}
+                 TString xtitle = "", TString ytitle = "", TString ztitle = ""); 
 
 /**
  * Create a TH3I object
@@ -220,10 +186,7 @@ TH3I* buildTH3I (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
                  Int_t nybins = 10, Double_t lowybin = 0, Double_t highybin = 10, 
                  Int_t nzbins = 10, Double_t lowzbin = 0, Double_t highzbin = 10,
-                 TString xtitle = "", TString ytitle = "", TString ztitle = "") {
-  return buildTH3<TH3I> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin,
-                         nzbins, lowzbin, highzbin, xtitle, ytitle, ztitle);
-}
+                 TString xtitle = "", TString ytitle = "", TString ztitle = ""); 
 
 /**
  * Create a TH3S object
@@ -233,10 +196,7 @@ TH3S* buildTH3S (TString name, TString title = "",
                  Int_t nxbins = 10, Double_t lowxbin = 0, Double_t highxbin = 10,
                  Int_t nybins = 10, Double_t lowybin = 0, Double_t highybin = 10, 
                  Int_t nzbins = 10, Double_t lowzbin = 0, Double_t highzbin = 10,
-                 TString xtitle = "", TString ytitle = "", TString ztitle = "") {
-  return buildTH3<TH3S> (name, title, nxbins, lowxbin, highxbin, nybins, lowybin, highybin,
-                         nzbins, lowzbin, highzbin, xtitle, ytitle, ztitle);
-}
+                 TString xtitle = "", TString ytitle = "", TString ztitle = ""); 
 
 // /////////////////////////////////////
 // Formatting functions

@@ -1,21 +1,34 @@
+import os.path, errno
+
+# Helpful python functions
+def moduleExists(module_name):
+  try:
+    __import__(module_name)
+  except (KeyboardInterrupt, SystemExit):
+    raise
+  except:
+    return False
+  return True
+
+def mkdirp(dir):
+  try:                                                                                                                  
+    os.makedirs(dir)                                                                                          
+  except OSError as exc:                                                                                                
+    if exc.errno == errno.EEXIST and os.path.isdir( working_dir ):                                                      
+      pass                                                                                                              
+    else:                                                                                                               
+      raise
+
+# Load in HAL C++
 from ROOT import gSystem
-
-gSystem.Load( 'libAlgorithms.so' )
-gSystem.Load( 'libAnalysisUtils.so' )
-gSystem.Load( 'libCutOptimizer.so' )
-gSystem.Load( 'libPlotUtils.so' )
-gSystem.Load( 'libIntegrator.so' )
-
+gSystem.Load( 'libHAL.so' )
 from ROOT import HAL
-# functions
-# libAlgorithms.so
+
+# Imported functions
 from ROOT.HAL import getNextCombination     # not really needed since python has itertools
-# libAnalysisUtils.so
 from ROOT.HAL import makeTLVFromPtEtaPhiE
 from ROOT.HAL import makeTLVFromPtEtaPhiM
 from ROOT.HAL import getTH1FromFileName
-# libPlotUtils.so
-#from ROOT.HAL import buildTH1
 from ROOT.HAL import buildTH1D
 from ROOT.HAL import buildTH1F
 from ROOT.HAL import buildTH1I
@@ -34,9 +47,7 @@ from ROOT.HAL import buildTH3S
 from ROOT.HAL import standardLegendFormat
 from ROOT.HAL import standardHistogramStackFormat
 
-# Classes
-# libCutOptimizer.so
+# Imported classes
 from ROOT.HAL import CutOptimizer
-# libIntegrator.so
 from ROOT.HAL import Integrator 
 

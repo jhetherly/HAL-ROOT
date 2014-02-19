@@ -1,6 +1,6 @@
 TestAlgorithms(Int_t size = 4, Int_t n = 2)                                                                                                  
 {                                                                                                                       
-  gSystem->Load("libAlgorithms");
+  gSystem->Load("libHAL");
 
   // start testing getNextCombination
   std::cout << "Testing getNextCombination(" << size << ", " << n << ")" << std::endl;

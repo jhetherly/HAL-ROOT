@@ -1,6 +1,9 @@
 #include <TLorentzVector.h>
 #include <vector>
 
+#ifndef HAL_PARTICLE
+#define HAL_PARTICLE
+
 namespace HAL {
 
 class Particle {
@@ -14,3 +17,5 @@ public:
 };
 
 }
+
+#endif

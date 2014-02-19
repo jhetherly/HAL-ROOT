@@ -23,8 +23,8 @@ environments. Here are the steps to 'installing' this software:
 3. Add the 'include' folder to your ACLiC include path in .rootrc
    (e.g. ACLiC.IncludePaths:   -I$(HOME)/src/HAL-ROOT/include)
 3. Add the 'lib/python' folder to your PYTHONPATH
-4. Optionally you can add 'lib' to Unix.*.Root.MacroPath for easy loading of libraries in
-   an interactive ROOT session (e.g. '.L libCutOptimizer.so')
+4. Optionally you can add 'lib' to Unix.*.Root.MacroPath for easy loading of the library in
+   an interactive ROOT session (e.g. '.L libHAL.so')
 
 Documentation:
 There is no formal documentation for this software, but the header/source files have 

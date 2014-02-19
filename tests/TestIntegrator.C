@@ -1,6 +1,6 @@
 TestIntegrator()
 {
-  gSystem->Load("libIntegrator");
+  gSystem->Load("libHAL");
 
   TF1 f1("", "1.0/sqrt(x)", 0, 1);
   TF1 f2("", "pow(x, 2)*sin(1.0/x)", -1, 2);
