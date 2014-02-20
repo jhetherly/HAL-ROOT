@@ -16,6 +16,8 @@ CompileSource ()
   TString objectListString;
   TString libraryName("libHAL.so");
   TString linkdefFile("HAL_LinkDef.h");
+  TString buildOS(gSystem->GetBuildArch());
+  TString linkingInstruction(" -Wl,");
   TString runCintCommand("rootcint -f $BuildDir/HAL_dict.cxx -c -p $IncludePath ");
   TString makeLibCommands(gSystem->GetMakeSharedLib());
   TString runCintResult;
@@ -31,6 +33,16 @@ CompileSource ()
   includePathFlag.Prepend("-I");
   buildPathString = buildDir;
   buildPathString = gSystem->PrependPathName(currentDir.Data(), buildPathString);
+
+  // Determine the linking instructions
+  if (buildOS.Contains("macosx")) {
+    linkingInstruction.Append("-install_name,@rpath/");
+    linkingInstruction.Append(libraryName.Data());
+  }
+  else {
+    linkingInstruction.Append("-soname,");
+    linkingInstruction.Append(libraryName.Data());
+  }
 
   // Set up environment for compiling and linking libraries
   gSystem->AddIncludePath(includePathFlag.Data());
@@ -50,7 +62,7 @@ CompileSource ()
     TIter next(files);
     while ((file=(TSystemFile*)next())) {
       fname = file->GetName();
-      if (!file->IsDirectory() && fname.EndsWith(incSuffix.Data()) && !fname.Contains("LinkDef") && !fname.Contains("HAL")) {
+      if (!file->IsDirectory() && fname.EndsWith(incSuffix.Data()) && !fname.Contains("LinkDef")) {
         includeListString = includeListString.Append(gSystem->PrependPathName(includePathString.Data(), fname));
         includeListString = includeListString.Append(" ");
       }
@@ -99,7 +111,7 @@ CompileSource ()
   gSystem->SetObjExt(objSuffix.Data());
   // Make the library
   std::cout << "Creating the HAL shared library..." << std::endl;
-  makeLibResult = gSystem->GetFromPipe(gSystem->ExpandPathName(makeLibCommands.Data()));
+  makeLibResult = gSystem->GetFromPipe(gSystem->ExpandPathName(makeLibCommands.Append(linkingInstruction.Data()).Data()));
   if (makeLibResult.CompareTo("")) {
     std::cout << "Compilation or linking may have ran into problems." << std::endl;
     std::cout << makeLibResult << std::endl;

@@ -69,9 +69,11 @@ Bool_t AnalysisSelector::Process (Long64_t entry) {
   // The return value is currently not used.
   GetEntry(entry);
 
-  std::cout << "Beginning analysis flow." << std::endl;
+  // Execute all tasks and subtasks
   fAnalysisFlow->ExecuteTasks("");
-  std::cout << "Finished analysis flow." << std::endl;
+
+  // Reset the state of all tasks
+  fAnalysisFlow->CleanTasks();
 
   return kTRUE;
 }

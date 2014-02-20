@@ -5,6 +5,7 @@ namespace HAL
 
 Analysis::Analysis (TString name, TString title, TString treeName) : 
   fChain(), fAnalizer(fAnalysisFlow), fAnalysisFlow(name.Data(), title.Data()) {
+  fChain.SetDirectory(0);
   fChain.SetName(treeName.Data());
   fAnalizer.fChain = &fChain;
 }
