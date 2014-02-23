@@ -1,18 +1,21 @@
 #include <TROOT.h>
 #include <TTree.h>
+#include <TBranch.h>
 #include <TString.h>
-#include <TObject.h>
+#include <TNamed.h>
 #include <vector>
 
-#ifndef HAL_ANALYSIS_DATA
-#define HAL_ANALYSIS_DATA
+#ifndef HAL_ANALYSIS_TREE_READER
+#define HAL_ANALYSIS_TREE_READER
 
 namespace HAL {
 
-class AnalysisData : public TObject{
+class AnalysisTreeReader : public TNamed {
 public:
-  AnalysisData (TTree *tree);
-  virtual ~AnalysisData ();
+  AnalysisTreeReader (TTree *tree = 0);
+  virtual ~AnalysisTreeReader ();
+  void SetTree (TTree *tree) {fChain = tree;}
+  void SetEntry (Long64_t entry) {fEntry = entry;}
 
   //Bool_t                  getBool (TString branchname, Int_t row_i = -1, Int_t column_i = -1);
   //Byte_t                  getByte (TString branchname, Int_t row_i = -1, Int_t column_i = -1);
@@ -23,15 +26,16 @@ public:
   //Long64_t                getLong (TString branchname, Int_t row_i = -1, Int_t column_i = -1);
   //long long int           getLongLongInt (TString branchname, Int_t row_i = -1, Int_t column_i = -1);
   //ULong64_t               getULong (TString branchname, Int_t row_i = -1, Int_t column_i = -1);
-  //unsigned long long int  getULongLongInt (TString branchname, Int_t row_i = -1, Int_t column_i = -1);
+  //unsigned long long int  getULongLong (TString branchname, Int_t row_i = -1, Int_t column_i = -1);
   //Float16_t               getFloat (TString branchname, Int_t row_i = -1, Int_t column_i = -1);
   //Double32_t              getDouble (TString branchname, Int_t row_i = -1, Int_t column_i = -1);
   //long double             getLongDouble (TString branchname, Int_t row_i = -1, Int_t column_i = -1);
   //Char_t                  getChar (TString branchname, Int_t row_i = -1, Int_t column_i = -1);
   //TString                 getTString (TString branchname, Int_t row_i = -1, Int_t column_i = -1);
   //TObject*                getTObjectPtr (TString branchname, Int_t row_i = -1, Int_t column_i = -1);
+  //void*                   getVoidPtr (TString branchname, Int_t row_i = -1, Int_t column_i = -1);
 
-  ClassDef(AnalysisData, 0);
+  ClassDef(AnalysisTreeReader, 0);
 
 private:
   // storage for basic types
@@ -89,6 +93,7 @@ private:
   std::vector<std::vector<std::vector<TObject*> > >                 fvvTOptr;
 
   TTree *fChain;
+  Long64_t fEntry;
 };
 
 } /* HAL */ 

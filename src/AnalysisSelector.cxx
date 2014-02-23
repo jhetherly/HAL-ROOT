@@ -8,18 +8,7 @@ void AnalysisSelector::Init (TTree *tree) {
   // Init() will be called many times when running on PROOF
   // (once per file to be processed).
 
-  std::cout << "Processing file number: " << tree->GetFileNumber() << std::endl;
-  
-  // attach raw AnalysisData object to data map
-  TMap *loopingData = new TMap();
-  loopingData->SetName("loopingData");
-  loopingData->Add(new TObjString("RawData"), new AnalysisData(fChain));
-
-  // attach map to fInput
-  fInput->AddFirst(loopingData);
-  
-  // attach data map to Algorithm(s)
-  fAnalysisFlow->AssignData((TMap*)fInput->FindObject("loopingData"));
+  ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetTree(tree);
 }
 
 Bool_t AnalysisSelector::Notify () {
@@ -37,7 +26,6 @@ void AnalysisSelector::Begin (TTree * /*tree*/) {
   // The tree argument is deprecated (on PROOF 0 is passed).
 
   TString option = GetOption();
-  
 }
 
 void AnalysisSelector::SlaveBegin (TTree * /*tree*/) {
@@ -47,6 +35,11 @@ void AnalysisSelector::SlaveBegin (TTree * /*tree*/) {
 
   TString option = GetOption();
 
+  AnalysisTreeReader *ad = new AnalysisTreeReader();
+  ad->SetName("RawData");
+  fInput->AddFirst(ad);
+  
+  fAnalysisFlow->AssignDataList(fInput);
 }
 
 Bool_t AnalysisSelector::Process (Long64_t entry) {
@@ -67,13 +60,14 @@ Bool_t AnalysisSelector::Process (Long64_t entry) {
   // Use fStatus to set the return value of TTree::Process().
   //
   // The return value is currently not used.
-  GetEntry(entry);
+  //GetEntry(entry);
+  ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetEntry(entry);
 
-  // Execute all tasks and subtasks
-  fAnalysisFlow->ExecuteTasks("");
+  // Execute all algorithms
+  fAnalysisFlow->ExecuteAlgo(GetOption());
 
-  // Reset the state of all tasks
-  fAnalysisFlow->CleanTasks();
+  // Reset the state of all algorithms
+  fAnalysisFlow->CleanAlgos();
 
   return kTRUE;
 }
@@ -83,8 +77,11 @@ void AnalysisSelector::SlaveTerminate () {
   // have been processed. When running with PROOF SlaveTerminate() is called
   // on each slave server.
 
-  // merge any flagged data in data map to fOutput
-  // delete data map
+  // IMPORTANT!!!!!!!!!
+  // merge any flagged data in fInput to fOutput
+  
+  // delete raw data
+  delete (AnalysisTreeReader*)fInput->FindObject("RawData");
 }
 
 void AnalysisSelector::Terminate () {

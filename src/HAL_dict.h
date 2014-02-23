@@ -34,8 +34,8 @@ extern void G__set_cpp_environmentHAL_dict();
 #include "/Users/jhetherly/src/root_HAL/include/HAL/Algorithm.h"
 #include "/Users/jhetherly/src/root_HAL/include/HAL/Algorithms.h"
 #include "/Users/jhetherly/src/root_HAL/include/HAL/Analysis.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/AnalysisData.h"
 #include "/Users/jhetherly/src/root_HAL/include/HAL/AnalysisSelector.h"
+#include "/Users/jhetherly/src/root_HAL/include/HAL/AnalysisTreeReader.h"
 #include "/Users/jhetherly/src/root_HAL/include/HAL/AnalysisUtils.h"
 #include "/Users/jhetherly/src/root_HAL/include/HAL/CutAlgorithm.h"
 #include "/Users/jhetherly/src/root_HAL/include/HAL/CutOptimizer.h"
@@ -72,10 +72,9 @@ extern G__linked_taginfo G__HAL_dictLN_TList;
 extern G__linked_taginfo G__HAL_dictLN_vectorlETVirtualArraymUcOallocatorlETVirtualArraymUgRsPgR;
 extern G__linked_taginfo G__HAL_dictLN_reverse_iteratorlEvectorlETVirtualArraymUcOallocatorlETVirtualArraymUgRsPgRcLcLiteratorgR;
 extern G__linked_taginfo G__HAL_dictLN_iteratorlEbidirectional_iterator_tagcOTObjectmUcOlongcOconstsPTObjectmUmUcOconstsPTObjectmUaNgR;
-extern G__linked_taginfo G__HAL_dictLN_TTask;
-extern G__linked_taginfo G__HAL_dictLN_TMap;
 extern G__linked_taginfo G__HAL_dictLN_HAL;
 extern G__linked_taginfo G__HAL_dictLN_HALcLcLAlgorithm;
+extern G__linked_taginfo G__HAL_dictLN_listlEHALcLcLAlgorithmmUcOallocatorlEHALcLcLAlgorithmmUgRsPgR;
 extern G__linked_taginfo G__HAL_dictLN_TArrayI;
 extern G__linked_taginfo G__HAL_dictLN_TTree;
 extern G__linked_taginfo G__HAL_dictLN_TArrayD;
@@ -83,7 +82,7 @@ extern G__linked_taginfo G__HAL_dictLN_maplEstringcOTObjArraymUcOlesslEstringgRc
 extern G__linked_taginfo G__HAL_dictLN_TH1;
 extern G__linked_taginfo G__HAL_dictLN_TSelector;
 extern G__linked_taginfo G__HAL_dictLN_TChain;
-extern G__linked_taginfo G__HAL_dictLN_HALcLcLAnalysisData;
+extern G__linked_taginfo G__HAL_dictLN_HALcLcLAnalysisTreeReader;
 extern G__linked_taginfo G__HAL_dictLN_vectorlEintcOallocatorlEintgRsPgR;
 extern G__linked_taginfo G__HAL_dictLN_reverse_iteratorlEvectorlEintcOallocatorlEintgRsPgRcLcLiteratorgR;
 extern G__linked_taginfo G__HAL_dictLN_vectorlElongsPlongsPintcOallocatorlElongsPlongsPintgRsPgR;

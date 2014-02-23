@@ -9,10 +9,8 @@ class ReconstructionAlgorithm : public Algorithm {
 public:
   ReconstructionAlgorithm(const char* name, const char* title) : Algorithm(name, title) {}
   virtual ~ReconstructionAlgorithm() {}
-  //virtual void Exec (Option_t *option) {};
-  //virtual void Clear (Option_t *option) {};
-
-  ClassDef(ReconstructionAlgorithm, 0);
+  virtual void Exec (Option_t * /*option*/ = "") {}
+  virtual void Clear (Option_t * /*option*/ = "") {}
 };
 
 } /* HAL  */ 

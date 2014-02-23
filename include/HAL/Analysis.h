@@ -19,18 +19,19 @@ public:
   void AddCutAlgo (Algorithm *c);
   void PrintAnalysisFlow ();
   void SetTreeObjectName (TString name);
+  void SetAnalysisName (TString name);
   void SetAnalysisTitle (TString title);
   Int_t AddFiles (TString fnames, Long64_t nentries = 1234567890);
   Int_t AddFiles (TChain *fchain);
   void PrintTree (Option_t *option = "");
   const char* GetLeafType (TString leafname);
   const char* GetLeafType (TString branchname, TString leafname);
-  Long64_t Process (Option_t* option = "", Long64_t nentries = 1234567890, Long64_t firstentry = 0);
+  Long64_t Process (Option_t *option = "", Long64_t nentries = 1234567890, Long64_t firstentry = 0);
 
 private:
-  TChain            fChain;
-  AnalysisSelector  fAnalizer;
-  Algorithm         fAnalysisFlow;
+  TChain            *fChain;
+  Algorithm         *fAnalysisFlow;
+  AnalysisSelector  *fAnalizer;
 };
 
 } /* HAL */ 

@@ -10,9 +10,7 @@ int main(int argc, char *argv[]) {
   a.AddRecoAlgo(new ElectronReco());
   a.AddCutAlgo(new ElectronTight());
 
-  std::cout << "Before" << std::endl;
   a.Process();
-  std::cout << "After" << std::endl;
 
   return 0;
 }

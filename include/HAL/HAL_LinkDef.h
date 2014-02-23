@@ -9,7 +9,7 @@
 #pragma link C++ defined_in "include/HAL/ReconstructionAlgorithm.h";
 #pragma link C++ defined_in "include/HAL/CutAlgorithm.h";
 #pragma link C++ defined_in "include/HAL/Analysis.h";
-#pragma link C++ defined_in "include/HAL/AnalysisData.h";
+#pragma link C++ defined_in "include/HAL/AnalysisTreeReader.h";
 #pragma link C++ defined_in "include/HAL/AnalysisSelector.h";
 #pragma link C++ defined_in "include/HAL/AnalysisUtils.h";
 #pragma link C++ defined_in "include/HAL/CutOptimizer.h";
