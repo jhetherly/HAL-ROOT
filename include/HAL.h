@@ -3,7 +3,7 @@
 #include <HAL/ReconstructionAlgorithm.h>
 #include <HAL/CutAlgorithm.h>
 #include <HAL/Analysis.h>
-#include <HAL/AnalysisData.h>
+#include <HAL/AnalysisTreeReader.h>
 #include <HAL/AnalysisSelector.h>
 #include <HAL/AnalysisUtils.h>
 #include <HAL/CutOptimizer.h>

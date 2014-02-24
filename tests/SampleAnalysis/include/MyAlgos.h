@@ -2,7 +2,7 @@
 
 class ElectronReco : public HAL::ReconstructionAlgorithm {
 public:
-  ElectronReco () : ReconstructionAlgorithm("ElectronReco", "Reconstruct electrons") {}
+  ElectronReco () : ReconstructionAlgorithm("Electron", "Reconstruct electrons") {}
   virtual ~ElectronReco () {} 
   virtual void Exec (Option_t* option = "") {
   }

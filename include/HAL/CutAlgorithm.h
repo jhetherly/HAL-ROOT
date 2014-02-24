@@ -1,3 +1,4 @@
+#include <TString.h>
 #include "Algorithm.h"
 
 #ifndef HAL_CUT_ALGORITHM
@@ -7,10 +8,8 @@ namespace HAL {
 
 class CutAlgorithm : public Algorithm {
 public:
-  CutAlgorithm(const char* name, const char* title) : Algorithm(name, title) {}
+  CutAlgorithm(TString name, TString title) : Algorithm(name.Prepend("Cut  - "), title) {}
   virtual ~CutAlgorithm() {}
-  virtual void Exec (Option_t * /*option*/ = "") {}
-  virtual void Clear (Option_t * /*option*/ = "") {}
 };
 
 } /* HAL  */ 

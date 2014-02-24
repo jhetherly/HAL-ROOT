@@ -12,6 +12,7 @@ CompileSource ()
   TString buildPathString;
   TString includePathFlag;
   TString includeListString;
+  TString linkedLibFlag;
   TString sourceListString;
   TString objectListString;
   TString libraryName("libHAL.so");
@@ -23,6 +24,7 @@ CompileSource ()
   TString runCintResult;
   TString makeLibResult;
   TList *files;
+  Bool_t hasPython = (gSystem->GetFromPipe("root-config --has-python") == "yes") ? kTRUE: KFALSE;
 
   // Create full paths
   srcPathString = srcDir;
@@ -31,6 +33,11 @@ CompileSource ()
   includePathString = gSystem->PrependPathName(currentDir.Data(), includePathString);
   includePathFlag = includePathString;
   includePathFlag.Prepend("-I");
+  linkedLibFlag = gSystem->GetFromPipe("root-config --glibs");
+  if (hasPython) {
+    linkedLibFlag.Append(" ");
+    linkedLibFlag.Append(gSystem->GetFromPipe("python-config --ldflags"));
+  }
   buildPathString = buildDir;
   buildPathString = gSystem->PrependPathName(currentDir.Data(), buildPathString);
 
@@ -45,10 +52,14 @@ CompileSource ()
   }
 
   // Set up environment for compiling and linking libraries
+  if (hasPython) {
+    includePathFlag.Append(" ");
+    includePathFlag.Append(gSystem->GetFromPipe("python-config --includes"));
+  }
   gSystem->AddIncludePath(includePathFlag.Data());
   gSystem->Setenv("IncludePath", gSystem->ExpandPathName(gSystem->GetIncludePath()));
   gSystem->Setenv("BuildDir", srcPathString.Data());
-  gSystem->Setenv("LinkedLibs", gSystem->GetFromPipe("root-config --glibs"));
+  gSystem->Setenv("LinkedLibs", linkedLibFlag.Data());
   gSystem->Setenv("SharedLib", libraryName.Data());
   gSystem->Setenv("Opt", "");
 
@@ -62,9 +73,13 @@ CompileSource ()
     TIter next(files);
     while ((file=(TSystemFile*)next())) {
       fname = file->GetName();
-      if (!file->IsDirectory() && fname.EndsWith(incSuffix.Data()) && !fname.Contains("LinkDef")) {
-        includeListString = includeListString.Append(gSystem->PrependPathName(includePathString.Data(), fname));
-        includeListString = includeListString.Append(" ");
+      if (!file->IsDirectory() && fname.EndsWith(incSuffix.Data()) && 
+          !fname.Contains("LinkDef")) {
+        if (!hasPython && fname.Contains("Python")) continue;
+        else {
+          includeListString = includeListString.Append(gSystem->PrependPathName(includePathString.Data(), fname));
+          includeListString = includeListString.Append(" ");
+        }
       }
     }
   }
@@ -92,11 +107,14 @@ CompileSource ()
     while ((file=(TSystemFile*)next())) {
       fname = file->GetName();
       if (!file->IsDirectory() && fname.EndsWith(srcSuffix.Data())) {
-        sourceListString = sourceListString.Append(gSystem->PrependPathName(srcPathString.Data(), fname));
-        sourceListString = sourceListString.Append(" ");
-        fname = file->GetName();
-        objectListString = objectListString.Append(gSystem->PrependPathName(buildPathString.Data(), fname));
-        objectListString = objectListString.Append(" ");
+        if (!hasPython && fname.Contains("Python")) continue;
+        else {
+          sourceListString = sourceListString.Append(gSystem->PrependPathName(srcPathString.Data(), fname));
+          sourceListString = sourceListString.Append(" ");
+          fname = file->GetName();
+          objectListString = objectListString.Append(gSystem->PrependPathName(buildPathString.Data(), fname));
+          objectListString = objectListString.Append(" ");
+        }
       }
     }
   }
