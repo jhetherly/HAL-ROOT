@@ -5,8 +5,8 @@
 #include <TObjString.h>
 #include <iostream>
 #include <vector>
-#include "Algorithm.h"
-#include "AnalysisTreeReader.h"
+#include <HAL/Algorithm.h>
+#include <HAL/AnalysisTreeReader.h>
 
 #ifndef HAL_ANALYSIS_SELECTOR
 #define HAL_ANALYSIS_SELECTOR

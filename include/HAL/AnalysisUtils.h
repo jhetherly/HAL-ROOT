@@ -2,7 +2,7 @@
 #include <TH1.h>
 #include <TFile.h>
 #include <TString.h>
-#include "Particle.h"
+#include <HAL/Particle.h>
 
 #ifndef HAL_ANALYSISUTILS
 #define HAL_ANALYSISUTILS

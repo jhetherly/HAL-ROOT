@@ -2,8 +2,8 @@
 #include <TTree.h>
 #include <TLeaf.h>
 #include <TString.h>
-#include "Algorithm.h"
-#include "AnalysisSelector.h"
+#include <HAL/Algorithm.h>
+#include <HAL/AnalysisSelector.h>
 
 #ifndef HAL_ANALYSIS
 #define HAL_ANALYSIS

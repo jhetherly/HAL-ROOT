@@ -33,6 +33,8 @@ CompileAnalysis ()
   includePathString = gSystem->PrependPathName(currentDir.Data(), includePathString);
   includePathFlag = includePathString;
   includePathFlag.Prepend("-I");
+  HAL_IncDir.Prepend(" -I");
+  includePathFlag.Append(HAL_IncDir.Data());
   buildPathString = buildDir;
   buildPathString = gSystem->PrependPathName(currentDir.Data(), buildPathString);
   linkPathFlag = " -L";

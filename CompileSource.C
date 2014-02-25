@@ -16,7 +16,7 @@ CompileSource ()
   TString sourceListString;
   TString objectListString;
   TString libraryName("libHAL.so");
-  TString linkdefFile("HAL_LinkDef.h");
+  TString linkdefFile("HAL/HAL_LinkDef.h");
   TString buildOS(gSystem->GetBuildArch());
   TString linkingInstruction(" -Wl,");
   TString runCintCommand("rootcint -f $BuildDir/HAL_dict.cxx -c -p $IncludePath ");
@@ -64,7 +64,7 @@ CompileSource ()
   gSystem->Setenv("Opt", "");
 
   // Create list of include files for cint
-  includePathString = gSystem->PrependPathName(includePathString.Data(), "HAL");
+  //includePathString = gSystem->PrependPathName(includePathString.Data(), "HAL");
   TSystemDirectory dir(includePathString.Data(), includePathString.Data());
   files = dir.GetListOfFiles();
   if (files) {

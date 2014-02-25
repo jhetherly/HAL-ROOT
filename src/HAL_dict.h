@@ -31,21 +31,7 @@ extern void G__set_cpp_environmentHAL_dict();
 
 #include "TObject.h"
 #include "TMemberInspector.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/Algorithm.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/Algorithms.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/Analysis.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/AnalysisSelector.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/AnalysisTreeReader.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/AnalysisUtils.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/CutAlgorithm.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/CutOptimizer.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/Integrator.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/Interpolator.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/Object.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/Particle.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/PlotUtils.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/PythonReconstructionAlgorithm.h"
-#include "/Users/jhetherly/src/root_HAL/include/HAL/ReconstructionAlgorithm.h"
+#include "/Users/jhetherly/src/root_HAL/include/HAL.h"
 #include <algorithm>
 namespace std { }
 using namespace std;
@@ -72,10 +58,13 @@ extern G__linked_taginfo G__HAL_dictLN_reverse_iteratorlEvectorlEROOTcLcLTSchema
 extern G__linked_taginfo G__HAL_dictLN_TList;
 extern G__linked_taginfo G__HAL_dictLN_vectorlETVirtualArraymUcOallocatorlETVirtualArraymUgRsPgR;
 extern G__linked_taginfo G__HAL_dictLN_reverse_iteratorlEvectorlETVirtualArraymUcOallocatorlETVirtualArraymUgRsPgRcLcLiteratorgR;
-extern G__linked_taginfo G__HAL_dictLN_iteratorlEbidirectional_iterator_tagcOTObjectmUcOlongcOconstsPTObjectmUmUcOconstsPTObjectmUaNgR;
+extern G__linked_taginfo G__HAL_dictLN_TArrayI;
 extern G__linked_taginfo G__HAL_dictLN_HAL;
+extern G__linked_taginfo G__HAL_dictLN_iteratorlEbidirectional_iterator_tagcOTObjectmUcOlongcOconstsPTObjectmUmUcOconstsPTObjectmUaNgR;
 extern G__linked_taginfo G__HAL_dictLN_HALcLcLAlgorithm;
 extern G__linked_taginfo G__HAL_dictLN_listlEHALcLcLAlgorithmmUcOallocatorlEHALcLcLAlgorithmmUgRsPgR;
+extern G__linked_taginfo G__HAL_dictLN_HALcLcLReconstructionAlgorithm;
+extern G__linked_taginfo G__HAL_dictLN_HALcLcLCutAlgorithm;
 extern G__linked_taginfo G__HAL_dictLN_TTree;
 extern G__linked_taginfo G__HAL_dictLN_TArrayD;
 extern G__linked_taginfo G__HAL_dictLN_maplEstringcOTObjArraymUcOlesslEstringgRcOallocatorlEpairlEconstsPstringcOTObjArraymUgRsPgRsPgR;
@@ -190,10 +179,14 @@ extern G__linked_taginfo G__HAL_dictLN_TMatrixTSparseRowlEfloatgR;
 extern G__linked_taginfo G__HAL_dictLN_TMatrixTSparseDiaglEfloatgR;
 extern G__linked_taginfo G__HAL_dictLN_TLorentzVector;
 extern G__linked_taginfo G__HAL_dictLN_TF1;
+extern G__linked_taginfo G__HAL_dictLN_TH1D;
+extern G__linked_taginfo G__HAL_dictLN_TH1C;
+extern G__linked_taginfo G__HAL_dictLN_TH1S;
+extern G__linked_taginfo G__HAL_dictLN_TH1I;
+extern G__linked_taginfo G__HAL_dictLN_TH1F;
 extern G__linked_taginfo G__HAL_dictLN_HALcLcLParticle;
 extern G__linked_taginfo G__HAL_dictLN_vectorlEHALcLcLParticlecOallocatorlEHALcLcLParticlegRsPgR;
 extern G__linked_taginfo G__HAL_dictLN_reverse_iteratorlEvectorlEHALcLcLParticlecOallocatorlEHALcLcLParticlegRsPgRcLcLiteratorgR;
-extern G__linked_taginfo G__HAL_dictLN_HALcLcLCutAlgorithm;
 extern G__linked_taginfo G__HAL_dictLN_TMatrixTlEdoublegR;
 extern G__linked_taginfo G__HAL_dictLN_TMatrixTRow_constlEdoublegR;
 extern G__linked_taginfo G__HAL_dictLN_TMatrixTRowlEdoublegR;
@@ -216,6 +209,17 @@ extern G__linked_taginfo G__HAL_dictLN_HALcLcLInterpBase;
 extern G__linked_taginfo G__HAL_dictLN_HALcLcLPolyInterp;
 extern G__linked_taginfo G__HAL_dictLN_HALcLcLPoly2DInterp;
 extern G__linked_taginfo G__HAL_dictLN_HALcLcLObject;
-extern G__linked_taginfo G__HAL_dictLN_HALcLcLReconstructionAlgorithm;
+extern G__linked_taginfo G__HAL_dictLN_TH2C;
+extern G__linked_taginfo G__HAL_dictLN_TH2S;
+extern G__linked_taginfo G__HAL_dictLN_TH2I;
+extern G__linked_taginfo G__HAL_dictLN_TH2F;
+extern G__linked_taginfo G__HAL_dictLN_TH2D;
+extern G__linked_taginfo G__HAL_dictLN_TH3C;
+extern G__linked_taginfo G__HAL_dictLN_TH3S;
+extern G__linked_taginfo G__HAL_dictLN_TH3I;
+extern G__linked_taginfo G__HAL_dictLN_TH3F;
+extern G__linked_taginfo G__HAL_dictLN_TH3D;
+extern G__linked_taginfo G__HAL_dictLN_THStack;
+extern G__linked_taginfo G__HAL_dictLN_TLegend;
 
 /* STUB derived class for protected member access */
