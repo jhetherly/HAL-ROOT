@@ -2,6 +2,8 @@
 #include <TTree.h>
 #include <TLeaf.h>
 #include <TString.h>
+#include <TObjString.h>
+#include <TMap.h>
 #include <HAL/Algorithm.h>
 #include <HAL/AnalysisSelector.h>
 
@@ -26,12 +28,16 @@ public:
   void PrintTree (Option_t *option = "");
   const char* GetLeafType (TString leafname);
   const char* GetLeafType (TString branchname, TString leafname);
+  void MapBranch (TString branchname, TString nickname);
   Long64_t Process (Option_t *option = "", Long64_t nentries = 1234567890, Long64_t firstentry = 0);
 
 private:
   TChain            *fChain;
   Algorithm         *fAnalysisFlow;
   AnalysisSelector  *fAnalizer;
+  TMap              *fBranchMap;
+
+  ClassDefNV(Analysis, 0);
 };
 
 } /* HAL */ 

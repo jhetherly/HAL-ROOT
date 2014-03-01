@@ -1,5 +1,7 @@
 #include <HAL/Algorithm.h>
 
+ClassImp(HAL::Algorithm);
+
 namespace HAL {
 
 Algorithm* Algorithm::fgBeginAlgo  = 0;

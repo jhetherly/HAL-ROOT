@@ -10,6 +10,9 @@ int main(int argc, char *argv[]) {
   a.AddRecoAlgo(new ElectronReco());
   a.AddCutAlgo(new ElectronTight());
 
+  a.MapBranch("jet_AntiKt4TruthJets_", "jet_");
+
+  a.PrintTree();
   a.Process();
 
   return 0;

@@ -33,6 +33,7 @@ public :
 
   Algorithm      *fAnalysisFlow;
   TTree          *fChain;   //!pointer to the analyzed TTree or TChain
+  TMap           *fBranchMap;
 
   ClassDef(AnalysisSelector, 0);
 };

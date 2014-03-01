@@ -1,10 +1,16 @@
 #include "HAL.h"
+#include <iostream>
 
 class ElectronReco : public HAL::ReconstructionAlgorithm {
 public:
   ElectronReco () : ReconstructionAlgorithm("Electron", "Reconstruct electrons") {}
   virtual ~ElectronReco () {} 
   virtual void Exec (Option_t* option = "") {
+    HAL::AnalysisTreeReader *tr = (HAL::AnalysisTreeReader*)GetData("RawData");
+    std::cout << tr->GetInt("mc_n") << "    " << tr->GetInt("jet_n") << "    " << tr->GetInt("ph_n") << std::endl;
+    //tr->GetInt("mc_n");
+    //tr->GetInt("jet_n");
+    //tr->GetInt("ph_n");
   }
   virtual void Clear (Option_t* option = "") {}
 };

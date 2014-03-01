@@ -1,5 +1,7 @@
 #include <HAL/AnalysisSelector.h>
 
+ClassImp(HAL::AnalysisSelector);
+
 namespace HAL {
 
 void AnalysisSelector::Init (TTree *tree) {
@@ -37,6 +39,7 @@ void AnalysisSelector::SlaveBegin (TTree * /*tree*/) {
 
   AnalysisTreeReader *ad = new AnalysisTreeReader();
   ad->SetName("RawData");
+  ad->SetBranchMap(fBranchMap);
   fInput->AddFirst(ad);
   
   fAnalysisFlow->AssignDataList(fInput);

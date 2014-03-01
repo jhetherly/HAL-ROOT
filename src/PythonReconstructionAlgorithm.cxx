@@ -1,5 +1,7 @@
 #include <HAL/PythonReconstructionAlgorithm.h>
 
+//ClassImp(HAL::PythonReconstructionAlgorithm);
+
 namespace HAL {
 
 PythonReconstructionAlgorithm::PythonReconstructionAlgorithm (TString name, TString title, PyObject *self) : 

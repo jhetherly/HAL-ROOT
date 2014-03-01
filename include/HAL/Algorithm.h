@@ -79,24 +79,8 @@ private:
   static Algorithm *fgBeginAlgo;    //pointer to algo initiator
   static Algorithm *fgBreakPoint;   //pointer to current break point
 
+  ClassDef(Algorithm, 0);
 };
-
-//class Algorithm : public TTask {
-//public:
-//  Algorithm(const char* name, const char* title) : TTask(name, title), fData(0) {}
-//  virtual ~Algorithm() {}
-//  //virtual void Exec (Option_t *option) {}
-//  //virtual void Clear (Option_t *option) {}
-//  void AddData (TString name, TObject *obj);
-//  TObject* GetData (TString name);
-//  Bool_t CheckData (TString name);
-//  void AssignDataMap (TMap *map);
-//
-//private:
-//  TMap *fData;
-//
-//  ClassDef(Algorithm, 0);
-//};
 
 } /* HAL */ 
 
