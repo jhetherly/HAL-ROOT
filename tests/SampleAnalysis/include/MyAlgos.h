@@ -7,10 +7,7 @@ public:
   virtual ~ElectronReco () {} 
   virtual void Exec (Option_t* option = "") {
     HAL::AnalysisTreeReader *tr = (HAL::AnalysisTreeReader*)GetData("RawData");
-    std::cout << tr->GetInt("mc_n") << "    " << tr->GetInt("jet_n") << "    " << tr->GetInt("ph_n") << std::endl;
-    //tr->GetInt("mc_n");
-    //tr->GetInt("jet_n");
-    //tr->GetInt("ph_n");
+    std::cout << tr->GetInteger("mc_n") << "    " << tr->GetInteger("jet_n") << "    " << tr->GetInteger("ph_n") << std::endl;
   }
   virtual void Clear (Option_t* option = "") {}
 };

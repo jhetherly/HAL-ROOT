@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 
   a.MapBranch("jet_AntiKt4TruthJets_", "jet_");
 
-  a.PrintTree();
+  //a.PrintTree();
   a.Process();
 
   return 0;

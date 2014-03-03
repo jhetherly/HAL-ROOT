@@ -10,8 +10,10 @@
 #include <TRefArray.h>
 #include <TNamed.h>
 #include <TMap.h>
+#include <string>
 #include <deque>
 #include <vector>
+#include <set>
 #include <iostream>
 #include <HAL/Exceptions.h>
 
@@ -29,22 +31,17 @@ public:
   TTree* GetTree () {return fChain;}
   void SetBranchMap (TMap *m) {fBranchMap = m;}
 
-  //Int_t                   getDim (TString branchname, Int_t idx_1 = -1);
-  //Bool_t                  getBool (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //Byte_t                  getByte (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  Int_t                   GetInt (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //UInt_t                  getUInt (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //Short_t                 getShort (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //UShort_t                getUShort (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //Long64_t                getLong (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //ULong64_t               getULong (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //Float16_t               getFloat (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //Double32_t              getDouble (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //LongDouble_t            getLongDouble (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //Char_t                  getChar (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //TString                 getTString (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //TObject*                getTObjectPtr (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //void*                   getVoidPtr (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  Int_t                     GetDim (TString branchname, Int_t idx_1 = -1);
+  //Bool_t                    GetBool (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  Long64_t                  GetInteger (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  //ULong64_t                 GetCounting (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  //LongDouble_t              GetDecimal (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  //TString                   GetString (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  //TObject&                  GetObject (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  //TObjArray&                GetObjArray (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  //TClonesArray&             GetClonesArray (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  //TRef&                     GetRef (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  //TRefArray&                GetRefArray (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
 
   ClassDef(AnalysisTreeReader, 0);
 
@@ -54,91 +51,77 @@ private:
 
   TTree *fChain;
   Long64_t fEntry;
-  enum StorageType {kB, kBy, kI};
+  enum StorageType {kB, kD, kI, kC, kS, kO, kOA, kCA, kR, kRA,
+                    kvB, kvD, kvI, kvC, kvS, kvO, kvOA, kvCA, kvR, kvRA,
+                    kvvB, kvvD, kvvI, kvvC, kvvS, kvvO, kvvR};
   // regex's for how to identify scalars, vec's, and arrays
   TRegexp fScalar, fVector, fVector2D, fArray, fArray2D;
+  // type lists
+  std::set<TString> fBool,
+                    fInteger, fShort, fLong, fLLong, fSChar,
+                    fUInteger, fUShort, fULong, fULLong, fUChar,
+                    fFloat, fDouble, fLDouble,
+                    fChar;
 
   // Container for storing the nicknames for the branches
   TMap *fBranchMap;
 
   // Storage for basic types
-  std::vector<Bool_t>                   fB;
-  std::vector<Byte_t>                   fBy; // unsigned char
-  std::deque<Int_t>                    fI;
-  std::vector<UInt_t>                   fUI;
-  std::vector<Short_t>                  fS;
-  std::vector<UShort_t>                 fUS;
-  std::vector<Long64_t>                 fL64;
-  std::vector<ULong64_t>                fUL64;
-  std::vector<Float16_t>                fF16;
-  std::vector<Double32_t>               fD32;
-  std::vector<LongDouble_t>             fLD;
-  std::vector<Char_t>                   fC;
-  std::vector<TString>                  fTS;
-  std::vector<TObject*>                 fTOptr;
-  std::vector<TObjArray*>               fTOAptr;
-  std::vector<TClonesArray*>            fTCAptr;
-  std::vector<TRef*>                    fTRptr;
-  std::vector<TRefArray*>               fTRAptr;
-  std::vector<void*>                    fvptr;
-
+  std::deque<Bool_t>                   fB;  // bool type
+  std::deque<LongDouble_t>             fD;  // decimal number  (float, double, etc...)
+  std::deque<Long64_t>                 fI;  // integer number  (Byte_t, int, long, short, etc...)
+  std::deque<ULong64_t>                fC;  // counting number (unsigned int, unsigned etc...)
+  std::deque<TString>                  fS;  // string types    (char, TString, ...)
+  std::deque<TObject>                  fO;  // TObject
+  std::deque<TObjArray>                fOA; // TObjArray
+  std::deque<TClonesArray>             fCA; // TClonesArray
+  std::deque<TRef>                     fR;  // TRef
+  std::deque<TRefArray>                fRA; // TRefArray
+  
   // storage for 1D arrays of data
-  std::vector<std::vector<Bool_t> >                   fvB;
-  std::vector<std::vector<Byte_t> >                   fvBy;
-  std::vector<std::vector<Int_t> >                    fvI;
-  std::vector<std::vector<UInt_t> >                   fvUI;
-  std::vector<std::vector<Short_t> >                  fvS;
-  std::vector<std::vector<UShort_t> >                 fvUS;
-  std::vector<std::vector<Long64_t> >                 fvL64;
-  std::vector<std::vector<ULong64_t> >                fvUL64;
-  std::vector<std::vector<Float16_t> >                fvF16;
-  std::vector<std::vector<Double32_t> >               fvD32;
-  std::vector<std::vector<LongDouble_t> >             fvLD;
-  std::vector<std::vector<Char_t> >                   fvC;
-  std::vector<std::vector<TString> >                  fvTS;
-  std::vector<std::vector<TObject*> >                 fvTOptr;
-  std::vector<std::vector<TObjArray*> >               fvTOAptr;
-  std::vector<std::vector<TClonesArray*> >            fvTCAptr;
-  std::vector<std::vector<TRef*> >                    fvTRptr;
-  std::vector<std::vector<TRefArray*> >               fvTRAptr;
-  std::vector<std::vector<void*> >                    fvvptr;
+  std::deque<std::vector<Bool_t> >        fvB;  // bool type
+  std::deque<std::vector<LongDouble_t> >  fvD;  // decimal number
+  std::deque<std::vector<Long64_t> >      fvI;  // integer number
+  std::deque<std::vector<ULong64_t> >     fvC;  // counting number
+  std::deque<std::vector<TString> >       fvS;  // string types
+  std::deque<std::vector<TObject> >       fvO;  // TObject
+  std::deque<std::vector<TObjArray> >     fvOA; // TObjArray
+  std::deque<std::vector<TClonesArray> >  fvCA; // TClonesArray
+  std::deque<std::vector<TRef> >          fvR;  // TRef
+  std::deque<std::vector<TRefArray> >     fvRA; // TRefArray
 
   // storage for 2D arrays of data
-  std::vector<std::vector<std::vector<Bool_t> > >                   fvvB;
-  std::vector<std::vector<std::vector<Byte_t> > >                   fvvBy;
-  std::vector<std::vector<std::vector<Int_t> > >                    fvvI;
-  std::vector<std::vector<std::vector<UInt_t> > >                   fvvUI;
-  std::vector<std::vector<std::vector<Short_t> > >                  fvvS;
-  std::vector<std::vector<std::vector<UShort_t> > >                 fvvUS;
-  std::vector<std::vector<std::vector<Long64_t> > >                 fvvL64;
-  std::vector<std::vector<std::vector<ULong64_t> > >                fvvUL64;
-  std::vector<std::vector<std::vector<Float16_t> > >                fvvF16;
-  std::vector<std::vector<std::vector<Double32_t> > >               fvvD32;
-  std::vector<std::vector<std::vector<LongDouble_t> > >             fvvLD;
-  std::vector<std::vector<std::vector<Char_t> > >                   fvvC;
-  std::vector<std::vector<std::vector<TString> > >                  fvvTS;
-  std::vector<std::vector<std::vector<TObject*> > >                 fvvTOptr;
-  std::vector<std::vector<std::vector<TRef*> > >                    fvvTRptr;
-  std::vector<std::vector<std::vector<void*> > >                    fvvvptr;
-
+  std::deque<std::vector<std::vector<Bool_t> > >        fvvB;  // bool type
+  std::deque<std::vector<std::vector<LongDouble_t> > >  fvvD;  // decimal number
+  std::deque<std::vector<std::vector<Long64_t> > >      fvvI;  // integer number
+  std::deque<std::vector<std::vector<ULong64_t> > >     fvvC;  // counting number
+  std::deque<std::vector<std::vector<TString> > >       fvvS;  // string types
+  std::deque<std::vector<std::vector<TObject> > >       fvvO;  // TObject
+  std::deque<std::vector<std::vector<TRef> > >          fvvR;  // TRef
 
 
   class BranchManager {
   public:
-    BranchManager (AnalysisTreeReader *tr = 0) : fTreeReader(tr) {}
-    ~BranchManager () {}
+    BranchManager (AnalysisTreeReader *tr = 0);
+    ~BranchManager ();
     TString GetName () {return fBranchName;}
     TString GetFullType () {return fType;}
     TString GetScalarType () {return fScalarType;}
+    Bool_t IsScalar () {return fScalar;}
+    Bool_t IsCArray1D () {return fCArray1D;}
+    Bool_t IsCArray2D () {return fCArray2D;}
+    Bool_t IsVec1D () {return fVec1D;}
+    Bool_t IsVec2D () {return fVec2D;}
     Bool_t Create (TString branchname);
-    void SetEntry (Long64_t entry) {fBranch->GetEntry(entry);}
+    Int_t SetEntry (Long64_t entry);
     StorageType GetStorageType () {return fStorageID;}
     Int_t GetStorageIndex () {return fStorageIndex;}
 
   private:
     StorageType            fStorageID; // this will be the proprietary index of the vector to use in the ATR
     Int_t                  fStorageIndex; // this will be the proprietary index of the vector to use in the ATR
-    TString                fBranchName, fType, fScalarType;
+    Bool_t                 fScalar, fCArray1D, fCArray2D, fVec1D, fVec2D;
+    TString                fBranchName, fLeafTitle, fType, fScalarType;
     TBranch               *fBranch;
     AnalysisTreeReader    *fTreeReader;
   };
