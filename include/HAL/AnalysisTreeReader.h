@@ -32,16 +32,15 @@ public:
   void SetBranchMap (TMap *m) {fBranchMap = m;}
 
   Int_t                     GetDim (TString branchname, Int_t idx_1 = -1);
-  //Bool_t                    GetBool (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  Bool_t                    GetBool (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
   Long64_t                  GetInteger (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //ULong64_t                 GetCounting (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //LongDouble_t              GetDecimal (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //TString                   GetString (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //TObject&                  GetObject (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //TObjArray&                GetObjArray (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //TClonesArray&             GetClonesArray (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //TRef&                     GetRef (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  //TRefArray&                GetRefArray (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  ULong64_t                 GetCounting (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  LongDouble_t              GetDecimal (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  TString                   GetString (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  TObjArray&                GetObjArray (TString branchname, Int_t idx_1 = -1);
+  TClonesArray&             GetClonesArray (TString branchname, Int_t idx_1 = -1);
+  TRef&                     GetRef (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
+  TRefArray&                GetRefArray (TString branchname, Int_t idx_1 = -1);
 
   ClassDef(AnalysisTreeReader, 0);
 
@@ -51,9 +50,9 @@ private:
 
   TTree *fChain;
   Long64_t fEntry;
-  enum StorageType {kB, kD, kI, kC, kS, kO, kOA, kCA, kR, kRA,
-                    kvB, kvD, kvI, kvC, kvS, kvO, kvOA, kvCA, kvR, kvRA,
-                    kvvB, kvvD, kvvI, kvvC, kvvS, kvvO, kvvR};
+  enum StorageType {kB, kD, kI, kC, kS, kOA, kCA, kR, kRA,
+                    kvB, kvD, kvI, kvC, kvS, kvOA, kvCA, kvR, kvRA,
+                    kvvB, kvvD, kvvI, kvvC, kvvS, kvvR};
   // regex's for how to identify scalars, vec's, and arrays
   TRegexp fScalar, fVector, fVector2D, fArray, fArray2D;
   // type lists
@@ -72,7 +71,6 @@ private:
   std::deque<Long64_t>                 fI;  // integer number  (Byte_t, int, long, short, etc...)
   std::deque<ULong64_t>                fC;  // counting number (unsigned int, unsigned etc...)
   std::deque<TString>                  fS;  // string types    (char, TString, ...)
-  std::deque<TObject>                  fO;  // TObject
   std::deque<TObjArray>                fOA; // TObjArray
   std::deque<TClonesArray>             fCA; // TClonesArray
   std::deque<TRef>                     fR;  // TRef
@@ -84,7 +82,6 @@ private:
   std::deque<std::vector<Long64_t> >      fvI;  // integer number
   std::deque<std::vector<ULong64_t> >     fvC;  // counting number
   std::deque<std::vector<TString> >       fvS;  // string types
-  std::deque<std::vector<TObject> >       fvO;  // TObject
   std::deque<std::vector<TObjArray> >     fvOA; // TObjArray
   std::deque<std::vector<TClonesArray> >  fvCA; // TClonesArray
   std::deque<std::vector<TRef> >          fvR;  // TRef
@@ -96,10 +93,10 @@ private:
   std::deque<std::vector<std::vector<Long64_t> > >      fvvI;  // integer number
   std::deque<std::vector<std::vector<ULong64_t> > >     fvvC;  // counting number
   std::deque<std::vector<std::vector<TString> > >       fvvS;  // string types
-  std::deque<std::vector<std::vector<TObject> > >       fvvO;  // TObject
   std::deque<std::vector<std::vector<TRef> > >          fvvR;  // TRef
 
 
+  // Can only handle scalars (defined in the std::set's above), c-arrays, and vectors
   class BranchManager {
   public:
     BranchManager (AnalysisTreeReader *tr = 0);

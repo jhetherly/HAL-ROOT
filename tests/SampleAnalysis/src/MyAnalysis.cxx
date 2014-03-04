@@ -14,6 +14,7 @@ int main(int argc, char *argv[]) {
 
   //a.PrintTree();
   a.Process();
+  //a.Process("", 50);
 
   return 0;
 }
