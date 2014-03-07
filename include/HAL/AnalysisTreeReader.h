@@ -1,6 +1,7 @@
 #include <TTree.h>
 #include <TBranch.h>
 #include <TLeaf.h>
+#include <TLeafF.h>
 #include <TRegexp.h>
 #include <TString.h>
 #include <TObjString.h>
@@ -26,7 +27,7 @@ class AnalysisTreeReader : public TNamed {
 public:
   AnalysisTreeReader (TTree *tree = 0);
   virtual ~AnalysisTreeReader ();
-  void SetTree (TTree *tree) {fChain = tree;}
+  void SetTree (TTree *tree) {fChain = tree; fChain->SetMakeClass(1);}
   void SetEntry (Long64_t entry);
   TTree* GetTree () {return fChain;}
   void SetBranchMap (TMap *m) {fBranchMap = m;}
@@ -110,7 +111,7 @@ private:
     Bool_t IsVec1D () {return fVec1D;}
     Bool_t IsVec2D () {return fVec2D;}
     Bool_t Create (TString branchname);
-    Int_t SetEntry (Long64_t entry);
+    void SetEntry (Long64_t entry);
     StorageType GetStorageType () {return fStorageID;}
     Int_t GetStorageIndex () {return fStorageIndex;}
 
@@ -121,6 +122,9 @@ private:
     TString                fBranchName, fLeafTitle, fType, fScalarType;
     TBranch               *fBranch;
     AnalysisTreeReader    *fTreeReader;
+
+    Int_t                  GetArrayLength (Int_t dim);
+    void                   FindTypeInformation ();
   };
 
   friend class BranchManager;

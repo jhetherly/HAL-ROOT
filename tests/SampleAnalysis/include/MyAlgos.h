@@ -8,7 +8,8 @@ public:
   virtual void Exec (Option_t* option = "") {
     HAL::AnalysisTreeReader *tr = (HAL::AnalysisTreeReader*)GetData("RawData");
     for (int i = 0; i < tr->GetDim("jet_pt"); ++i)
-      tr->GetDecimal("jet_pt", i);
+      std::cout << tr->GetDecimal("jet_pt", i) << "   ";
+    std::cout << std::endl;
   }
   virtual void Clear (Option_t* option = "") {}
 };

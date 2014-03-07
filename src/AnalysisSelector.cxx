@@ -10,6 +10,8 @@ void AnalysisSelector::Init (TTree *tree) {
   // Init() will be called many times when running on PROOF
   // (once per file to be processed).
 
+  if (!tree) return;
+
   ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetTree(tree);
 }
 
