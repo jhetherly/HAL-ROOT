@@ -18,7 +18,7 @@ CompileSource ()
   TString libraryName("libHAL.so");
   TString linkdefFile("HAL/HAL_LinkDef.h");
   TString buildOS(gSystem->GetBuildArch());
-  TString linkingInstruction(" -Wl,");
+  TString linkingInstruction;
   TString runCintCommand("rootcint -f $BuildDir/HAL_dict.cxx -c -p $IncludePath ");
   TString makeLibCommands(gSystem->GetMakeSharedLib());
   TString runCintResult;
@@ -38,6 +38,10 @@ CompileSource ()
     includePathFlag.Prepend("-DLONGDOUBLE ");
   linkedLibFlag = gSystem->GetFromPipe("root-config --glibs");
   if (hasPython) {
+    TString pyLinker(gSystem->GetFromPipe("python-config --prefix"));
+    pyLinker = gSystem->PrependPathName(pyLinker.Data(), "lib");
+    linkedLibFlag.Append(" -L");
+    linkedLibFlag.Append(pyLinker.Data());
     linkedLibFlag.Append(" ");
     linkedLibFlag.Append(gSystem->GetFromPipe("python-config --ldflags"));
   }
@@ -46,11 +50,7 @@ CompileSource ()
 
   // Determine the linking instructions
   if (buildOS.Contains("macosx")) {
-    linkingInstruction.Append("-install_name,@rpath/");
-    linkingInstruction.Append(libraryName.Data());
-  }
-  else {
-    linkingInstruction.Append("-soname,");
+    linkingInstruction.Append(" -Wl,-install_name,@rpath/");
     linkingInstruction.Append(libraryName.Data());
   }
 
@@ -64,6 +64,7 @@ CompileSource ()
   gSystem->Setenv("BuildDir", srcPathString.Data());
   gSystem->Setenv("LinkedLibs", linkedLibFlag.Data());
   gSystem->Setenv("SharedLib", libraryName.Data());
+  gSystem->Setenv("LibName", libraryName.Remove(libraryName.First('.'), libraryName.Length()).Data());
   gSystem->Setenv("Opt", "");
 
   // Create list of include files for cint
@@ -132,7 +133,9 @@ CompileSource ()
   gSystem->SetObjExt(objSuffix.Data());
   // Make the library
   std::cout << "Creating the HAL shared library..." << std::endl;
-  makeLibResult = gSystem->GetFromPipe(gSystem->ExpandPathName(makeLibCommands.Append(linkingInstruction.Data()).Data()));
+  makeLibCommands.Append(linkingInstruction.Data()).Data();
+  makeLibResult = gSystem->GetFromPipe(gSystem->ExpandPathName(makeLibCommands.Data()));
+  std::cout << makeLibResult << std::endl;
   if (makeLibResult.CompareTo("")) {
     std::cout << "Compilation or linking may have ran into problems." << std::endl;
     std::cout << makeLibResult << std::endl;

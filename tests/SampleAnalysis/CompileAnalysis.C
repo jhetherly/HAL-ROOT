@@ -1,6 +1,7 @@
 CompileAnalysis ()
 {
-  TString HAL_Dir("/Users/jhetherly/src/root_HAL");
+  //TString HAL_Dir("/Users/jhetherly/src/root_HAL");
+  TString HAL_Dir("/users/jhetherl/src/HAL-ROOT");
   TString HAL_LibDir(gSystem->PrependPathName(HAL_Dir.Data(), "lib"));
   TString HAL_IncDir(gSystem->PrependPathName(HAL_Dir.Data(), "include"));
   TString currentDir(gSystem->pwd());
