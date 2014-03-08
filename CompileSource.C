@@ -24,6 +24,7 @@ CompileSource ()
   TString runCintResult;
   TString makeLibResult;
   TList *files;
+  Int_t versionNumber = gROOT->GetVersionInt();
   Bool_t hasPython = (gSystem->GetFromPipe("root-config --has-python") == "yes") ? kTRUE: KFALSE;
 
   // Create full paths
@@ -33,6 +34,8 @@ CompileSource ()
   includePathString = gSystem->PrependPathName(currentDir.Data(), includePathString);
   includePathFlag = includePathString;
   includePathFlag.Prepend("-I");
+  if (versionNumber >= 53417)
+    includePathFlag.Prepend("-DLONGDOUBLE ");
   linkedLibFlag = gSystem->GetFromPipe("root-config --glibs");
   if (hasPython) {
     linkedLibFlag.Append(" ");

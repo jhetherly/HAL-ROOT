@@ -16,6 +16,7 @@
 #include <vector>
 #include <set>
 #include <iostream>
+#include <HAL/Common.h>
 #include <HAL/Exceptions.h>
 
 #ifndef HAL_ANALYSIS_TREE_READER

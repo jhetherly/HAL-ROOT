@@ -7,6 +7,7 @@
 #pragma link C++ defined_in "HAL/Algorithms.h";
 #pragma link C++ defined_in "HAL/Algorithm.h";
 #pragma link C++ defined_in "HAL/ReconstructionAlgorithm.h";
+#pragma link C++ defined_in "HAL/Common.h";
 #pragma link C++ defined_in "HAL/CutAlgorithm.h";
 #pragma link C++ defined_in "HAL/Analysis.h";
 #pragma link C++ defined_in "HAL/AnalysisTreeReader.h";
