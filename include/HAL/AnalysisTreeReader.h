@@ -119,7 +119,8 @@ private:
     StorageType            fStorageID; // this will be the proprietary index of the vector to use in the ATR
     Int_t                  fStorageIndex; // this will be the proprietary index of the vector to use in the ATR
     Bool_t                 fScalar, fCArray1D, fCArray2D, fVec1D, fVec2D;
-    TString                fBranchName, fLeafTitle, fType, fScalarType;
+    TString                fBranchName, fBranchTitle, fLeafTitle, fType, fScalarType;
+    Int_t                  fLeafNdata;
     TBranch               *fBranch;
     AnalysisTreeReader    *fTreeReader;
 
