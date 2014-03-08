@@ -1,4 +1,5 @@
 #include <TString.h>
+#include <HAL/Common.h>
 #include <HAL/Algorithm.h>
 
 #ifndef HAL_RECONSRTUCTION_ALGORITHM

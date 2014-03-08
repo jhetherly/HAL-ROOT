@@ -4,6 +4,7 @@
 #include <TString.h>
 #include <TObjString.h>
 #include <TMap.h>
+#include <HAL/Common.h>
 #include <HAL/Algorithm.h>
 #include <HAL/AnalysisSelector.h>
 

@@ -2,6 +2,7 @@
 #include <TArrayD.h>
 #include <vector>
 #include <exception>
+#include <HAL/Common.h>
 
 /*
  * This is adapted from Numerical Recipes in C++

@@ -15,7 +15,6 @@
 #include <deque>
 #include <vector>
 #include <set>
-#include <iostream>
 #include <HAL/Common.h>
 #include <HAL/Exceptions.h>
 

@@ -4,6 +4,7 @@
 #include <TArrayD.h>
 #include <TH1.h>
 #include <TF2.h>
+#include <HAL/Common.h>
 
 /*
  * This class is designed to perform an n-sided optimization given the signal and

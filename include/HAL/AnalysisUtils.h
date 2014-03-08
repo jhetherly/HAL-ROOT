@@ -2,6 +2,7 @@
 #include <TH1.h>
 #include <TFile.h>
 #include <TString.h>
+#include <HAL/Common.h>
 #include <HAL/Particle.h>
 
 #ifndef HAL_ANALYSISUTILS

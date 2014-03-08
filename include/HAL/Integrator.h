@@ -1,5 +1,6 @@
 #include <TMath.h>
 #include <TF1.h>
+#include <HAL/Common.h>
 
 /*
  * This is adapted from Numerical Recipes in C++

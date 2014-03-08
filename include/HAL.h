@@ -1,3 +1,4 @@
+#include <HAL/Common.h>
 #include <HAL/Algorithms.h>
 #include <HAL/Algorithm.h>
 #include <HAL/ReconstructionAlgorithm.h>

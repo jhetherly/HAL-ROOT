@@ -3,8 +3,8 @@
 #include <TTree.h>
 #include <TMap.h>
 #include <TObjString.h>
-#include <iostream>
 #include <vector>
+#include <HAL/Common.h>
 #include <HAL/Algorithm.h>
 #include <HAL/AnalysisTreeReader.h>
 

@@ -4,6 +4,7 @@
 #include <TList.h>
 #include <list>
 #include <iostream>
+#include <HAL/Common.h>
 
 #ifndef HAL_ALGORITHM
 #define HAL_ALGORITHM

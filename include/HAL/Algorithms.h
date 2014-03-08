@@ -1,4 +1,5 @@
 #include <TArrayI.h>
+#include <HAL/Common.h>
 
 /*
  * This function is designed to help iterate over all unique

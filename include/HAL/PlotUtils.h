@@ -6,6 +6,7 @@
 #include <TFile.h>
 #include <TString.h>
 #include <TLegend.h>
+#include <HAL/Common.h>
 
 #ifndef HAL_PLOTUTILS
 #define HAL_PLOTUTILS

@@ -1,7 +1,7 @@
 CompileAnalysis ()
 {
-  //TString HAL_Dir("/Users/jhetherly/src/root_HAL");
-  TString HAL_Dir("/users/jhetherl/src/HAL-ROOT");
+  TString HAL_Dir("/Users/jhetherly/src/root_HAL");
+  //TString HAL_Dir("/users/jhetherl/src/HAL-ROOT");
   TString HAL_LibDir(gSystem->PrependPathName(HAL_Dir.Data(), "lib"));
   TString HAL_IncDir(gSystem->PrependPathName(HAL_Dir.Data(), "include"));
   TString currentDir(gSystem->pwd());
@@ -25,6 +25,7 @@ CompileAnalysis ()
   TString linkingInstruction(" -Wl,");
   TString makeExeCommands(gSystem->GetMakeExe());
   TString makeExeResult;
+  Int_t versionNumber = gROOT->GetVersionInt();
   TList *files;
 
   // Create full paths
@@ -36,6 +37,8 @@ CompileAnalysis ()
   includePathFlag.Prepend("-I");
   HAL_IncDir.Prepend(" -I");
   includePathFlag.Append(HAL_IncDir.Data());
+  if (versionNumber >= 53417)
+    includePathFlag.Prepend("-DLONGDOUBLE ");
   buildPathString = buildDir;
   buildPathString = gSystem->PrependPathName(currentDir.Data(), buildPathString);
   linkPathFlag = " -L";

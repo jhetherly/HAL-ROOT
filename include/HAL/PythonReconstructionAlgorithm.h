@@ -2,6 +2,7 @@
 #include "Python.h"
 #endif
 #include <TString.h>
+#include <HAL/Common.h>
 #include <HAL/ReconstructionAlgorithm.h>
 
 #ifndef HAL_PYTHON_RECONSRTUCTION_ALGORITHM

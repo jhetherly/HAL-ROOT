@@ -1,5 +1,6 @@
 #include <TString.h>
 #include <exception>
+#include <HAL/Common.h>
 
 #ifndef HAL_EXCEPTIONS
 #define HAL_EXCEPTIONS
