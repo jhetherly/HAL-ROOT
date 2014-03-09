@@ -5,6 +5,7 @@
 #include <list>
 #include <iostream>
 #include <HAL/Common.h>
+#include <HAL/Exceptions.h>
 
 #ifndef HAL_ALGORITHM
 #define HAL_ALGORITHM
@@ -58,6 +59,7 @@ public:
   void          AddData (TString name, TObject *obj);
   TObject*      GetData (TString name);
   Bool_t        CheckData (TString name);
+  void          DeleteData (TString name);
   void          AssignDataList (TList *list); 
   // -------------------------------------------
 

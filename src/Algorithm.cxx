@@ -158,6 +158,14 @@ void Algorithm::AssignDataList (TList *list) {
     (*algo)->AssignDataList(list);
 }
 
+void Algorithm::DeleteData (TString name) {
+  TObject *obj = fDataList->FindObject(name.Data());
+  if (obj == 0)
+    throw HALException(name.Prepend("Couldn't find and delete data "));
+  fDataList->Remove(obj);
+  delete obj;
+}
+
 void Algorithm::ls (TString indent) {
   std::cout << indent << fName << ": " << fTitle << std::endl;
   indent.Prepend("  ");

@@ -86,7 +86,7 @@ void AnalysisSelector::SlaveTerminate () {
   // merge any flagged data in fInput to fOutput
   
   // delete raw data
-  delete (AnalysisTreeReader*)fInput->FindObject("RawData");
+  fAnalysisFlow->DeleteData("RawData");
 }
 
 void AnalysisSelector::Terminate () {
