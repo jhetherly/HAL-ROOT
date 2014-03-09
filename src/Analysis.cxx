@@ -17,7 +17,6 @@ Analysis::~Analysis () {
   delete fAnalysisFlow;
   delete fAnalizer;
   delete fBranchMap;
-  delete fChain;
 }
 
 void Analysis::AddRecoAlgo (Algorithm *r) {
