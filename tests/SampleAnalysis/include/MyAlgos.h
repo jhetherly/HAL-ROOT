@@ -5,6 +5,7 @@ class ElectronReco : public HAL::ReconstructionAlgorithm {
 public:
   ElectronReco () : ReconstructionAlgorithm("Electron", "Reconstruct electrons") {}
   virtual ~ElectronReco () {} 
+  virtual void Init (Option_t* option = "") {}
   virtual void Exec (Option_t* option = "") {
     HAL::AnalysisTreeReader *tr = (HAL::AnalysisTreeReader*)GetData("RawData");
     for (int i = 0; i < tr->GetDim("jet_pt"); ++i)
@@ -18,6 +19,7 @@ class ElectronTight : public HAL::CutAlgorithm {
 public:
   ElectronTight () : CutAlgorithm("ElectronTight", "Making tight selections on electrons") {}
   virtual ~ElectronTight () {} 
+  virtual void Init (Option_t* option = "") {}
   virtual void Exec (Option_t* option = "") {
   }
   virtual void Clear (Option_t* option = "") {}

@@ -137,6 +137,13 @@ void  Algorithm::ExecuteAlgos (Option_t *option) {
   }
 }
 
+void  Algorithm::InitializeAlgo (Option_t *option) {
+  Init(option);
+  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
+       algo != fAlgorithms.end(); ++algo)
+    (*algo)->InitializeAlgo(option);
+}
+
 void Algorithm::AddData (TString name, TObject *obj) {
   ((TNamed*)obj)->SetName(name.Data());
   fDataList->AddLast(obj);

@@ -29,6 +29,7 @@ public:
   // -------------------------------------------
 
   // User must overide these -------------------
+  virtual void  Init (Option_t * /*options*/ = "") {}
   virtual void  Exec (Option_t * /*options*/ = "") {}
   virtual void  Clear (Option_t * /*options*/ = "") {}
   // -------------------------------------------
@@ -50,6 +51,7 @@ public:
   virtual void  CleanAlgos ();
   virtual void  ExecuteAlgo (Option_t *option = "0");
   virtual void  ExecuteAlgos (Option_t *option);
+  virtual void  InitializeAlgo (Option_t *option);
   Int_t         GetBreakin () const { return fBreakin; }
   Int_t         GetBreakout () const { return fBreakout; }
   Bool_t        IsActive () const { return fActive; }

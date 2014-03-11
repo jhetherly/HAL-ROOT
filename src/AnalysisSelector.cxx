@@ -13,6 +13,8 @@ void AnalysisSelector::Init (TTree *tree) {
   if (!tree) return;
 
   ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetTree(tree);
+
+  fAnalysisFlow->InitializeAlgo(GetOption());
 }
 
 Bool_t AnalysisSelector::Notify () {
@@ -65,7 +67,7 @@ Bool_t AnalysisSelector::Process (Long64_t entry) {
   // Use fStatus to set the return value of TTree::Process().
   //
   // The return value is currently not used.
-  //GetEntry(entry);
+
   ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetEntry(entry);
 
   // Execute all algorithms

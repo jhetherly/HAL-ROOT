@@ -50,4 +50,12 @@ from ROOT.HAL import standardHistogramStackFormat
 # Imported classes
 from ROOT.HAL import CutOptimizer
 from ROOT.HAL import Integrator 
+from ROOT.HAL import Particle 
+from ROOT.HAL import Analysis
+from ROOT.HAL import AnalysisSelector
+from ROOT.HAL import AnalysisTreeReader
+from ROOT.HAL import Algorithm
+from ROOT.HAL import CutAlgorithm
+from ROOT.HAL import ReconstructionAlgorithm
+from ROOT.HAL import PythonReconstructionAlgorithm
 
