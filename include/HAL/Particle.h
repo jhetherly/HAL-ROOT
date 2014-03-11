@@ -1,9 +1,9 @@
+#ifndef HAL_PARTICLE
+#define HAL_PARTICLE
+
 #include <TLorentzVector.h>
 #include <vector>
 #include <HAL/Common.h>
-
-#ifndef HAL_PARTICLE
-#define HAL_PARTICLE
 
 namespace HAL {
 

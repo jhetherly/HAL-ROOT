@@ -2,6 +2,7 @@
 #include <HAL/Algorithms.h>
 #include <HAL/Algorithm.h>
 #include <HAL/ReconstructionAlgorithm.h>
+#include <HAL/PythonReconstructionAlgorithm.h>
 #include <HAL/CutAlgorithm.h>
 #include <HAL/Analysis.h>
 #include <HAL/AnalysisTreeReader.h>

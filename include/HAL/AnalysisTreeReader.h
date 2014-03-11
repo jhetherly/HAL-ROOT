@@ -1,3 +1,6 @@
+#ifndef HAL_ANALYSIS_TREE_READER
+#define HAL_ANALYSIS_TREE_READER
+
 #include <TTree.h>
 #include <TBranch.h>
 #include <TLeaf.h>
@@ -17,9 +20,6 @@
 #include <set>
 #include <HAL/Common.h>
 #include <HAL/Exceptions.h>
-
-#ifndef HAL_ANALYSIS_TREE_READER
-#define HAL_ANALYSIS_TREE_READER
 
 namespace HAL {
 

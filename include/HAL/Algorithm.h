@@ -1,3 +1,6 @@
+#ifndef HAL_ALGORITHM
+#define HAL_ALGORITHM
+
 #include <TString.h>
 #include <TNamed.h>
 #include <TObject.h>
@@ -6,9 +9,6 @@
 #include <iostream>
 #include <HAL/Common.h>
 #include <HAL/Exceptions.h>
-
-#ifndef HAL_ALGORITHM
-#define HAL_ALGORITHM
 
 class AnalysisData;
 

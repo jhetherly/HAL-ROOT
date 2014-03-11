@@ -1,3 +1,6 @@
+#ifndef HAL_ALGORITHMS
+#define HAL_ALGORITHMS
+
 #include <TArrayI.h>
 #include <HAL/Common.h>
 
@@ -10,9 +13,6 @@
  * returns NULL, indicating the end of the algorithm. For 
  * usage look in the tests folder for 'TestAlgorithms.C'. 
  * */
-
-#ifndef HAL_ALGORITHMS
-#define HAL_ALGORITHMS
 
 namespace HAL
 {

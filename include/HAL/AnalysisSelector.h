@@ -1,3 +1,6 @@
+#ifndef HAL_ANALYSIS_SELECTOR
+#define HAL_ANALYSIS_SELECTOR
+
 #include <TROOT.h>
 #include <TSelector.h>
 #include <TTree.h>
@@ -7,9 +10,6 @@
 #include <HAL/Common.h>
 #include <HAL/Algorithm.h>
 #include <HAL/AnalysisTreeReader.h>
-
-#ifndef HAL_ANALYSIS_SELECTOR
-#define HAL_ANALYSIS_SELECTOR
 
 namespace HAL {
 

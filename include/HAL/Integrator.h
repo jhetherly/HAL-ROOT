@@ -1,3 +1,6 @@
+#ifndef HAL_INTEGRATOR
+#define HAL_INTEGRATOR
+
 #include <TMath.h>
 #include <TF1.h>
 #include <HAL/Common.h>
@@ -8,9 +11,6 @@
  * native TF1::Integral method. Example usage and a comparison to
  * ROOT can be found in tests/TestIntegrator.C.
  * */
-
-#ifndef HAL_INTEGRATOR
-#define HAL_INTEGRATOR
 
 namespace HAL {
   

@@ -1,3 +1,6 @@
+#ifndef HAL_CUTOPTIMIZER
+#define HAL_CUTOPTIMIZER
+
 #include <TString.h>
 #include <TMath.h>
 #include <TMatrixD.h>
@@ -50,9 +53,6 @@
  *  - The signal and background histograms must have the same number of bins.
  *
  * */
-
-#ifndef HAL_CUTOPTIMIZER
-#define HAL_CUTOPTIMIZER
 
 // /////////////////////////////////////
 // Optimization class

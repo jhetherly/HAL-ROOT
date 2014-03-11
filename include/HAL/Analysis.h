@@ -1,3 +1,6 @@
+#ifndef HAL_ANALYSIS
+#define HAL_ANALYSIS
+
 #include <TChain.h>
 #include <TTree.h>
 #include <TLeaf.h>
@@ -7,9 +10,6 @@
 #include <HAL/Common.h>
 #include <HAL/Algorithm.h>
 #include <HAL/AnalysisSelector.h>
-
-#ifndef HAL_ANALYSIS
-#define HAL_ANALYSIS
 
 namespace HAL
 {

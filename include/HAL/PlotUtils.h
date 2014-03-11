@@ -1,3 +1,6 @@
+#ifndef HAL_PLOTUTILS
+#define HAL_PLOTUTILS
+
 #include <TList.h>
 #include <TH1.h>
 #include <TH2.h>
@@ -7,9 +10,6 @@
 #include <TString.h>
 #include <TLegend.h>
 #include <HAL/Common.h>
-
-#ifndef HAL_PLOTUTILS
-#define HAL_PLOTUTILS
 
 namespace HAL
 {

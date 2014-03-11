@@ -1,9 +1,9 @@
+#ifndef HAL_CUT_ALGORITHM
+#define HAL_CUT_ALGORITHM
+
 #include <TString.h>
 #include <HAL/Common.h>
 #include <HAL/Algorithm.h>
-
-#ifndef HAL_CUT_ALGORITHM
-#define HAL_CUT_ALGORITHM
 
 namespace HAL {
 

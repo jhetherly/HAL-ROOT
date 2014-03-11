@@ -1,9 +1,9 @@
+#ifndef HAL_RECONSRTUCTION_ALGORITHM
+#define HAL_RECONSRTUCTION_ALGORITHM
+
 #include <TString.h>
 #include <HAL/Common.h>
 #include <HAL/Algorithm.h>
-
-#ifndef HAL_RECONSRTUCTION_ALGORITHM
-#define HAL_RECONSRTUCTION_ALGORITHM
 
 namespace HAL {
 

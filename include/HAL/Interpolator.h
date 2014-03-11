@@ -1,3 +1,6 @@
+#ifndef HAL_INTERPOLATE
+#define HAL_INTERPOLATE
+
 #include <TMath.h>
 #include <TArrayD.h>
 #include <vector>
@@ -8,9 +11,6 @@
  * This is adapted from Numerical Recipes in C++
  * These are n-point Lagrangian 1D and 2D interpolators.
  * */
-
-#ifndef HAL_INTERPOLATE
-#define HAL_INTERPOLATE
 
 namespace HAL {
 
