@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
 
   a.AddRecoAlgo(new ElectronReco());
   a.AddCutAlgo(new ElectronTight());
-  a.AddCutAlgo(new PythonReconstructionAlgorithm("pyreco", "testing python algo", "test.py", "PythonAlgo"));
+  //a.AddCutAlgo(new HAL::PythonReconstructionAlgorithm("pyreco", "testing python algo", "test", "PythonAlgo"));
 
   //a.MapBranch("jet_AntiKt4TruthJets_pt", "jet_pt");
   a.MapBranch("Jet.PT", "jet_pt");

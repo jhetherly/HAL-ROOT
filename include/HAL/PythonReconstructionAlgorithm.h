@@ -1,20 +1,17 @@
 #ifndef HAL_PYTHON_RECONSRTUCTION_ALGORITHM
 #define HAL_PYTHON_RECONSRTUCTION_ALGORITHM
 
-#ifndef __CINT__
-#include "Python.h"
-#endif
 #include <TString.h>
 #include <TPython.h>
 #include <HAL/Common.h>
 #include <HAL/Exceptions.h>
 #include <HAL/ReconstructionAlgorithm.h>
 
-#ifdef __CINT__
+//#ifdef __CINT__
 // Python
 struct _object;
 typedef _object PyObject;
-#endif
+//#endif
 
 namespace HAL {
 

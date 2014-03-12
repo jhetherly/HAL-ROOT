@@ -1,3 +1,7 @@
+#ifndef __CINT__
+#include "Python.h"
+#endif
+
 #include <HAL/PythonReconstructionAlgorithm.h>
 
 //ClassImp(HAL::PythonReconstructionAlgorithm);
@@ -69,7 +73,7 @@ void PythonReconstructionAlgorithm::SetupPySelf() {
   //std::string module = opt.substr( 0, pos );
   //std::string user = (pos == std::string::npos) ? "" : opt.substr( pos+1, std::string::npos );
 
-  //TString impst = TString::Format( "import %s", module.c_str() );
+  TString impst = TString::Format( "import %s", fPyFile.Data() );
 
   //// reset user option
   //SetOption( user.c_str() );

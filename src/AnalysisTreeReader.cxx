@@ -77,12 +77,16 @@ void AnalysisTreeReader::SetEntry (Long64_t entry) {
 }
 
 TString AnalysisTreeReader::GetFullBranchName (TString name) {
-  // WARNING!!!!!!!
-  // THIS IS VERY PRIMATIVE
-  // NEEDS TO BE MADE MORE ROBUST
   // Remove any leading or trailing whitespace
   name.Strip(TString::kBoth);
 
+  // Check if branch or leaf has name
+  if (fChain->FindBranch(name.Data()))
+    return name;
+  if (fChain->FindLeaf(name.Data()))
+    return TString(fChain->GetLeaf(name.Data())->GetBranch()->GetName());
+
+  // Substitute branch mapping
   TMapIter next(fBranchMap);
   while(TObjString *key = (TObjString*)next()){
     TString nn = key->String();
@@ -93,7 +97,13 @@ TString AnalysisTreeReader::GetFullBranchName (TString name) {
       break;
     }
   }
-  return name;
+  // Recheck if branch or leaf has name
+  if (fChain->FindBranch(name.Data()))
+    return name;
+  if (fChain->FindLeaf(name.Data()))
+    return TString(fChain->GetLeaf(name.Data())->GetBranch()->GetName());
+
+  throw HALException(name.Prepend("Couldn't find branch: ").Data());
 }
 
 Int_t AnalysisTreeReader::GetDim (TString branchname, Int_t idx_1) {
@@ -304,7 +314,7 @@ LongDouble_t AnalysisTreeReader::GetDecimal (TString branchname, Int_t idx_1, In
     if (branchmanager->Create(bname))
       fBranchManagers.push_back(branchmanager);
     else
-      throw HALException(bname.Prepend("Couldn't find branch: ").Data());
+      throw HALException(bname.Prepend("Error in setting up branch: ").Data());
   }
 
   if (branchmanager->GetStorageType() == kD)
@@ -343,7 +353,7 @@ TString AnalysisTreeReader::GetString (TString branchname, Int_t idx_1, Int_t id
     if (branchmanager->Create(bname))
       fBranchManagers.push_back(branchmanager);
     else
-      throw HALException(bname.Prepend("Couldn't find branch: ").Data());
+      throw HALException(bname.Prepend("Error in setting up branch: ").Data());
   }
 
   if (branchmanager->GetStorageType() == kS)
@@ -370,7 +380,7 @@ TObjArray& AnalysisTreeReader::GetObjArray (TString branchname, Int_t idx_1) {
     if (branchmanager->Create(bname))
       fBranchManagers.push_back(branchmanager);
     else
-      throw HALException(bname.Prepend("Couldn't find branch: ").Data());
+      throw HALException(bname.Prepend("Error in setting up branch: ").Data());
   }
 
   if (branchmanager->GetStorageType() == kOA)
@@ -395,7 +405,7 @@ TClonesArray& AnalysisTreeReader::GetClonesArray (TString branchname, Int_t idx_
     if (branchmanager->Create(bname))
       fBranchManagers.push_back(branchmanager);
     else
-      throw HALException(bname.Prepend("Couldn't find branch: ").Data());
+      throw HALException(bname.Prepend("Error in setting up branch: ").Data());
   }
 
   if (branchmanager->GetStorageType() == kCA)
@@ -420,7 +430,7 @@ TRef& AnalysisTreeReader::GetRef (TString branchname, Int_t idx_1, Int_t idx_2) 
     if (branchmanager->Create(bname))
       fBranchManagers.push_back(branchmanager);
     else
-      throw HALException(bname.Prepend("Couldn't find branch: ").Data());
+      throw HALException(bname.Prepend("Error in setting up branch: ").Data());
   }
 
   if (branchmanager->GetStorageType() == kR)
@@ -447,7 +457,7 @@ TRefArray& AnalysisTreeReader::GetRefArray (TString branchname, Int_t idx_1) {
     if (branchmanager->Create(bname))
       fBranchManagers.push_back(branchmanager);
     else
-      throw HALException(bname.Prepend("Couldn't find branch: ").Data());
+      throw HALException(bname.Prepend("Error in setting up branch: ").Data());
   }
 
   if (branchmanager->GetStorageType() == kRA)
@@ -1818,13 +1828,11 @@ Int_t AnalysisTreeReader::BranchManager::GetArrayLength (Int_t dim) {
     size.Remove(0, size.First('[') + 1);
   size.Remove(size.First(']'), size.Length());
 
+  // size is just a static number, so return it
   if (size.Contains(TRegexp("[^a-zA-Z_]")))
     return size.Atoi();
 
-  if (fTreeReader->fChain->FindLeaf(size))
-    return fTreeReader->GetInteger(fTreeReader->fChain->FindLeaf(size)->GetBranch()->GetName());
-
-  throw HALException("Could find array length");
+  return fTreeReader->GetInteger(size);
 }
 
 void AnalysisTreeReader::BranchManager::FindTypeInformation() {
