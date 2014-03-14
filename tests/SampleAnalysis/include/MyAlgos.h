@@ -12,7 +12,7 @@ public:
       std::cout << tr->GetDecimal("jet_pt", i) << "   ";
     std::cout << std::endl;
   }
-  virtual void Clear (Option_t* option = "") {}
+  //virtual void Clear (Option_t* option = "") {}
 };
 
 class ElectronTight : public HAL::CutAlgorithm {
@@ -20,7 +20,6 @@ public:
   ElectronTight () : CutAlgorithm("ElectronTight", "Making tight selections on electrons") {}
   virtual ~ElectronTight () {} 
   virtual void Init (Option_t* option = "") {}
-  virtual void Exec (Option_t* option = "") {
-  }
-  virtual void Clear (Option_t* option = "") {}
+  //virtual void Exec (Option_t* option = "") {}
+  //virtual void Clear (Option_t* option = "") {}
 };

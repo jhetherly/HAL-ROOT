@@ -70,11 +70,8 @@ Bool_t AnalysisSelector::Process (Long64_t entry) {
 
   ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetEntry(entry);
 
-  // Execute all algorithms
+  // Execute (and then implicitly clean) all algorithms
   fAnalysisFlow->ExecuteAlgo(GetOption());
-
-  // Reset the state of all algorithms
-  fAnalysisFlow->CleanAlgos();
 
   return kTRUE;
 }

@@ -64,6 +64,11 @@ public:
   void          DeleteData (TString name);
   void          AssignDataList (TList *list); 
   // -------------------------------------------
+  
+  // Data related ------------------------------
+  TString       GetName () {return fName;}
+  TString       GetTitle () {return fTitle;}
+  // -------------------------------------------
 
 protected:
   TList     *fDataList; // borrowed ptr

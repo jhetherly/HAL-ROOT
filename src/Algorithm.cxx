@@ -74,10 +74,10 @@ void  Algorithm::CleanAlgos () {
   if (fBreakin)  fBreakin  = 1;
   if (fBreakout) fBreakout = 1;
   fHasExecuted = kFALSE;
-  Clear();
-  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
-       algo != fAlgorithms.end(); ++algo)
+  for (std::list<Algorithm*>::reverse_iterator algo = fAlgorithms.rbegin();
+       algo != fAlgorithms.rend(); ++algo)
     (*algo)->CleanAlgos();
+  Clear();
 }
 
 void  Algorithm::ExecuteAlgo (Option_t *option) {

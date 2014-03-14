@@ -2,184 +2,146 @@
 #include "Python.h"
 #endif
 
+#include <iostream>
 #include <HAL/PythonReconstructionAlgorithm.h>
 
 //ClassImp(HAL::PythonReconstructionAlgorithm);
 
 namespace HAL {
 
-PythonReconstructionAlgorithm::PythonReconstructionAlgorithm (TString name, TString title, TString pyfile, TString pyclass, PyObject *self) : 
-  ReconstructionAlgorithm(name, title), fPyFile(pyfile), fPyClass(pyclass) {
+PythonReconstructionAlgorithm::PythonReconstructionAlgorithm (TString name, TString title, 
+                                                              TString pypath, TString pyfile, 
+                                                              TString pyclass, PyObject *self) : 
+  ReconstructionAlgorithm(name, title), fPyPath(pypath), fPyFile(pyfile), fPyClass(pyclass) {
   if ( self ) {
     // steal reference as this is us, as seen from python
     fPySelf = self;
   } else {
-    Py_INCREF( Py_None );        // using None allows clearer diagnostics
-    fPySelf = Py_None;
+    fPySelf = NULL;
   }
 }
 
 PythonReconstructionAlgorithm::~PythonReconstructionAlgorithm () {
   // Destructor. Only deref if still holding on to Py_None (circular otherwise).
-  if ( fPySelf == Py_None ) {
-    Py_DECREF( fPySelf );
-  }
+  //if ( fPySelf == Py_None ) {
+  //  Py_DECREF( fPySelf );
+  //}
+  if (fPySelf)
+    Py_DECREF(fPySelf);
 }
 
 void  PythonReconstructionAlgorithm::Init (Option_t *options) {
-  // First function called, and used to setup the python self; forward call.
+  //// First function called, and used to setup the python self; forward call.
   SetupPySelf();
 
-  // As per the generated code: the tree argument is deprecated (on PROOF 0 is
-  // passed), and hence not forwarded.
-  PyObject* result = CallSelf( "Init" );
-
-  if ( ! result )
-    Abort();
+  // Setup DataList on python side
+  
+  PyObject *result = CallSelf("Init", Py_BuildValue("(s)", options));
 
   Py_XDECREF( result );
 }
 
 void  PythonReconstructionAlgorithm::Exec (Option_t *options) {
-  // As per the generated code: the tree argument is deprecated (on PROOF 0 is
-  // passed), and hence not forwarded.
-  PyObject* result = CallSelf( "Exec" );
-
-  if ( ! result )
-    Abort();
+  PyObject* result = CallSelf("Exec", Py_BuildValue("(s)", options));
 
   Py_XDECREF( result );
 }
 
 void  PythonReconstructionAlgorithm::Clear (Option_t *options) {
-  // As per the generated code: the tree argument is deprecated (on PROOF 0 is
-  // passed), and hence not forwarded.
-  PyObject* result = CallSelf( "Clear" );
-
-  if ( ! result )
-    Abort();
+  PyObject* result = CallSelf("Clear", Py_BuildValue("(s)", options));
 
   Py_XDECREF( result );
 }
 
 void PythonReconstructionAlgorithm::SetupPySelf() {
-  // Install the python side identity of the PythonReconstructionAlgorithm
-  if ( fPySelf && fPySelf != Py_None )
-    return;                      // already created ...
+  int class_check;
+  PyObject *po_HALmod = NULL, 
+           *po_USRmod = NULL, 
+           *po_HALclass = NULL, 
+           *po_USRclass = NULL, 
+           *po_USRpath = NULL,
+           *po_USRargs = NULL,
+           *po_SYSmod = NULL,
+           *po_SYSpath = NULL;
 
-  //// split option as needed for the module part and the (optional) user part
-  //std::string opt = GetOption();
-  //std::string::size_type pos = opt.find( '#' );
-  //std::string module = opt.substr( 0, pos );
-  //std::string user = (pos == std::string::npos) ? "" : opt.substr( pos+1, std::string::npos );
+  // Initialize python if need be
+  if (!Py_IsInitialized())
+    Py_Initialize();
 
-  TString impst = TString::Format( "import %s", fPyFile.Data() );
+  if (fPySelf) 
+    Py_DECREF(fPySelf);
 
-  //// reset user option
-  //SetOption( user.c_str() );
+  // Load sys module and add user's path as first element to sys.path
+  po_SYSmod = PyImport_ImportModule("sys");
+  po_SYSpath = PyObject_GetAttrString(po_SYSmod, "path");
+  po_USRpath = Py_BuildValue("s", fPyPath.Data());
+  if (PyList_Insert(po_SYSpath, 0, po_USRpath))
+    throw HALException("Couldn't modify system path.");
 
-  //// use TPython to ensure that the interpreter is initialized
-  //if ( ! TPython::Exec( (const char*)impst ) ) {
-  //  Abort( "failed to load provided python module" );  // Exec already printed error trace
-  //  return;
-  //}
 
-  // get the PythonReconstructionAlgorithm python class
-  PyObject* tpysel = PyObject_GetAttrString(
-      PyImport_AddModule( const_cast< char* >( "libHAL.so" ) ),
-      const_cast< char* >( "PythonReconstructionAlgorithm" ) );
+  // Load in HAL module
+  po_HALmod = PyImport_ImportModule("HAL");
+  if (po_HALmod == NULL)
+    throw HALException("Couldn't locate HAL.py to load as a module for python.");
+  // Find HAL class to compare user class to
+  po_HALclass = PyObject_GetAttrString(po_HALmod, "ReconstructionAlgorithm");
+  if (po_HALclass == NULL)
+    throw HALException("Couldn't locate HAL class.");
 
-  // get handle to the module
-  PyObject* pymod = PyImport_AddModule( const_cast< char* >( fPyFile.Data() ) );
 
-  // get the module dictionary to loop over
-  PyObject* dict = PyModule_GetDict( pymod );
-  Py_INCREF( dict );
+  // Load in user's module
+  po_USRmod = PyImport_ImportModule(fPyFile.Data());
+  if (po_USRmod == NULL)
+    throw HALException(fPyFile.Prepend("Couldn't locate user's file to load as a module for python: ").Data());
+  // Find user's class
+  po_USRclass = PyObject_GetAttrString(po_USRmod, fPyClass.Data());
+  if (po_USRclass == NULL)
+    throw HALException(fPyClass.Prepend("Couldn't locate user's python class: ").Data());
 
-  // locate the TSelector derived class
-  PyObject* allvalues = PyDict_Values( dict );
+  
+  // Make sure that the user's class properly inherits from the HAL class
+  class_check = PyObject_IsSubclass(po_USRclass, po_HALclass);
+  if (class_check == -1)
+    throw HALException(fPyClass.Prepend("Error in determining class relationship for: ").Data());
+  if (class_check == 0)
+    throw HALException(fPyClass.Prepend("Make sure your python class inherits from the proper HAL class: ").Data());
 
-  PyObject* pyclass = 0;
-  for ( int i = 0; i < PyList_GET_SIZE( allvalues ); ++i ) {
-    PyObject* value = PyList_GET_ITEM( allvalues, i );
-    Py_INCREF( value );
 
-    if ( PyType_Check( value ) && PyObject_IsSubclass( value, tpysel ) ) {
-      if ( PyObject_RichCompareBool( value, tpysel, Py_NE ) ) {   // i.e., if not equal
-        pyclass = value;
-        break;
-      }
-    }
-
-    Py_DECREF( value );
-  }
-
-  Py_DECREF( allvalues );
-  Py_DECREF( dict );
-  Py_DECREF( tpysel );
-
-  if ( ! pyclass ) {
-    Abort();
-    return;
-  }
-
-  PyObject* args = PyTuple_New( 0 );
-  PyObject* self = PyObject_Call( pyclass, args, 0 );
-  Py_DECREF( args );
-  Py_DECREF( pyclass );
-
-  // final check before declaring success ...
-  if ( !self ) {
-    if ( !PyErr_Occurred() )
-      PyErr_SetString( PyExc_RuntimeError, "could not create python reco algo" );
-    Py_XDECREF( self );
-    Abort();
-    return;
-  }
-
-  // steal reference to new self, since the deletion will come from the C++ side
-  Py_XDECREF( fPySelf );
-  fPySelf = self;
-
-  //// inject ourselves into the base of self; destroy old identity if need be (which happens
-  //// if the user calls the default ctor unnecessarily)
-  //TPySelector* oldselector = (TPySelector*)((PyROOT::ObjectProxy*)fPySelf)->fObject;
-  //((PyROOT::ObjectProxy*)fPySelf)->fObject = this;
-  //if ( oldselector ) {
-  //  PyROOT::TMemoryRegulator::UnregisterObject( oldselector );
-  //  delete oldselector;
-  //}
+  // Call python class to make the object
+  if (!PyCallable_Check(po_USRclass))
+    throw HALException(fPyClass.Prepend("Python class couldn't be called: ").Data());
+  po_USRargs = Py_BuildValue("()");
+  fPySelf = PyObject_CallObject(po_USRclass, po_USRargs);
+  if (fPySelf == NULL)
+    throw HALException("Couldn't instantiate the python class.");
+  
+  Py_DECREF(po_SYSmod);
+  Py_DECREF(po_SYSpath);
+  Py_DECREF(po_USRpath);
+  Py_DECREF(po_HALmod);
+  Py_DECREF(po_USRmod);
+  Py_DECREF(po_HALclass);
+  Py_DECREF(po_USRclass);
+  Py_DECREF(po_USRargs);
 }
 
-PyObject* PythonReconstructionAlgorithm::CallSelf(const char *method, PyObject *pyobject) {
+// Steals args and kw arguements
+PyObject* PythonReconstructionAlgorithm::CallSelf (TString method, 
+                                                   PyObject *po_args) {
   // Forward <method> to python.
-  if ( !fPySelf || fPySelf == Py_None ) {
-    Py_INCREF( Py_None );
-    return Py_None;
-  }
+  PyObject *result = NULL;
+  if (po_args == NULL) po_args = Py_BuildValue("()");
 
-  PyObject *result = 0;
-
-  // get the named method and check for python side overload by not accepting the
-  // binding's methodproxy
-  PyObject* pymethod = PyObject_GetAttrString( fPySelf, const_cast< char* >( method ) );
-  //if ( ! PyROOT::MethodProxy_CheckExact( pymethod ) ) {
-    if ( pyobject )
-      result = PyObject_CallFunction( pymethod, const_cast< char* >( "O" ), pyobject );
-    else
-      result = PyObject_CallFunction( pymethod, const_cast< char* >( "" ) );
-  //} else {
-  //  // silently ignore if method not overridden (note that the above can't lead
-  //  // to a python exception, since this (TPySelector) class contains the method
-  //  // so it is always to be found)
-  //  Py_INCREF( Py_None );
+  PyObject *po_method = PyObject_GetAttrString( fPySelf, method.Data());
+  //if (po_method == NULL) // method wasn't overwritten on python side, ignore
   //  result = Py_None;
-  //}
+  //else 
+  //  result = PyObject_Call(po_method, po_args, po_kw);
+  if (po_method != NULL)
+    result = PyObject_CallObject(po_method, po_args);
 
-  Py_XDECREF( pymethod );
-
-  if ( !result )
-    Abort();
+  Py_XDECREF( po_method );
+  Py_DECREF(po_args);
 
   return result;
 }
