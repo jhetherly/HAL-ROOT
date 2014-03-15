@@ -4,12 +4,9 @@ ClassImp(HAL::Algorithm);
 
 namespace HAL {
 
-Algorithm* Algorithm::fgBeginAlgo  = 0;
-Algorithm* Algorithm::fgBreakPoint = 0;
-
 Algorithm::Algorithm (TString name, TString title) : 
   fDataList(0), fName(name), fTitle(title), fAlgorithms(), 
-  fBreakin(0), fBreakout(0), fHasExecuted(kFALSE), fActive(kTRUE) {
+  fHasExecuted(kFALSE), fAbort(kFALSE) {
 }
 
 Algorithm::Algorithm (const Algorithm &other) {
@@ -22,10 +19,8 @@ Algorithm::Algorithm (const Algorithm &other) {
   fTitle = other.fTitle;
   fDataList = other.fDataList; 
   fOption = other.fOption;
-  fBreakin = other.fBreakin;
-  fBreakout = other.fBreakout;
   fHasExecuted = kFALSE;
-  fActive = other.fActive;
+  fAbort = kFALSE;
 }
 
 Algorithm::~Algorithm() {
@@ -45,66 +40,32 @@ void Algorithm::DeleteAlgos () {
   fAlgorithms.clear(); // may double delete
 }
 
+// Be sure the calling method cleans their own memory
 void Algorithm::Abort () {
-  if (!fgBeginAlgo) {
-    std::cout << " Nothing to abort: No algorithm currently running." << std::endl;
-    return;
-  }
-  CleanAlgos();
-  fgBeginAlgo  = 0;
-  fgBreakPoint = 0;
-}
-
-void Algorithm::Continue () {
-  if (!fgBeginAlgo) {
-    std::cout << " No algorithm to continue." << std::endl;
-    return;
-  }
-  fgBreakPoint = 0;
-
-  fgBeginAlgo->ExecuteAlgos(fOption.Data());
-
-  if (!fgBreakPoint) {
-    fgBeginAlgo->CleanAlgos();
-    fgBeginAlgo = 0;
-  }
+  fAbort = kTRUE;
+  fHasExecuted = kFALSE;
 }
 
 void  Algorithm::CleanAlgos () {
-  if (fBreakin)  fBreakin  = 1;
-  if (fBreakout) fBreakout = 1;
-  fHasExecuted = kFALSE;
   for (std::list<Algorithm*>::reverse_iterator algo = fAlgorithms.rbegin();
        algo != fAlgorithms.rend(); ++algo)
     (*algo)->CleanAlgos();
-  Clear();
+  if (fHasExecuted)
+    Clear();
+  fHasExecuted = kFALSE;
+  fAbort = kFALSE;
 }
 
 void  Algorithm::ExecuteAlgo (Option_t *option) {
 
-  if (fgBeginAlgo) {
-    std::cerr << "Cannot execute algorithm:" << fName 
-              << ", already running algorithm: " << fgBeginAlgo->fName << std::endl;
-    return;
-  }
-  if (!IsActive()) return;
-
   fOption = option;
-  fgBeginAlgo = this;
-  fgBreakPoint = 0;
 
-  if (fBreakin) return;
   Exec(option);
 
   fHasExecuted = kTRUE;
   ExecuteAlgos(option);
 
-  if (fBreakout) return;
-
-  if (!fgBreakPoint) {
-    fgBeginAlgo->CleanAlgos();
-    fgBeginAlgo = 0;
-  }
+  CleanAlgos();
 }
 
 void  Algorithm::ExecuteAlgos (Option_t *option) {
@@ -112,28 +73,15 @@ void  Algorithm::ExecuteAlgos (Option_t *option) {
   for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
        algo != fAlgorithms.end(); ++algo) {
 
-    if (fgBreakPoint) return;
-    if (!(*algo)->IsActive()) continue;
     if ((*algo)->fHasExecuted) {
       (*algo)->ExecuteAlgos(option);
       continue;
     }
-    if ((*algo)->fBreakin == 1) {
-      std::cout << "Break at entry of algorithm: " << (*algo)->fName << std::endl;
-      fgBreakPoint = this;
-      (*algo)->fBreakin++;
-      return;
-    }
 
     (*algo)->Exec(option);
+    if ((*algo)->fAbort) break;
     (*algo)->fHasExecuted = kTRUE;
     (*algo)->ExecuteAlgos(option);
-    if ((*algo)->fBreakout == 1) {
-      std::cout << "Break at exit of algorithm: " << (*algo)->fName << std::endl;
-      fgBreakPoint = this;
-      (*algo)->fBreakout++;
-      return;
-    }
   }
 }
 

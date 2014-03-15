@@ -1,19 +1,72 @@
-CompileAnalysis ()
+/*
+ * This macro is designed to aid in compiling and linking the
+ * user's algorithms and analysis code with the HAL Analysis
+ * framework. If the file structure of the user's code follows
+ * the standard format (explained below), then all the user
+ * needs to provide is:
+ *  - the directory of the HAL framework
+ *  - the name of the analysis source file
+ * 
+ * The standard file structure:
+ *  UserRoot - CompileAnalysis.C
+ *           - bin
+ *           - analyses
+ *           - algorithms - include
+ *                        - src
+ *
+ * Logically the user's code should be separated into one or
+ * more algorithm files which may or may not have separate
+ * declarations (header files) and definitions
+ * (source files). By default this macro looks in 
+ * UserRoot/algorithms/include and UserRoot/algoirthms/src
+ * for these files. Additionally the user must specify a
+ * "driver" or "analysis" source file located in 
+ * UserRoot/analyses by default. This file should have a 
+ * "main" function and should act to set all the analysis
+ * specific variables (TTree name, branch mappings, etc...).
+ *
+ * The C++ source files in UserRoot/analyses and 
+ * UserRoot/algorithms/src should end in '.cxx' and the header
+ * files in UserRoot/algorithms/include should end in '.h' by
+ * default.
+ *
+ * The resulting executable should be found in UserRoot/bin if
+ * everything was successful. The default name for the
+ * executable is the "analysis file" minus the extention.
+ *
+ * Most of the parameters are customizable and listed in the 
+ * arguement list below. If you need the default value for a
+ * parameter, just input a "" as the arguement.
+ * */
+
+CompileAnalysis (TString HAL_dir,             // Directory of HAL framework
+                 TString analysis_src,        // Analysis source file (include extension)
+                 TString exe_name = "",       // Executable name
+                 TString header_suffix = "",  // Header files suffix
+                 TString source_suffix = "",  // Source files suffix
+                 TString include_dir = "",    // Header files directory
+                 TString source_dir = "",     // Source files directory
+                 TString analyses_dir = "",   // Directory of analyses sources
+                 TString output_dir = "")     // Directory to build executable
 {
-  TString HAL_Dir("/Users/jhetherly/src/root_HAL");
-  //TString HAL_Dir("/users/jhetherl/src/HAL-ROOT");
+  // HAL framework information
+  TString HAL_Dir(HAL_dir);
   TString HAL_LibDir(gSystem->PrependPathName(HAL_Dir.Data(), "lib"));
   TString HAL_IncDir(gSystem->PrependPathName(HAL_Dir.Data(), "include"));
+  // User specific information
   TString currentDir(gSystem->pwd());
-  TString incDir("include");
-  TString srcDir("src");
-  TString buildDir("bin");
-  TString incSuffix("h");
-  TString srcSuffix("cxx");
+  TString incDir(include_dir.EqualTo("") ? gSystem->PrependPathName("algorithms", "include") : include_dir);
+  TString srcDir(source_dir.EqualTo("") ? gSystem->PrependPathName("algorithms", "src") : source_dir);
+  TString buildDir(output_dir.EqualTo("") ? "bin" : output_dir);
+  TString analysesDir(analyses_dir.EqualTo("") ? "analyses" : analyses_dir);
+  TString incSuffix(header_suffix.EqualTo("") ? "h" : header_suffix);
+  TString srcSuffix(source_suffix.EqualTo("") ? "cxx" : source_suffix);
   TString objSuffix("o");
-  TString exeName("MyAnalysis");
+  TString temp(analysis_src);
+  TString exeName(exe_name.EqualTo("") ? temp.Remove(temp.Last('.'), temp.Length()) : exe_name);
   TString linkPathFlag;
   TString includePathString;
+  TString analysesPathString;
   TString srcPathString;
   TString buildPathString;
   TString includePathFlag;
@@ -29,6 +82,8 @@ CompileAnalysis ()
   TList *files;
 
   // Create full paths
+  analysesPathString = analysesDir;
+  analysesPathString = gSystem->PrependPathName(currentDir.Data(), analysesPathString);
   srcPathString = srcDir;
   srcPathString = gSystem->PrependPathName(currentDir.Data(), srcPathString);
   includePathString = incDir;
@@ -37,7 +92,7 @@ CompileAnalysis ()
   includePathFlag.Prepend("-I");
   HAL_IncDir.Prepend(" -I");
   includePathFlag.Append(HAL_IncDir.Data());
-  if (versionNumber >= 53417)
+  if (versionNumber >= 53417) // versions before 5.34.17 don't define LongDouble_t
     includePathFlag.Prepend("-DLONGDOUBLE ");
   buildPathString = buildDir;
   buildPathString = gSystem->PrependPathName(currentDir.Data(), buildPathString);
@@ -71,6 +126,13 @@ CompileAnalysis ()
       }
     }
   }
+  // Add the analysis source file
+  temp = analysis_src;
+  sourceListString = sourceListString.Append(gSystem->PrependPathName(analysesPathString.Data(), temp));
+  sourceListString = sourceListString.Append(" ");
+  objectListString = objectListString.Append(gSystem->PrependPathName(buildPathString.Data(), analysis_src));
+  objectListString = objectListString.Append(" ");
+
   // Change all cxx affixes to o
   objectListString = objectListString.ReplaceAll(srcSuffix.Data(), objSuffix.Data());
 

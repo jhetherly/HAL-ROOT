@@ -17,7 +17,7 @@ namespace HAL
 
 class Algorithm {
 public:
-  // Carbon copy from the TTask class
+  // (Almost) carbon copy from the TTask class
   // (Since user doesn't inherit from TObject, user's shared 
   //  lib could be more easily imported to python using
   //  rootcint)
@@ -28,33 +28,20 @@ public:
   virtual ~Algorithm();
   // -------------------------------------------
 
-  // User must overide these -------------------
-  virtual void  Init (Option_t * /*options*/ = "") {}
-  virtual void  Exec (Option_t * /*options*/ = "") {}
-  virtual void  Clear (Option_t * /*options*/ = "") {}
-  // -------------------------------------------
-  
   // Setup -------------------------------------
-  virtual void  Add (Algorithm *algo) { fAlgorithms.push_back(algo); }
-  virtual void  ls ();
-  void          SetActive (Bool_t active=kTRUE) { fActive = active; }
-  void          SetBreakin (Int_t breakin=1) { fBreakin = breakin; }
-  void          SetBreakout (Int_t breakout=1) { fBreakout = breakout; }
+  void          Add (Algorithm *algo) { fAlgorithms.push_back(algo); }
+  void          ls ();
   void          DeleteAlgos ();
   void          SetName (TString name) {fName = name;}
   void          SetTitle (TString title) {fTitle = title;}
   // -------------------------------------------
   
   // Flow control ------------------------------
-  virtual void  Abort ();
-  virtual void  Continue();
-  virtual void  CleanAlgos ();
-  virtual void  ExecuteAlgo (Option_t *option = "0");
-  virtual void  ExecuteAlgos (Option_t *option);
-  virtual void  InitializeAlgo (Option_t *option);
-  Int_t         GetBreakin () const { return fBreakin; }
-  Int_t         GetBreakout () const { return fBreakout; }
-  Bool_t        IsActive () const { return fActive; }
+  void          Abort ();
+  void          CleanAlgos ();
+  void          ExecuteAlgo (Option_t *option = "0");
+  void          ExecuteAlgos (Option_t *option);
+  void          InitializeAlgo (Option_t *option);
   // -------------------------------------------
   
   // DataList related --------------------------
@@ -71,6 +58,12 @@ public:
   // -------------------------------------------
 
 protected:
+  // User must overide these -------------------
+  virtual void  Init (Option_t * /*options*/ = "") {}
+  virtual void  Exec (Option_t * /*options*/ = "") {}
+  virtual void  Clear (Option_t * /*options*/ = "") {}
+  // -------------------------------------------
+
   TList     *fDataList; // borrowed ptr
 
 private:
@@ -81,10 +74,8 @@ private:
   // Carbon copy from the TTask class
   std::list<Algorithm*> fAlgorithms;
   TString               fOption;       //Option specified in ExecuteAlgo
-  Int_t                 fBreakin;      //=1 if a break point set at task extry
-  Int_t                 fBreakout;     //=1 if a break point set at task exit
   Bool_t                fHasExecuted;  //True if algo has executed
-  Bool_t                fActive;       //true if algo is active
+  Bool_t                fAbort;        //True if algo has signaled an abort
 
   static Algorithm *fgBeginAlgo;    //pointer to algo initiator
   static Algorithm *fgBreakPoint;   //pointer to current break point

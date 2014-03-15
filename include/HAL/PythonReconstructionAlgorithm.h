@@ -6,11 +6,9 @@
 #include <HAL/Exceptions.h>
 #include <HAL/ReconstructionAlgorithm.h>
 
-//#ifdef __CINT__
 // Python
 struct _object;
 typedef _object PyObject;
-//#endif
 
 namespace HAL {
 

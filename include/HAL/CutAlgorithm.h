@@ -9,7 +9,7 @@ namespace HAL {
 
 class CutAlgorithm : public Algorithm {
 public:
-  CutAlgorithm(TString name, TString title) : Algorithm(name.Prepend("Cut  - "), title) {}
+  CutAlgorithm(TString name = "", TString title = "") : Algorithm(name.Prepend("Cut  - "), title) {}
   virtual ~CutAlgorithm() {}
 };
 

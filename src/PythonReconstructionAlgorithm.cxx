@@ -31,12 +31,13 @@ PythonReconstructionAlgorithm::~PythonReconstructionAlgorithm () {
 }
 
 void  PythonReconstructionAlgorithm::Init (Option_t *options) {
-  //// First function called, and used to setup the python self; forward call.
+  // First function called, and used to setup the python self; forward call.
   SetupPySelf();
 
   // Setup DataList on python side
+  PyObject *result = CallSelf("AssignDataList", Py_BuildValue("(N)", PyCapsule_New(fDataList, NULL, NULL)));
   
-  PyObject *result = CallSelf("Init", Py_BuildValue("(s)", options));
+  result = CallSelf("Init", Py_BuildValue("(s)", options));
 
   Py_XDECREF( result );
 }
