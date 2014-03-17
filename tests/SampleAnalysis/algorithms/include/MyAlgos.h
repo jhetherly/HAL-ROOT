@@ -1,31 +1,82 @@
 #include "HAL.h"
+#include <TLorentzVector.h>
 #include <iostream>
 
-class ElectronReco : public HAL::ReconstructionAlgorithm {
+class DiJetReco : public HAL::ReconstructionAlgorithm {
 public:
-  ElectronReco () : ReconstructionAlgorithm("Electron", "Reconstruct electrons") {}
-  virtual ~ElectronReco () {} 
-protected:
-  virtual void Init (Option_t* option = "") { std::cout << "Init ElectronReco" << std::endl; }
-  virtual void Exec (Option_t* option = "") {
-    HAL::AnalysisTreeReader *tr = (HAL::AnalysisTreeReader*)GetData("RawData");
-    for (int i = 0; i < tr->GetDim("jet_pt"); ++i)
-      std::cout << tr->GetDecimal("jet_pt", i) << "   ";
-    std::cout << std::endl;
+  DiJetReco () : ReconstructionAlgorithm("DiJetReco", "Reconstruct di-jets") {}
+  virtual ~DiJetReco () {} 
+
+  virtual void Init (Option_t* option) {
+    std::cout << "Init DiJetReco" << std::endl;
   }
-  virtual void Clear (Option_t* option = "") {std::cout << "Clear ElectronReco" << std::endl;}
+
+  virtual void Exec (Option_t* option) {
+    std::cout << "Exec DiJetReco" << std::endl;
+    HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+    HAL::AnalysisTreeReader *tr = (HAL::AnalysisTreeReader*)GetData("RawData");
+    TLorentzVector *el_1 = NULL, *el_2 = NULL, *di_el = NULL, *temp = NULL;
+    int el_1_i, el_2_i;
+
+    // Find leading and subleading electrons in pT
+    for (int i = 0; i < tr->GetInteger("jet_n"); ++i) {
+      temp = HAL::makeTLVFromPtEtaPhiM(tr->GetDecimal("jet_pt", i), 
+                                       tr->GetDecimal("jet_eta", i), 
+                                       tr->GetDecimal("jet_phi", i), 
+                                       tr->GetDecimal("jet_m", i));
+      if (el_1 == NULL) {el_1_i = i; el_1 = temp; continue;}
+      if (el_1->Pt() < temp->Pt()) {
+        if (el_2 != NULL) delete el_2;
+        el_2 = el_1;
+        el_2_i = el_1_i;
+        el_1 = temp;
+        el_1_i = i;
+        continue;
+      }
+      if (el_2 == NULL) {el_2 = temp; continue;}
+      delete temp;
+    }
+
+    // Construct di-electron object
+    if (el_1 != NULL && el_2 != NULL) {
+      di_el = el_1;
+      di_el->operator+=(*el_2);
+      delete el_2;
+    }
+
+    // Store data
+    data->SetValue("di-jet p", di_el);
+    data->SetValue("di-jet leading index", el_1_i);
+    data->SetValue("di-jet subleading index", el_2_i);
+  }
+
+  virtual void Clear (Option_t* option) {
+    std::cout << "Clear DiJetReco" << std::endl;
+    HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+
+    delete data->GetTObject("di-jet p");
+  }
 };
 
-class ElectronTight : public HAL::CutAlgorithm {
+class DiJetCut : public HAL::CutAlgorithm {
 public:
-  ElectronTight () : CutAlgorithm("ElectronTight", "Making tight selections on electrons") {}
-  virtual ~ElectronTight () {} 
-protected:
-  virtual void Init (Option_t* option = "") {std::cout << "Init ElectronTight" << std::endl;}
-  virtual void Exec (Option_t* option = "") {
-    std::cout << "Made Cut" << std::endl;
-    Abort();
-    return;
+  DiJetCut () : CutAlgorithm("DiJetCut", "Make selections on di-jets") {}
+  virtual ~DiJetCut () {} 
+
+  virtual void Init (Option_t* option) {
+    std::cout << "Init DiJetCut" << std::endl;
   }
-  virtual void Clear (Option_t* option = "") {std::cout << "Clear ElectronTight" << std::endl;}
+
+  virtual void Exec (Option_t* option) {
+    std::cout << "Exec DiJetCut" << std::endl;
+    HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+
+    if (data->GetTObject("di-jet p") == NULL) {Abort(); return;}
+    std::cout << ((TLorentzVector*)data->GetTObject("di-jet p"))->M() << std::endl;
+    // Fill tree here!!!
+  }
+
+  virtual void Clear (Option_t* option) {
+    std::cout << "Clear DiJetCut" << std::endl;
+  }
 };

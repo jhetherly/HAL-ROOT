@@ -6,7 +6,6 @@
 #include <TFile.h>
 #include <TString.h>
 #include <HAL/Common.h>
-#include <HAL/Particle.h>
 
 namespace HAL
 {

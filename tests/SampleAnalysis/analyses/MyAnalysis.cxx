@@ -15,14 +15,19 @@ int main(int argc, char *argv[]) {
         "/Users/jhetherly/src/root_HAL/tests/SampleAnalysis/algorithms/python", 
         "pyalgo", 
         "PythonAlgo"));
-  a.AddRecoAlgo(new ElectronReco());
-  a.AddCutAlgo(new ElectronTight());
+  a.AddRecoAlgo(new DiJetReco());
+  a.AddCutAlgo(new DiJetCut());
 
   //a.MapBranch("jet_AntiKt4TruthJets_pt", "jet_pt");
+  a.MapBranch("Jet_size", "jet_n");
   a.MapBranch("Jet.PT", "jet_pt");
+  a.MapBranch("Jet.Eta", "jet_eta");
+  a.MapBranch("Jet.Phi", "jet_phi");
+  a.MapBranch("Jet.Mass", "jet_m");
   //a.MapBranch("jet_AntiKt4LCTopo_pt", "jet_pt");
 
   a.Process("", 50);
+  //a.Process();
 
   return 0;
 }

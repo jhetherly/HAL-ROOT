@@ -9,6 +9,7 @@
 #include <vector>
 #include <HAL/Common.h>
 #include <HAL/Algorithm.h>
+#include <HAL/AnalysisData.h>
 #include <HAL/AnalysisTreeReader.h>
 
 namespace HAL {

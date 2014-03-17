@@ -41,10 +41,14 @@ void AnalysisSelector::SlaveBegin (TTree * /*tree*/) {
 
   TString option = GetOption();
 
-  AnalysisTreeReader *ad = new AnalysisTreeReader();
-  ad->SetName("RawData");
-  ad->SetBranchMap(fBranchMap);
+  AnalysisData *ad = new AnalysisData();
+  ad->SetName("UserData");
   fInput->AddFirst(ad);
+
+  AnalysisTreeReader *atr = new AnalysisTreeReader();
+  atr->SetName("RawData");
+  atr->SetBranchMap(fBranchMap);
+  fInput->AddFirst(atr);
   
   fAnalysisFlow->AssignDataList(fInput);
 }
@@ -84,7 +88,9 @@ void AnalysisSelector::SlaveTerminate () {
   // IMPORTANT!!!!!!!!!
   // merge any flagged data in fInput to fOutput
   
-  // delete raw data
+  // Delete user data
+  fAnalysisFlow->DeleteData("UserData");
+  // Delete raw data
   fAnalysisFlow->DeleteData("RawData");
 }
 
