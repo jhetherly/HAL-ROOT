@@ -41,14 +41,20 @@ void AnalysisSelector::SlaveBegin (TTree * /*tree*/) {
 
   TString option = GetOption();
 
-  AnalysisData *ad = new AnalysisData();
-  ad->SetName("UserData");
-  fInput->AddFirst(ad);
-
   AnalysisTreeReader *atr = new AnalysisTreeReader();
   atr->SetName("RawData");
   atr->SetBranchMap(fBranchMap);
   fInput->AddFirst(atr);
+
+  AnalysisData *ad = new AnalysisData();
+  ad->SetName("UserData");
+  fInput->AddFirst(ad);
+
+  AnalysisTreeWriter *atw = new AnalysisTreeWriter(fOutputFileName);
+  atw->SetTreeName(fOutputTreeName);
+  atw->SetTreeDescription(fOutputTreeDescription);
+  atw->SetName("UserOutput");
+  fInput->AddFirst(atw);
   
   fAnalysisFlow->AssignDataList(fInput);
 }
@@ -92,6 +98,7 @@ void AnalysisSelector::SlaveTerminate () {
   fAnalysisFlow->DeleteData("UserData");
   // Delete raw data
   fAnalysisFlow->DeleteData("RawData");
+  ((AnalysisTreeWriter*)fAnalysisFlow->GetData("UserOutput"))->WriteData();
 }
 
 void AnalysisSelector::Terminate () {

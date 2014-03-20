@@ -5,11 +5,11 @@ ClassImp(HAL::AnalysisData);
 namespace HAL
 {
 
-void AnalysisData::SetValue (std::string name, LongDouble_t v) {
+void AnalysisData::SetValue (std::string name, long double v) {
   if (fDecimalMap.count(name) != 0)
     fDecimalMap[name] = v;
   else
-    fDecimalMap.insert(std::pair<std::string, LongDouble_t>(name, v));
+    fDecimalMap.insert(std::pair<std::string, long double>(name, v));
 }
 
 void AnalysisData::SetValue (std::string name, long long v) {
@@ -40,15 +40,15 @@ void AnalysisData::SetValue (std::string name, TObject *v) {
     fTObjectMap.insert(std::pair<std::string, TObject*>(name, v));
 }
 
-void AnalysisData::SetValue (std::string name, LongDouble_t v, Int_t i) {
+void AnalysisData::SetValue (std::string name, long double v, Int_t i) {
   if (fDecimalIntMap.count(name) != 0 && fDecimalIntMap[name].count(i) != 0)
     fDecimalIntMap[name][i] = v;
   else if (fDecimalIntMap.count(name) != 0)
-    fDecimalIntMap[name].insert(std::pair<Int_t, LongDouble_t>(i, v));
+    fDecimalIntMap[name].insert(std::pair<Int_t, long double>(i, v));
   else {
-    std::map<Int_t, LongDouble_t>   temp;
-    temp.insert(std::pair<Int_t, LongDouble_t>(i, v));
-    fDecimalIntMap.insert(std::pair<std::string, std::map<Int_t, LongDouble_t> >(name, temp));
+    std::map<Int_t, long double>   temp;
+    temp.insert(std::pair<Int_t, long double>(i, v));
+    fDecimalIntMap.insert(std::pair<std::string, std::map<Int_t, long double> >(name, temp));
   }
 }
 
@@ -100,7 +100,7 @@ void AnalysisData::SetValue (std::string name, TObject *v, Int_t i) {
   }
 }
 
-LongDouble_t AnalysisData::GetDecimal (std::string name, Int_t i) {
+long double AnalysisData::GetDecimal (std::string name, Int_t i) {
   if (fDecimalMap.count(name) != 0)
     return fDecimalMap[name];
   if (fDecimalIntMap.count(name) != 0)

@@ -358,8 +358,26 @@ TString AnalysisTreeReader::GetString (TString branchname, Int_t idx_1, Int_t id
 
   if (branchmanager->GetStorageType() == kS)
     return fS[branchmanager->GetStorageIndex()];
+  if (branchmanager->GetStorageType() == kvS && 
+      fvS[branchmanager->GetStorageIndex()].back().Length() == 1 && 
+      fvS[branchmanager->GetStorageIndex()].back()[0] == '\0') {
+    TString s("");
+    for (std::vector<TString>::iterator it = fvS[branchmanager->GetStorageIndex()].begin();
+         it != fvS[branchmanager->GetStorageIndex()].end(); ++it)
+      s.Prepend(*it);
+    return s;
+  }
   if (branchmanager->GetStorageType() == kvS)
     return fvS[branchmanager->GetStorageIndex()][idx_1];
+  if (branchmanager->GetStorageType() == kvvS && 
+      fvvS[branchmanager->GetStorageIndex()][idx_1].back().Length() == 1 && 
+      fvvS[branchmanager->GetStorageIndex()][idx_1].back()[0] == '\0') {
+    TString s("");
+    for (std::vector<TString>::iterator it = fvvS[branchmanager->GetStorageIndex()][idx_1].begin();
+         it != fvvS[branchmanager->GetStorageIndex()][idx_1].end(); ++it)
+      s.Prepend(*it);
+    return s;
+  }
   if (branchmanager->GetStorageType() == kvvS)
     return fvvS[branchmanager->GetStorageIndex()][idx_1][idx_2];
 

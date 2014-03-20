@@ -7,12 +7,9 @@ public:
   DiJetReco () : ReconstructionAlgorithm("DiJetReco", "Reconstruct di-jets") {}
   virtual ~DiJetReco () {} 
 
-  virtual void Init (Option_t* option) {
-    std::cout << "Init DiJetReco" << std::endl;
-  }
+  virtual void Init (Option_t* option) {}
 
   virtual void Exec (Option_t* option) {
-    std::cout << "Exec DiJetReco" << std::endl;
     HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
     HAL::AnalysisTreeReader *tr = (HAL::AnalysisTreeReader*)GetData("RawData");
     TLorentzVector *el_1 = NULL, *el_2 = NULL, *di_el = NULL, *temp = NULL;
@@ -51,7 +48,6 @@ public:
   }
 
   virtual void Clear (Option_t* option) {
-    std::cout << "Clear DiJetReco" << std::endl;
     HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
 
     delete data->GetTObject("di-jet p");
@@ -63,20 +59,19 @@ public:
   DiJetCut () : CutAlgorithm("DiJetCut", "Make selections on di-jets") {}
   virtual ~DiJetCut () {} 
 
-  virtual void Init (Option_t* option) {
-    std::cout << "Init DiJetCut" << std::endl;
-  }
+  virtual void Init (Option_t* option) {}
 
   virtual void Exec (Option_t* option) {
-    std::cout << "Exec DiJetCut" << std::endl;
     HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+    HAL::AnalysisData *output = (HAL::AnalysisTreeWriter*)GetData("UserOutput");
 
-    if (data->GetTObject("di-jet p") == NULL) {Abort(); return;}
-    std::cout << ((TLorentzVector*)data->GetTObject("di-jet p"))->M() << std::endl;
-    // Fill tree here!!!
+    if (data->GetTObject("di-jet p") == NULL ||
+        ((TLorentzVector*)data->GetTObject("di-jet p"))->M() < 500.0) {
+      Abort(); 
+      return;
+    }
+    output->SetValue("dijet_mass", ((TLorentzVector*)data->GetTObject("di-jet p"))->M());
   }
 
-  virtual void Clear (Option_t* option) {
-    std::cout << "Clear DiJetCut" << std::endl;
-  }
+  virtual void Clear (Option_t* option) {}
 };

@@ -4,6 +4,7 @@
 #include <HAL/Analysis.h>
 #include <HAL/AnalysisData.h>
 #include <HAL/AnalysisTreeReader.h>
+#include <HAL/AnalysisTreeWriter.h>
 #include <HAL/AnalysisSelector.h>
 #include <HAL/AnalysisUtils.h>
 #include <HAL/CutAlgorithm.h>

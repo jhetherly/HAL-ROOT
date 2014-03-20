@@ -1,7 +1,8 @@
 #ifndef HAL_ANALYSIS_SELECTOR
 #define HAL_ANALYSIS_SELECTOR
 
-#include <TROOT.h>
+//#include <TROOT.h>
+#include <TString.h>
 #include <TSelector.h>
 #include <TTree.h>
 #include <TMap.h>
@@ -11,6 +12,7 @@
 #include <HAL/Algorithm.h>
 #include <HAL/AnalysisData.h>
 #include <HAL/AnalysisTreeReader.h>
+#include <HAL/AnalysisTreeWriter.h>
 
 namespace HAL {
 
@@ -31,10 +33,16 @@ public :
   virtual TList  *GetOutputList () const { return fOutput; }
   virtual void    SlaveTerminate ();
   virtual void    Terminate ();
+  void            SetOutputFileName (TString fname) {fOutputFileName = fname;}
+  void            SetOutputTreeName (TString tname) {fOutputTreeName = tname;}
+  void            SetOutputTreeDescription (TString tdescription) {fOutputTreeDescription = tdescription;}
 
   Algorithm      *fAnalysisFlow;
   TTree          *fChain;   //!pointer to the analyzed TTree or TChain
   TMap           *fBranchMap;
+
+private:
+  TString         fOutputFileName, fOutputTreeName, fOutputTreeDescription;
 
   ClassDef(AnalysisSelector, 0);
 };

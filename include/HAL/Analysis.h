@@ -26,6 +26,9 @@ public:
   void SetAnalysisTitle (TString title);
   Int_t AddFiles (TString fnames, Long64_t nentries = 1234567890);
   Int_t AddFiles (TChain *fchain);
+  void SetOutputFileName (TString fname) {fAnalizer->SetOutputFileName(fname);}
+  void SetOutputTreeName (TString tname) {fAnalizer->SetOutputTreeName(tname);}
+  void SetOutputTreeDescription (TString tdescription) {fAnalizer->SetOutputTreeDescription(tdescription);}
   void PrintTree (Option_t *option = "");
   const char* GetLeafType (TString leafname);
   const char* GetLeafType (TString branchname, TString leafname);
