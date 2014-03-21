@@ -6,14 +6,15 @@ namespace HAL {
 
 AnalysisTreeReader::AnalysisTreeReader (TTree *t) : fChain(t), 
   fScalar("^[a-zA-Z][a-zA-Z0-9_]+$"),
-  fVector("^vector<[a-zA-Z][a-zA-Z0-9_]+>$"), 
-  fVector2D("^vector<vector<[a-zA-Z][a-zA-Z0-9_]+> >$"), 
-  fArray("^[a-zA-Z_][a-zA-Z0-9_]+[[a-zA-Z0-9_]+]$"), 
-  fArray2D("^[a-zA-Z_][a-zA-Z0-9_]+[[a-zA-Z0-9_]+][[a-zA-Z0-9_]+]$") {
-  // bool type
+  fVector("^vector[ ]*<[ ]*[a-zA-Z][a-zA-Z0-9_]+[ ]*>$"), // vector<scalar>
+  fVector2D("^vector[ ]*<[ ]*vector[ ]*<[ ]*[a-zA-Z][a-zA-Z0-9_]+[ ]*>[ ]*>$"), // vector<vector<scalar> >
+  fArray("^[a-zA-Z_][a-zA-Z0-9_]*[[a-zA-Z0-9_]+]$"), // name[i]
+  fArray2D("^[a-zA-Z_][a-zA-Z0-9_]*[[a-zA-Z0-9_]+][[a-zA-Z0-9_]+]$") /* name[i][j] */ { 
+
+  // bool types
   fBool.insert("Bool_t");
   fBool.insert("bool");
-  // integer type
+  // integer types
   fInteger.insert("int");
   if (sizeof(int) == sizeof(Int_t))
     fInteger.insert("Int_t");
@@ -29,7 +30,7 @@ AnalysisTreeReader::AnalysisTreeReader (TTree *t) : fChain(t),
   fLLong.insert("long long");
   fLLong.insert("long long int");
   fSChar.insert("signed char");
-  // counting type
+  // counting types
   if (sizeof(unsigned int) == sizeof(UInt_t))
     fUInteger.insert("UInt_t");
   fUInteger.insert("unsigned");
@@ -47,7 +48,7 @@ AnalysisTreeReader::AnalysisTreeReader (TTree *t) : fChain(t),
   fULLong.insert("unsigned long long int");
   fUChar.insert("unsigned char");
   fUChar.insert("Byte_t");
-  // decimal type
+  // decimal types
   fFloat.insert("Real_t");
   fFloat.insert("Float_t");
   fFloat.insert("Float16_t");
@@ -55,9 +56,12 @@ AnalysisTreeReader::AnalysisTreeReader (TTree *t) : fChain(t),
   fDouble.insert("Double_t");
   fDouble.insert("Double32_t");
   fDouble.insert("double");
-  fLDouble.insert("LongDouble_t");
+  if (sizeof(double) == sizeof(LongDouble_t))
+    fDouble.insert("LongDouble_t");
+  else
+    fLDouble.insert("LongDouble_t");
   fLDouble.insert("long double");
-  // string type
+  // string types
   fChar.insert("Text_t");
   fChar.insert("Char_t");
   fChar.insert("char");
@@ -106,7 +110,7 @@ TString AnalysisTreeReader::GetFullBranchName (TString name) {
   throw HALException(name.Prepend("Couldn't find branch: ").Data());
 }
 
-Int_t AnalysisTreeReader::GetDim (TString branchname, Int_t idx_1) {
+unsigned int AnalysisTreeReader::GetDim (TString branchname, Int_t idx_1) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
@@ -124,11 +128,11 @@ Int_t AnalysisTreeReader::GetDim (TString branchname, Int_t idx_1) {
   }
 
   if (branchmanager->GetStorageType() == kOA)
-    return fOA[branchmanager->GetStorageIndex()].GetEntries();
+    return (unsigned int)fOA[branchmanager->GetStorageIndex()].GetEntries();
   if (branchmanager->GetStorageType() == kCA)
-    return fCA[branchmanager->GetStorageIndex()].GetEntries();
+    return (unsigned int)fCA[branchmanager->GetStorageIndex()].GetEntries();
   if (branchmanager->GetStorageType() == kRA)
-    return fRA[branchmanager->GetStorageIndex()].GetEntries();
+    return (unsigned int)fRA[branchmanager->GetStorageIndex()].GetEntries();
   if (branchmanager->IsScalar())
     throw HALException(bname.Prepend("Tried getting dimension of scalar in branch: ").Data());
   if (branchmanager->GetStorageType() == kvB && idx_1 == -1)
@@ -146,17 +150,17 @@ Int_t AnalysisTreeReader::GetDim (TString branchname, Int_t idx_1) {
   if (branchmanager->GetStorageType() == kvOA) {
     if (idx_1 == -1)
       return fvOA[branchmanager->GetStorageIndex()].size();
-    return fvOA[branchmanager->GetStorageIndex()][idx_1].GetEntries();
+    return (unsigned int)fvOA[branchmanager->GetStorageIndex()][idx_1].GetEntries();
   }
   if (branchmanager->GetStorageType() == kvCA) {
     if (idx_1 == -1)
       return fvCA[branchmanager->GetStorageIndex()].size();
-    return fvCA[branchmanager->GetStorageIndex()][idx_1].GetEntries();
+    return (unsigned int)fvCA[branchmanager->GetStorageIndex()][idx_1].GetEntries();
   }
   if (branchmanager->GetStorageType() == kvRA) {
     if (idx_1 == -1)
       return fvRA[branchmanager->GetStorageIndex()].size();
-    return fvRA[branchmanager->GetStorageIndex()][idx_1].GetEntries();
+    return (unsigned int)fvRA[branchmanager->GetStorageIndex()][idx_1].GetEntries();
   }
   if (branchmanager->GetStorageType() == kvvB) {
     if (idx_1 == -1)
@@ -192,7 +196,7 @@ Int_t AnalysisTreeReader::GetDim (TString branchname, Int_t idx_1) {
   throw HALException(bname.Prepend("Error in finding dimensions in branch: ").Data());
 }
 
-Bool_t AnalysisTreeReader::GetBool (TString branchname, Int_t idx_1, Int_t idx_2) {
+bool AnalysisTreeReader::GetBool (TString branchname, Int_t idx_1, Int_t idx_2) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
@@ -219,7 +223,7 @@ Bool_t AnalysisTreeReader::GetBool (TString branchname, Int_t idx_1, Int_t idx_2
   throw HALException(bname.Prepend("Couldn't find bool data in branch: ").Data());
 }
 
-Long64_t AnalysisTreeReader::GetInteger (TString branchname, Int_t idx_1, Int_t idx_2) {
+long long AnalysisTreeReader::GetInteger (TString branchname, Int_t idx_1, Int_t idx_2) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
@@ -261,7 +265,7 @@ Long64_t AnalysisTreeReader::GetInteger (TString branchname, Int_t idx_1, Int_t 
   throw HALException(bname.Prepend("Couldn't find integer number data in branch: ").Data());
 }
 
-ULong64_t AnalysisTreeReader::GetCounting (TString branchname, Int_t idx_1, Int_t idx_2) {
+unsigned long long AnalysisTreeReader::GetCounting (TString branchname, Int_t idx_1, Int_t idx_2) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
@@ -300,7 +304,7 @@ ULong64_t AnalysisTreeReader::GetCounting (TString branchname, Int_t idx_1, Int_
   throw HALException(bname.Prepend("Couldn't find counting number data in branch: ").Data());
 }
 
-LongDouble_t AnalysisTreeReader::GetDecimal (TString branchname, Int_t idx_1, Int_t idx_2) {
+long double AnalysisTreeReader::GetDecimal (TString branchname, Int_t idx_1, Int_t idx_2) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
@@ -589,7 +593,7 @@ Bool_t AnalysisTreeReader::BranchManager::Create (TString branchname) {
   else if (fVec1D || fCArray1D) {
     // Test for bool types
     if (fTreeReader->fBool.count(fScalarType) != 0) {
-      std::vector<Bool_t> temp;
+      std::vector<bool> temp;
       fStorageID = kvB;
       fTreeReader->fvB.push_back(temp);
       fStorageIndex = fTreeReader->fvB.size() - 1;
@@ -600,7 +604,7 @@ Bool_t AnalysisTreeReader::BranchManager::Create (TString branchname) {
              fTreeReader->fLong.count(fScalarType) != 0 ||
              fTreeReader->fLLong.count(fScalarType) != 0 ||
              fTreeReader->fSChar.count(fScalarType) != 0) {
-      std::vector<Long64_t> temp;
+      std::vector<long long> temp;
       fStorageID = kvI;
       fTreeReader->fvI.push_back(temp);
       fStorageIndex = fTreeReader->fvI.size() - 1;
@@ -611,7 +615,7 @@ Bool_t AnalysisTreeReader::BranchManager::Create (TString branchname) {
              fTreeReader->fULong.count(fScalarType) != 0 ||
              fTreeReader->fULLong.count(fScalarType) != 0 ||
              fTreeReader->fUChar.count(fScalarType) != 0) {
-      std::vector<ULong64_t> temp;
+      std::vector<unsigned long long> temp;
       fStorageID = kvC;
       fTreeReader->fvC.push_back(temp);
       fStorageIndex = fTreeReader->fvC.size() - 1;
@@ -620,7 +624,7 @@ Bool_t AnalysisTreeReader::BranchManager::Create (TString branchname) {
     else if (fTreeReader->fFloat.count(fScalarType) != 0 || 
              fTreeReader->fDouble.count(fScalarType) != 0 ||
              fTreeReader->fLDouble.count(fScalarType) != 0) {
-      std::vector<LongDouble_t> temp;
+      std::vector<long double> temp;
       fStorageID = kvD;
       fTreeReader->fvD.push_back(temp);
       fStorageIndex = fTreeReader->fvD.size() - 1;
@@ -666,7 +670,7 @@ Bool_t AnalysisTreeReader::BranchManager::Create (TString branchname) {
   else if (fVec2D || fCArray2D) {
     // Test for bool types
     if (fTreeReader->fBool.count(fScalarType) != 0) {
-      std::vector<std::vector<Bool_t> > temp;
+      std::vector<std::vector<bool> > temp;
       fStorageID = kvvB;
       fTreeReader->fvvB.push_back(temp);
       fStorageIndex = fTreeReader->fvvB.size() - 1;
@@ -677,7 +681,7 @@ Bool_t AnalysisTreeReader::BranchManager::Create (TString branchname) {
              fTreeReader->fLong.count(fScalarType) != 0 ||
              fTreeReader->fLLong.count(fScalarType) != 0 ||
              fTreeReader->fSChar.count(fScalarType) != 0) {
-      std::vector<std::vector<Long64_t> > temp;
+      std::vector<std::vector<long long> > temp;
       fStorageID = kvvI;
       fTreeReader->fvvI.push_back(temp);
       fStorageIndex = fTreeReader->fvvI.size() - 1;
@@ -688,7 +692,7 @@ Bool_t AnalysisTreeReader::BranchManager::Create (TString branchname) {
              fTreeReader->fULong.count(fScalarType) != 0 ||
              fTreeReader->fULLong.count(fScalarType) != 0 ||
              fTreeReader->fUChar.count(fScalarType) != 0) {
-      std::vector<std::vector<ULong64_t> > temp;
+      std::vector<std::vector<unsigned long long> > temp;
       fStorageID = kvvC;
       fTreeReader->fvvC.push_back(temp);
       fStorageIndex = fTreeReader->fvvC.size() - 1;
@@ -697,7 +701,7 @@ Bool_t AnalysisTreeReader::BranchManager::Create (TString branchname) {
     else if (fTreeReader->fFloat.count(fScalarType) != 0 || 
              fTreeReader->fDouble.count(fScalarType) != 0 ||
              fTreeReader->fLDouble.count(fScalarType) != 0) {
-      std::vector<std::vector<LongDouble_t> > temp;
+      std::vector<std::vector<long double> > temp;
       fStorageID = kvvD;
       fTreeReader->fvvD.push_back(temp);
       fStorageIndex = fTreeReader->fvvD.size() - 1;
@@ -751,19 +755,19 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fTreeReader->fI[fStorageIndex] = temp;
     }
     else if (fTreeReader->fShort.count(fType) != 0) {
-      Short_t temp = 0;
+      short temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fI[fStorageIndex] = temp;
     }
     else if (fTreeReader->fLong.count(fType) != 0) {
-      Long_t temp = 0;
+      long temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fI[fStorageIndex] = temp;
     }
     else if (fTreeReader->fLLong.count(fType) != 0) {
-      Long64_t temp = 0;
+      long long temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fI[fStorageIndex] = temp;
@@ -781,19 +785,19 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fTreeReader->fC[fStorageIndex] = temp;
     }
     else if (fTreeReader->fUShort.count(fType) != 0) {
-      UShort_t temp = 0;
+      unsigned short temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fC[fStorageIndex] = temp;
     }
     else if (fTreeReader->fULong.count(fType) != 0) {
-      ULong_t temp = 0;
+      unsigned long temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fC[fStorageIndex] = temp;
     }
     else if (fTreeReader->fULLong.count(fType) != 0) {
-      ULong64_t temp = 0;
+      unsigned long long temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fC[fStorageIndex] = temp;
@@ -805,25 +809,25 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fTreeReader->fC[fStorageIndex] = temp;
     }
     else if (fTreeReader->fFloat.count(fType) != 0) {
-      Float_t temp = 0.0;
+      float temp = 0.0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fD[fStorageIndex] = temp;
     }
     else if (fTreeReader->fDouble.count(fType) != 0) {
-      Double_t temp = 0.0;
+      double temp = 0.0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fD[fStorageIndex] = temp;
     }
     else if (fTreeReader->fLDouble.count(fType) != 0) {
-      LongDouble_t temp = 0.0;
+      long double temp = 0.0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fD[fStorageIndex] = temp;
     }
     else if (fTreeReader->fChar.count(fType) != 0) {
-      Char_t temp;
+      char temp;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fS[fStorageIndex] = temp;
@@ -895,7 +899,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     }
     else if (fTreeReader->fShort.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
-      Short_t temp[n];
+      short temp[n];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvI[fStorageIndex].clear();
@@ -904,7 +908,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     }
     else if (fTreeReader->fLong.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
-      Long_t temp[n];
+      long temp[n];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvI[fStorageIndex].clear();
@@ -913,7 +917,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     }
     else if (fTreeReader->fLLong.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
-      Long64_t temp[n];
+      long long temp[n];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvI[fStorageIndex].clear();
@@ -940,7 +944,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     }
     else if (fTreeReader->fUShort.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
-      UShort_t temp[n];
+      unsigned short temp[n];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvC[fStorageIndex].clear();
@@ -949,7 +953,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     }
     else if (fTreeReader->fULong.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
-      ULong_t temp[n];
+      unsigned long temp[n];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvC[fStorageIndex].clear();
@@ -958,7 +962,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     }
     else if (fTreeReader->fULLong.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
-      ULong64_t temp[n];
+      unsigned long long temp[n];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvC[fStorageIndex].clear();
@@ -976,7 +980,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     }
     else if (fTreeReader->fFloat.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
-      Float_t temp[n];
+      float temp[n];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvD[fStorageIndex].clear();
@@ -985,7 +989,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     }
     else if (fTreeReader->fDouble.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
-      Double_t temp[n];
+      double temp[n];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvD[fStorageIndex].clear();
@@ -994,7 +998,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     }
     else if (fTreeReader->fLDouble.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
-      LongDouble_t temp[n];
+      long double temp[n];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvD[fStorageIndex].clear();
@@ -1003,7 +1007,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     }
     else if (fTreeReader->fChar.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
-      Char_t temp[n];
+      char temp[n];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvS[fStorageIndex].clear();
@@ -1115,7 +1119,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     else if (fTreeReader->fShort.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
       Int_t m = GetArrayLength(2);
-      Short_t temp[n][m];
+      short temp[n][m];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
@@ -1129,7 +1133,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     else if (fTreeReader->fLong.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
       Int_t m = GetArrayLength(2);
-      Long_t temp[n][m];
+      long temp[n][m];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
@@ -1143,7 +1147,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     else if (fTreeReader->fLLong.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
       Int_t m = GetArrayLength(2);
-      Long64_t temp[n][m];
+      long long temp[n][m];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
@@ -1185,7 +1189,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     else if (fTreeReader->fUShort.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
       Int_t m = GetArrayLength(2);
-      UShort_t temp[n][m];
+      unsigned short temp[n][m];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
@@ -1199,7 +1203,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     else if (fTreeReader->fULong.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
       Int_t m = GetArrayLength(2);
-      ULong_t temp[n][m];
+      unsigned long temp[n][m];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
@@ -1213,7 +1217,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     else if (fTreeReader->fULLong.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
       Int_t m = GetArrayLength(2);
-      ULong64_t temp[n][m];
+      unsigned long long temp[n][m];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
@@ -1241,7 +1245,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     else if (fTreeReader->fFloat.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
       Int_t m = GetArrayLength(2);
-      Float_t temp[n][m];
+      float temp[n][m];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
@@ -1255,7 +1259,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     else if (fTreeReader->fDouble.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
       Int_t m = GetArrayLength(2);
-      Double_t temp[n][m];
+      double temp[n][m];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
@@ -1269,7 +1273,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     else if (fTreeReader->fLDouble.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
       Int_t m = GetArrayLength(2);
-      LongDouble_t temp[n][m];
+      long double temp[n][m];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
@@ -1283,7 +1287,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
     else if (fTreeReader->fChar.count(fScalarType) != 0) {
       Int_t n = GetArrayLength(1);
       Int_t m = GetArrayLength(2);
-      Char_t temp[n][m];
+      char temp[n][m];
       fBranch->SetAddress(temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvS[fStorageIndex].clear();
@@ -1394,29 +1398,29 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       delete temp;
     }
     else if (fTreeReader->fShort.count(fScalarType) != 0) {
-      std::vector<Short_t> *temp = 0;
+      std::vector<short> *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvI[fStorageIndex].clear();
-      for (std::vector<Short_t>::iterator it = temp->begin(); it != temp->end(); ++it)
+      for (std::vector<short>::iterator it = temp->begin(); it != temp->end(); ++it)
         fTreeReader->fvI[fStorageIndex].push_back(*it);
       delete temp;
     }
     else if (fTreeReader->fLong.count(fScalarType) != 0) {
-      std::vector<Long_t> *temp = 0;
+      std::vector<long> *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvI[fStorageIndex].clear();
-      for (std::vector<Long_t>::iterator it = temp->begin(); it != temp->end(); ++it)
+      for (std::vector<long>::iterator it = temp->begin(); it != temp->end(); ++it)
         fTreeReader->fvI[fStorageIndex].push_back(*it);
       delete temp;
     }
     else if (fTreeReader->fLLong.count(fScalarType) != 0) {
-      std::vector<Long64_t> *temp = 0;
+      std::vector<long long> *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvI[fStorageIndex].clear();
-      for (std::vector<Long64_t>::iterator it = temp->begin(); it != temp->end(); ++it)
+      for (std::vector<long long>::iterator it = temp->begin(); it != temp->end(); ++it)
         fTreeReader->fvI[fStorageIndex].push_back(*it);
       delete temp;
     }
@@ -1439,29 +1443,29 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       delete temp;
     }
     else if (fTreeReader->fUShort.count(fScalarType) != 0) {
-      std::vector<UShort_t> *temp = 0;
+      std::vector<unsigned short> *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvC[fStorageIndex].clear();
-      for (std::vector<UShort_t>::iterator it = temp->begin(); it != temp->end(); ++it)
+      for (std::vector<unsigned short>::iterator it = temp->begin(); it != temp->end(); ++it)
         fTreeReader->fvC[fStorageIndex].push_back(*it);
       delete temp;
     }
     else if (fTreeReader->fULong.count(fScalarType) != 0) {
-      std::vector<ULong_t> *temp = 0;
+      std::vector<unsigned long> *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvC[fStorageIndex].clear();
-      for (std::vector<ULong_t>::iterator it = temp->begin(); it != temp->end(); ++it)
+      for (std::vector<unsigned long>::iterator it = temp->begin(); it != temp->end(); ++it)
         fTreeReader->fvC[fStorageIndex].push_back(*it);
       delete temp;
     }
     else if (fTreeReader->fULLong.count(fScalarType) != 0) {
-      std::vector<ULong64_t> *temp = 0;
+      std::vector<unsigned long long> *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvC[fStorageIndex].clear();
-      for (std::vector<ULong64_t>::iterator it = temp->begin(); it != temp->end(); ++it)
+      for (std::vector<unsigned long long>::iterator it = temp->begin(); it != temp->end(); ++it)
         fTreeReader->fvC[fStorageIndex].push_back(*it);
       delete temp;
     }
@@ -1475,38 +1479,38 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       delete temp;
     }
     else if (fTreeReader->fFloat.count(fScalarType) != 0) {
-      std::vector<Float_t> *temp = 0;
+      std::vector<float> *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvD[fStorageIndex].clear();
-      for (std::vector<Float_t>::iterator it = temp->begin(); it != temp->end(); ++it)
+      for (std::vector<float>::iterator it = temp->begin(); it != temp->end(); ++it)
         fTreeReader->fvD[fStorageIndex].push_back(*it);
       delete temp;
     }
     else if (fTreeReader->fDouble.count(fScalarType) != 0) {
-      std::vector<Double_t> *temp = 0;
+      std::vector<double> *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvD[fStorageIndex].clear();
-      for (std::vector<Double_t>::iterator it = temp->begin(); it != temp->end(); ++it)
+      for (std::vector<double>::iterator it = temp->begin(); it != temp->end(); ++it)
         fTreeReader->fvD[fStorageIndex].push_back(*it);
       delete temp;
     }
     else if (fTreeReader->fLDouble.count(fScalarType) != 0) {
-      std::vector<LongDouble_t> *temp = 0;
+      std::vector<long double> *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvD[fStorageIndex].clear();
-      for (std::vector<LongDouble_t>::iterator it = temp->begin(); it != temp->end(); ++it)
+      for (std::vector<long double>::iterator it = temp->begin(); it != temp->end(); ++it)
         fTreeReader->fvD[fStorageIndex].push_back(*it);
       delete temp;
     }
     else if (fTreeReader->fChar.count(fScalarType) != 0) {
-      std::vector<Char_t> *temp = 0;
+      std::vector<char> *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvS[fStorageIndex].clear();
-      for (std::vector<Char_t>::iterator it = temp->begin(); it != temp->end(); ++it)
+      for (std::vector<char>::iterator it = temp->begin(); it != temp->end(); ++it)
         fTreeReader->fvS[fStorageIndex].push_back(*it);
       delete temp;
     }
@@ -1605,40 +1609,40 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       delete temp;
     }
     else if (fTreeReader->fShort.count(fScalarType) != 0) {
-      std::vector<std::vector<Short_t> > *temp = 0;
+      std::vector<std::vector<short> > *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
-      for (std::vector<std::vector<Short_t> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
+      for (std::vector<std::vector<short> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
         std::vector<Long64_t> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
-        for (std::vector<Short_t>::iterator it = iit->begin(); it != iit->end(); ++it)
+        for (std::vector<short>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvI[fStorageIndex].back().push_back(*it);
       }
       delete temp;
     }
     else if (fTreeReader->fLong.count(fScalarType) != 0) {
-      std::vector<std::vector<Long_t> > *temp = 0;
+      std::vector<std::vector<long> > *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
-      for (std::vector<std::vector<Long_t> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
+      for (std::vector<std::vector<long> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
         std::vector<Long64_t> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
-        for (std::vector<Long_t>::iterator it = iit->begin(); it != iit->end(); ++it)
+        for (std::vector<long>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvI[fStorageIndex].back().push_back(*it);
       }
       delete temp;
     }
     else if (fTreeReader->fLLong.count(fScalarType) != 0) {
-      std::vector<std::vector<Long64_t> > *temp = 0;
+      std::vector<std::vector<long long> > *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
-      for (std::vector<std::vector<Long64_t> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
+      for (std::vector<std::vector<long long> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
         std::vector<Long64_t> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
-        for (std::vector<Long64_t>::iterator it = iit->begin(); it != iit->end(); ++it)
+        for (std::vector<long long>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvI[fStorageIndex].back().push_back(*it);
       }
       delete temp;
@@ -1670,40 +1674,40 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       delete temp;
     }
     else if (fTreeReader->fUShort.count(fScalarType) != 0) {
-      std::vector<std::vector<UShort_t> > *temp = 0;
+      std::vector<std::vector<unsigned short> > *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
-      for (std::vector<std::vector<UShort_t> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
+      for (std::vector<std::vector<unsigned short> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
         std::vector<ULong64_t> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
-        for (std::vector<UShort_t>::iterator it = iit->begin(); it != iit->end(); ++it)
+        for (std::vector<unsigned short>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvC[fStorageIndex].back().push_back(*it);
       }
       delete temp;
     }
     else if (fTreeReader->fULong.count(fScalarType) != 0) {
-      std::vector<std::vector<ULong_t> > *temp = 0;
+      std::vector<std::vector<unsigned long> > *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
-      for (std::vector<std::vector<ULong_t> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
+      for (std::vector<std::vector<unsigned long> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
         std::vector<ULong64_t> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
-        for (std::vector<ULong_t>::iterator it = iit->begin(); it != iit->end(); ++it)
+        for (std::vector<unsigned long>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvC[fStorageIndex].back().push_back(*it);
       }
       delete temp;
     }
     else if (fTreeReader->fULLong.count(fScalarType) != 0) {
-      std::vector<std::vector<ULong64_t> > *temp = 0;
+      std::vector<std::vector<unsigned long long> > *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
-      for (std::vector<std::vector<ULong64_t> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
+      for (std::vector<std::vector<unsigned long long> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
         std::vector<ULong64_t> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
-        for (std::vector<ULong64_t>::iterator it = iit->begin(); it != iit->end(); ++it)
+        for (std::vector<unsigned long long>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvC[fStorageIndex].back().push_back(*it);
       }
       delete temp;
@@ -1722,53 +1726,53 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       delete temp;
     }
     else if (fTreeReader->fFloat.count(fScalarType) != 0) {
-      std::vector<std::vector<Float_t> > *temp = 0;
+      std::vector<std::vector<float> > *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
-      for (std::vector<std::vector<Float_t> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
+      for (std::vector<std::vector<float> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
         std::vector<LongDouble_t> row;
         fTreeReader->fvvD[fStorageIndex].push_back(row);
-        for (std::vector<Float_t>::iterator it = iit->begin(); it != iit->end(); ++it)
+        for (std::vector<float>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvD[fStorageIndex].back().push_back(*it);
       }
       delete temp;
     }
     else if (fTreeReader->fDouble.count(fScalarType) != 0) {
-      std::vector<std::vector<Double_t> > *temp = 0;
+      std::vector<std::vector<double> > *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
-      for (std::vector<std::vector<Double_t> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
+      for (std::vector<std::vector<double> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
         std::vector<LongDouble_t> row;
         fTreeReader->fvvD[fStorageIndex].push_back(row);
-        for (std::vector<Double_t>::iterator it = iit->begin(); it != iit->end(); ++it)
+        for (std::vector<double>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvD[fStorageIndex].back().push_back(*it);
       }
       delete temp;
     }
     else if (fTreeReader->fLDouble.count(fScalarType) != 0) {
-      std::vector<std::vector<LongDouble_t> > *temp = 0;
+      std::vector<std::vector<long double> > *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
-      for (std::vector<std::vector<LongDouble_t> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
+      for (std::vector<std::vector<long double> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
         std::vector<LongDouble_t> row;
         fTreeReader->fvvD[fStorageIndex].push_back(row);
-        for (std::vector<LongDouble_t>::iterator it = iit->begin(); it != iit->end(); ++it)
+        for (std::vector<long double>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvD[fStorageIndex].back().push_back(*it);
       }
       delete temp;
     }
     else if (fTreeReader->fChar.count(fScalarType) != 0) {
-      std::vector<std::vector<Char_t> > *temp = 0;
+      std::vector<std::vector<char> > *temp = 0;
       fBranch->SetAddress(&temp);
       fBranch->GetEntry(entry);
       fTreeReader->fvvS[fStorageIndex].clear();
-      for (std::vector<std::vector<Char_t> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
+      for (std::vector<std::vector<char> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
         std::vector<TString> row;
         fTreeReader->fvvS[fStorageIndex].push_back(row);
-        for (std::vector<Char_t>::iterator it = iit->begin(); it != iit->end(); ++it)
+        for (std::vector<char>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvS[fStorageIndex].back().push_back(*it);
       }
       delete temp;

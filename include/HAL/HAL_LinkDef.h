@@ -1,4 +1,5 @@
 #include <vector>
+#include <string>
 
 #ifdef __CINT__
 
@@ -24,9 +25,12 @@
 #pragma link C++ defined_in "HAL/PythonReconstructionAlgorithm.h";
 #pragma link C++ defined_in "HAL/ReconstructionAlgorithm.h";
 
+// These are needed for the AnalysisTreeWriter class
+#pragma link C++ class vector<bool>+;
 #pragma link C++ class vector<long double>+;
 #pragma link C++ class vector<long long>+;
 #pragma link C++ class vector<unsigned long long>+;
+#pragma link C++ class vector<vector<bool> >+;
 #pragma link C++ class vector<vector<long double> >+;
 #pragma link C++ class vector<vector<long long> >+;
 #pragma link C++ class vector<vector<unsigned long long> >+;
