@@ -26,8 +26,9 @@ PythonReconstructionAlgorithm::~PythonReconstructionAlgorithm () {
   //if ( fPySelf == Py_None ) {
   //  Py_DECREF( fPySelf );
   //}
-  if (fPySelf)
+  if (fPySelf) {
     Py_DECREF(fPySelf);
+  }
 }
 
 void  PythonReconstructionAlgorithm::Init (Option_t *options) {
@@ -67,11 +68,13 @@ void PythonReconstructionAlgorithm::SetupPySelf() {
            *po_SYSpath = NULL;
 
   // Initialize python if need be
-  if (!Py_IsInitialized())
+  if (!Py_IsInitialized()) {
     Py_Initialize();
+  }
 
-  if (fPySelf) 
+  if (fPySelf) {
     Py_DECREF(fPySelf);
+  }
 
   // Load sys module and add user's path as first element to sys.path
   po_SYSmod = PyImport_ImportModule("sys");

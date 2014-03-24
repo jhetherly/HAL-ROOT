@@ -56,7 +56,7 @@ public:
   
   Poly2DInterp (Double_t *x1_values, Double_t *x2_values, Int_t x1_size,
                 Int_t x2_size, Double_t **y_matrix, Int_t x1_order, Int_t x2_order)
-    : y(y_matrix), m(x1_size), n(x2_size), mm(x1_order), nn(x2_order), 
+    : y(y_matrix), /*m(x1_size), n(x2_size),*/ mm(x1_order), nn(x2_order), 
       x1terp(x1_values, NULL, x1_size, mm), x2terp(x2_values, NULL, x2_size, nn) {}
 
   Double_t Interp (const Double_t &x1_value, const Double_t &x2_value);
@@ -64,7 +64,8 @@ public:
   Double_t GetX2Error () {return x2terp.dy;}
 
 private:
-  Int_t m, n, mm, nn;
+  //Int_t m, n, mm, nn;
+  Int_t mm, nn;
   PolyInterp x1terp, x2terp;
 };
 
