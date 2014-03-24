@@ -1096,7 +1096,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvB[fStorageIndex].clear();
       for (Int_t i = 0; i < n; ++i) {
-        std::vector<Bool_t> row;
+        std::vector<bool> row;
         fTreeReader->fvvB[fStorageIndex].push_back(row);
         for (Int_t j = 0; j < m; ++j)
           fTreeReader->fvvB[fStorageIndex].back().push_back(temp[i][j]);
@@ -1110,7 +1110,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       for (Int_t i = 0; i < n; ++i) {
-        std::vector<Long64_t> row;
+        std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         for (Int_t j = 0; j < m; ++j)
           fTreeReader->fvvI[fStorageIndex].back().push_back(temp[i][j]);
@@ -1124,7 +1124,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       for (Int_t i = 0; i < n; ++i) {
-        std::vector<Long64_t> row;
+        std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         for (Int_t j = 0; j < m; ++j)
           fTreeReader->fvvI[fStorageIndex].back().push_back(temp[i][j]);
@@ -1138,7 +1138,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       for (Int_t i = 0; i < n; ++i) {
-        std::vector<Long64_t> row;
+        std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         for (Int_t j = 0; j < m; ++j)
           fTreeReader->fvvI[fStorageIndex].back().push_back(temp[i][j]);
@@ -1152,7 +1152,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       for (Int_t i = 0; i < n; ++i) {
-        std::vector<Long64_t> row;
+        std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         for (Int_t j = 0; j < m; ++j)
           fTreeReader->fvvI[fStorageIndex].back().push_back(temp[i][j]);
@@ -1166,7 +1166,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       for (Int_t i = 0; i < n; ++i) {
-        std::vector<Long64_t> row;
+        std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         for (Int_t j = 0; j < m; ++j)
           fTreeReader->fvvI[fStorageIndex].back().push_back(temp[i][j]);
@@ -1180,7 +1180,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       for (Int_t i = 0; i < n; ++i) {
-        std::vector<ULong64_t> row;
+        std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         for (Int_t j = 0; j < m; ++j)
           fTreeReader->fvvC[fStorageIndex].back().push_back(temp[i][j]);
@@ -1194,7 +1194,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       for (Int_t i = 0; i < n; ++i) {
-        std::vector<ULong64_t> row;
+        std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         for (Int_t j = 0; j < m; ++j)
           fTreeReader->fvvC[fStorageIndex].back().push_back(temp[i][j]);
@@ -1208,7 +1208,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       for (Int_t i = 0; i < n; ++i) {
-        std::vector<ULong64_t> row;
+        std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         for (Int_t j = 0; j < m; ++j)
           fTreeReader->fvvC[fStorageIndex].back().push_back(temp[i][j]);
@@ -1222,7 +1222,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       for (Int_t i = 0; i < n; ++i) {
-        std::vector<ULong64_t> row;
+        std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         for (Int_t j = 0; j < m; ++j)
           fTreeReader->fvvC[fStorageIndex].back().push_back(temp[i][j]);
@@ -1236,7 +1236,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       for (Int_t i = 0; i < n; ++i) {
-        std::vector<ULong64_t> row;
+        std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         for (Int_t j = 0; j < m; ++j)
           fTreeReader->fvvC[fStorageIndex].back().push_back(temp[i][j]);
@@ -1250,7 +1250,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
       for (Int_t i = 0; i < n; ++i) {
-        std::vector<LongDouble_t> row;
+        std::vector<long double> row;
         fTreeReader->fvvD[fStorageIndex].push_back(row);
         for (Int_t j = 0; j < m; ++j)
           fTreeReader->fvvD[fStorageIndex].back().push_back(temp[i][j]);
@@ -1264,7 +1264,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
       for (Int_t i = 0; i < n; ++i) {
-        std::vector<LongDouble_t> row;
+        std::vector<long double> row;
         fTreeReader->fvvD[fStorageIndex].push_back(row);
         for (Int_t j = 0; j < m; ++j)
           fTreeReader->fvvD[fStorageIndex].back().push_back(temp[i][j]);
@@ -1278,7 +1278,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
       for (Int_t i = 0; i < n; ++i) {
-        std::vector<LongDouble_t> row;
+        std::vector<long double> row;
         fTreeReader->fvvD[fStorageIndex].push_back(row);
         for (Int_t j = 0; j < m; ++j)
           fTreeReader->fvvD[fStorageIndex].back().push_back(temp[i][j]);
@@ -1588,7 +1588,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvB[fStorageIndex].clear();
       for (std::vector<std::vector<bool> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
-        std::vector<Bool_t> row;
+        std::vector<bool> row;
         fTreeReader->fvvB[fStorageIndex].push_back(row);
         for (std::vector<bool>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvB[fStorageIndex].back().push_back(*it);
@@ -1601,7 +1601,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       for (std::vector<std::vector<int> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
-        std::vector<Long64_t> row;
+        std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         for (std::vector<int>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvI[fStorageIndex].back().push_back(*it);
@@ -1614,7 +1614,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       for (std::vector<std::vector<short> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
-        std::vector<Long64_t> row;
+        std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         for (std::vector<short>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvI[fStorageIndex].back().push_back(*it);
@@ -1627,7 +1627,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       for (std::vector<std::vector<long> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
-        std::vector<Long64_t> row;
+        std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         for (std::vector<long>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvI[fStorageIndex].back().push_back(*it);
@@ -1640,7 +1640,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       for (std::vector<std::vector<long long> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
-        std::vector<Long64_t> row;
+        std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         for (std::vector<long long>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvI[fStorageIndex].back().push_back(*it);
@@ -1653,7 +1653,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       for (std::vector<std::vector<signed char> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
-        std::vector<Long64_t> row;
+        std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         for (std::vector<signed char>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvI[fStorageIndex].back().push_back(*it);
@@ -1666,7 +1666,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       for (std::vector<std::vector<unsigned int> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
-        std::vector<ULong64_t> row;
+        std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         for (std::vector<unsigned int>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvC[fStorageIndex].back().push_back(*it);
@@ -1679,7 +1679,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       for (std::vector<std::vector<unsigned short> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
-        std::vector<ULong64_t> row;
+        std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         for (std::vector<unsigned short>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvC[fStorageIndex].back().push_back(*it);
@@ -1692,7 +1692,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       for (std::vector<std::vector<unsigned long> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
-        std::vector<ULong64_t> row;
+        std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         for (std::vector<unsigned long>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvC[fStorageIndex].back().push_back(*it);
@@ -1705,7 +1705,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       for (std::vector<std::vector<unsigned long long> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
-        std::vector<ULong64_t> row;
+        std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         for (std::vector<unsigned long long>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvC[fStorageIndex].back().push_back(*it);
@@ -1718,7 +1718,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       for (std::vector<std::vector<unsigned char> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
-        std::vector<ULong64_t> row;
+        std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         for (std::vector<unsigned char>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvC[fStorageIndex].back().push_back(*it);
@@ -1731,7 +1731,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
       for (std::vector<std::vector<float> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
-        std::vector<LongDouble_t> row;
+        std::vector<long double> row;
         fTreeReader->fvvD[fStorageIndex].push_back(row);
         for (std::vector<float>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvD[fStorageIndex].back().push_back(*it);
@@ -1744,7 +1744,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
       for (std::vector<std::vector<double> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
-        std::vector<LongDouble_t> row;
+        std::vector<long double> row;
         fTreeReader->fvvD[fStorageIndex].push_back(row);
         for (std::vector<double>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvD[fStorageIndex].back().push_back(*it);
@@ -1757,7 +1757,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
       for (std::vector<std::vector<long double> >::iterator iit = temp->begin(); iit != temp->end(); ++iit) {
-        std::vector<LongDouble_t> row;
+        std::vector<long double> row;
         fTreeReader->fvvD[fStorageIndex].push_back(row);
         for (std::vector<long double>::iterator it = iit->begin(); it != iit->end(); ++it)
           fTreeReader->fvvD[fStorageIndex].back().push_back(*it);

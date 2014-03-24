@@ -35,9 +35,10 @@ void  PythonReconstructionAlgorithm::Init (Option_t *options) {
   SetupPySelf();
 
   // Setup DataList on python side
-  PyObject *result = CallSelf("AssignDataList", Py_BuildValue("(N)", PyCapsule_New(fDataList, NULL, NULL)));
+  // Can't use PyCapsule_New on versions of python < 2.7
+  //PyObject *result = CallSelf("AssignDataList", Py_BuildValue("(N)", PyCapsule_New(fDataList, NULL, NULL)));
   
-  result = CallSelf("Init", Py_BuildValue("(s)", options));
+  PyObject *result = CallSelf("Init", Py_BuildValue("(s)", options));
 
   Py_XDECREF( result );
 }

@@ -19,6 +19,7 @@ public:
   void          SetTreeName (TString tname) {fTreeName = tname;}
   void          SetTreeDescription (TString tdescription) {fTreeDescription = tdescription;}
   void          WriteData ();
+  using AnalysisData::SetValue;
   // Bool values
   virtual void  SetValue (std::string n, bool v);
   virtual void  SetValue (std::string n, bool v, long long i);

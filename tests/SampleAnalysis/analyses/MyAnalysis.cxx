@@ -36,7 +36,11 @@ int main(int argc, char *argv[]) {
   //a.MapBranch("Jet.Eta", "jet_eta");
   //a.MapBranch("Jet.Phi", "jet_phi");
   //a.MapBranch("Jet.Mass", "jet_m");
+  //a.MapBranch("jet_AntiKt4LCTopo_n", "jet_n");
   //a.MapBranch("jet_AntiKt4LCTopo_pt", "jet_pt");
+  //a.MapBranch("jet_AntiKt4LCTopo_eta", "jet_eta");
+  //a.MapBranch("jet_AntiKt4LCTopo_phi", "jet_phi");
+  //a.MapBranch("jet_AntiKt4LCTopo_m", "jet_m");
 
   // Actually run the analysis
   //a.Process("", 50);

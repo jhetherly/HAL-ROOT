@@ -67,7 +67,7 @@ public:
 
     // Remove those di-jet objects whose mass is < 500.0 GeV
     if (data->GetTObject("di-jet p") == NULL ||
-        ((TLorentzVector*)data->GetTObject("di-jet p"))->M() < 500.0) {
+        ((TLorentzVector*)data->GetTObject("di-jet p"))->M() < 500000.0) {
       Abort(); 
       return;
     }
