@@ -91,15 +91,15 @@ CompileSource ()
   runCintCommand = runCintCommand.Append(includeListString.Data());
 
   // Make dictionary
-  std::cout << "Building HAL's CINT dictionary..." << std::endl;
+  std::cout << std::endl << "Building HAL's CINT dictionary..." << std::endl;
   runCintResult = gSystem->GetFromPipe(gSystem->ExpandPathName(runCintCommand.Data()));
-  if (runCintResult.CompareTo("")) {
-    std::cout << "Something prevented rootcint from making dictionary smoothly." <<
-      " I will try to make the shared library regardless." << std::endl;
-    std::cout << runCintResult << std::endl;
-  }
-  else
-    std::cout << "Success!" << std::endl;
+  //if (runCintResult.CompareTo("")) {
+  //  std::cout << "Something prevented rootcint from making dictionary smoothly." <<
+  //    " I will try to make the shared library regardless." << std::endl;
+  //  std::cout << runCintResult << std::endl;
+  //}
+  //else
+  //  std::cout << "Success!" << std::endl;
   
   // Get the list of source (and object) files (files in the src dir and affixed with srcSufix)
   dir.SetDirectory(srcPathString.Data());
@@ -132,22 +132,23 @@ CompileSource ()
   objSuffix.Prepend(".");
   gSystem->SetObjExt(objSuffix.Data());
   // Make the library
-  std::cout << "Creating the HAL shared library..." << std::endl;
+  std::cout << std::endl << "Creating the HAL shared library..." << std::endl;
   makeLibCommands.Append(linkingInstruction.Data()).Data();
   makeLibResult = gSystem->GetFromPipe(gSystem->ExpandPathName(makeLibCommands.Data()));
-  std::cout << makeLibResult << std::endl;
-  if (makeLibResult.CompareTo("")) {
-    std::cout << "Compilation or linking may have ran into problems." << std::endl;
-    std::cout << makeLibResult << std::endl;
-  }
-  else
-    std::cout << "Success!" << std::endl;
+  std::cout <<"Link to " << buildPathString.Data() << " to access the library."  << std::endl;
+  std::cout <<"Link python to " << buildPathString.Data() << " to access HAL.py."  << std::endl;
+  //if (makeLibResult.CompareTo("")) {
+  //  std::cout << "Compilation or linking may have ran into problems." << std::endl;
+  //  std::cout << makeLibResult << std::endl;
+  //}
+  //else
+  //  std::cout << "Success!" << std::endl;
 
-  if (!runCintResult.CompareTo("") && !makeLibResult.CompareTo("")) {
-    std::cout << "All source files compiled successfully!" << std::endl <<"Link to " << 
-      buildPathString.Data() << " to access the library."  << std::endl;
-  }
-  else {
-    std::cout << "There may have been a problem making the library." << std::endl;
-  }
+  //if (!runCintResult.CompareTo("") && !makeLibResult.CompareTo("")) {
+  //  std::cout << "All source files compiled successfully!" << std::endl <<"Link to " << 
+  //    buildPathString.Data() << " to access the library."  << std::endl;
+  //}
+  //else {
+  //  std::cout << "There may have been a problem making the library." << std::endl;
+  //}
 }

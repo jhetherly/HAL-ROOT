@@ -37,11 +37,14 @@
  * Most of the parameters are customizable and listed in the 
  * arguement list below. If you need the default value for a
  * parameter, just input a "" as the arguement.
+ *
  * */
 
 CompileAnalysis (TString HAL_dir,             // Directory of HAL framework
                  TString analysis_src,        // Analysis source file (include extension)
                  TString exe_name = "",       // Executable name
+                 TString user_inc_flag = "",  // Additional user include flag(s)
+                 TString user_lib_flag = "",  // Additional user library flag(s)
                  TString header_suffix = "",  // Header files suffix
                  TString source_suffix = "",  // Source files suffix
                  TString include_dir = "",    // Header files directory
@@ -92,13 +95,17 @@ CompileAnalysis (TString HAL_dir,             // Directory of HAL framework
   includePathFlag.Prepend("-I");
   HAL_IncDir.Prepend(" -I");
   includePathFlag.Append(HAL_IncDir.Data());
-  if (versionNumber >= 53417) // versions before 5.34.17 don't define LongDouble_t
+  if (user_inc_flag.CompareTo(""))
+    includePathFlag.Prepend(" ").Prepend(user_inc_flag);
+  if (versionNumber >= 53417) // versions before 5.34.17 don't typedef LongDouble_t
     includePathFlag.Prepend("-DLONGDOUBLE ");
   buildPathString = buildDir;
   buildPathString = gSystem->PrependPathName(currentDir.Data(), buildPathString);
   linkPathFlag = " -L";
   linkPathFlag.Append(HAL_LibDir.Data());
   linkPathFlag.Append(" -lHAL");
+  if (user_lib_flag.CompareTo(""))
+    linkPathFlag.Append(" ").Append(user_lib_flag);
 
   // Set up environment for compiling and linking libraries
   gSystem->AddIncludePath(includePathFlag.Data());
@@ -148,11 +155,11 @@ CompileAnalysis (TString HAL_dir,             // Directory of HAL framework
   // Make the executable
   std::cout << "Creating your analysis executable..." << std::endl;
   makeExeResult = gSystem->GetFromPipe(gSystem->ExpandPathName(makeExeCommands.Append(linkingInstruction.Data()).Data()));
-  if (makeExeResult.CompareTo("")) {
-    std::cout << "Compilation or linking may have ran into problems." << std::endl;
-    std::cout << makeExeResult << std::endl;
-  }
-  else
-    std::cout << "Success!" << std::endl;
+  //if (makeExeResult.CompareTo("")) {
+  //  std::cout << "Compilation or linking may have ran into problems." << std::endl;
+  //  std::cout << makeExeResult << std::endl;
+  //}
+  //else
+  //  std::cout << "Success!" << std::endl;
 
 }
