@@ -18,15 +18,15 @@ This software requires a working version of ROOT along with a compatable version
 if one is to use HAL.py (in other words, you need to be able to use PyROOT from anywhere
 in your system). Additionally, it requires a few modifications to your ROOT and python
 environments. Here are the steps to installing this software:  
-1. Run the CompileSource.C macro as described above
-2. Add the 'lib' folder to your Unix.*.Root.DynamicPath (or Windows equivalent) in .rootrc
+1. Run the CompileSource.C macro as described above  
+2. Add the 'lib' folder to your Unix.*.Root.DynamicPath (or Windows equivalent) in .rootrc  
 3. Add the 'include' folder to your ACLiC include path in .rootrc
-(e.g. ACLiC.IncludePaths:   -I$(HOME)/src/HAL-ROOT/include)
+(e.g. ACLiC.IncludePaths:   -I$(HOME)/src/HAL-ROOT/include)  
 3. Add the 'lib/python' folder to your PYTHONPATH
-4. Optionally you can add 'lib' to Unix.*.Root.MacroPath for easy loading of the library in
+4. Optionally you can add 'lib' to Unix.*.Root.MacroPath for easy loading of the library in  
 an interactive ROOT session (e.g. '.L libHAL.so')
 
-# Documentation:
+# Documentation
 There is no formal documentation for this software, but the header/source files have 
 explainatory comments or self-explainatory function names/parameters.
 
