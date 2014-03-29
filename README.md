@@ -1,17 +1,17 @@
-Introduction
-This is my personal custom ROOT library. It contains several functions and classes
+# Introduction
+This is my personal, custom ROOT library. It contains several functions and classes
 that aid in analyzing high energy physics data. All macros are meant to be used in their
 compiled form and may be too complex for the CINT interpreter. To aid in the compilation
 of all the source code, a macro entitled 'CompileSource.C' can be executed from the
 command line by 'root -q -b -l CompileSource.C'. All functions and classes are available
 in python from the lib/python/HAL.py module. Furthermore, everything lives in the 'HAL'
-namespace. HAL stands
-for
+namespace. HAL stands for
 H - H.E.P.
 A - Analysis
 L - Library
-Of course, this is also a thinly veiled reference to the classic "2001: A Space Odyssey"'s
-villian. But, I personally think this bit of software is far less pernicious.
+Of course, this is also a thinly veiled reference to the villian in the classic 
+"2001: A Space Odyssey." But, I personally think this bit of software is far less 
+pernicious.
 
 Requirements and 'Installation'
 This software requires a working version of ROOT along with a compatable version of python
