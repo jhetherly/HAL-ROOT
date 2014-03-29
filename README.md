@@ -13,17 +13,17 @@ Of course, this is also a thinly veiled reference to the villian in the classic
 "2001: A Space Odyssey." But, I personally think this bit of software is far less 
 pernicious.
 
-# Requirements and 'Installation'
+# Requirements and Installation
 This software requires a working version of ROOT along with a compatable version of python
 if one is to use HAL.py (in other words, you need to be able to use PyROOT from anywhere
 in your system). Additionally, it requires a few modifications to your ROOT and python
-environments. Here are the steps to 'installing' this software:  
-1.  Run the CompileSource.C macro as described above
-2.  Add the 'lib' folder to your Unix.*.Root.DynamicPath (or Windows equivalent) in .rootrc
-3.  Add the 'include' folder to your ACLiC include path in .rootrc
+environments. Here are the steps to installing this software:  
+1. Run the CompileSource.C macro as described above
+2. Add the 'lib' folder to your Unix.*.Root.DynamicPath (or Windows equivalent) in .rootrc
+3. Add the 'include' folder to your ACLiC include path in .rootrc
 (e.g. ACLiC.IncludePaths:   -I$(HOME)/src/HAL-ROOT/include)
-3.  Add the 'lib/python' folder to your PYTHONPATH
-4.  Optionally you can add 'lib' to Unix.*.Root.MacroPath for easy loading of the library in
+3. Add the 'lib/python' folder to your PYTHONPATH
+4. Optionally you can add 'lib' to Unix.*.Root.MacroPath for easy loading of the library in
 an interactive ROOT session (e.g. '.L libHAL.so')
 
 # Documentation:
