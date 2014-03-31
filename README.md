@@ -33,7 +33,7 @@ extensive user's guide is located in the 'docs' folder.
 # Analysis
 To aid in rapid development of physics analysis, a ROOT macro for compiling user's
 algorithms and analyses is provided in the SampleAnalysis subfolder. Instructions for how
-to use this macro is given at the top of the macro.
+to use this macro are given at the top of the macro.
 
 # Testing
 To test that everything is correctly there are several macros and python scripts in the
@@ -42,3 +42,12 @@ tests folder. They should work like any other ROOT macro or python script
 SampleAnalysis subfolder.
 
 # TODO
+- [ ] Write Doxygen and Users' Guide
+- [ ] Make more generic algorithms
+- [ ] Add counter to CutAlgorithm class and efficiency report
+- [ ] Implement 'RawData,' 'UserData,' and 'UserOutput' as members of Algorithm
+- [ ] Make python class for Algorithm share fInput TList with C++ and vice versa
+- [ ] Improve usability of Interpolator class
+- [ ] Expand AnalysisTreeReader to read in histograms
+- [ ] Allow for weigths in CutOptimizer
+- [ ] Develop CMake build system
