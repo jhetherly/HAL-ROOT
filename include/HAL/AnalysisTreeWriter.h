@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <iostream>
 #include <HAL/Common.h>
 #include <HAL/Exceptions.h>
 #include <HAL/AnalysisData.h>

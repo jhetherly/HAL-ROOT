@@ -1,6 +1,5 @@
 #include "HAL.h"
 #include <TLorentzVector.h>
-#include <iostream>
 
 class DiJetReco : public HAL::ReconstructionAlgorithm {
 public:

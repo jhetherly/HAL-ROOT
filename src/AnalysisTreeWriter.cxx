@@ -86,6 +86,8 @@ void AnalysisTreeWriter::WriteData() {
     std::string bname = outer->first;
     std::vector<bool> *values = new std::vector<bool>;
 
+    std::cout << "Creating vector<bool> branch: " << bname << std::endl;
+
     for (std::map<long long, bool>::iterator inner = outer->second.begin();
         inner != outer->second.end(); ++inner) {
       bool value = inner->second;
@@ -98,6 +100,8 @@ void AnalysisTreeWriter::WriteData() {
     std::string bname = outer->first;
     //std::vector<long double> *values = new std::vector<long double>;
     std::vector<double> *values = new std::vector<double>;
+
+    std::cout << "Creating vector<double> branch: " << bname << std::endl;
 
     for (std::map<long long, long double>::iterator inner = outer->second.begin();
         inner != outer->second.end(); ++inner) {
@@ -113,6 +117,8 @@ void AnalysisTreeWriter::WriteData() {
     std::string bname = outer->first;
     std::vector<long long> *values = new std::vector<long long>;
 
+    std::cout << "Creating vector<long long> branch: " << bname << std::endl;
+
     for (std::map<long long, long long>::iterator inner = outer->second.begin();
         inner != outer->second.end(); ++inner) {
       long long value = inner->second;
@@ -125,6 +131,8 @@ void AnalysisTreeWriter::WriteData() {
     std::string bname = outer->first;
     std::vector<unsigned long long> *values = new std::vector<unsigned long long>;
 
+    std::cout << "Creating vector<unsigned long long> branch: " << bname << std::endl;
+
     for (std::map<long long, unsigned long long>::iterator inner = outer->second.begin();
         inner != outer->second.end(); ++inner) {
       unsigned long long value = inner->second;
@@ -136,6 +144,8 @@ void AnalysisTreeWriter::WriteData() {
       outer != fBoolIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
     std::vector<std::vector<bool> > *values = new std::vector<std::vector<bool> >;
+
+    std::cout << "Creating vector<vector<bool> > branch: " << bname << std::endl;
 
     for (std::map<long long, std::map<long long, bool> >::iterator middle = outer->second.begin();
         middle != outer->second.end(); ++middle) {
@@ -154,6 +164,8 @@ void AnalysisTreeWriter::WriteData() {
     std::string bname = outer->first;
     //std::vector<std::vector<long double> > *values = new std::vector<std::vector<long double> >;
     std::vector<std::vector<double> > *values = new std::vector<std::vector<double> >;
+
+    std::cout << "Creating vector<vector<double> > branch: " << bname << std::endl;
 
     for (std::map<long long, std::map<long long, long double> >::iterator middle = outer->second.begin();
         middle != outer->second.end(); ++middle) {
@@ -175,6 +187,8 @@ void AnalysisTreeWriter::WriteData() {
     std::string bname = outer->first;
     std::vector<std::vector<long long> > *values = new std::vector<std::vector<long long> >;
 
+    std::cout << "Creating vector<vector<long long> > branch: " << bname << std::endl;
+
     for (std::map<long long, std::map<long long, long long> >::iterator middle = outer->second.begin();
         middle != outer->second.end(); ++middle) {
       std::vector<long long> row;
@@ -191,6 +205,8 @@ void AnalysisTreeWriter::WriteData() {
       outer != fCountingIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
     std::vector<std::vector<unsigned long long> > *values = new std::vector<std::vector<unsigned long long> >;
+
+    std::cout << "Creating vector<vector<unsigned long long> > branch: " << bname << std::endl;
 
     for (std::map<long long, std::map<long long, unsigned long long> >::iterator middle = outer->second.begin();
         middle != outer->second.end(); ++middle) {

@@ -119,6 +119,15 @@ public:
   std::map<std::string, std::map<long long, std::map<long long, TObject*> > >           fTObjectIntIntMap;
 
   ClassDefNV(AnalysisData, 0);
+
+private:
+  enum StorageType {kB, kD, kI, kC, kS, kO,
+                    kIB, kID, kII, kIC, kIS, kIO,
+                    kIIB, kIID, kIII, kIIC, kIIS, kIIO};
+
+  std::map<std::string, StorageType>  fNameTypeMap;
+
+  bool NameAlreadyStored (std::string n) {return fNameTypeMap.count(n) != 0 ? true : false;}
 };
 
 } /*  HAL */ 
