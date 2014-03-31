@@ -14,3 +14,10 @@
 #include <HAL/PlotUtils.h>
 #include <HAL/PythonReconstructionAlgorithm.h>
 #include <HAL/ReconstructionAlgorithm.h>
+
+/*!
+ * \mainpage The H.E.P. %Analysis Library
+ *
+ * \section intro_sec Introduction
+ * */
+

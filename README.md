@@ -43,12 +43,12 @@ SampleAnalysis subfolder.
 
 # TODO
 
-- [x] Write Doxygen and Users' Guide
-- [ ] Make more generic algorithms
-- [ ] Add counter to CutAlgorithm class and efficiency report
-- [ ] Implement 'RawData,' 'UserData,' and 'UserOutput' as members of Algorithm
-- [ ] Make python class for Algorithm share fInput TList with C++ and vice versa
-- [ ] Improve usability of Interpolator class
-- [ ] Expand AnalysisTreeReader to read in histograms
-- [ ] Allow for weigths in CutOptimizer
-- [ ] Develop CMake build system
+- Write Doxygen and Users' Guide
+- Make more generic algorithms
+- Add counter to CutAlgorithm class and efficiency report
+- Implement 'RawData,' 'UserData,' and 'UserOutput' as members of Algorithm
+- Make python class for Algorithm share fInput TList with C++ and vice versa
+- Improve usability of Interpolator class
+- Expand AnalysisTreeReader to read in histograms
+- Allow for weigths in CutOptimizer
+- Develop CMake build system
