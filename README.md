@@ -43,7 +43,7 @@ SampleAnalysis subfolder.
 
 # TODO
 
-- [ ] Write Doxygen and Users' Guide
+- [x] Write Doxygen and Users' Guide
 - [ ] Make more generic algorithms
 - [ ] Add counter to CutAlgorithm class and efficiency report
 - [ ] Implement 'RawData,' 'UserData,' and 'UserOutput' as members of Algorithm
