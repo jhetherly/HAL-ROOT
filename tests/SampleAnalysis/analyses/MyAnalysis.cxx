@@ -22,19 +22,23 @@ int main(int argc, char *argv[]) {
   //      "/Users/jhetherly/src/root_HAL/tests/SampleAnalysis/algorithms/python", 
   //      "pyalgo", 
   //      "PythonAlgo"));
-  a.AddRecoAlgo(new HAL::IA0001("electrons", "base electron import"));
+  a.AddRecoAlgo(new HAL::IA0021("jets", "import basic jet objects"));
+  a.AddRecoAlgo(new HAL::FA0000("leading pt jet", "find highest pt jet", 
+                                "jets", // input algorithm
+                                1)); // rank in pt (0 = first)
+  a.AddRecoAlgo(new HAL::FA0000("subleading pt jet", "find 2nd highest pt jet", 
+                                "jets", // input algorithm
+                                2)); // rank in pt (1 = second)
+  a.AddRecoAlgo(new PrintJets());
   a.AddRecoAlgo(new DiJetReco());
   a.AddCutAlgo(new DiJetCut());
 
   // Assign any branch maps
-  a.MapBranch("el_n", "electrons:nentries");
-  a.MapBranch("el_pt", "electrons:x1");
-  a.MapBranch("el_eta", "electrons:x2");
-  a.MapBranch("el_phi", "electrons:x3");
-  a.MapBranch("el_m", "electrons:x0");
-  a.MapBranch("jet_AntiKt4TruthJets_eta", "jet_eta");
-  a.MapBranch("jet_AntiKt4TruthJets_phi", "jet_phi");
-  a.MapBranch("jet_AntiKt4TruthJets_m", "jet_m");
+  a.MapBranch("jet_AntiKt4TruthJets_pt", "jets:pT");
+  a.MapBranch("jet_AntiKt4TruthJets_eta", "jets:eta");
+  a.MapBranch("jet_AntiKt4TruthJets_phi", "jets:phi");
+  a.MapBranch("jet_AntiKt4TruthJets_m", "jets:m");
+
   a.MapBranch("jet_AntiKt4TruthJets_n", "jet_n");
   a.MapBranch("jet_AntiKt4TruthJets_pt", "jet_pt");
   a.MapBranch("jet_AntiKt4TruthJets_eta", "jet_eta");

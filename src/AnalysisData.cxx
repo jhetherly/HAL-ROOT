@@ -481,5 +481,152 @@ TObject* AnalysisData::GetTObject (std::string name, long long i, long long j) {
   throw HALException(name.insert(0, "Error retrieving data: ").c_str());
 }
 
+unsigned AnalysisData::TypeDim (std::string n) {
+  if (fNameTypeMap[n] == kB || fNameTypeMap[n] == kD ||
+      fNameTypeMap[n] == kI || fNameTypeMap[n] == kC ||
+      fNameTypeMap[n] == kS || fNameTypeMap[n] == kO)
+    return 0;
+  if (fNameTypeMap[n] == kIB || fNameTypeMap[n] == kID ||
+      fNameTypeMap[n] == kII || fNameTypeMap[n] == kIC ||
+      fNameTypeMap[n] == kIS || fNameTypeMap[n] == kIO)
+    return 1;
+  if (fNameTypeMap[n] == kIIB || fNameTypeMap[n] == kIID ||
+      fNameTypeMap[n] == kIII || fNameTypeMap[n] == kIIC ||
+      fNameTypeMap[n] == kIIS || fNameTypeMap[n] == kIIO)
+    return 2;
+  throw HALException("Type dimension couldn't be determined.");
+}
+
+std::vector<std::string> AnalysisData::GetSimilarNames (std::string n, unsigned min_dim) {
+  std::vector<std::string> names;
+  std::map<std::string, StorageType>::iterator  it;
+  // pick out ^<name>:
+  TRegexp pat(n.substr(0, n.find_first_of(':')).insert(0, "^").c_str());
+
+  for (it = fNameTypeMap.begin(); it != fNameTypeMap.end(); ++it) {
+    TString name(it->first.c_str());
+    if (name.Contains(pat) && TypeDim(it->first) >= min_dim && it->first != n)
+      names.push_back(it->first);
+  }
+  
+  return names;
+}
+
+void AnalysisData::CopyValues (std::string from, std::string to) {
+  if (TypeDim(from) == 0) {
+    if (fNameTypeMap[from] == kB)
+      fBoolMap[to] = fBoolMap[from];
+    else if (fNameTypeMap[from] == kD)
+      fDecimalMap[to] = fDecimalMap[from];
+    else if (fNameTypeMap[from] == kI)
+      fIntegerMap[to] = fIntegerMap[from];
+    else if (fNameTypeMap[from] == kC)
+      fCountingMap[to] = fCountingMap[from];
+    else if (fNameTypeMap[from] == kS)
+      fStringMap[to] = fStringMap[from];
+    else if (fNameTypeMap[from] == kO)
+      fTObjectMap[to] = fTObjectMap[from];
+  }
+  else if (TypeDim(from) == 1) {
+    if (fNameTypeMap[from] == kIB)
+      fBoolIntMap[to] = fBoolIntMap[from];
+    else if (fNameTypeMap[from] == kID)
+      fDecimalIntMap[to] = fDecimalIntMap[from];
+    else if (fNameTypeMap[from] == kII)
+      fIntegerIntMap[to] = fIntegerIntMap[from];
+    else if (fNameTypeMap[from] == kIC)
+      fCountingIntMap[to] = fCountingIntMap[from];
+    else if (fNameTypeMap[from] == kIS)
+      fStringIntMap[to] = fStringIntMap[from];
+    else if (fNameTypeMap[from] == kIO)
+      fTObjectIntMap[to] = fTObjectIntMap[from];
+  }
+  else if (TypeDim(from) == 2) {
+    if (fNameTypeMap[from] == kIIB)
+      fBoolIntIntMap[to] = fBoolIntIntMap[from];
+    else if (fNameTypeMap[from] == kIID)
+      fDecimalIntIntMap[to] = fDecimalIntIntMap[from];
+    else if (fNameTypeMap[from] == kIII)
+      fIntegerIntIntMap[to] = fIntegerIntIntMap[from];
+    else if (fNameTypeMap[from] == kIIC)
+      fCountingIntIntMap[to] = fCountingIntIntMap[from];
+    else if (fNameTypeMap[from] == kIIS)
+      fStringIntIntMap[to] = fStringIntIntMap[from];
+    else if (fNameTypeMap[from] == kIIO)
+      fTObjectIntIntMap[to] = fTObjectIntIntMap[from];
+  }
+}
+
+void AnalysisData::Swap (std::string n, long long i, long long j) {
+  if (TypeDim(n) == 1) {
+    if (fNameTypeMap[n] == kIB) {
+      bool temp = fBoolIntMap[n][i];
+      fBoolIntMap[n][i] = fBoolIntMap[n][j];
+      fBoolIntMap[n][j] = temp;
+    }
+    else if (fNameTypeMap[n] == kID) {
+      long double temp = fDecimalIntMap[n][i];
+      fDecimalIntMap[n][i] = fDecimalIntMap[n][j];
+      fDecimalIntMap[n][j] = temp;
+    }
+    else if (fNameTypeMap[n] == kII) {
+      long long temp = fIntegerIntMap[n][i];
+      fIntegerIntMap[n][i] = fIntegerIntMap[n][j];
+      fIntegerIntMap[n][j] = temp;
+    }
+    else if (fNameTypeMap[n] == kIC) {
+      unsigned long long temp = fCountingIntMap[n][i];
+      fCountingIntMap[n][i] = fCountingIntMap[n][j];
+      fCountingIntMap[n][j] = temp;
+    }
+    else if (fNameTypeMap[n] == kIS) {
+      std::string temp = fStringIntMap[n][i];
+      fStringIntMap[n][i] = fStringIntMap[n][j];
+      fStringIntMap[n][j] = temp;
+    }
+    else if (fNameTypeMap[n] == kIO) {
+      TObject *temp = fTObjectIntMap[n][i];
+      fTObjectIntMap[n][i] = fTObjectIntMap[n][j];
+      fTObjectIntMap[n][j] = temp;
+    }
+  }
+  else if (TypeDim(n) == 2) {
+    if (fNameTypeMap[n] == kIIB)
+      fBoolIntIntMap[n][i].swap(fBoolIntIntMap[n][j]);
+    else if (fNameTypeMap[n] == kIID)
+      fDecimalIntIntMap[n][i].swap(fDecimalIntIntMap[n][j]);
+    else if (fNameTypeMap[n] == kIII)
+      fIntegerIntIntMap[n][i].swap(fIntegerIntIntMap[n][j]);
+    else if (fNameTypeMap[n] == kIIC)
+      fCountingIntIntMap[n][i].swap(fCountingIntIntMap[n][j]);
+    else if (fNameTypeMap[n] == kIIS)
+      fStringIntIntMap[n][i].swap(fStringIntIntMap[n][j]);
+    else if (fNameTypeMap[n] == kIIO)
+      fTObjectIntIntMap[n][i].swap(fTObjectIntIntMap[n][j]);
+  }
+}
+
+void AnalysisData::Reset () {
+  fBoolMap.clear();
+  fDecimalMap.clear();
+  fIntegerMap.clear();
+  fCountingMap.clear();
+  fStringMap.clear();
+  fTObjectMap.clear();
+  fBoolIntMap.clear();
+  fDecimalIntMap.clear();
+  fIntegerIntMap.clear();
+  fCountingIntMap.clear();
+  fStringIntMap.clear();
+  fTObjectIntMap.clear();
+  fBoolIntIntMap.clear();
+  fDecimalIntIntMap.clear();
+  fIntegerIntIntMap.clear();
+  fCountingIntIntMap.clear();
+  fStringIntIntMap.clear();
+  fTObjectIntIntMap.clear();
+  fNameTypeMap.clear();
+}
+
 } /*  HAL */ 
 

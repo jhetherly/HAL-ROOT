@@ -83,6 +83,9 @@ Bool_t AnalysisSelector::Process (Long64_t entry) {
   // Execute (and then implicitly clean) all algorithms
   fAnalysisFlow->ExecuteAlgo(GetOption());
 
+  // Reset AnalysisData
+  ((AnalysisData*)fInput->FindObject("UserData"))->Reset();
+
   return kTRUE;
 }
 

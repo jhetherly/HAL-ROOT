@@ -3,8 +3,10 @@
 
 #include <TNamed.h>
 #include <TString.h>
+#include <TRegexp.h>
 #include <string>
 #include <map>
+#include <vector>
 #include <HAL/Common.h>
 #include <HAL/Exceptions.h>
 
@@ -94,6 +96,15 @@ public:
   unsigned long long  GetCounting (std::string, long long i = -1, long long j = -1);
   std::string         GetString (std::string, long long i = -1, long long j = -1);
   TObject*            GetTObject (std::string, long long i = -1, long long j = -1);
+
+  bool                      Exists (std::string n) {return NameAlreadyStored(n);}
+  unsigned                  TypeDim (std::string n);
+  std::vector<std::string>  GetSimilarNames (std::string n, unsigned min_dim);
+  // Copy value(s) stored in <map>[from] to <map>[to]
+  void                      CopyValues (std::string from, std::string to);
+  // Swap elements in a 1D or 2D IntMap or IntIntMap
+  void                      Swap (std::string n, long long i, long long j);
+  void                      Reset ();
 
 public:
   std::map<std::string, bool>                                 fBoolMap;
