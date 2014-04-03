@@ -31,8 +31,7 @@ int main(int argc, char *argv[]) {
                                 2)); // rank in pt
   const char* names[] = {"leading pt jet", "subleading pt jet"};
   a.AddRecoAlgo(new HAL::RA0000("di-jet", "reconstruct a di-jet object", 
-                                "leading pt jet", // first input algorithm
-                                "subleading pt jet", names, 2)); // second input algorithm
+                                names, 2));
   a.AddCutAlgo(new HAL::CA0003("di-jet mass cut", "cut on the mass of the di-jet system", 
                                "di-jet", 
                                500000.0));

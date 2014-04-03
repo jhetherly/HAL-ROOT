@@ -292,6 +292,7 @@ bool FA0000::operator() (long long lhs, long long rhs) {
   TLorentzVector *lhs_vec = (TLorentzVector*)data->GetTObject(fElementName.Data(), lhs);
   TLorentzVector *rhs_vec = (TLorentzVector*)data->GetTObject(fElementName.Data(), rhs);
 
+  // decending order (greatest to least)
   return (lhs_vec->Pt() > rhs_vec->Pt());
 }
 
@@ -304,9 +305,9 @@ void FA0000::Sort (std::vector<long long> &ip) {
  * */
 void RA0000::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
-  TString RealInput1, RealInput2;
-  long long Parent1Index, Parent2Index;
-  TLorentzVector *Parent1Vec, *Parent2Vec;
+  TString *RealInputs = new TString[fLength];
+  long long *ParentIndices = new long long[fLength];
+  TLorentzVector **ParentVecs = new TLorentzVector*[fLength];
   // scalars
   TString NObjectsOutput = TString::Format("%s:nobjects", GetName().Data());
   TString NParentsOutput = TString::Format("%s:nparents", GetName().Data());
@@ -316,27 +317,31 @@ void RA0000::Exec (Option_t* /*option*/) {
   TString ParentNamesOutput = TString::Format("%s:parent_ref_name", GetName().Data());
   TString ParentIndicesOutput = TString::Format("%s:parent_index", GetName().Data());
 
-  if (internal::determineAccessProtocol(data, fParent1Name, RealInput1) &&
-      internal::determineAccessProtocol(data, fParent2Name, RealInput2)) {
-    Parent1Index = data->GetInteger(TString::Format("%s:index", fParent1Name.Data()).Data(), 0);
-    Parent1Vec = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput1.Data()).Data(), Parent1Index);
-    Parent2Index = data->GetInteger(TString::Format("%s:index", fParent2Name.Data()).Data(), 0);
-    Parent2Vec = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput2.Data()).Data(), Parent2Index);
+  for (long long i = 0; i < fLength; ++i) {
+    TString pname(fParentNames[i]);
+    if (internal::determineAccessProtocol(data, pname, RealInputs[i])) {
+      ParentIndices[i] = data->GetInteger(TString::Format("%s:index", fParentNames[i]).Data(), 0);
+      ParentVecs[i] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInputs[i].Data()).Data(), ParentIndices[i]);
+    }
+    else
+      return;
   }
-  else
-    return;
 
-  TLorentzVector *vec = new TLorentzVector(*Parent1Vec);
-  vec->operator+=(*Parent2Vec);
+  TLorentzVector *vec = new TLorentzVector(*ParentVecs[0]);
+  for (long long i = 1; i < fLength; ++i)
+    vec->operator+=(*ParentVecs[i]);
 
   data->SetValue(NObjectsOutput.Data(), (long long)1);
-  data->SetValue(NParentsOutput.Data(), (long long)2);
+  data->SetValue(NParentsOutput.Data(), fLength);
   data->SetValue(VectorOutput.Data(), vec, 0);
   data->SetValue(IndexOutput.Data(), (long long)0, 0);
-  data->SetValue(ParentNamesOutput.Data(), fParent1Name, 0);
-  data->SetValue(ParentNamesOutput.Data(), fParent2Name, 1);
-  data->SetValue(ParentIndicesOutput.Data(), Parent1Index, 0);
-  data->SetValue(ParentIndicesOutput.Data(), Parent2Index, 1);
+  for (long long i = 0; i < fLength; ++i) {
+    data->SetValue(ParentNamesOutput.Data(), RealInputs[i], i);
+    data->SetValue(ParentIndicesOutput.Data(), ParentIndices[i], 0);
+  }
+  delete[] RealInputs;
+  delete[] ParentIndices;
+  delete[] ParentVecs;
 }
 
 void RA0000::Clear (Option_t* /*option*/) {

@@ -6,6 +6,7 @@
  *  - creates <name>:4-vec 1D array
  * All other Algorithms should never create or destroy objects in 'data'
  *  - creates <name>:ref_name scalar that points to the actual data (index refers to ref_name indices)
+ * ref_names should always reference direct access data, never reference a reference
  * */
 
 #ifndef HAL_ALGORITHMS
@@ -395,8 +396,8 @@ private:
  * */
 
 /*
- * Reconstruction algorithm to build particle from the two other
- * particles.
+ * Reconstruction algorithm to build particle from the
+ * addition of other particles.
  *
  * Prerequisites:
  *  Stored Particles
@@ -404,7 +405,7 @@ private:
  *  None
  * Output:
  *  <name>:nobjects (scalar: number of particles)
- *  <name>:nparents (scalar: number of parent particles (two in this case))
+ *  <name>:nparents (scalar: number of parent particles)
  *  <name>:4-vec (1D array: of TLorentzVector's (just one in this case))
  *  <name>:index (1D array: of indices (just one index))
  *  <name>:parent_ref_name (1D array: ref_names of parents)
@@ -412,16 +413,15 @@ private:
  */
 class RA0000: public Algorithm {
 public:
-  RA0000 (TString name, TString title, TString parent1, TString parent2, const char* names[], int length) :
-    Algorithm(name, title), fParent1Name(parent1), fParent2Name(parent2), fNames(names), fLength(length) {}
+  RA0000 (TString name, TString title, const char* names[], long long length) :
+    Algorithm(name, title), fParentNames(names), fLength(length) {}
   virtual ~RA0000() {}
 
   virtual void  Exec (Option_t* /*option*/);
   virtual void  Clear (Option_t* /*option*/);
 private:
-  TString       fParent1Name, fParent2Name;
-  const char**  fNames;
-  int           fLength;
+  const char**  fParentNames;
+  long long     fLength;
 };
 
 
