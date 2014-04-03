@@ -25,11 +25,21 @@ int main(int argc, char *argv[]) {
   a.AddRecoAlgo(new HAL::IA0021("jets", "import basic jet objects"));
   a.AddRecoAlgo(new HAL::FA0000("leading pt jet", "find highest pt jet", 
                                 "jets", // input algorithm
-                                1)); // rank in pt (0 = first)
+                                1)); // rank in pt
   a.AddRecoAlgo(new HAL::FA0000("subleading pt jet", "find 2nd highest pt jet", 
                                 "jets", // input algorithm
-                                2)); // rank in pt (1 = second)
-  a.AddRecoAlgo(new PrintJets());
+                                2)); // rank in pt
+  const char* names[] = {"leading pt jet", "subleading pt jet"};
+  a.AddRecoAlgo(new HAL::RA0000("di-jet", "reconstruct a di-jet object", 
+                                "leading pt jet", // first input algorithm
+                                "subleading pt jet", names, 2)); // second input algorithm
+  a.AddCutAlgo(new HAL::CA0003("di-jet mass cut", "cut on the mass of the di-jet system", 
+                               "di-jet", 
+                               500000.0));
+  a.AddCutAlgo(new HAL::EA0003("store di-jet mass", "store the mass of the di-jet system", 
+                               "di-jet", 
+                               "dijet_mass2"));
+  //a.AddRecoAlgo(new PrintJets());
   a.AddRecoAlgo(new DiJetReco());
   a.AddCutAlgo(new DiJetCut());
 

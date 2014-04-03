@@ -4,6 +4,26 @@ namespace HAL
 {
 
 /*
+ * Generic functions
+ * */
+bool internal::determineAccessProtocol(HAL::AnalysisData *data, 
+                                       TString &RawInput, 
+                                       TString &RealInput) {
+  TString VectorInput = TString::Format("%s:4-vec", RawInput.Data());   // either this
+  TString NameInput = TString::Format("%s:ref_name", RawInput.Data());  // or this must exist
+
+  if (data->Exists(VectorInput.Data())) {
+    RealInput = RawInput;
+    return true;
+  }
+  else if (data->Exists(NameInput.Data())) {
+    RealInput = TString(data->GetString(NameInput.Data()).c_str());
+    return true;
+  }
+  return false;
+}
+
+/*
  * Generic classes
  * */
 void internal::ImportTLVAlgo::Exec (unsigned n) {
@@ -33,27 +53,21 @@ void internal::ImportTLVAlgo::Clear (Option_t* /*option*/) {
 void internal::NthElementAlgo::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
   unsigned n;
+  TString RealInput;
   TString SortedIndexListName;
-  TString VectorInput = TString::Format("%s:4-vec", fInput.Data());   // either this
-  TString NameInput = TString::Format("%s:ref_name", fInput.Data());  // or this must exist
   TString NObjectsOutput = TString::Format("%s:nobjects", GetName().Data());
   TString NameOutput = TString::Format("%s:ref_name", GetName().Data());
   TString IndexOutput = TString::Format("%s:index", GetName().Data());
 
-  if (data->Exists(VectorInput.Data())) {
-    fFullInput = VectorInput;
-    n = data->GetInteger(TString::Format("%s:nobjects", fInput.Data()).Data());
-    SortedIndexListName = TString::Format("%s:sorted_%s", fInput.Data(), SortTag().Data());
-  }
-  else if (data->Exists(NameInput.Data())) {
-    fFullInput = TString::Format("%s:4-vec", data->GetString(NameInput.Data()).c_str());
-    n = data->GetInteger(TString::Format("%s:nobjects", data->GetString(NameInput.Data()).c_str()).Data());
-    SortedIndexListName = TString::Format("%s:sorted_%s", data->GetString(NameInput.Data()).c_str(), SortTag().Data());
+  if (determineAccessProtocol(data, fInput, RealInput)) {
+    fElementName = TString::Format("%s:4-vec", RealInput.Data());
+    n = data->GetInteger(TString::Format("%s:nobjects", RealInput.Data()).Data());
+    SortedIndexListName = TString::Format("%s:sorted_%s", RealInput.Data(), SortTag().Data());
   }
   else
     return;
 
-  if (n < fN || data->TypeDim(fFullInput.Data()) != 1)
+  if (n < fN)
     return;
 
   if (!data->Exists(SortedIndexListName.Data())) {
@@ -64,13 +78,48 @@ void internal::NthElementAlgo::Exec (Option_t* /*option*/) {
       IndexProxy.push_back(i);
     Sort(IndexProxy);
     for (std::vector<long long>::iterator it = IndexProxy.begin(); it != IndexProxy.end(); ++it)
-      data->SetValue(SortedIndexListName.Data(), count++, *it);
+      data->SetValue(SortedIndexListName.Data(), *it, count++);
   }
 
   long long location = data->GetInteger(SortedIndexListName.Data(), fN - 1);
   data->SetValue(NObjectsOutput.Data(), (long long)1);
   data->SetValue(NameOutput.Data(), fInput);
-  data->SetValue(IndexOutput.Data(), (long long)0, location);
+  data->SetValue(IndexOutput.Data(), location, 0);
+}
+
+void internal::SingleParticleTLVCut::Exec (Option_t* /*option*/) {
+  HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+  TString RealInput;
+  TLorentzVector *InputVec;
+
+  if (internal::determineAccessProtocol(data, fInput, RealInput)) {
+    long long InputIndex = data->GetInteger(TString::Format("%s:index", fInput.Data()).Data(), 0);
+    InputVec = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput.Data()).Data(), InputIndex);
+  }
+  else
+    return;
+
+  if (CutPredicate(InputVec)) {
+    Passed();
+    return;
+  }
+  Abort();
+}
+
+void internal::SingleParticleTLVStore::Exec (Option_t* /*option*/) {
+  HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+  HAL::AnalysisData *output = (HAL::AnalysisTreeWriter*)GetData("UserOutput");
+  TString RealInput;
+  TLorentzVector *InputVec;
+
+  if (internal::determineAccessProtocol(data, fInput, RealInput)) {
+    long long InputIndex = data->GetInteger(TString::Format("%s:index", fInput.Data()).Data(), 0);
+    InputVec = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput.Data()).Data(), InputIndex);
+  }
+  else
+    return;
+
+  output->SetValue(fBranchName.Data(), StoreValue(InputVec));
 }
 
 
@@ -240,14 +289,84 @@ TString FA0000::SortTag () {
 
 bool FA0000::operator() (long long lhs, long long rhs) {
   AnalysisData *data = (AnalysisData*)GetData("UserData");
-  TLorentzVector *lhs_vec = (TLorentzVector*)data->GetTObject(fFullInput.Data(), lhs);
-  TLorentzVector *rhs_vec = (TLorentzVector*)data->GetTObject(fFullInput.Data(), rhs);
+  TLorentzVector *lhs_vec = (TLorentzVector*)data->GetTObject(fElementName.Data(), lhs);
+  TLorentzVector *rhs_vec = (TLorentzVector*)data->GetTObject(fElementName.Data(), rhs);
 
   return (lhs_vec->Pt() > rhs_vec->Pt());
 }
 
 void FA0000::Sort (std::vector<long long> &ip) {
   std::stable_sort(ip.begin(), ip.end(), *this);
+}
+
+/*
+ * Reconstruction Algorithms
+ * */
+void RA0000::Exec (Option_t* /*option*/) {
+  HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+  TString RealInput1, RealInput2;
+  long long Parent1Index, Parent2Index;
+  TLorentzVector *Parent1Vec, *Parent2Vec;
+  // scalars
+  TString NObjectsOutput = TString::Format("%s:nobjects", GetName().Data());
+  TString NParentsOutput = TString::Format("%s:nparents", GetName().Data());
+  // 1D arrays
+  TString VectorOutput = TString::Format("%s:4-vec", GetName().Data());
+  TString IndexOutput = TString::Format("%s:index", GetName().Data());
+  TString ParentNamesOutput = TString::Format("%s:parent_ref_name", GetName().Data());
+  TString ParentIndicesOutput = TString::Format("%s:parent_index", GetName().Data());
+
+  if (internal::determineAccessProtocol(data, fParent1Name, RealInput1) &&
+      internal::determineAccessProtocol(data, fParent2Name, RealInput2)) {
+    Parent1Index = data->GetInteger(TString::Format("%s:index", fParent1Name.Data()).Data(), 0);
+    Parent1Vec = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput1.Data()).Data(), Parent1Index);
+    Parent2Index = data->GetInteger(TString::Format("%s:index", fParent2Name.Data()).Data(), 0);
+    Parent2Vec = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput2.Data()).Data(), Parent2Index);
+  }
+  else
+    return;
+
+  TLorentzVector *vec = new TLorentzVector(*Parent1Vec);
+  vec->operator+=(*Parent2Vec);
+
+  data->SetValue(NObjectsOutput.Data(), (long long)1);
+  data->SetValue(NParentsOutput.Data(), (long long)2);
+  data->SetValue(VectorOutput.Data(), vec, 0);
+  data->SetValue(IndexOutput.Data(), (long long)0, 0);
+  data->SetValue(ParentNamesOutput.Data(), fParent1Name, 0);
+  data->SetValue(ParentNamesOutput.Data(), fParent2Name, 1);
+  data->SetValue(ParentIndicesOutput.Data(), Parent1Index, 0);
+  data->SetValue(ParentIndicesOutput.Data(), Parent2Index, 1);
+}
+
+void RA0000::Clear (Option_t* /*option*/) {
+  HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+  TString VectorOutput = TString::Format("%s:4-vec", GetName().Data());
+
+  if (data->Exists(VectorOutput.Data()))
+    delete data->GetTObject(VectorOutput.Data(), 0);
+}
+
+/*
+ * Cutting Algorithms
+ * */
+bool CA0000::CutPredicate (TLorentzVector *vec) {
+  return (vec->Pt() >= fCutValue);
+}
+
+bool CA0003::CutPredicate (TLorentzVector *vec) {
+  return (vec->M() >= fCutValue);
+}
+
+/*
+ * Exporting Algorithms
+ * */
+double EA0000::StoreValue (TLorentzVector *vec) {
+  return vec->Pt();
+}
+
+double EA0003::StoreValue (TLorentzVector *vec) {
+  return vec->M();
 }
 
 } /* HAL */ 

@@ -98,7 +98,8 @@ public:
     if (data->Exists("subleading pt jet:ref_name"))
       subleading_vec = (TLorentzVector*)data->GetTObject(subleading_name.append(":4-vec"), subleading_index);
 
-    if (data->Exists("subleading pt jet:ref_name") && leading_vec->Pt() < subleading_vec->Pt()) {
+    //if (data->Exists("subleading pt jet:ref_name") && leading_vec->Pt() < subleading_vec->Pt()) {
+    if (data->Exists("subleading pt jet:ref_name")) {
       std::cout << leading_vec->Pt() << "   " << subleading_vec->Pt() << std::endl;
       for (int i = 0; i < nobjects; ++i) {
         TLorentzVector *vec = (TLorentzVector*)data->GetTObject("jets:4-vec", i);

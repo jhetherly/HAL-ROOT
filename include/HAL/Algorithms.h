@@ -41,6 +41,12 @@ namespace internal
 {
 
 /*
+ * General function for determining how to access information
+ * stored in AnalysisData (either reference or direct access)
+ * */
+bool determineAccessProtocol(HAL::AnalysisData *data, TString &RawInput, TString &RealInput);
+
+/*
  * Algorithm for importing an array of TLorentzVecotr's from and TTree.
  * */
 class ImportTLVAlgo : public HAL::Algorithm {
@@ -72,7 +78,44 @@ protected:
   virtual void      Exec (Option_t* /*option*/);
 
   unsigned  fN;
-  TString   fInput, fFullInput;
+  TString   fInput, fElementName;
+};
+
+/*
+ * Algorithm for a single particle cut on its TLV
+ * */
+class SingleParticleTLVCut : public CutAlgorithm {
+public:
+  SingleParticleTLVCut (TString name, TString title, TString input, double cut) :
+    CutAlgorithm(name, title), fInput(input), fCutValue(cut) {}
+  virtual ~SingleParticleTLVCut () {}
+
+  // this should return true if particle passed cut
+  virtual bool CutPredicate (TLorentzVector*) = 0;
+
+protected:
+  virtual void Exec (Option_t* /*option*/);
+
+  TString   fInput;
+  double    fCutValue;
+};
+
+/*
+ * Algorithm for the exporting of simple quantities from a
+ * particle's TLV
+ * */
+class SingleParticleTLVStore : public Algorithm {
+public:
+  SingleParticleTLVStore (TString name, TString title, TString input, TString bname) :
+    Algorithm(name, title), fBranchName(bname), fInput(input) {}
+  virtual ~SingleParticleTLVStore () {}
+
+
+protected:
+  virtual void    Exec (Option_t* /*option*/);
+  virtual double  StoreValue (TLorentzVector*) = 0;
+
+  TString         fBranchName, fInput;
 };
 
 } /* internal */ 
@@ -362,10 +405,24 @@ private:
  * Output:
  *  <name>:nobjects (scalar: number of particles)
  *  <name>:nparents (scalar: number of parent particles (two in this case))
- *  <name>:4-vec (scalar: TLorentzVector)
+ *  <name>:4-vec (1D array: of TLorentzVector's (just one in this case))
+ *  <name>:index (1D array: of indices (just one index))
  *  <name>:parent_ref_name (1D array: ref_names of parents)
  *  <name>:parent_index (1D array: indices of parents)
  */
+class RA0000: public Algorithm {
+public:
+  RA0000 (TString name, TString title, TString parent1, TString parent2, const char* names[], int length) :
+    Algorithm(name, title), fParent1Name(parent1), fParent2Name(parent2), fNames(names), fLength(length) {}
+  virtual ~RA0000() {}
+
+  virtual void  Exec (Option_t* /*option*/);
+  virtual void  Clear (Option_t* /*option*/);
+private:
+  TString       fParent1Name, fParent2Name;
+  const char**  fNames;
+  int           fLength;
+};
 
 
 
@@ -377,13 +434,13 @@ private:
  * Select the particle with nth highest pT
  *
  * Prerequisites:
- *  Stored TLorentzVector's
+ *  Stored particles (either as references or direct access)
  * Branch Maps Needed:
  *  None
  * Output:
  *  <name>:nobjects (scalar: number of particles)
- *  <name>:ref_name ((scalar): string name of reference array to use)
- *  <name>:index (1D array: of indices (just one index that points to the nth highest pT if ref_name))
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices (just one index that points to the nth highest pT of ref_name))
  * */
 class FA0000 : public internal::NthElementAlgo {
 public:
@@ -403,12 +460,94 @@ public:
  * Cutting Algorithms
  * */
 
+/*
+ * Cut on particle pT lower limit
+ *
+ * Prerequisites:
+ *  Stored particle (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  None
+ * */
+class CA0000 : public internal::SingleParticleTLVCut {
+public:
+  CA0000 (TString name, TString title, TString input, double cut) :
+    SingleParticleTLVCut(name, title, input, cut) {}
+  virtual ~CA0000 () {}
+
+  virtual bool CutPredicate (TLorentzVector *vec);
+};
+
+
+/*
+ * Cut on particle mass lower limit
+ *
+ * Prerequisites:
+ *  Stored particle (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  None
+ * */
+class CA0003 : public internal::SingleParticleTLVCut {
+public:
+  CA0003 (TString name, TString title, TString input, double cut) :
+    SingleParticleTLVCut(name, title, input, cut) {}
+  virtual ~CA0003 () {}
+
+  virtual bool CutPredicate (TLorentzVector *vec);
+};
+
 
 
 
 /*
  * Exporting Algorithms
  * */
+
+/*
+ * Store the pT of a particle
+ *
+ * Prerequisites:
+ *  Stored particle (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  None
+ * */
+class EA0000 : public internal::SingleParticleTLVStore {
+public:
+  EA0000 (TString name, TString title, TString input, TString bname) :
+    SingleParticleTLVStore(name, title, input, bname) {}
+  virtual ~EA0000 () {}
+
+
+protected:
+  virtual double  StoreValue (TLorentzVector*);
+};
+
+
+/*
+ * Store the mass of a particle
+ *
+ * Prerequisites:
+ *  Stored particle (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  None
+ * */
+class EA0003 : public internal::SingleParticleTLVStore {
+public:
+  EA0003 (TString name, TString title, TString input, TString bname) :
+    SingleParticleTLVStore(name, title, input, bname) {}
+  virtual ~EA0003 () {}
+
+
+protected:
+  virtual double  StoreValue (TLorentzVector*);
+};
 
 } /* HAL */ 
 
