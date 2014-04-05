@@ -15,9 +15,12 @@
 #include <TRandom3.h>
 #include <TString.h>
 #include <TLorentzVector.h>
+#include <cstdarg>
 #include <string>
+#include <deque>
 #include <vector>
 #include <map>
+#include <set>
 #include <algorithm>
 #include <HAL/Common.h>
 #include <HAL/Exceptions.h>
@@ -85,11 +88,11 @@ protected:
 /*
  * Algorithm for a single particle cut on its TLV
  * */
-class SingleParticleTLVCut : public CutAlgorithm {
+class ParticlesTLVCut : public CutAlgorithm {
 public:
-  SingleParticleTLVCut (TString name, TString title, TString input, double cut) :
+  ParticlesTLVCut (TString name, TString title, TString input, double cut) :
     CutAlgorithm(name, title), fInput(input), fCutValue(cut) {}
-  virtual ~SingleParticleTLVCut () {}
+  virtual ~ParticlesTLVCut () {}
 
   // this should return true if particle passed cut
   virtual bool CutPredicate (TLorentzVector*) = 0;
@@ -105,11 +108,11 @@ protected:
  * Algorithm for the exporting of simple quantities from a
  * particle's TLV
  * */
-class SingleParticleTLVStore : public Algorithm {
+class ParticlesTLVStore : public Algorithm {
 public:
-  SingleParticleTLVStore (TString name, TString title, TString input, TString bname) :
+  ParticlesTLVStore (TString name, TString title, TString input, TString bname) :
     Algorithm(name, title), fBranchName(bname), fInput(input) {}
-  virtual ~SingleParticleTLVStore () {}
+  virtual ~ParticlesTLVStore () {}
 
 
 protected:
@@ -141,7 +144,7 @@ protected:
  *  <name>:x3
  * Output:
  *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVector's)
+ *  <name>:4-vec (1D array: of TLorentzVectors)
  *  <name>:index (1D array: of indices (used in subsequent algorithms))
  */
 class IA0000 : public internal::ImportTLVAlgo {
@@ -170,7 +173,7 @@ protected:
  *  <name>:x3
  * Output:
  *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVector's)
+ *  <name>:4-vec (1D array: of TLorentzVectors)
  *  <name>:index (1D array: of indices (used in subsequent algorithms))
  */
 class IA0001 : public internal::ImportTLVAlgo {
@@ -197,7 +200,7 @@ protected:
  *  <name>:x3
  * Output:
  *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVector's)
+ *  <name>:4-vec (1D array: of TLorentzVectors)
  *  <name>:index (1D array: of indices (used in subsequent algorithms))
  */
 class IA0002 : public internal::ImportTLVAlgo {
@@ -227,7 +230,7 @@ private:
  *  <name>:e
  * Output:
  *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVector's)
+ *  <name>:4-vec (1D array: of TLorentzVectors)
  *  <name>:index (1D array: of indices (used in subsequent algorithms))
  */
 class IA0010 : public internal::ImportTLVAlgo {
@@ -256,7 +259,7 @@ protected:
  *  <name>:e
  * Output:
  *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVector's)
+ *  <name>:4-vec (1D array: of TLorentzVectors)
  *  <name>:index (1D array: of indices (used in subsequent algorithms))
  */
 class IA0011 : public internal::ImportTLVAlgo {
@@ -284,7 +287,7 @@ protected:
  *  <name>:e
  * Output:
  *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVector's)
+ *  <name>:4-vec (1D array: of TLorentzVectors)
  *  <name>:index (1D array: of indices (used in subsequent algorithms))
  */
 class IA0012 : public internal::ImportTLVAlgo {
@@ -315,7 +318,7 @@ private:
  *  <name>:m
  * Output:
  *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVector's)
+ *  <name>:4-vec (1D array: of TLorentzVectors)
  *  <name>:index (1D array: of indices (used in subsequent algorithms))
  */
 class IA0020 : public internal::ImportTLVAlgo {
@@ -344,7 +347,7 @@ protected:
  *  <name>:m
  * Output:
  *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVector's)
+ *  <name>:4-vec (1D array: of TLorentzVectors)
  *  <name>:index (1D array: of indices (used in subsequent algorithms))
  */
 class IA0021 : public internal::ImportTLVAlgo {
@@ -372,7 +375,7 @@ protected:
  *  <name>:m
  * Output:
  *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVector's)
+ *  <name>:4-vec (1D array: of TLorentzVectors)
  *  <name>:index (1D array: of indices (used in subsequent algorithms))
  */
 class IA0022 : public internal::ImportTLVAlgo {
@@ -396,8 +399,9 @@ private:
  * */
 
 /*
- * Reconstruction algorithm to build particle from the
- * addition of other particles.
+ * Reconstruction algorithm to build particles from the
+ * vector addition of other particles.
+ * The unknown parameters should be a series of string literals
  *
  * Prerequisites:
  *  Stored Particles
@@ -406,16 +410,15 @@ private:
  * Output:
  *  <name>:nobjects (scalar: number of particles)
  *  <name>:nparents (scalar: number of parent particles)
- *  <name>:4-vec (1D array: of TLorentzVector's (just one in this case))
- *  <name>:index (1D array: of indices (just one index))
+ *  <name>:4-vec (1D array: of TLorentzVectors)
+ *  <name>:index (1D array: of indices)
  *  <name>:parent_ref_name (1D array: ref_names of parents)
  *  <name>:parent_index (1D array: indices of parents)
  */
 class RA0000: public Algorithm {
 public:
-  RA0000 (TString name, TString title, const char* names[], long long length) :
-    Algorithm(name, title), fParentNames(names), fLength(length) {}
-  virtual ~RA0000() {}
+  RA0000 (TString name, TString title, long long length, ...);
+  virtual ~RA0000();
 
   virtual void  Exec (Option_t* /*option*/);
   virtual void  Clear (Option_t* /*option*/);
@@ -461,7 +464,7 @@ public:
  * */
 
 /*
- * Cut on particle pT lower limit
+ * Cut on particles' pT (lower limit)
  *
  * Prerequisites:
  *  Stored particle (either as references or direct access)
@@ -470,10 +473,10 @@ public:
  * Output:
  *  None
  * */
-class CA0000 : public internal::SingleParticleTLVCut {
+class CA0000 : public internal::ParticlesTLVCut {
 public:
   CA0000 (TString name, TString title, TString input, double cut) :
-    SingleParticleTLVCut(name, title, input, cut) {}
+    ParticlesTLVCut(name, title, input, cut) {}
   virtual ~CA0000 () {}
 
   virtual bool CutPredicate (TLorentzVector *vec);
@@ -481,19 +484,19 @@ public:
 
 
 /*
- * Cut on particle mass lower limit
+ * Cut on particles' mass (lower limit)
  *
  * Prerequisites:
- *  Stored particle (either as references or direct access)
+ *  Stored particles (either as references or direct access)
  * Branch Maps Needed:
  *  None
  * Output:
  *  None
  * */
-class CA0003 : public internal::SingleParticleTLVCut {
+class CA0003 : public internal::ParticlesTLVCut {
 public:
   CA0003 (TString name, TString title, TString input, double cut) :
-    SingleParticleTLVCut(name, title, input, cut) {}
+    ParticlesTLVCut(name, title, input, cut) {}
   virtual ~CA0003 () {}
 
   virtual bool CutPredicate (TLorentzVector *vec);
@@ -507,19 +510,19 @@ public:
  * */
 
 /*
- * Store the pT of a particle
+ * Store the pT of particles
  *
  * Prerequisites:
- *  Stored particle (either as references or direct access)
+ *  Stored particles (either as references or direct access)
  * Branch Maps Needed:
  *  None
  * Output:
  *  None
  * */
-class EA0000 : public internal::SingleParticleTLVStore {
+class EA0000 : public internal::ParticlesTLVStore {
 public:
   EA0000 (TString name, TString title, TString input, TString bname) :
-    SingleParticleTLVStore(name, title, input, bname) {}
+    ParticlesTLVStore(name, title, input, bname) {}
   virtual ~EA0000 () {}
 
 
@@ -538,10 +541,10 @@ protected:
  * Output:
  *  None
  * */
-class EA0003 : public internal::SingleParticleTLVStore {
+class EA0003 : public internal::ParticlesTLVStore {
 public:
   EA0003 (TString name, TString title, TString input, TString bname) :
-    SingleParticleTLVStore(name, title, input, bname) {}
+    ParticlesTLVStore(name, title, input, bname) {}
   virtual ~EA0003 () {}
 
 

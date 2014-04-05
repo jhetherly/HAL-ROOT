@@ -29,12 +29,12 @@ int main(int argc, char *argv[]) {
   a.AddRecoAlgo(new HAL::FA0000("subleading pt jet", "find 2nd highest pt jet", 
                                 "jets", // input algorithm
                                 2)); // rank in pt
-  const char* names[] = {"leading pt jet", "subleading pt jet"};
   a.AddRecoAlgo(new HAL::RA0000("di-jet", "reconstruct a di-jet object", 
-                                names, 2));
+                                //2, "leading pt jet", "subleading pt jet"));
+                                2, "jets", "jets"));
   a.AddCutAlgo(new HAL::CA0003("di-jet mass cut", "cut on the mass of the di-jet system", 
                                "di-jet", 
-                               500000.0));
+                               2000.0));
   a.AddCutAlgo(new HAL::EA0003("store di-jet mass", "store the mass of the di-jet system", 
                                "di-jet", 
                                "dijet_mass2"));

@@ -87,39 +87,64 @@ void internal::NthElementAlgo::Exec (Option_t* /*option*/) {
   data->SetValue(IndexOutput.Data(), location, 0);
 }
 
-void internal::SingleParticleTLVCut::Exec (Option_t* /*option*/) {
+void internal::ParticlesTLVCut::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
-  TString RealInput;
-  TLorentzVector *InputVec;
+  long long n;
+  TString *RealInput;
+  TLorentzVector **InputVec;
 
-  if (internal::determineAccessProtocol(data, fInput, RealInput)) {
-    long long InputIndex = data->GetInteger(TString::Format("%s:index", fInput.Data()).Data(), 0);
-    InputVec = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput.Data()).Data(), InputIndex);
+  if (data->Exists(TString::Format("%s:nobjects", fInput.Data()).Data())) {
+    n = data->GetInteger(TString::Format("%s:nobjects", fInput.Data()).Data());
+    RealInput = new TString[n];
+    InputVec = new TLorentzVector*[n];
   }
   else
     return;
 
-  if (CutPredicate(InputVec)) {
-    Passed();
-    return;
+  for (long long i = 0; i < n; ++i) {
+    if (internal::determineAccessProtocol(data, fInput, RealInput[i])) {
+      long long InputIndex = data->GetInteger(TString::Format("%s:index", fInput.Data()).Data(), i);
+      InputVec[i] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput[i].Data()).Data(), InputIndex);
+    }
+    else
+      return;
   }
-  Abort();
+
+  for (long long i = 0; i < n; ++i) {
+    if (!CutPredicate(InputVec[i])) {
+      Abort();
+      return;
+    }
+  }
+  Passed();
 }
 
-void internal::SingleParticleTLVStore::Exec (Option_t* /*option*/) {
+void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
   HAL::AnalysisData *output = (HAL::AnalysisTreeWriter*)GetData("UserOutput");
-  TString RealInput;
-  TLorentzVector *InputVec;
+  long long n;
+  TString *RealInput;
+  TLorentzVector **InputVec;
 
-  if (internal::determineAccessProtocol(data, fInput, RealInput)) {
-    long long InputIndex = data->GetInteger(TString::Format("%s:index", fInput.Data()).Data(), 0);
-    InputVec = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput.Data()).Data(), InputIndex);
+  if (data->Exists(TString::Format("%s:nobjects", fInput.Data()).Data())) {
+    n = data->GetInteger(TString::Format("%s:nobjects", fInput.Data()).Data());
+    RealInput = new TString[n];
+    InputVec = new TLorentzVector*[n];
   }
   else
     return;
 
-  output->SetValue(fBranchName.Data(), StoreValue(InputVec));
+  for (long long i = 0; i < n; ++i) {
+    if (internal::determineAccessProtocol(data, fInput, RealInput[i])) {
+      long long InputIndex = data->GetInteger(TString::Format("%s:index", fInput.Data()).Data(), i);
+      InputVec[i] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput[i].Data()).Data(), InputIndex);
+    }
+    else
+      return;
+  }
+
+  for (long long i = 0; i < n; ++i)
+    output->SetValue(fBranchName.Data(), StoreValue(InputVec[i]));
 }
 
 
@@ -303,11 +328,34 @@ void FA0000::Sort (std::vector<long long> &ip) {
 /*
  * Reconstruction Algorithms
  * */
+RA0000::RA0000 (TString name, TString title, long long length, ...) :
+    Algorithm(name, title), fLength(length) {
+  fParentNames = new const char*[fLength];
+  va_list arguments;  // store the variable list of arguments
+
+  va_start (arguments, length); // initializing arguments to store all values after length
+  for (long long i = 0; i < fLength; ++i)
+    fParentNames[i] = va_arg(arguments, const char*);
+  va_end(arguments); // cleans up the list
+}
+
+RA0000::~RA0000() {
+  delete[] fParentNames;
+}
+
 void RA0000::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
   TString *RealInputs = new TString[fLength];
-  long long *ParentIndices = new long long[fLength];
-  TLorentzVector **ParentVecs = new TLorentzVector*[fLength];
+  long long *ParentNObjects = new long long[fLength];
+  long long **ParentIndices2 = new long long*[fLength];
+  TLorentzVector ***ParentVecs2 = new TLorentzVector**[fLength];
+  std::set<TString> UniqueRealInput;
+  std::map<TString, std::set<std::set<long long> > > UniqueTuples;
+  long long UniqueTuplesMaxLength = 0;
+  std::map<TString, long long> UniqueTuplesLengths;
+  std::vector<TString> UniqueTuplesLabels;
+  std::deque<std::vector<long long> > UniqueTuplesValues;
+  std::vector<TLorentzVector*> UniqueTuplesVectors;
   // scalars
   TString NObjectsOutput = TString::Format("%s:nobjects", GetName().Data());
   TString NParentsOutput = TString::Format("%s:nparents", GetName().Data());
@@ -320,36 +368,177 @@ void RA0000::Exec (Option_t* /*option*/) {
   for (long long i = 0; i < fLength; ++i) {
     TString pname(fParentNames[i]);
     if (internal::determineAccessProtocol(data, pname, RealInputs[i])) {
-      ParentIndices[i] = data->GetInteger(TString::Format("%s:index", fParentNames[i]).Data(), 0);
-      ParentVecs[i] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInputs[i].Data()).Data(), ParentIndices[i]);
+      UniqueRealInput.insert(RealInputs[i]);
+      ParentNObjects[i] = data->GetInteger(TString::Format("%s:nobjects", fParentNames[i]).Data());
+      ParentIndices2[i] = new long long[ParentNObjects[i]];
+      ParentVecs2[i] = new TLorentzVector*[ParentNObjects[i]];
+      for (long long j = 0; j < ParentNObjects[i]; ++j) {
+        ParentIndices2[i][j] = data->GetInteger(TString::Format("%s:index", fParentNames[i]).Data(), j);
+        ParentVecs2[i][j] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInputs[i].Data()).Data(), ParentIndices2[i][j]);
+      }
     }
     else
       return;
   }
 
-  TLorentzVector *vec = new TLorentzVector(*ParentVecs[0]);
-  for (long long i = 1; i < fLength; ++i)
-    vec->operator+=(*ParentVecs[i]);
+  // remove any overlap
+  // loop over unique real names
+  for (std::set<TString>::iterator name = UniqueRealInput.begin(); name != UniqueRealInput.end(); ++name) {
+    for (long long i = 0; i < fLength; ++i) {
+      if (RealInputs[i] == *name) {
+        if (UniqueTuples.count(*name) == 0) {
+          std::set<std::set<long long> > index_tuples;
+          for (long long j = 0; j < ParentNObjects[i]; ++j) {
+            std::set<long long> index_tuple;
+            index_tuple.insert(ParentIndices2[i][j]);
+            index_tuples.insert(index_tuple);
+          }
+          UniqueTuples[*name] = index_tuples;
+        }
+        else {
+          std::set<std::set<long long> > index_tuples;
+          for (std::set<std::set<long long> >::iterator tuple = UniqueTuples[*name].begin();
+               tuple != UniqueTuples[*name].end(); ++tuple) {
+            for (long long j = 0; j < ParentNObjects[i]; ++j) {
+              std::set<long long> index_tuple = *tuple;
+              index_tuple.insert(ParentIndices2[i][j]);
+              index_tuples.insert(index_tuple);
+            }
+          }
+          UniqueTuples[*name] = index_tuples;
+        }
+      }
+    }
+  }
+  // find largest size of set for each type, then remove all that are smaller than this
+  for (std::map<TString, std::set<std::set<long long> > >::iterator mapit = UniqueTuples.begin();
+       mapit != UniqueTuples.end(); ++mapit) {
+    unsigned max_size = 0;
+    for (std::set<std::set<long long> >::iterator setit = mapit->second.begin();
+         setit != mapit->second.end(); ++setit) {
+      if (setit->size() > max_size)
+        max_size = setit->size();
+    }
+    UniqueTuplesMaxLength += max_size;
+    UniqueTuplesLengths[mapit->first] = max_size;
+    for (std::set<std::set<long long> >::iterator setit = mapit->second.begin();
+         setit != mapit->second.end(); ) {
+      if (setit->size() < max_size)
+        mapit->second.erase(setit++);
+      else
+        ++setit;
+    }
+  }
+  // print out UniqueTuples
+  //for (std::map<TString, std::set<std::set<long long> > >::iterator mapit = UniqueTuples.begin();
+  //     mapit != UniqueTuples.end(); ++mapit) {
+  //  std::cout << mapit->first << std::endl;
+  //  for (std::set<std::set<long long> >::iterator setit = mapit->second.begin();
+  //       setit != mapit->second.end(); ++setit) {
+  //    for (std::set<long long>::iterator value = setit->begin(); value != setit->end(); ++value) {
+  //      std::cout << *value << "   ";
+  //    }
+  //    std::cout << std::endl;
+  //  }
+  //}
 
-  data->SetValue(NObjectsOutput.Data(), (long long)1);
+  // merge tuples to form array of indices
+  for (std::map<TString, std::set<std::set<long long> > >::iterator mapit = UniqueTuples.begin();
+       mapit != UniqueTuples.end(); ++mapit) {
+    for (long long i = 0; i < UniqueTuplesLengths[mapit->first]; ++i)
+      UniqueTuplesLabels.push_back(mapit->first);
+    if (UniqueTuplesValues.size() == 0) {
+      for (std::set<std::set<long long> >::iterator setit = mapit->second.begin();
+          setit != mapit->second.end(); ++setit) {
+        std::vector<long long> indices;
+        for (std::set<long long>::iterator value = setit->begin(); value != setit->end(); ++value) {
+          indices.push_back(*value);
+        }
+        UniqueTuplesValues.push_back(indices);
+      }
+    }
+    else {
+      for (std::deque<std::vector<long long> >::iterator tuple = UniqueTuplesValues.begin();
+           tuple != UniqueTuplesValues.end(); ++tuple) {
+        for (unsigned i = 0; i < mapit->second.size(); ++i) {
+          UniqueTuplesValues.insert(tuple++, *tuple);
+        }
+      }
+      for (std::deque<std::vector<long long> >::iterator tuple = UniqueTuplesValues.begin();
+           tuple != UniqueTuplesValues.end(); ++tuple) {
+        for (std::set<std::set<long long> >::iterator setit = mapit->second.begin();
+            setit != mapit->second.end(); ++setit) {
+          for (std::set<long long>::iterator value = setit->begin(); value != setit->end(); ++value) {
+            tuple->push_back(*value);
+            ++tuple;
+          }
+        }
+      }
+    }
+  }
+  if (UniqueTuplesMaxLength != fLength)
+    return;
+  // print out final result
+  //for (std::vector<TString>::iterator name = UniqueTuplesLabels.begin(); name != UniqueTuplesLabels.end(); ++name) {
+  //  std::cout << *name << "\t\t";
+  //}
+  //std::cout << std::endl;
+  //for (std::deque<std::vector<long long> >::iterator tuple = UniqueTuplesValues.begin();
+  //     tuple != UniqueTuplesValues.end(); ++tuple) {
+  //  for (std::vector<long long>::iterator value = tuple->begin(); value != tuple->end(); ++value) {
+  //    std::cout << *value << "\t\t";
+  //  }
+  //  std::cout << std::endl;
+  //}
+
+
+  for (unsigned i = 0; i < UniqueTuplesValues.size(); ++i) {
+    for (unsigned j = 0; j < UniqueTuplesValues[i].size(); ++j) { // loop over all indices
+      if (j == 0)
+        UniqueTuplesVectors.push_back(new TLorentzVector(*((TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", UniqueTuplesLabels[j].Data()).Data(), UniqueTuplesValues[i][j]))));
+      else
+        UniqueTuplesVectors[i]->operator+=(*((TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", UniqueTuplesLabels[j].Data()).Data(), UniqueTuplesValues[i][j])));
+    }
+  }
+  //for (std::vector<TLorentzVector*>::iterator vec = UniqueTuplesVectors.begin();
+  //     vec != UniqueTuplesVectors.end(); ++vec) {
+  //  std::cout << (*vec)->Pt() << "    ";
+  //}
+  //std::cout << std::endl;
+
   data->SetValue(NParentsOutput.Data(), fLength);
-  data->SetValue(VectorOutput.Data(), vec, 0);
-  data->SetValue(IndexOutput.Data(), (long long)0, 0);
-  for (long long i = 0; i < fLength; ++i) {
-    data->SetValue(ParentNamesOutput.Data(), RealInputs[i], i);
-    data->SetValue(ParentIndicesOutput.Data(), ParentIndices[i], 0);
+  data->SetValue(NObjectsOutput.Data(), UniqueTuplesVectors.size());
+  for (unsigned i = 0; i < UniqueTuplesVectors.size(); ++i) {
+    data->SetValue(VectorOutput.Data(), UniqueTuplesVectors[i], i);
+    data->SetValue(IndexOutput.Data(), i, i);
+  }
+  for (unsigned i = 0; i < UniqueTuplesLabels.size(); ++i)
+    data->SetValue(ParentNamesOutput.Data(), UniqueTuplesLabels[i], i);
+  for (unsigned i = 0; i < UniqueTuplesValues.size(); ++i) {
+    for (unsigned j = 0; j < UniqueTuplesValues[i].size(); ++j) {
+      data->SetValue(ParentIndicesOutput.Data(), UniqueTuplesValues[i][j], i, j);
+    }
   }
   delete[] RealInputs;
-  delete[] ParentIndices;
-  delete[] ParentVecs;
+  delete[] ParentNObjects;
+  for (int i = 0; i < fLength; ++i) {
+    delete[] ParentIndices2[i];
+    delete[] ParentVecs2[i];
+  }
+  delete[] ParentIndices2;
+  delete[] ParentVecs2;
 }
 
 void RA0000::Clear (Option_t* /*option*/) {
   HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
   TString VectorOutput = TString::Format("%s:4-vec", GetName().Data());
+  TString NObjectsOutput = TString::Format("%s:nobjects", GetName().Data());
 
-  if (data->Exists(VectorOutput.Data()))
-    delete data->GetTObject(VectorOutput.Data(), 0);
+  // replace with loop
+  if (data->Exists(VectorOutput.Data())) {
+    for (long long i = 0; i < data->GetInteger(NObjectsOutput.Data()); ++i)
+      delete data->GetTObject(VectorOutput.Data(), i);
+  }
 }
 
 /*
