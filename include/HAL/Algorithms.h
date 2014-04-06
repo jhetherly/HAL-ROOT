@@ -154,6 +154,7 @@ public:
   virtual ~IA0000 () {}
 
 protected:
+  using ImportTLVAlgo::Exec;
   virtual void Exec (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned);
 };
@@ -183,6 +184,7 @@ public:
   virtual ~IA0001 () {}
 
 protected:
+  using ImportTLVAlgo::Exec;
   virtual void Exec (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned);
 };
@@ -210,6 +212,7 @@ public:
   virtual ~IA0002 () {}
 
 protected:
+  using ImportTLVAlgo::Exec;
   virtual void Exec (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned);
 
@@ -240,6 +243,7 @@ public:
   virtual ~IA0010 () {}
 
 protected:
+  using ImportTLVAlgo::Exec;
   virtual void Exec (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned);
 };
@@ -269,6 +273,7 @@ public:
   virtual ~IA0011 () {}
 
 protected:
+  using ImportTLVAlgo::Exec;
   virtual void Exec (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned);
 };
@@ -297,6 +302,7 @@ public:
   virtual ~IA0012 () {}
 
 protected:
+  using ImportTLVAlgo::Exec;
   virtual void Exec (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned);
 
@@ -328,6 +334,7 @@ public:
   virtual ~IA0020 () {}
 
 protected:
+  using ImportTLVAlgo::Exec;
   virtual void Exec (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned);
 };
@@ -357,6 +364,7 @@ public:
   virtual ~IA0021 () {}
 
 protected:
+  using ImportTLVAlgo::Exec;
   virtual void Exec (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned);
 };
@@ -385,6 +393,7 @@ public:
   virtual ~IA0022 () {}
 
 protected:
+  using ImportTLVAlgo::Exec;
   virtual void Exec (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned);
 
