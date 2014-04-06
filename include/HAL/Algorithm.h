@@ -10,7 +10,12 @@
 #include <HAL/Common.h>
 #include <HAL/Exceptions.h>
 
+namespace HAL
+{
 class AnalysisData;
+class AnalysisTreeReader;
+class AnalysisTreeWriter;
+} /* HAL */ 
 
 namespace HAL
 {
@@ -34,6 +39,7 @@ public:
   void          DeleteAlgos ();
   void          SetName (TString name) {fName = name;}
   void          SetTitle (TString title) {fTitle = title;}
+  void          SetOutputFileName (TString filename);
   // -------------------------------------------
   
   // Flow control ------------------------------
@@ -42,6 +48,10 @@ public:
   void          ExecuteAlgo (Option_t *option = "0");
   void          ExecuteAlgos (Option_t *option);
   void          InitializeAlgo (Option_t *option);
+  void          BeginAlgo (Option_t *option);
+  void          SlaveBeginAlgo (Option_t *option);
+  void          SlaveTerminateAlgo (Option_t *option);
+  void          TerminateAlgo (Option_t *option);
   // -------------------------------------------
   
   // DataList related --------------------------
@@ -55,32 +65,37 @@ public:
   // Data related ------------------------------
   TString       GetName () {return fName;}
   TString       GetTitle () {return fTitle;}
+  TString       GetOutputFileName () {return fOutputFileName;}
+  AnalysisTreeReader*   GetRawData () {return ((AnalysisTreeReader*)fDataList->FindObject("RawData"));}
+  AnalysisData*         GetUserData () {return ((AnalysisData*)fDataList->FindObject("UserData"));}
+  AnalysisTreeWriter*   GetUserOutput () {return ((AnalysisTreeWriter*)fDataList->FindObject("UserOutput"));}
   // -------------------------------------------
 
 protected:
-  // User must overide these -------------------
+  // User can override these -------------------
+  virtual void  Begin (Option_t * /*options*/ = "") {}
+  virtual void  SlaveBegin (Option_t * /*options*/ = "") {}
   virtual void  Init (Option_t * /*options*/ = "") {}
   virtual void  Exec (Option_t * /*options*/ = "") {}
   virtual void  Clear (Option_t * /*options*/ = "") {}
+  virtual void  SlaveTerminate (Option_t * /*options*/ = "") {}
+  virtual void  Terminate (Option_t * /*options*/ = "") {}
   // -------------------------------------------
 
   TList     *fDataList; // borrowed ptr
 
 private:
-  void       ls(TString indention);
+  void        ls(TString indention);
 
-  TString    fName, fTitle;
+  TString     fName, fTitle, fOutputFileName;
 
-  // Carbon copy from the TTask class
+  // ~Carbon copy from the TTask class
   std::list<Algorithm*> fAlgorithms;
   TString               fOption;       //Option specified in ExecuteAlgo
   Bool_t                fHasExecuted;  //True if algo has executed
   Bool_t                fAbort;        //True if algo has signaled an abort
 
-  static Algorithm *fgBeginAlgo;    //pointer to algo initiator
-  static Algorithm *fgBreakPoint;   //pointer to current break point
-
-  ClassDef(Algorithm, 0);
+  ClassDef(Algorithm, 1);
 };
 
 } /* HAL */ 

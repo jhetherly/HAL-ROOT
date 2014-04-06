@@ -26,6 +26,13 @@ Algorithm::Algorithm (const Algorithm &other) {
 Algorithm::~Algorithm() {
 }
 
+void Algorithm::SetOutputFileName (TString filename) {
+  fOutputFileName = filename;
+  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
+       algo != fAlgorithms.end(); ++algo)
+    (*algo)->SetOutputFileName(filename);
+}
+
 void Algorithm::ls () {
   TString indent("");
   ls(indent);
@@ -40,7 +47,7 @@ void Algorithm::DeleteAlgos () {
   fAlgorithms.clear(); // may double delete
 }
 
-// Be sure the calling method cleans their own memory
+// Be sure the calling method cleans its own memory
 void Algorithm::Abort () {
   fAbort = kTRUE;
   fHasExecuted = kFALSE;
@@ -90,6 +97,34 @@ void  Algorithm::InitializeAlgo (Option_t *option) {
   for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
        algo != fAlgorithms.end(); ++algo)
     (*algo)->InitializeAlgo(option);
+}
+
+void Algorithm::BeginAlgo (Option_t *option) {
+  Begin(option);
+  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
+       algo != fAlgorithms.end(); ++algo)
+    (*algo)->BeginAlgo(option);
+}
+
+void Algorithm::SlaveBeginAlgo (Option_t *option) {
+  SlaveBegin(option);
+  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
+       algo != fAlgorithms.end(); ++algo)
+    (*algo)->SlaveBeginAlgo(option);
+}
+
+void Algorithm::SlaveTerminateAlgo (Option_t *option) {
+  for (std::list<Algorithm*>::reverse_iterator algo = fAlgorithms.rbegin();
+       algo != fAlgorithms.rend(); ++algo)
+    (*algo)->SlaveTerminateAlgo(option);
+  SlaveTerminate(option);
+}
+
+void Algorithm::TerminateAlgo (Option_t *option) {
+  for (std::list<Algorithm*>::reverse_iterator algo = fAlgorithms.rbegin();
+       algo != fAlgorithms.rend(); ++algo)
+    (*algo)->TerminateAlgo(option);
+  Terminate(option);
 }
 
 void Algorithm::AddData (TString name, TObject *obj) {

@@ -27,7 +27,7 @@ bool internal::determineAccessProtocol(HAL::AnalysisData *data,
  * Generic classes
  * */
 void internal::ImportTLVAlgo::Exec (unsigned n) {
-  HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+  HAL::AnalysisData *data = GetUserData();
   TString VectorOutput = TString::Format("%s:4-vec", GetName().Data());
   TString IndexOutput = TString::Format("%s:index", GetName().Data());
   TString NObjectsOutput = TString::Format("%s:nobjects", GetName().Data());
@@ -41,17 +41,17 @@ void internal::ImportTLVAlgo::Exec (unsigned n) {
 }
 
 void internal::ImportTLVAlgo::Clear (Option_t* /*option*/) {
-  HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+  HAL::AnalysisData *data = GetUserData();
   unsigned n = data->GetInteger(TString::Format("%s:nobjects", GetName().Data()).Data());
   TString VectorOutput = TString::Format("%s:4-vec", GetName().Data());
 
-  for (unsigned i = 0; i < n; ++i) {
+  for (unsigned i = 0; i < n; ++i)
     delete data->GetTObject(VectorOutput.Data());
-  }
+  data->RemoveAllAssociatedData(GetName().Data());
 }
 
 void internal::NthElementAlgo::Exec (Option_t* /*option*/) {
-  HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+  HAL::AnalysisData *data = GetUserData();
   unsigned n;
   TString RealInput;
   TString SortedIndexListName;
@@ -87,8 +87,14 @@ void internal::NthElementAlgo::Exec (Option_t* /*option*/) {
   data->SetValue(IndexOutput.Data(), location, 0);
 }
 
+void internal::NthElementAlgo::Clear (Option_t* /*option*/) {
+  HAL::AnalysisData *data = GetUserData();
+
+  data->RemoveAllAssociatedData(GetName().Data());
+}
+
 void internal::ParticlesTLVCut::Exec (Option_t* /*option*/) {
-  HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+  HAL::AnalysisData *data = GetUserData();
   long long n;
   TString *RealInput;
   TLorentzVector **InputVec;
@@ -120,8 +126,8 @@ void internal::ParticlesTLVCut::Exec (Option_t* /*option*/) {
 }
 
 void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
-  HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
-  HAL::AnalysisData *output = (HAL::AnalysisTreeWriter*)GetData("UserOutput");
+  HAL::AnalysisData *data = GetUserData();
+  HAL::AnalysisData *output = GetUserOutput();
   long long n;
   TString *RealInput;
   TLorentzVector **InputVec;
@@ -156,14 +162,14 @@ void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
  * Importing Algorithms
  * */
 void IA0000::Exec (Option_t* /*option*/) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
   unsigned n = tr->GetInteger(TString::Format("%s:nentries", GetName().Data()));
 
   ImportTLVAlgo::Exec(n);
 }
 
 TLorentzVector* IA0000::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
 
   long double x0 = tr->GetDecimal(TString::Format("%s:x0", GetName().Data()), i),
               x1 = tr->GetDecimal(TString::Format("%s:x1", GetName().Data()), i),
@@ -173,14 +179,14 @@ TLorentzVector* IA0000::MakeTLV (unsigned i) {
 }
 
 void IA0001::Exec (Option_t* /*option*/) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
   unsigned n = tr->GetDim(TString::Format("%s:x1", GetName().Data()));
 
   ImportTLVAlgo::Exec(n);
 }
 
 TLorentzVector* IA0001::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
 
   long double x0 = tr->GetDecimal(TString::Format("%s:x0", GetName().Data()), i),
               x1 = tr->GetDecimal(TString::Format("%s:x1", GetName().Data()), i),
@@ -196,7 +202,7 @@ void IA0002::Exec (Option_t* /*option*/) {
 }
 
 TLorentzVector* IA0002::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
 
   long double x0 = tr->GetDecimal(TString::Format("%s:x0", GetName().Data()), i),
               x1 = tr->GetDecimal(TString::Format("%s:x1", GetName().Data()), i),
@@ -206,14 +212,14 @@ TLorentzVector* IA0002::MakeTLV (unsigned i) {
 }
 
 void IA0010::Exec (Option_t* /*option*/) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
   unsigned n = tr->GetInteger(TString::Format("%s:nentries", GetName().Data()));
 
   ImportTLVAlgo::Exec(n);
 }
 
 TLorentzVector* IA0010::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
 
   long double e = tr->GetDecimal(TString::Format("%s:e", GetName().Data()), i),
               pT = tr->GetDecimal(TString::Format("%s:pt", GetName().Data()), i),
@@ -223,14 +229,14 @@ TLorentzVector* IA0010::MakeTLV (unsigned i) {
 }
 
 void IA0011::Exec (Option_t* /*option*/) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
   unsigned n = tr->GetDim(TString::Format("%s:pt", GetName().Data()));
 
   ImportTLVAlgo::Exec(n);
 }
 
 TLorentzVector* IA0011::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
 
   long double e = tr->GetDecimal(TString::Format("%s:e", GetName().Data()), i),
               pT = tr->GetDecimal(TString::Format("%s:pt", GetName().Data()), i),
@@ -246,7 +252,7 @@ void IA0012::Exec (Option_t* /*option*/) {
 }
 
 TLorentzVector* IA0012::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
 
   long double e = tr->GetDecimal(TString::Format("%s:e", GetName().Data()), i),
               pT = tr->GetDecimal(TString::Format("%s:pt", GetName().Data()), i),
@@ -256,14 +262,14 @@ TLorentzVector* IA0012::MakeTLV (unsigned i) {
 }
 
 void IA0020::Exec (Option_t* /*option*/) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
   unsigned n = tr->GetInteger(TString::Format("%s:nentries", GetName().Data()));
 
   ImportTLVAlgo::Exec(n);
 }
 
 TLorentzVector* IA0020::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
 
   long double m = tr->GetDecimal(TString::Format("%s:m", GetName().Data()), i),
               pT = tr->GetDecimal(TString::Format("%s:pT", GetName().Data()), i),
@@ -273,14 +279,14 @@ TLorentzVector* IA0020::MakeTLV (unsigned i) {
 }
 
 void IA0021::Exec (Option_t* /*option*/) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
   unsigned n = tr->GetDim(TString::Format("%s:pt", GetName().Data()));
 
   ImportTLVAlgo::Exec(n);
 }
 
 TLorentzVector* IA0021::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
 
   long double m = tr->GetDecimal(TString::Format("%s:m", GetName().Data()), i),
               pT = tr->GetDecimal(TString::Format("%s:pt", GetName().Data()), i),
@@ -296,7 +302,7 @@ void IA0022::Exec (Option_t* /*option*/) {
 }
 
 TLorentzVector* IA0022::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = (AnalysisTreeReader*)GetData("RawData");
+  AnalysisTreeReader *tr = GetRawData();
 
   long double m = tr->GetDecimal(TString::Format("%s:m", GetName().Data()), i),
               pT = tr->GetDecimal(TString::Format("%s:pt", GetName().Data()), i),
@@ -313,7 +319,7 @@ TString FA0000::SortTag () {
 }
 
 bool FA0000::operator() (long long lhs, long long rhs) {
-  AnalysisData *data = (AnalysisData*)GetData("UserData");
+  AnalysisData *data = GetUserData();
   TLorentzVector *lhs_vec = (TLorentzVector*)data->GetTObject(fElementName.Data(), lhs);
   TLorentzVector *rhs_vec = (TLorentzVector*)data->GetTObject(fElementName.Data(), rhs);
 
@@ -344,7 +350,7 @@ RA0000::~RA0000() {
 }
 
 void RA0000::Exec (Option_t* /*option*/) {
-  HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+  HAL::AnalysisData *data = GetUserData();
   TString *RealInputs = new TString[fLength];
   long long *ParentNObjects = new long long[fLength];
   long long **ParentIndices2 = new long long*[fLength];
@@ -530,15 +536,15 @@ void RA0000::Exec (Option_t* /*option*/) {
 }
 
 void RA0000::Clear (Option_t* /*option*/) {
-  HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+  HAL::AnalysisData *data = GetUserData();
   TString VectorOutput = TString::Format("%s:4-vec", GetName().Data());
   TString NObjectsOutput = TString::Format("%s:nobjects", GetName().Data());
 
-  // replace with loop
   if (data->Exists(VectorOutput.Data())) {
     for (long long i = 0; i < data->GetInteger(NObjectsOutput.Data()); ++i)
       delete data->GetTObject(VectorOutput.Data(), i);
   }
+  data->RemoveAllAssociatedData(GetName().Data());
 }
 
 /*

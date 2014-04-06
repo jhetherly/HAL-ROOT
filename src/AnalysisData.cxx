@@ -628,5 +628,60 @@ void AnalysisData::Reset () {
   fNameTypeMap.clear();
 }
 
+void AnalysisData::RemoveData (std::string n) {
+  if (fNameTypeMap[n] == kB)
+    fBoolMap.erase(n);
+  else if (fNameTypeMap[n] == kD)
+    fDecimalMap.erase(n);
+  else if (fNameTypeMap[n] == kI)
+    fIntegerMap.erase(n);
+  else if (fNameTypeMap[n] == kC)
+    fCountingMap.erase(n);
+  else if (fNameTypeMap[n] == kS)
+    fStringMap.erase(n);
+  else if (fNameTypeMap[n] == kO)
+    fTObjectMap.erase(n);
+  else if (fNameTypeMap[n] == kIB)
+    fBoolIntMap.erase(n);
+  else if (fNameTypeMap[n] == kID)
+    fDecimalIntMap.erase(n);
+  else if (fNameTypeMap[n] == kII)
+    fIntegerIntMap.erase(n);
+  else if (fNameTypeMap[n] == kIC)
+    fCountingIntMap.erase(n);
+  else if (fNameTypeMap[n] == kIS)
+    fStringIntMap.erase(n);
+  else if (fNameTypeMap[n] == kIO)
+    fTObjectIntMap.erase(n);
+  else if (fNameTypeMap[n] == kIIB)
+    fBoolIntIntMap.erase(n);
+  else if (fNameTypeMap[n] == kIID)
+    fDecimalIntIntMap.erase(n);
+  else if (fNameTypeMap[n] == kIII)
+    fIntegerIntIntMap.erase(n);
+  else if (fNameTypeMap[n] == kIIC)
+    fCountingIntIntMap.erase(n);
+  else if (fNameTypeMap[n] == kIIS)
+    fStringIntIntMap.erase(n);
+  else if (fNameTypeMap[n] == kIIO)
+    fTObjectIntIntMap.erase(n);
+}
+
+void AnalysisData::RemoveAllAssociatedData (std::string n) {
+  TRegexp prefix(TString::Format("^%s:.*", n.c_str()));
+  std::vector<std::string> names;
+
+  for (std::map<std::string, StorageType>::iterator name = fNameTypeMap.begin();
+       name != fNameTypeMap.end(); ++name) {
+    if (TString(name->first.c_str()).Contains(prefix)) {
+      RemoveData(name->first);
+      names.push_back(name->first);
+    }
+  }
+  for (std::vector<std::string>::iterator name = names.begin();
+       name != names.end(); ++name)
+    fNameTypeMap.erase(*name);
+}
+
 } /*  HAL */ 
 

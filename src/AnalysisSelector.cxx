@@ -14,6 +14,7 @@ void AnalysisSelector::Init (TTree *tree) {
 
   ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetTree(tree);
 
+  fAnalysisFlow->SetOutputFileName(((AnalysisTreeReader*)fInput->FindObject("RawData"))->GetTree()->GetCurrentFile()->GetName());
   fAnalysisFlow->InitializeAlgo(GetOption());
 }
 
@@ -31,7 +32,7 @@ void AnalysisSelector::Begin (TTree * /*tree*/) {
   // When running with PROOF Begin() is only called on the client.
   // The tree argument is deprecated (on PROOF 0 is passed).
 
-  TString option = GetOption();
+  fAnalysisFlow->BeginAlgo(GetOption());
 }
 
 void AnalysisSelector::SlaveBegin (TTree * /*tree*/) {
@@ -57,6 +58,8 @@ void AnalysisSelector::SlaveBegin (TTree * /*tree*/) {
   fInput->AddFirst(atw);
   
   fAnalysisFlow->AssignDataList(fInput);
+
+  fAnalysisFlow->SlaveBeginAlgo(GetOption());
 }
 
 Bool_t AnalysisSelector::Process (Long64_t entry) {
@@ -83,9 +86,6 @@ Bool_t AnalysisSelector::Process (Long64_t entry) {
   // Execute (and then implicitly clean) all algorithms
   fAnalysisFlow->ExecuteAlgo(GetOption());
 
-  // Reset AnalysisData
-  ((AnalysisData*)fInput->FindObject("UserData"))->Reset();
-
   return kTRUE;
 }
 
@@ -94,13 +94,12 @@ void AnalysisSelector::SlaveTerminate () {
   // have been processed. When running with PROOF SlaveTerminate() is called
   // on each slave server.
 
-  // IMPORTANT!!!!!!!!!
-  // merge any flagged data in fInput to fOutput
-  
   // Delete user data
   fAnalysisFlow->DeleteData("UserData");
   // Delete raw data
   fAnalysisFlow->DeleteData("RawData");
+
+  fAnalysisFlow->SlaveTerminateAlgo(GetOption());
   ((AnalysisTreeWriter*)fAnalysisFlow->GetData("UserOutput"))->WriteData();
 }
 
@@ -109,7 +108,7 @@ void AnalysisSelector::Terminate () {
   // a query. It always runs on the client, it can be used to present
   // the results graphically or save the results to file.
 
-  // loop through fOutput to save objects
+  fAnalysisFlow->TerminateAlgo(GetOption());
 }
 
 } /* HAL */ 

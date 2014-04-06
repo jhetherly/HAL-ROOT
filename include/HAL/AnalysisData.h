@@ -105,6 +105,8 @@ public:
   // Swap elements in a 1D or 2D IntMap or IntIntMap
   void                      Swap (std::string n, long long i, long long j);
   void                      Reset ();
+  void                      RemoveData (std::string);
+  void                      RemoveAllAssociatedData (std::string);
 
 public:
   std::map<std::string, bool>                                 fBoolMap;

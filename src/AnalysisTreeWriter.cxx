@@ -1,4 +1,5 @@
 #include <HAL/AnalysisTreeWriter.h>
+#include <deque>
 
 ClassImp(HAL::AnalysisTreeWriter);
 
@@ -81,7 +82,7 @@ void AnalysisTreeWriter::WriteData() {
   TTree t(fTreeName.Data(), fTreeDescription.Data());
 
   // Loop over maps - each key is a branch name
-  std::vector<std::vector<double>*> bDecimalValues;
+  std::deque<std::vector<double>*> bDecimalValues;
   for (std::map<std::string, std::map<long long, bool> >::iterator outer = fBoolIntMap.begin();
       outer != fBoolIntMap.end(); ++outer) {
     std::string bname = outer->first;
@@ -102,18 +103,24 @@ void AnalysisTreeWriter::WriteData() {
     std::string bname = outer->first;
     //std::vector<long double> *values = new std::vector<long double>;
     bDecimalValues.push_back(new std::vector<double>);
+    std::vector<double> *values = new std::vector<double>;
+    //t.Branch(bname.c_str(), "vector<double>", &values);
+    t.Branch(bname.c_str(), "vector<double>", &bDecimalValues.back());
 
     std::cout << "Creating vector<double> branch: " << bname << std::endl;
 
     for (std::map<long long, long double>::iterator inner = outer->second.begin();
         inner != outer->second.end(); ++inner) {
       long double value = inner->second;
+      //values->clear();
+      bDecimalValues.back()->clear();
       //values->push_back(value);
+      //values->push_back((double)value);
       bDecimalValues.back()->push_back((double)value);
+      t.Fill();
     }
     //t.Branch(bname.c_str(), "vector<long double>", &values);
-    t.Branch(bname.c_str(), "vector<double>", &bDecimalValues.back());
-    t.Fill();
+    //t.Fill();
   }
   for (std::map<std::string, std::map<long long, long long> >::iterator outer = fIntegerIntMap.begin();
       outer != fIntegerIntMap.end(); ++outer) {
@@ -230,7 +237,8 @@ void AnalysisTreeWriter::WriteData() {
     t.Fill();
   }
 
-  t.Write();
+  //t.Write();
+  f.Write();
   f.Close();
 }
 
