@@ -14,7 +14,6 @@ void AnalysisSelector::Init (TTree *tree) {
 
   ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetTree(tree);
 
-  fAnalysisFlow->SetOutputFileName(((AnalysisTreeReader*)fInput->FindObject("RawData"))->GetTree()->GetCurrentFile()->GetName());
   fAnalysisFlow->InitializeAlgo(GetOption());
 }
 
@@ -58,6 +57,7 @@ void AnalysisSelector::SlaveBegin (TTree * /*tree*/) {
   fInput->AddFirst(atw);
   
   fAnalysisFlow->AssignDataList(fInput);
+  fAnalysisFlow->SetOutputFileName(fOutputFileName);
 
   fAnalysisFlow->SlaveBeginAlgo(GetOption());
 }
@@ -82,6 +82,7 @@ Bool_t AnalysisSelector::Process (Long64_t entry) {
   // The return value is currently not used.
 
   ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetEntry(entry);
+  ((AnalysisTreeWriter*)fInput->FindObject("UserOutput"))->IncrementCount();
 
   // Execute (and then implicitly clean) all algorithms
   fAnalysisFlow->ExecuteAlgo(GetOption());

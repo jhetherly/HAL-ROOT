@@ -3,16 +3,16 @@
 #endif
 
 #include <iostream>
-#include <HAL/PythonReconstructionAlgorithm.h>
+#include <HAL/PythonAlgorithm.h>
 
-//ClassImp(HAL::PythonReconstructionAlgorithm);
+//ClassImp(HAL::PythonAlgorithm);
 
 namespace HAL {
 
-PythonReconstructionAlgorithm::PythonReconstructionAlgorithm (TString name, TString title, 
+PythonAlgorithm::PythonAlgorithm (TString name, TString title, 
                                                               TString pypath, TString pyfile, 
                                                               TString pyclass, PyObject *self) : 
-  ReconstructionAlgorithm(name, title), fPyPath(pypath), fPyFile(pyfile), fPyClass(pyclass) {
+  Algorithm(name, title), fPyPath(pypath), fPyFile(pyfile), fPyClass(pyclass) {
   if ( self ) {
     // steal reference as this is us, as seen from python
     fPySelf = self;
@@ -21,7 +21,7 @@ PythonReconstructionAlgorithm::PythonReconstructionAlgorithm (TString name, TStr
   }
 }
 
-PythonReconstructionAlgorithm::~PythonReconstructionAlgorithm () {
+PythonAlgorithm::~PythonAlgorithm () {
   // Destructor. Only deref if still holding on to Py_None (circular otherwise).
   //if ( fPySelf == Py_None ) {
   //  Py_DECREF( fPySelf );
@@ -31,7 +31,7 @@ PythonReconstructionAlgorithm::~PythonReconstructionAlgorithm () {
   }
 }
 
-void  PythonReconstructionAlgorithm::Init (Option_t *options) {
+void  PythonAlgorithm::Init (Option_t *options) {
   // First function called, and used to setup the python self; forward call.
   SetupPySelf();
 
@@ -44,19 +44,19 @@ void  PythonReconstructionAlgorithm::Init (Option_t *options) {
   Py_XDECREF( result );
 }
 
-void  PythonReconstructionAlgorithm::Exec (Option_t *options) {
+void  PythonAlgorithm::Exec (Option_t *options) {
   PyObject* result = CallSelf("Exec", Py_BuildValue("(s)", options));
 
   Py_XDECREF( result );
 }
 
-void  PythonReconstructionAlgorithm::Clear (Option_t *options) {
+void  PythonAlgorithm::Clear (Option_t *options) {
   PyObject* result = CallSelf("Clear", Py_BuildValue("(s)", options));
 
   Py_XDECREF( result );
 }
 
-void PythonReconstructionAlgorithm::SetupPySelf() {
+void PythonAlgorithm::SetupPySelf() {
   int class_check;
   PyObject *po_HALmod = NULL, 
            *po_USRmod = NULL, 
@@ -131,7 +131,7 @@ void PythonReconstructionAlgorithm::SetupPySelf() {
 }
 
 // Steals args and kw arguements
-PyObject* PythonReconstructionAlgorithm::CallSelf (TString method, 
+PyObject* PythonAlgorithm::CallSelf (TString method, 
                                                    PyObject *po_args) {
   // Forward <method> to python.
   PyObject *result = NULL;

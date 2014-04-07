@@ -109,6 +109,24 @@ protected:
  * Algorithm for the exporting of simple quantities from a
  * particle's TLV
  * */
+class SingleParticleTLVStore : public Algorithm {
+public:
+  SingleParticleTLVStore (TString name, TString title, TString input, TString bname) :
+    Algorithm(name, title), fBranchName(bname), fInput(input) {}
+  virtual ~SingleParticleTLVStore () {}
+
+
+protected:
+  virtual void    Exec (Option_t* /*option*/);
+  virtual double  StoreValue (TLorentzVector*) = 0;
+
+  TString         fBranchName, fInput;
+};
+
+/*
+ * Algorithm for the exporting of simple quantities from
+ * several particles' TLVs
+ * */
 class ParticlesTLVStore : public Algorithm {
 public:
   ParticlesTLVStore (TString name, TString title, TString input, TString bname) :
@@ -475,6 +493,7 @@ public:
 
 /*
  * Cut on particles' pT (lower limit)
+ * (logical 'and')
  *
  * Prerequisites:
  *  Stored particle (either as references or direct access)
@@ -495,6 +514,7 @@ public:
 
 /*
  * Cut on particles' mass (lower limit)
+ * (logical 'and')
  *
  * Prerequisites:
  *  Stored particles (either as references or direct access)
@@ -513,14 +533,9 @@ public:
 };
 
 
-
-
 /*
- * Exporting Algorithms
- * */
-
-/*
- * Store the pT of particles
+ * Cut on particles' existence
+ * (logical 'and')
  *
  * Prerequisites:
  *  Stored particles (either as references or direct access)
@@ -529,10 +544,65 @@ public:
  * Output:
  *  None
  * */
-class EA0000 : public internal::ParticlesTLVStore {
+class CA0100 : public CutAlgorithm {
+public:
+  CA0100 (TString name, TString title, long long length, ...);
+  virtual ~CA0100 () {}
+
+protected:
+  virtual void Exec (Option_t* /*option*/);
+
+private:
+  long long     fLength;
+  const char**  fParticleNames;
+};
+
+
+/*
+ * Cut on particles' existence
+ * (logical 'or')
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  None
+ * */
+class CA0101 : public CutAlgorithm {
+public:
+  CA0101 (TString name, TString title, long long length, ...);
+  virtual ~CA0101 () {}
+
+protected:
+  virtual void Exec (Option_t* /*option*/);
+
+private:
+  long long     fLength;
+  const char**  fParticleNames;
+};
+
+
+
+
+/*
+ * Exporting Algorithms
+ * */
+
+/*
+ * Store the pT of a particle
+ *
+ * Prerequisites:
+ *  Stored particle (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  None
+ * */
+class EA0000 : public internal::SingleParticleTLVStore {
 public:
   EA0000 (TString name, TString title, TString input, TString bname) :
-    ParticlesTLVStore(name, title, input, bname) {}
+    SingleParticleTLVStore(name, title, input, bname) {}
   virtual ~EA0000 () {}
 
 
@@ -545,17 +615,60 @@ protected:
  * Store the mass of a particle
  *
  * Prerequisites:
- *  Stored particle (either as references or direct access)
+ *  Stored particles (either as references or direct access)
  * Branch Maps Needed:
  *  None
  * Output:
  *  None
  * */
-class EA0003 : public internal::ParticlesTLVStore {
+class EA0003 : public internal::SingleParticleTLVStore {
 public:
   EA0003 (TString name, TString title, TString input, TString bname) :
-    ParticlesTLVStore(name, title, input, bname) {}
+    SingleParticleTLVStore(name, title, input, bname) {}
   virtual ~EA0003 () {}
+
+
+protected:
+  virtual double  StoreValue (TLorentzVector*);
+};
+
+/*
+ * Store the pT of particles
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  None
+ * */
+class EA0010 : public internal::ParticlesTLVStore {
+public:
+  EA0010 (TString name, TString title, TString input, TString bname) :
+    ParticlesTLVStore(name, title, input, bname) {}
+  virtual ~EA0010 () {}
+
+
+protected:
+  virtual double  StoreValue (TLorentzVector*);
+};
+
+
+/*
+ * Store the mass of particles
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  None
+ * */
+class EA0013 : public internal::ParticlesTLVStore {
+public:
+  EA0013 (TString name, TString title, TString input, TString bname) :
+    ParticlesTLVStore(name, title, input, bname) {}
+  virtual ~EA0013 () {}
 
 
 protected:

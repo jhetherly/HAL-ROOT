@@ -4,7 +4,7 @@
 #include <TString.h>
 #include <HAL/Common.h>
 #include <HAL/Exceptions.h>
-#include <HAL/ReconstructionAlgorithm.h>
+#include <HAL/Algorithm.h>
 
 // Python
 struct _object;
@@ -12,10 +12,10 @@ typedef _object PyObject;
 
 namespace HAL {
 
-class PythonReconstructionAlgorithm : public ReconstructionAlgorithm {
+class PythonAlgorithm : public Algorithm {
 public:
-  PythonReconstructionAlgorithm (TString name = "", TString title = "", TString PyPath = "", TString PyFile = "", TString PyClass = "", PyObject *self = 0);
-  virtual ~PythonReconstructionAlgorithm ();
+  PythonAlgorithm (TString name = "", TString title = "", TString PyPath = "", TString PyFile = "", TString PyClass = "", PyObject *self = 0);
+  virtual ~PythonAlgorithm ();
   
   // User can overide these --------------------
   virtual void  Init (Option_t * options = "");
@@ -31,7 +31,7 @@ private:
   TString   fPyPath, fPyFile, fPyClass;
   PyObject* fPySelf;              //! actual python object
 
-  //ClassDef(PythonReconstructionAlgorithm, 0);
+  //ClassDef(PythonAlgorithm, 0);
 };
 
 } /* HAL  */ 

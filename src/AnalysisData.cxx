@@ -481,6 +481,52 @@ TObject* AnalysisData::GetTObject (std::string name, long long i, long long j) {
   throw HALException(name.insert(0, "Error retrieving data: ").c_str());
 }
 
+bool AnalysisData::Exists (std::string n, long long i, long long j) {
+  if (NameAlreadyStored(n) && i == -1 && j == -1)
+    return true;
+  if (NameAlreadyStored(n) && j == -1) {
+    if (fNameTypeMap[n] == kIB)
+      return (fBoolIntMap[n].count(i) == 1) ? true : false;
+    if (fNameTypeMap[n] == kID)
+      return (fDecimalIntMap[n].count(i) == 1) ? true : false;
+    if (fNameTypeMap[n] == kII)
+      return (fIntegerIntMap[n].count(i) == 1) ? true : false;
+    if (fNameTypeMap[n] == kIC)
+      return (fCountingIntMap[n].count(i) == 1) ? true : false;
+    if (fNameTypeMap[n] == kIS)
+      return (fStringIntMap[n].count(i) == 1) ? true : false;
+    if (fNameTypeMap[n] == kIO)
+      return (fTObjectIntMap[n].count(i) == 1) ? true : false;
+    if (fNameTypeMap[n] == kIIB)
+      return (fBoolIntIntMap[n].count(i) == 1) ? true : false;
+    if (fNameTypeMap[n] == kIID)
+      return (fDecimalIntIntMap[n].count(i) == 1) ? true : false;
+    if (fNameTypeMap[n] == kIII)
+      return (fIntegerIntIntMap[n].count(i) == 1) ? true : false;
+    if (fNameTypeMap[n] == kIIC)
+      return (fCountingIntIntMap[n].count(i) == 1) ? true : false;
+    if (fNameTypeMap[n] == kIIS)
+      return (fStringIntIntMap[n].count(i) == 1) ? true : false;
+    if (fNameTypeMap[n] == kIIO)
+      return (fTObjectIntIntMap[n].count(i) == 1) ? true : false;
+  }
+  if (NameAlreadyStored(n)) {
+    if (fNameTypeMap[n] == kIIB)
+      return (fBoolIntIntMap[n][i].count(j) == 1) ? true : false;
+    if (fNameTypeMap[n] == kIID)
+      return (fDecimalIntIntMap[n][i].count(j) == 1) ? true : false;
+    if (fNameTypeMap[n] == kIII)
+      return (fIntegerIntIntMap[n][i].count(j) == 1) ? true : false;
+    if (fNameTypeMap[n] == kIIC)
+      return (fCountingIntIntMap[n][i].count(j) == 1) ? true : false;
+    if (fNameTypeMap[n] == kIIS)
+      return (fStringIntIntMap[n][i].count(j) == 1) ? true : false;
+    if (fNameTypeMap[n] == kIIO)
+      return (fTObjectIntIntMap[n][i].count(j) == 1) ? true : false;
+  }
+  return false;
+}
+
 unsigned AnalysisData::TypeDim (std::string n) {
   if (fNameTypeMap[n] == kB || fNameTypeMap[n] == kD ||
       fNameTypeMap[n] == kI || fNameTypeMap[n] == kC ||
@@ -557,7 +603,7 @@ void AnalysisData::CopyValues (std::string from, std::string to) {
   }
 }
 
-void AnalysisData::Swap (std::string n, long long i, long long j) {
+void AnalysisData::SwapValues (std::string n, long long i, long long j) {
   if (TypeDim(n) == 1) {
     if (fNameTypeMap[n] == kIB) {
       bool temp = fBoolIntMap[n][i];
@@ -626,6 +672,11 @@ void AnalysisData::Reset () {
   fStringIntIntMap.clear();
   fTObjectIntIntMap.clear();
   fNameTypeMap.clear();
+}
+
+void AnalysisData::RemoveNameAndData (std::string n) {
+  RemoveData(n);
+  fNameTypeMap.erase(n);
 }
 
 void AnalysisData::RemoveData (std::string n) {

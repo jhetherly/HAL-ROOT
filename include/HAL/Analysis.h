@@ -18,8 +18,7 @@ class Analysis {
 public:
   Analysis (TString name = "", TString title = "", TString treeName = "");
   ~Analysis ();
-  void AddRecoAlgo (Algorithm *r); 
-  void AddCutAlgo (Algorithm *c);
+  void AddAlgo (Algorithm *a); 
   void PrintAnalysisFlow ();
   void SetTreeObjectName (TString name);
   void SetAnalysisName (TString name);

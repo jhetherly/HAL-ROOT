@@ -12,8 +12,7 @@
 #include <HAL/Integrator.h>
 #include <HAL/Interpolator.h>
 #include <HAL/PlotUtils.h>
-#include <HAL/PythonReconstructionAlgorithm.h>
-#include <HAL/ReconstructionAlgorithm.h>
+#include <HAL/PythonAlgorithm.h>
 
 /*!
  * \mainpage The H.E.P. %Analysis Library

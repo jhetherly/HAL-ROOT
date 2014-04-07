@@ -97,14 +97,15 @@ public:
   std::string         GetString (std::string, long long i = -1, long long j = -1);
   TObject*            GetTObject (std::string, long long i = -1, long long j = -1);
 
-  bool                      Exists (std::string n) {return NameAlreadyStored(n);}
+  bool                      Exists (std::string n, long long i = -1, long long j = -1);
   unsigned                  TypeDim (std::string n);
   std::vector<std::string>  GetSimilarNames (std::string n, unsigned min_dim);
   // Copy value(s) stored in <map>[from] to <map>[to]
   void                      CopyValues (std::string from, std::string to);
   // Swap elements in a 1D or 2D IntMap or IntIntMap
-  void                      Swap (std::string n, long long i, long long j);
+  void                      SwapValues (std::string n, long long i, long long j);
   void                      Reset ();
+  void                      RemoveNameAndData (std::string);
   void                      RemoveData (std::string);
   void                      RemoveAllAssociatedData (std::string);
 

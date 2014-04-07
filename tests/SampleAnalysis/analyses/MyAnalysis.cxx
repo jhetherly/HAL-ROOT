@@ -22,27 +22,32 @@ int main(int argc, char *argv[]) {
   //      "/Users/jhetherly/src/root_HAL/tests/SampleAnalysis/algorithms/python", 
   //      "pyalgo", 
   //      "PythonAlgo"));
-  a.AddRecoAlgo(new HAL::IA0021("jets", "import basic jet objects"));
-  a.AddRecoAlgo(new HAL::FA0000("leading pt jet", "find highest pt jet", 
+  a.AddAlgo(new HAL::IA0021("jets", "import basic jet objects"));
+  a.AddAlgo(new HAL::FA0000("leading pt jet", "find highest pt jet", 
                                 "jets", // input algorithm
                                 1)); // rank in pt
-  a.AddRecoAlgo(new HAL::FA0000("subleading pt jet", "find 2nd highest pt jet", 
+  a.AddAlgo(new HAL::FA0000("subleading pt jet", "find 2nd highest pt jet", 
                                 "jets", // input algorithm
                                 2)); // rank in pt
-  a.AddRecoAlgo(new HAL::RA0000("di-jet", "reconstruct a di-jet object", 
+  a.AddAlgo(new HAL::RA0000("di-jet", "reconstruct a di-jet object", 
                                 2, "leading pt jet", "subleading pt jet"));
                                 //2, "jets", "jets"));
-  a.AddCutAlgo(new HAL::CA0003("di-jet mass cut", "cut on the mass of the di-jet system", 
+  a.AddAlgo(new HAL::CA0003("di-jet mass cut", "cut on the mass of the di-jet system", 
                                "di-jet", 
                                500000.0));
                                //2000.0));
-  a.AddCutAlgo(new HAL::EA0003("store di-jet mass", "store the mass of the di-jet system", 
+  a.AddAlgo(new HAL::CA0100("di-jet existence cut", "make sure dijet exists", 
+                               1, "di-jet"));
+  a.AddAlgo(new HAL::EA0003("store di-jet mass", "store the mass of the di-jet system", 
                                "di-jet", 
                                "dijet_mass2"));
-  //a.AddRecoAlgo(new PrintJets());
+  //a.AddAlgo(new HAL::EA0013("store di-jet mass", "store the mass of the di-jet system", 
+  //                             "di-jet", 
+  //                             "dijet_mass2"));
+  //a.AddAlgo(new PrintJets());
   
-  //a.AddRecoAlgo(new DiJetReco());
-  //a.AddCutAlgo(new DiJetCut());
+  a.AddAlgo(new DiJetReco());
+  a.AddAlgo(new DiJetCut());
 
   // Assign any branch maps
   a.MapBranch("jet_AntiKt4TruthJets_pt", "jets:pT");

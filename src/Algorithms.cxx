@@ -125,9 +125,36 @@ void internal::ParticlesTLVCut::Exec (Option_t* /*option*/) {
   Passed();
 }
 
+void internal::SingleParticleTLVStore::Exec (Option_t* /*option*/) {
+  HAL::AnalysisData *data = GetUserData();
+  HAL::AnalysisTreeWriter *output = GetUserOutput();
+  long long n;
+  TString *RealInput;
+  TLorentzVector **InputVec;
+
+  if (data->Exists(TString::Format("%s:nobjects", fInput.Data()).Data())) {
+    n = data->GetInteger(TString::Format("%s:nobjects", fInput.Data()).Data());
+    RealInput = new TString[n];
+    InputVec = new TLorentzVector*[n];
+  }
+  else
+    return;
+
+  for (long long i = 0; i < n; ++i) {
+    if (internal::determineAccessProtocol(data, fInput, RealInput[i])) {
+      long long InputIndex = data->GetInteger(TString::Format("%s:index", fInput.Data()).Data(), i);
+      InputVec[i] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput[i].Data()).Data(), InputIndex);
+    }
+    else
+      return;
+  }
+
+  output->SetValue(fBranchName.Data(), StoreValue(InputVec[0]));
+}
+
 void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
-  HAL::AnalysisData *output = GetUserOutput();
+  HAL::AnalysisTreeWriter *output = GetUserOutput();
   long long n;
   TString *RealInput;
   TLorentzVector **InputVec;
@@ -150,7 +177,7 @@ void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
   }
 
   for (long long i = 0; i < n; ++i)
-    output->SetValue(fBranchName.Data(), StoreValue(InputVec[i]));
+    output->SetValue(fBranchName.Data(), StoreValue(InputVec[i]), i);
 }
 
 
@@ -558,6 +585,60 @@ bool CA0003::CutPredicate (TLorentzVector *vec) {
   return (vec->M() >= fCutValue);
 }
 
+CA0100::CA0100 (TString name, TString title, long long length, ...) :
+  CutAlgorithm(name, title), fLength(length) {
+  fParticleNames = new const char*[fLength];
+  va_list arguments;  // store the variable list of arguments
+
+  va_start (arguments, length); // initializing arguments to store all values after length
+  for (long long i = 0; i < fLength; ++i)
+    fParticleNames[i] = va_arg(arguments, const char*);
+  va_end(arguments); // cleans up the list
+}
+
+void CA0100::Exec (Option_t* /*option*/) {
+  AnalysisData *data = GetUserData();
+
+  for (long long i = 0; i < fLength; ++i) {
+    TString NObjects = TString::Format("%s:nobjects", fParticleNames[i]);
+    if (!data->Exists(NObjects.Data())) {
+      Abort();
+      return;
+    }
+    else if (data->GetInteger(NObjects.Data()) < 1) {
+      Abort();
+      return;
+    }
+  }
+
+  Passed();
+}
+
+CA0101::CA0101 (TString name, TString title, long long length, ...) :
+  CutAlgorithm(name, title), fLength(length) {
+  fParticleNames = new const char*[fLength];
+  va_list arguments;  // store the variable list of arguments
+
+  va_start (arguments, length); // initializing arguments to store all values after length
+  for (long long i = 0; i < fLength; ++i)
+    fParticleNames[i] = va_arg(arguments, const char*);
+  va_end(arguments); // cleans up the list
+}
+
+void CA0101::Exec (Option_t* /*option*/) {
+  AnalysisData *data = GetUserData();
+
+  for (long long i = 0; i < fLength; ++i) {
+    TString NObjects = TString::Format("%s:nobjects", fParticleNames[i]);
+    if (data->Exists(NObjects.Data()) && data->GetInteger(NObjects.Data()) > 0) {
+      Passed();
+      return;
+    }
+  }
+
+  Abort();
+}
+
 /*
  * Exporting Algorithms
  * */
@@ -566,6 +647,14 @@ double EA0000::StoreValue (TLorentzVector *vec) {
 }
 
 double EA0003::StoreValue (TLorentzVector *vec) {
+  return vec->M();
+}
+
+double EA0010::StoreValue (TLorentzVector *vec) {
+  return vec->Pt();
+}
+
+double EA0013::StoreValue (TLorentzVector *vec) {
   return vec->M();
 }
 

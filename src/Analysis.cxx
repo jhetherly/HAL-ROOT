@@ -19,12 +19,8 @@ Analysis::~Analysis () {
   delete fBranchMap;
 }
 
-void Analysis::AddRecoAlgo (Algorithm *r) {
-  fAnalysisFlow->Add(r);
-}
-
-void Analysis::AddCutAlgo (Algorithm *c) {
-  fAnalysisFlow->Add(c);
+void Analysis::AddAlgo (Algorithm *a) {
+  fAnalysisFlow->Add(a);
 }
 
 void Analysis::PrintAnalysisFlow () {

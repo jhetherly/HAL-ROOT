@@ -95,7 +95,7 @@ private:
   Bool_t                fHasExecuted;  //True if algo has executed
   Bool_t                fAbort;        //True if algo has signaled an abort
 
-  ClassDef(Algorithm, 1);
+  ClassDef(Algorithm, 0);
 };
 
 } /* HAL */ 

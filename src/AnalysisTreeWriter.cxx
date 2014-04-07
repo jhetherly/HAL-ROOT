@@ -7,237 +7,241 @@ namespace HAL
 {
 
 AnalysisTreeWriter::AnalysisTreeWriter (TString ofile) : 
-  fOutputFileName(ofile) {}
+  fCount(0), fOutputFileName(ofile) {}
 
 void  AnalysisTreeWriter::SetValue (std::string n, bool v) {
-  if (fBoolCount.count(n) == 0)
-    fBoolCount[n] = 0;
-  AnalysisData::SetValue(n, v, ++fBoolCount[n]);
+  AnalysisData::SetValue(n, v, fCount);
 }
 
 void  AnalysisTreeWriter::SetValue (std::string n, bool v, long long i) {
-  if (fBoolIntCount.count(n) != 0 && fBoolIntCount[n].count(i) == 0)
-    fBoolIntCount[n][i] = 0;
-  else if (fBoolIntCount.count(n) == 0) {
-    std::map<long long, long long> temp;
-    temp.insert(std::pair<long long, long long>(i, 0));
-    fBoolIntCount[n] = temp;
-  }
-  AnalysisData::SetValue(n, v, i, ++fBoolIntCount[n][i]);
+  AnalysisData::SetValue(n, v, fCount, i);
 }
 
+//void  AnalysisTreeWriter::Set1DValue (std::string n, bool v) {
+//  if (!Exists(n, fCount, 0))
+//    fBoolIntCount[n][fCount] = 0;
+//  AnalysisData::SetValue(n, v, fCount, fBoolIntCount[n][fCount]++);
+//}
+
 void  AnalysisTreeWriter::SetValue (std::string n, long double v) {
-  if (fDecimalCount.count(n) == 0)
-    fDecimalCount[n] = 0;
-  AnalysisData::SetValue(n, v, ++fDecimalCount[n]);
+  AnalysisData::SetValue(n, v, fCount);
 }
 
 void  AnalysisTreeWriter::SetValue (std::string n, long double v, long long i) {
-  if (fDecimalIntCount.count(n) != 0 && fDecimalIntCount[n].count(i) == 0)
-    fDecimalIntCount[n][i] = 0;
-  else if (fDecimalIntCount.count(n) == 0) {
-    std::map<long long, long long> temp;
-    temp.insert(std::pair<long long, long long>(i, 0));
-    fDecimalIntCount[n] = temp;
-  }
-  AnalysisData::SetValue(n, v, i, ++fDecimalIntCount[n][i]);
+  AnalysisData::SetValue(n, v, fCount, i);
 }
 
+//void  AnalysisTreeWriter::Set1DValue (std::string n, long double v) {
+//  if (!Exists(n, fCount, 0))
+//    fDecimalIntCount[n][fCount] = 0;
+//  AnalysisData::SetValue(n, v, fCount, fDecimalIntCount[n][fCount]++);
+//}
+
 void  AnalysisTreeWriter::SetValue (std::string n, long long v) {
-  if (fIntegerCount.count(n) == 0)
-    fIntegerCount[n] = 0;
-  AnalysisData::SetValue(n, v, ++fIntegerCount[n]);
+  AnalysisData::SetValue(n, v, fCount);
 }
 
 void  AnalysisTreeWriter::SetValue (std::string n, long long v, long long i) {
-  if (fIntegerIntCount.count(n) != 0 && fIntegerIntCount[n].count(i) == 0)
-    fIntegerIntCount[n][i] = 0;
-  else if (fIntegerIntCount.count(n) == 0) {
-    std::map<long long, long long> temp;
-    temp.insert(std::pair<long long, long long>(i, 0));
-    fIntegerIntCount[n] = temp;
-  }
-  AnalysisData::SetValue(n, v, i, ++fIntegerIntCount[n][i]);
+  AnalysisData::SetValue(n, v, fCount, i);
 }
 
+//void  AnalysisTreeWriter::Set1DValue (std::string n, long long v) {
+//  if (!Exists(n, fCount, 0))
+//    fIntegerIntCount[n][fCount] = 0;
+//  AnalysisData::SetValue(n, v, fCount, fIntegerIntCount[n][fCount]++);
+//}
+
 void  AnalysisTreeWriter::SetValue (std::string n, unsigned long long v) {
-  if (fCountingCount.count(n) == 0)
-    fCountingCount[n] = 0;
-  AnalysisData::SetValue(n, v, ++fCountingCount[n]);
+  AnalysisData::SetValue(n, v, fCount);
 }
 
 void  AnalysisTreeWriter::SetValue (std::string n, unsigned long long v, long long i) {
-  if (fCountingIntCount.count(n) != 0 && fCountingIntCount[n].count(i) == 0)
-    fCountingIntCount[n][i] = 0;
-  else if (fCountingIntCount.count(n) == 0) {
-    std::map<long long, long long> temp;
-    temp.insert(std::pair<long long, long long>(i, 0));
-    fCountingIntCount[n] = temp;
-  }
-  AnalysisData::SetValue(n, v, i, ++fCountingIntCount[n][i]);
+  AnalysisData::SetValue(n, v, fCount, i);
 }
+
+//void  AnalysisTreeWriter::SetValue (std::string n, unsigned long long v) {
+//  if (!Exists(n, fCount, 0))
+//    fCountingIntCount[n][fCount] = 0;
+//  AnalysisData::SetValue(n, v, fCount, fCountingIntCount[n][fCount]++);
+//}
 
 void AnalysisTreeWriter::WriteData() {
   TFile f(fOutputFileName.Data(), "RECREATE");
   TTree t(fTreeName.Data(), fTreeDescription.Data());
+  bool fill = false;
 
+  std::map<std::string, bool> bBoolValues;
+  std::map<std::string, std::vector<bool> > bBoolIntValues;
+  std::map<std::string, double> bDecimalValues;
+  std::map<std::string, std::vector<double> > bDecimalIntValues;
+  std::map<std::string, long long> bIntegerValues;
+  std::map<std::string, std::vector<long long> > bIntegerIntValues;
+  std::map<std::string, unsigned long long> bCountingValues;
+  std::map<std::string, std::vector<unsigned long long> > bCountingIntValues;
+  
   // Loop over maps - each key is a branch name
-  std::deque<std::vector<double>*> bDecimalValues;
   for (std::map<std::string, std::map<long long, bool> >::iterator outer = fBoolIntMap.begin();
       outer != fBoolIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    std::vector<bool> *values = new std::vector<bool>;
-
-    std::cout << "Creating vector<bool> branch: " << bname << std::endl;
-
-    for (std::map<long long, bool>::iterator inner = outer->second.begin();
-        inner != outer->second.end(); ++inner) {
-      bool value = inner->second;
-      values->push_back(value);
-    }
-    t.Branch(bname.c_str(), "vector<bool>", &values);
-    t.Fill();
+    std::cout << "Creating branch " << bname << " of type bool" << std::endl;
+    t.Branch(bname.c_str(), &bBoolValues[bname]);
   }
   for (std::map<std::string, std::map<long long, long double> >::iterator outer = fDecimalIntMap.begin();
       outer != fDecimalIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    //std::vector<long double> *values = new std::vector<long double>;
-    bDecimalValues.push_back(new std::vector<double>);
-    std::vector<double> *values = new std::vector<double>;
-    //t.Branch(bname.c_str(), "vector<double>", &values);
-    t.Branch(bname.c_str(), "vector<double>", &bDecimalValues.back());
-
-    std::cout << "Creating vector<double> branch: " << bname << std::endl;
-
-    for (std::map<long long, long double>::iterator inner = outer->second.begin();
-        inner != outer->second.end(); ++inner) {
-      long double value = inner->second;
-      //values->clear();
-      bDecimalValues.back()->clear();
-      //values->push_back(value);
-      //values->push_back((double)value);
-      bDecimalValues.back()->push_back((double)value);
-      t.Fill();
-    }
-    //t.Branch(bname.c_str(), "vector<long double>", &values);
-    //t.Fill();
+    std::cout << "Creating branch " << bname << " of type double" << std::endl;
+    t.Branch(bname.c_str(), &bDecimalValues[bname]);
   }
   for (std::map<std::string, std::map<long long, long long> >::iterator outer = fIntegerIntMap.begin();
       outer != fIntegerIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    std::vector<long long> *values = new std::vector<long long>;
-
-    std::cout << "Creating vector<long long> branch: " << bname << std::endl;
-
-    for (std::map<long long, long long>::iterator inner = outer->second.begin();
-        inner != outer->second.end(); ++inner) {
-      long long value = inner->second;
-      values->push_back(value);
-    }
-    t.Branch(bname.c_str(), "vector<long long>", &values);
-    t.Fill();
+    std::cout << "Creating branch " << bname << " of type long long" << std::endl;
+    t.Branch(bname.c_str(), &bIntegerValues[bname]);
   }
   for (std::map<std::string, std::map<long long, unsigned long long> >::iterator outer = fCountingIntMap.begin();
       outer != fCountingIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    std::vector<unsigned long long> *values = new std::vector<unsigned long long>;
-
-    std::cout << "Creating vector<unsigned long long> branch: " << bname << std::endl;
-
-    for (std::map<long long, unsigned long long>::iterator inner = outer->second.begin();
-        inner != outer->second.end(); ++inner) {
-      unsigned long long value = inner->second;
-      values->push_back(value);
-    }
-    t.Branch(bname.c_str(), "vector<unsigned long long>", &values);
-    t.Fill();
+    std::cout << "Creating branch " << bname << " of type unsigned long long" << std::endl;
+    t.Branch(bname.c_str(), &bCountingValues[bname]);
   }
   for (std::map<std::string, std::map<long long, std::map<long long, bool> > >::iterator outer = fBoolIntIntMap.begin();
       outer != fBoolIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    std::vector<std::vector<bool> > *values = new std::vector<std::vector<bool> >;
-
-    std::cout << "Creating vector<vector<bool> > branch: " << bname << std::endl;
-
-    for (std::map<long long, std::map<long long, bool> >::iterator middle = outer->second.begin();
-        middle != outer->second.end(); ++middle) {
-      std::vector<bool> row;
-      for (std::map<long long, bool>::iterator inner = middle->second.begin();
-          inner != middle->second.end(); ++inner) {
-        bool value = inner->second;
-        row.push_back(value);
-      }
-      values->push_back(row);
-    }
-    t.Branch(bname.c_str(), "vector<vector<bool> >", &values);
-    t.Fill();
+    std::cout << "Creating branch " << bname << " of type vector<bool>" << std::endl;
+    t.Branch(bname.c_str(), &bBoolIntValues[bname]);
   }
   for (std::map<std::string, std::map<long long, std::map<long long, long double> > >::iterator outer = fDecimalIntIntMap.begin();
       outer != fDecimalIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    //std::vector<std::vector<long double> > *values = new std::vector<std::vector<long double> >;
-    std::vector<std::vector<double> > *values = new std::vector<std::vector<double> >;
-
-    std::cout << "Creating vector<vector<double> > branch: " << bname << std::endl;
-
-    for (std::map<long long, std::map<long long, long double> >::iterator middle = outer->second.begin();
-        middle != outer->second.end(); ++middle) {
-      //std::vector<long double> row;
-      std::vector<double> row;
-      for (std::map<long long, long double>::iterator inner = middle->second.begin();
-          inner != middle->second.end(); ++inner) {
-        long double value = inner->second;
-        //row.push_back(value);
-        row.push_back((double)value);
-      }
-      values->push_back(row);
-    }
-    //t.Branch(bname.c_str(), "vector<vector<long double> >", &values);
-    t.Branch(bname.c_str(), "vector<vector<double> >", &values);
-    t.Fill();
+    std::cout << "Creating branch " << bname << " of type vector<double>" << std::endl;
+    t.Branch(bname.c_str(), &bDecimalIntValues[bname]);
   }
   for (std::map<std::string, std::map<long long, std::map<long long, long long> > >::iterator outer = fIntegerIntIntMap.begin();
       outer != fIntegerIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    std::vector<std::vector<long long> > *values = new std::vector<std::vector<long long> >;
-
-    std::cout << "Creating vector<vector<long long> > branch: " << bname << std::endl;
-
-    for (std::map<long long, std::map<long long, long long> >::iterator middle = outer->second.begin();
-        middle != outer->second.end(); ++middle) {
-      std::vector<long long> row;
-      for (std::map<long long, long long>::iterator inner = middle->second.begin();
-          inner != middle->second.end(); ++inner) {
-        long long value = inner->second;
-        row.push_back(value);
-      }
-      values->push_back(row);
-    }
-    t.Branch(bname.c_str(), "vector<vector<long long> >", &values);
-    t.Fill();
+    std::cout << "Creating branch " << bname << " of type vector<long long>" << std::endl;
+    t.Branch(bname.c_str(), &bIntegerIntValues[bname]);
   }
   for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> > >::iterator outer = fCountingIntIntMap.begin();
       outer != fCountingIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    std::vector<std::vector<unsigned long long> > *values = new std::vector<std::vector<unsigned long long> >;
-
-    std::cout << "Creating vector<vector<unsigned long long> > branch: " << bname << std::endl;
-
-    for (std::map<long long, std::map<long long, unsigned long long> >::iterator middle = outer->second.begin();
-        middle != outer->second.end(); ++middle) {
-      std::vector<unsigned long long> row;
-      for (std::map<long long, unsigned long long>::iterator inner = middle->second.begin();
-          inner != middle->second.end(); ++inner) {
-        unsigned long long value = inner->second;
-        row.push_back(value);
-      }
-      values->push_back(row);
-    }
-    t.Branch(bname.c_str(), "vector<vector<unsigned long long> >", &values);
-    t.Fill();
+    std::cout << "Creating branch " << bname << " of type vector<unsigned long long>" << std::endl;
+    t.Branch(bname.c_str(), &bCountingIntValues[bname]);
   }
 
-  //t.Write();
+  // actual loop to fill in the TTree
+  for (long long i = 1; i <= fCount; ++i) {
+    for (std::map<std::string, std::map<long long, bool> >::iterator outer = fBoolIntMap.begin();
+        outer != fBoolIntMap.end(); ++outer) {
+      std::string bname = outer->first;
+      if (Exists(bname, i)) {
+        fill = true;
+        t.SetBranchStatus(bname.c_str(), 1);
+        bBoolValues[bname] = GetBool(bname, i);
+      }
+      else
+        t.SetBranchStatus(bname.c_str(), 0);
+    }
+    for (std::map<std::string, std::map<long long, long double> >::iterator outer = fDecimalIntMap.begin();
+        outer != fDecimalIntMap.end(); ++outer) {
+      std::string bname = outer->first;
+      if (Exists(bname, i)) {
+        fill = true;
+        t.SetBranchStatus(bname.c_str(), 1);
+        bDecimalValues[bname] = GetDecimal(bname, i);
+      }
+      else
+        t.SetBranchStatus(bname.c_str(), 0);
+    }
+    for (std::map<std::string, std::map<long long, long long> >::iterator outer = fIntegerIntMap.begin();
+        outer != fIntegerIntMap.end(); ++outer) {
+      std::string bname = outer->first;
+      if (Exists(bname, i)) {
+        fill = true;
+        t.SetBranchStatus(bname.c_str(), 1);
+        bIntegerValues[bname] = GetInteger(bname, i);
+      }
+      else
+        t.SetBranchStatus(bname.c_str(), 0);
+    }
+    for (std::map<std::string, std::map<long long, unsigned long long> >::iterator outer = fCountingIntMap.begin();
+        outer != fCountingIntMap.end(); ++outer) {
+      std::string bname = outer->first;
+      if (Exists(bname, i)) {
+        fill = true;
+        t.SetBranchStatus(bname.c_str(), 1);
+        bCountingValues[bname] = GetCounting(bname, i);
+      }
+      else
+        t.SetBranchStatus(bname.c_str(), 0);
+    }
+    for (std::map<std::string, std::map<long long, std::map<long long, bool> > >::iterator outer = fBoolIntIntMap.begin();
+        outer != fBoolIntIntMap.end(); ++outer) {
+      std::string bname = outer->first;
+      if (Exists(bname, i)) {
+        fill = true;
+        std::vector<bool> temp;
+        for (std::map<long long, bool>::iterator it = outer->second[i].begin();
+             it != outer->second[i].end(); ++it)
+          temp.push_back(it->second);
+        t.SetBranchStatus(bname.c_str(), 1);
+        bBoolIntValues[bname] = temp;
+      }
+      else
+        t.SetBranchStatus(bname.c_str(), 0);
+    }
+    for (std::map<std::string, std::map<long long, std::map<long long, long double> > >::iterator outer = fDecimalIntIntMap.begin();
+        outer != fDecimalIntIntMap.end(); ++outer) {
+      std::string bname = outer->first;
+      if (Exists(bname, i)) {
+        fill = true;
+        std::vector<double> temp;
+        for (std::map<long long, long double>::iterator it = outer->second[i].begin();
+             it != outer->second[i].end(); ++it)
+          temp.push_back(it->second);
+        t.SetBranchStatus(bname.c_str(), 1);
+        bDecimalIntValues[bname] = temp;
+      }
+      else
+        t.SetBranchStatus(bname.c_str(), 0);
+    }
+    for (std::map<std::string, std::map<long long, std::map<long long, long long> > >::iterator outer = fIntegerIntIntMap.begin();
+        outer != fIntegerIntIntMap.end(); ++outer) {
+      std::string bname = outer->first;
+      if (Exists(bname, i)) {
+        fill = true;
+        std::vector<long long> temp;
+        for (std::map<long long, long long>::iterator it = outer->second[i].begin();
+             it != outer->second[i].end(); ++it)
+          temp.push_back(it->second);
+        t.SetBranchStatus(bname.c_str(), 1);
+        bIntegerIntValues[bname] = temp;
+      }
+      else
+        t.SetBranchStatus(bname.c_str(), 0);
+    }
+    for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> > >::iterator outer = fCountingIntIntMap.begin();
+        outer != fCountingIntIntMap.end(); ++outer) {
+      std::string bname = outer->first;
+      if (Exists(bname, i)) {
+        fill = true;
+        std::vector<unsigned long long> temp;
+        for (std::map<long long, unsigned long long>::iterator it = outer->second[i].begin();
+             it != outer->second[i].end(); ++it)
+          temp.push_back(it->second);
+        t.SetBranchStatus(bname.c_str(), 1);
+        bCountingIntValues[bname] = temp;
+      }
+      else
+        t.SetBranchStatus(bname.c_str(), 0);
+    }
+
+    if (fill)
+      t.Fill();
+    fill = false;
+  }
+
+  t.SetBranchStatus("*", kTRUE);
   f.Write();
   f.Close();
 }

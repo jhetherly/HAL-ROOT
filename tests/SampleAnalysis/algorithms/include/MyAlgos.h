@@ -2,9 +2,9 @@
 #include <TLorentzVector.h>
 #include <iostream>
 
-class DiJetReco : public HAL::ReconstructionAlgorithm {
+class DiJetReco : public HAL::Algorithm {
 public:
-  DiJetReco () : ReconstructionAlgorithm("DiJetReco", "Reconstruct di-jets") {}
+  DiJetReco () : Algorithm("DiJetReco", "Reconstruct di-jets") {}
   virtual ~DiJetReco () {} 
 
   virtual void Init (Option_t* option) {}
@@ -63,7 +63,7 @@ public:
 
   virtual void Exec (Option_t* option) {
     HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
-    HAL::AnalysisData *output = (HAL::AnalysisTreeWriter*)GetData("UserOutput");
+    HAL::AnalysisTreeWriter *output = (HAL::AnalysisTreeWriter*)GetData("UserOutput");
 
     // Remove those di-jet objects whose mass is < 500.0 GeV
     if (data->GetTObject("di-jet p") == NULL ||
