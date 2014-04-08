@@ -32,9 +32,9 @@ int main(int argc, char *argv[]) {
   a.AddAlgo(new HAL::RA0000("di-jet", "reconstruct a di-jet object", 
                                 2, "leading pt jet", "subleading pt jet"));
                                 //2, "jets", "jets"));
-  a.AddAlgo(new HAL::CA0003("di-jet mass cut", "cut on the mass of the di-jet system", 
-                               "di-jet", 
-                               500000.0));
+  //a.AddAlgo(new HAL::CA0003("di-jet mass cut", "cut on the mass of the di-jet system", 
+  //                             "di-jet", 
+  //                             500000.0));
                                //2000.0));
   a.AddAlgo(new HAL::CA0100("di-jet existence cut", "make sure dijet exists", 
                                1, "di-jet"));
