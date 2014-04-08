@@ -32,15 +32,24 @@ int main(int argc, char *argv[]) {
   a.AddAlgo(new HAL::RA0000("di-jet", "reconstruct a di-jet object", 
                                 2, "leading pt jet", "subleading pt jet"));
                                 //2, "jets", "jets"));
+  a.AddAlgo(new HAL::FA0100("di-jet50pt", "filter on di-jet pt >= 50GeV", 
+                                "di-jet", // input algorithm
+                                50000)); // pT value
+  a.AddAlgo(new HAL::FA0121("di-jetfinal", "filter on di-jet |eta| <= 1.5", 
+                                "di-jet50pt", // input algorithm
+                                -1.5, 1.5)); // eta low and high values
   //a.AddAlgo(new HAL::CA0003("di-jet mass cut", "cut on the mass of the di-jet system", 
   //                             "di-jet", 
   //                             500000.0));
                                //2000.0));
   a.AddAlgo(new HAL::CA0100("di-jet existence cut", "make sure dijet exists", 
-                               1, "di-jet"));
+                               1, "di-jetfinal"));
   a.AddAlgo(new HAL::EA0003("store di-jet mass", "store the mass of the di-jet system", 
-                               "di-jet", 
-                               "dijet_mass2"));
+                               "di-jetfinal", "dijet_mass2")); // input, branch
+  a.AddAlgo(new HAL::EA0000("store di-jet pt", "store the pt of the di-jet system", 
+                               "di-jetfinal", "dijet_pt")); // input, branch
+  a.AddAlgo(new HAL::EA0001("store di-jet eta", "store the eta of the di-jet system", 
+                               "di-jetfinal", "dijet_eta")); // input, branch
   //a.AddAlgo(new HAL::EA0013("store di-jet mass", "store the mass of the di-jet system", 
   //                             "di-jet", 
   //                             "dijet_mass2"));

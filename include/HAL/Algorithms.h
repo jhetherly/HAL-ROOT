@@ -87,12 +87,29 @@ protected:
 };
 
 /*
- * Algorithm for a single particle cut on its TLV
+ * Algorithm for filtering many particle by their TLV
+ * */
+class FilterTLVAlgo : public Algorithm {
+public:
+  FilterTLVAlgo (TString name, TString title, TString input) :
+    Algorithm(name, title), fInput(input) {}
+  virtual ~FilterTLVAlgo () {}
+
+  virtual bool FilterPredicate (TLorentzVector*) = 0;
+protected:
+  virtual void Exec (Option_t* /*option*/);
+  virtual void Clear (Option_t* /*option*/);
+
+  TString fInput;
+};
+
+/*
+ * Algorithm for cutting many particle on their TLV
  * */
 class ParticlesTLVCut : public CutAlgorithm {
 public:
-  ParticlesTLVCut (TString name, TString title, TString input, double cut) :
-    CutAlgorithm(name, title), fInput(input), fCutValue(cut) {}
+  ParticlesTLVCut (TString name, TString title, TString input) :
+    CutAlgorithm(name, title), fInput(input) {}
   virtual ~ParticlesTLVCut () {}
 
   // this should return true if particle passed cut
@@ -102,7 +119,6 @@ protected:
   virtual void Exec (Option_t* /*option*/);
 
   TString   fInput;
-  double    fCutValue;
 };
 
 /*
@@ -485,6 +501,391 @@ public:
 };
 
 
+/*
+ * Select the particles with pT greater than or equal to
+ * a given value
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0100 : public internal::FilterTLVAlgo {
+public:
+  FA0100 (TString name, TString title, TString input, double v) : 
+    FilterTLVAlgo(name, title, input), fValue(v) {}
+  virtual ~FA0100 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fValue;
+};
+
+
+/*
+ * Select the particles with eta greater than or equal to
+ * a given value
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0101 : public internal::FilterTLVAlgo {
+public:
+  FA0101 (TString name, TString title, TString input, double v) : 
+    FilterTLVAlgo(name, title, input), fValue(v) {}
+  virtual ~FA0101 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fValue;
+};
+
+
+/*
+ * Select the particles with phi greater than or equal to
+ * a given value
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0102 : public internal::FilterTLVAlgo {
+public:
+  FA0102 (TString name, TString title, TString input, double v) : 
+    FilterTLVAlgo(name, title, input), fValue(v) {}
+  virtual ~FA0102 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fValue;
+};
+
+
+/*
+ * Select the particles with mass greater than or equal to
+ * a given value
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0103 : public internal::FilterTLVAlgo {
+public:
+  FA0103 (TString name, TString title, TString input, double v) : 
+    FilterTLVAlgo(name, title, input), fValue(v) {}
+  virtual ~FA0103 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fValue;
+};
+
+
+/*
+ * Select the particles with energy greater than or equal to
+ * a given value
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0104 : public internal::FilterTLVAlgo {
+public:
+  FA0104 (TString name, TString title, TString input, double v) : 
+    FilterTLVAlgo(name, title, input), fValue(v) {}
+  virtual ~FA0104 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fValue;
+};
+
+
+/*
+ * Select the particles with pT less than or equal to
+ * a given value
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0110 : public internal::FilterTLVAlgo {
+public:
+  FA0110 (TString name, TString title, TString input, double v) : 
+    FilterTLVAlgo(name, title, input), fValue(v) {}
+  virtual ~FA0110 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fValue;
+};
+
+
+/*
+ * Select the particles with eta less than or equal to
+ * a given value
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0111 : public internal::FilterTLVAlgo {
+public:
+  FA0111 (TString name, TString title, TString input, double v) : 
+    FilterTLVAlgo(name, title, input), fValue(v) {}
+  virtual ~FA0111 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fValue;
+};
+
+
+/*
+ * Select the particles with phi less than or equal to
+ * a given value
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0112 : public internal::FilterTLVAlgo {
+public:
+  FA0112 (TString name, TString title, TString input, double v) : 
+    FilterTLVAlgo(name, title, input), fValue(v) {}
+  virtual ~FA0112 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fValue;
+};
+
+
+/*
+ * Select the particles with mass less than or equal to
+ * a given value
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0113 : public internal::FilterTLVAlgo {
+public:
+  FA0113 (TString name, TString title, TString input, double v) : 
+    FilterTLVAlgo(name, title, input), fValue(v) {}
+  virtual ~FA0113 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fValue;
+};
+
+
+/*
+ * Select the particles with energy less than or equal to
+ * a given value
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0114 : public internal::FilterTLVAlgo {
+public:
+  FA0114 (TString name, TString title, TString input, double v) : 
+    FilterTLVAlgo(name, title, input), fValue(v) {}
+  virtual ~FA0114 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fValue;
+};
+
+
+/*
+ * Select the particles within a pT window
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0120 : public internal::FilterTLVAlgo {
+public:
+  FA0120 (TString name, TString title, TString input, double low, double high) : 
+    FilterTLVAlgo(name, title, input), fLow(low), fHigh(high) {}
+  virtual ~FA0120 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fLow, fHigh;
+};
+
+
+/*
+ * Select the particles within a eta window
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0121 : public internal::FilterTLVAlgo {
+public:
+  FA0121 (TString name, TString title, TString input, double low, double high) : 
+    FilterTLVAlgo(name, title, input), fLow(low), fHigh(high) {}
+  virtual ~FA0121 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fLow, fHigh;
+};
+
+
+/*
+ * Select the particles within a phi window
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0122 : public internal::FilterTLVAlgo {
+public:
+  FA0122 (TString name, TString title, TString input, double low, double high) : 
+    FilterTLVAlgo(name, title, input), fLow(low), fHigh(high) {}
+  virtual ~FA0122 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fLow, fHigh;
+};
+
+
+/*
+ * Select the particles within a mass window
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0123 : public internal::FilterTLVAlgo {
+public:
+  FA0123 (TString name, TString title, TString input, double low, double high) : 
+    FilterTLVAlgo(name, title, input), fLow(low), fHigh(high) {}
+  virtual ~FA0123 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fLow, fHigh;
+};
+
+
+/*
+ * Select the particles within a energy window
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class FA0124 : public internal::FilterTLVAlgo {
+public:
+  FA0124 (TString name, TString title, TString input, double low, double high) : 
+    FilterTLVAlgo(name, title, input), fLow(low), fHigh(high) {}
+  virtual ~FA0124 () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  double fLow, fHigh;
+};
+
+
 
 
 /*
@@ -505,10 +906,13 @@ public:
 class CA0000 : public internal::ParticlesTLVCut {
 public:
   CA0000 (TString name, TString title, TString input, double cut) :
-    ParticlesTLVCut(name, title, input, cut) {}
+    ParticlesTLVCut(name, title, input), fCutValue(cut) {}
   virtual ~CA0000 () {}
 
   virtual bool CutPredicate (TLorentzVector *vec);
+
+private:
+  double    fCutValue;
 };
 
 
@@ -526,10 +930,13 @@ public:
 class CA0003 : public internal::ParticlesTLVCut {
 public:
   CA0003 (TString name, TString title, TString input, double cut) :
-    ParticlesTLVCut(name, title, input, cut) {}
+    ParticlesTLVCut(name, title, input), fCutValue(cut) {}
   virtual ~CA0003 () {}
 
   virtual bool CutPredicate (TLorentzVector *vec);
+
+private:
+  double    fCutValue;
 };
 
 
@@ -605,6 +1012,47 @@ public:
     SingleParticleTLVStore(name, title, input, bname) {}
   virtual ~EA0000 () {}
 
+protected:
+  virtual double  StoreValue (TLorentzVector*);
+};
+
+
+/*
+ * Store the eta of a particle
+ *
+ * Prerequisites:
+ *  Stored particle (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  None
+ * */
+class EA0001 : public internal::SingleParticleTLVStore {
+public:
+  EA0001 (TString name, TString title, TString input, TString bname) :
+    SingleParticleTLVStore(name, title, input, bname) {}
+  virtual ~EA0001 () {}
+
+protected:
+  virtual double  StoreValue (TLorentzVector*);
+};
+
+
+/*
+ * Store the phi of a particle
+ *
+ * Prerequisites:
+ *  Stored particle (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  None
+ * */
+class EA0002 : public internal::SingleParticleTLVStore {
+public:
+  EA0002 (TString name, TString title, TString input, TString bname) :
+    SingleParticleTLVStore(name, title, input, bname) {}
+  virtual ~EA0002 () {}
 
 protected:
   virtual double  StoreValue (TLorentzVector*);
@@ -627,10 +1075,31 @@ public:
     SingleParticleTLVStore(name, title, input, bname) {}
   virtual ~EA0003 () {}
 
+protected:
+  virtual double  StoreValue (TLorentzVector*);
+};
+
+
+/*
+ * Store the energy of a particle
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  None
+ * */
+class EA0004 : public internal::SingleParticleTLVStore {
+public:
+  EA0004 (TString name, TString title, TString input, TString bname) :
+    SingleParticleTLVStore(name, title, input, bname) {}
+  virtual ~EA0004 () {}
 
 protected:
   virtual double  StoreValue (TLorentzVector*);
 };
+
 
 /*
  * Store the pT of particles
@@ -648,6 +1117,47 @@ public:
     ParticlesTLVStore(name, title, input, bname) {}
   virtual ~EA0010 () {}
 
+protected:
+  virtual double  StoreValue (TLorentzVector*);
+};
+
+
+/*
+ * Store the eta of particles
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  None
+ * */
+class EA0011 : public internal::ParticlesTLVStore {
+public:
+  EA0011 (TString name, TString title, TString input, TString bname) :
+    ParticlesTLVStore(name, title, input, bname) {}
+  virtual ~EA0011 () {}
+
+protected:
+  virtual double  StoreValue (TLorentzVector*);
+};
+
+
+/*
+ * Store the phi of particles
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  None
+ * */
+class EA0012 : public internal::ParticlesTLVStore {
+public:
+  EA0012 (TString name, TString title, TString input, TString bname) :
+    ParticlesTLVStore(name, title, input, bname) {}
+  virtual ~EA0012 () {}
 
 protected:
   virtual double  StoreValue (TLorentzVector*);
@@ -670,6 +1180,26 @@ public:
     ParticlesTLVStore(name, title, input, bname) {}
   virtual ~EA0013 () {}
 
+protected:
+  virtual double  StoreValue (TLorentzVector*);
+};
+
+
+/*
+ * Store the energy of particles
+ *
+ * Prerequisites:
+ *  Stored particles (either as references or direct access)
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  None
+ * */
+class EA0014 : public internal::ParticlesTLVStore {
+public:
+  EA0014 (TString name, TString title, TString input, TString bname) :
+    ParticlesTLVStore(name, title, input, bname) {}
+  virtual ~EA0014 () {}
 
 protected:
   virtual double  StoreValue (TLorentzVector*);

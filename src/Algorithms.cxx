@@ -83,34 +83,81 @@ void internal::NthElementAlgo::Exec (Option_t* /*option*/) {
 
   long long location = data->GetInteger(SortedIndexListName.Data(), fN - 1);
   data->SetValue(NObjectsOutput.Data(), (long long)1);
-  data->SetValue(NameOutput.Data(), fInput);
+  data->SetValue(NameOutput.Data(), RealInput);
   data->SetValue(IndexOutput.Data(), location, 0);
 }
 
 void internal::NthElementAlgo::Clear (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
+  data->RemoveAllAssociatedData(GetName().Data());
+}
 
+void internal::FilterTLVAlgo::Exec (Option_t* /*option*/) {
+  HAL::AnalysisData *data = GetUserData();
+  TString NObjectsOutput = TString::Format("%s:nobjects", GetName().Data());
+  TString NameOutput = TString::Format("%s:ref_name", GetName().Data());
+  TString IndexOutput = TString::Format("%s:index", GetName().Data());
+  long long n, count;
+  TString RealInput;
+  long long *InputIndices;
+  TLorentzVector **InputVec;
+
+  if (data->Exists(TString::Format("%s:nobjects", fInput.Data()).Data())) {
+    n = data->GetInteger(TString::Format("%s:nobjects", fInput.Data()).Data());
+    InputVec = new TLorentzVector*[n];
+    InputIndices = new long long[n];
+  }
+  else
+    return;
+
+  for (long long i = 0; i < n; ++i) {
+    if (internal::determineAccessProtocol(data, fInput, RealInput)) {
+      InputIndices[i] = data->GetInteger(TString::Format("%s:index", fInput.Data()).Data(), i);
+      InputVec[i] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput.Data()).Data(), InputIndices[i]);
+    }
+    else
+      return;
+  }
+
+  count = 0;
+  for (long long i = 0; i < n; ++i) {
+    if (FilterPredicate(InputVec[i])) {
+      data->SetValue(IndexOutput.Data(), InputIndices[i], i);
+      ++count;
+    }
+  }
+  if (count > 0) {
+    data->SetValue(NameOutput.Data(), RealInput);
+    data->SetValue(NObjectsOutput.Data(), count);
+  }
+}
+
+void internal::FilterTLVAlgo::Clear (Option_t* /*option*/) {
+  HAL::AnalysisData *data = GetUserData();
   data->RemoveAllAssociatedData(GetName().Data());
 }
 
 void internal::ParticlesTLVCut::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
   long long n;
-  TString *RealInput;
+  //TString *RealInput;
+  TString RealInput;
   TLorentzVector **InputVec;
 
   if (data->Exists(TString::Format("%s:nobjects", fInput.Data()).Data())) {
     n = data->GetInteger(TString::Format("%s:nobjects", fInput.Data()).Data());
-    RealInput = new TString[n];
+    //RealInput = new TString[n];
     InputVec = new TLorentzVector*[n];
   }
   else
     return;
 
   for (long long i = 0; i < n; ++i) {
-    if (internal::determineAccessProtocol(data, fInput, RealInput[i])) {
+    //if (internal::determineAccessProtocol(data, fInput, RealInput[i])) {
+    if (internal::determineAccessProtocol(data, fInput, RealInput)) {
       long long InputIndex = data->GetInteger(TString::Format("%s:index", fInput.Data()).Data(), i);
-      InputVec[i] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput[i].Data()).Data(), InputIndex);
+      //InputVec[i] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput[i].Data()).Data(), InputIndex);
+      InputVec[i] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput.Data()).Data(), InputIndex);
     }
     else
       return;
@@ -356,6 +403,66 @@ bool FA0000::operator() (long long lhs, long long rhs) {
 
 void FA0000::Sort (std::vector<long long> &ip) {
   std::stable_sort(ip.begin(), ip.end(), *this);
+}
+
+bool FA0100::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Pt() >= fValue);
+}
+
+bool FA0101::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Eta() >= fValue);
+}
+
+bool FA0102::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Phi() >= fValue);
+}
+
+bool FA0103::FilterPredicate(TLorentzVector *vec) {
+  return (vec->M() >= fValue);
+}
+
+bool FA0104::FilterPredicate(TLorentzVector *vec) {
+  return (vec->E() >= fValue);
+}
+
+bool FA0110::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Pt() <= fValue);
+}
+
+bool FA0111::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Eta() <= fValue);
+}
+
+bool FA0112::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Phi() <= fValue);
+}
+
+bool FA0113::FilterPredicate(TLorentzVector *vec) {
+  return (vec->M() <= fValue);
+}
+
+bool FA0114::FilterPredicate(TLorentzVector *vec) {
+  return (vec->E() <= fValue);
+}
+
+bool FA0120::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Pt() <= fHigh && vec->Pt() >= fLow);
+}
+
+bool FA0121::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Eta() <= fHigh && vec->Eta() >= fLow);
+}
+
+bool FA0122::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Phi() <= fHigh && vec->Phi() >= fLow);
+}
+
+bool FA0123::FilterPredicate(TLorentzVector *vec) {
+  return (vec->M() <= fHigh && vec->M() >= fLow);
+}
+
+bool FA0124::FilterPredicate(TLorentzVector *vec) {
+  return (vec->E() <= fHigh && vec->E() >= fLow);
 }
 
 /*
@@ -646,16 +753,40 @@ double EA0000::StoreValue (TLorentzVector *vec) {
   return vec->Pt();
 }
 
+double EA0001::StoreValue (TLorentzVector *vec) {
+  return vec->Eta();
+}
+
+double EA0002::StoreValue (TLorentzVector *vec) {
+  return vec->Phi();
+}
+
 double EA0003::StoreValue (TLorentzVector *vec) {
   return vec->M();
+}
+
+double EA0004::StoreValue (TLorentzVector *vec) {
+  return vec->E();
 }
 
 double EA0010::StoreValue (TLorentzVector *vec) {
   return vec->Pt();
 }
 
+double EA0011::StoreValue (TLorentzVector *vec) {
+  return vec->Eta();
+}
+
+double EA0012::StoreValue (TLorentzVector *vec) {
+  return vec->Phi();
+}
+
 double EA0013::StoreValue (TLorentzVector *vec) {
   return vec->M();
+}
+
+double EA0014::StoreValue (TLorentzVector *vec) {
+  return vec->E();
 }
 
 } /* HAL */ 
