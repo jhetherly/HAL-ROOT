@@ -97,15 +97,16 @@ TString AnalysisTreeReader::GetFullBranchName (TString name) {
     TString bn = ((TObjString*)(fBranchMap->GetValue(key)))->String();
 
     if (name.BeginsWith(nn, TString::kIgnoreCase)) {
+      TString oldname = name;
       name.Replace(0, nn.Length(), bn);
-      break;
+      // Check if branch or leaf has name
+      if (fChain->FindBranch(name.Data()))
+        return name;
+      if (fChain->FindLeaf(name.Data()))
+        return TString(fChain->GetLeaf(name.Data())->GetBranch()->GetName());
+      name = oldname;
     }
   }
-  // Recheck if branch or leaf has name
-  if (fChain->FindBranch(name.Data()))
-    return name;
-  if (fChain->FindLeaf(name.Data()))
-    return TString(fChain->GetLeaf(name.Data())->GetBranch()->GetName());
 
   throw HALException(name.Prepend("Couldn't find branch: ").Data());
 }
