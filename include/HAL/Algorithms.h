@@ -941,7 +941,7 @@ private:
 
 
 /*
- * Cut on particles' existence
+ * Cut on number of particles
  * (logical 'and')
  *
  * Prerequisites:
@@ -953,20 +953,20 @@ private:
  * */
 class CA0100 : public CutAlgorithm {
 public:
-  CA0100 (TString name, TString title, long long length, ...);
+  CA0100 (TString name, TString title, long long n, long long length, ...);
   virtual ~CA0100 () {}
 
 protected:
   virtual void Exec (Option_t* /*option*/);
 
 private:
-  long long     fLength;
+  long long     fLength, fN;
   const char**  fParticleNames;
 };
 
 
 /*
- * Cut on particles' existence
+ * Cut on number of particles
  * (logical 'or')
  *
  * Prerequisites:
@@ -978,14 +978,14 @@ private:
  * */
 class CA0101 : public CutAlgorithm {
 public:
-  CA0101 (TString name, TString title, long long length, ...);
+  CA0101 (TString name, TString title, long long n, long long length, ...);
   virtual ~CA0101 () {}
 
 protected:
   virtual void Exec (Option_t* /*option*/);
 
 private:
-  long long     fLength;
+  long long     fLength, fN;
   const char**  fParticleNames;
 };
 

@@ -170,28 +170,27 @@ void internal::FilterTLVAlgo::Clear (Option_t* /*option*/) {
 void internal::ParticlesTLVCut::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
   long long n;
-  //TString *RealInput;
+  TString NObjectsInput = TString::Format("%s:nobjects", fInput.Data());
+  TString IndexInput = TString::Format("%s:index", fInput.Data());
   TString RealInput;
   TLorentzVector **InputVec;
 
-  if (data->Exists(TString::Format("%s:nobjects", fInput.Data()).Data())) {
-    n = data->GetInteger(TString::Format("%s:nobjects", fInput.Data()).Data());
-    //RealInput = new TString[n];
+  if (data->Exists(NObjectsInput.Data())) {
+    n = data->GetInteger(NObjectsInput.Data());
     InputVec = new TLorentzVector*[n];
   }
   else
     return;
 
-  for (long long i = 0; i < n; ++i) {
-    //if (internal::determineAccessProtocol(data, fInput, RealInput[i])) {
-    if (internal::determineAccessProtocol(data, fInput, RealInput)) {
-      long long InputIndex = data->GetInteger(TString::Format("%s:index", fInput.Data()).Data(), i);
-      //InputVec[i] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput[i].Data()).Data(), InputIndex);
-      InputVec[i] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput.Data()).Data(), InputIndex);
+  if (internal::determineAccessProtocol(data, fInput, RealInput)) {
+    TString RealVec = TString::Format("%s:4-vec", RealInput.Data());
+    for (long long i = 0; i < n; ++i) {
+      long long inputIndex = data->GetInteger(IndexInput.Data(), i);
+      InputVec[i] = (TLorentzVector*)data->GetTObject(RealVec.Data(), inputIndex);
     }
-    else
-      return;
   }
+  else
+    return;
 
   for (long long i = 0; i < n; ++i) {
     if (!CutPredicate(InputVec[i])) {
@@ -206,25 +205,27 @@ void internal::SingleParticleTLVStore::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
   HAL::AnalysisTreeWriter *output = GetUserOutput();
   long long n;
-  TString *RealInput;
+  TString NObjectsInput = TString::Format("%s:nobjects", fInput.Data());
+  TString IndexInput = TString::Format("%s:index", fInput.Data());
+  TString RealInput;
   TLorentzVector **InputVec;
 
-  if (data->Exists(TString::Format("%s:nobjects", fInput.Data()).Data())) {
-    n = data->GetInteger(TString::Format("%s:nobjects", fInput.Data()).Data());
-    RealInput = new TString[n];
+  if (data->Exists(NObjectsInput.Data())) {
+    n = data->GetInteger(NObjectsInput.Data());
     InputVec = new TLorentzVector*[n];
   }
   else
     return;
 
-  for (long long i = 0; i < n; ++i) {
-    if (internal::determineAccessProtocol(data, fInput, RealInput[i])) {
-      long long InputIndex = data->GetInteger(TString::Format("%s:index", fInput.Data()).Data(), i);
-      InputVec[i] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput[i].Data()).Data(), InputIndex);
+  if (internal::determineAccessProtocol(data, fInput, RealInput)) {
+    TString RealVec = TString::Format("%s:4-vec", RealInput.Data());
+    for (long long i = 0; i < n; ++i) {
+      long long inputIndex = data->GetInteger(IndexInput.Data(), i);
+      InputVec[i] = (TLorentzVector*)data->GetTObject(RealVec.Data(), inputIndex);
     }
-    else
-      return;
   }
+  else
+    return;
 
   output->SetValue(fBranchName.Data(), StoreValue(InputVec[0]));
 }
@@ -233,25 +234,27 @@ void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
   HAL::AnalysisTreeWriter *output = GetUserOutput();
   long long n;
-  TString *RealInput;
+  TString NObjectsInput = TString::Format("%s:nobjects", fInput.Data());
+  TString IndexInput = TString::Format("%s:index", fInput.Data());
+  TString RealInput;
   TLorentzVector **InputVec;
 
-  if (data->Exists(TString::Format("%s:nobjects", fInput.Data()).Data())) {
-    n = data->GetInteger(TString::Format("%s:nobjects", fInput.Data()).Data());
-    RealInput = new TString[n];
+  if (data->Exists(NObjectsInput.Data())) {
+    n = data->GetInteger(NObjectsInput.Data());
     InputVec = new TLorentzVector*[n];
   }
   else
     return;
 
-  for (long long i = 0; i < n; ++i) {
-    if (internal::determineAccessProtocol(data, fInput, RealInput[i])) {
-      long long InputIndex = data->GetInteger(TString::Format("%s:index", fInput.Data()).Data(), i);
-      InputVec[i] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput[i].Data()).Data(), InputIndex);
+  if (internal::determineAccessProtocol(data, fInput, RealInput)) {
+    TString RealVec = TString::Format("%s:4-vec", RealInput.Data());
+    for (long long i = 0; i < n; ++i) {
+      long long inputIndex = data->GetInteger(IndexInput.Data(), i);
+      InputVec[i] = (TLorentzVector*)data->GetTObject(RealVec.Data(), inputIndex);
     }
-    else
-      return;
   }
+  else
+    return;
 
   for (long long i = 0; i < n; ++i)
     output->SetValue(fBranchName.Data(), StoreValue(InputVec[i]), i);
@@ -722,8 +725,8 @@ bool CA0003::CutPredicate (TLorentzVector *vec) {
   return (vec->M() >= fCutValue);
 }
 
-CA0100::CA0100 (TString name, TString title, long long length, ...) :
-  CutAlgorithm(name, title), fLength(length) {
+CA0100::CA0100 (TString name, TString title, long long n, long long length, ...) :
+  CutAlgorithm(name, title), fLength(length), fN(n) {
   fParticleNames = new const char*[fLength];
   va_list arguments;  // store the variable list of arguments
 
@@ -742,7 +745,7 @@ void CA0100::Exec (Option_t* /*option*/) {
       Abort();
       return;
     }
-    else if (data->GetInteger(NObjects.Data()) < 1) {
+    else if (data->GetInteger(NObjects.Data()) < fN) {
       Abort();
       return;
     }
@@ -751,8 +754,8 @@ void CA0100::Exec (Option_t* /*option*/) {
   Passed();
 }
 
-CA0101::CA0101 (TString name, TString title, long long length, ...) :
-  CutAlgorithm(name, title), fLength(length) {
+CA0101::CA0101 (TString name, TString title, long long n, long long length, ...) :
+  CutAlgorithm(name, title), fLength(length), fN(n) {
   fParticleNames = new const char*[fLength];
   va_list arguments;  // store the variable list of arguments
 
@@ -767,7 +770,7 @@ void CA0101::Exec (Option_t* /*option*/) {
 
   for (long long i = 0; i < fLength; ++i) {
     TString NObjects = TString::Format("%s:nobjects", fParticleNames[i]);
-    if (data->Exists(NObjects.Data()) && data->GetInteger(NObjects.Data()) > 0) {
+    if (data->Exists(NObjects.Data()) && data->GetInteger(NObjects.Data()) >= fN) {
       Passed();
       return;
     }
