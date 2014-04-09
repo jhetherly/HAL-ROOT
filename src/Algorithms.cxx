@@ -52,17 +52,21 @@ void internal::ImportTLVAlgo::Clear (Option_t* /*option*/) {
 
 void internal::NthElementAlgo::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
-  unsigned n;
+  unsigned n, nreal;
   TString RealInput;
   TString SortedIndexListName;
+  TString NObjectsInput = TString::Format("%s:nobjects", fInput.Data());
+  TString IndexInput = TString::Format("%s:index", fInput.Data());
   TString NObjectsOutput = TString::Format("%s:nobjects", GetName().Data());
   TString NameOutput = TString::Format("%s:ref_name", GetName().Data());
   TString IndexOutput = TString::Format("%s:index", GetName().Data());
 
   if (determineAccessProtocol(data, fInput, RealInput)) {
-    fElementName = TString::Format("%s:4-vec", RealInput.Data());
-    n = data->GetInteger(TString::Format("%s:nobjects", RealInput.Data()).Data());
+    TString NObjectsReal = TString::Format("%s:nobjects", RealInput.Data());
     SortedIndexListName = TString::Format("%s:sorted_%s", RealInput.Data(), SortTag().Data());
+    fElementName = TString::Format("%s:4-vec", RealInput.Data());
+    n = data->GetInteger(NObjectsInput.Data());
+    nreal = data->GetInteger(NObjectsReal.Data());
   }
   else
     return;
@@ -70,18 +74,36 @@ void internal::NthElementAlgo::Exec (Option_t* /*option*/) {
   if (n < fN)
     return;
 
+  // create sorted list for real data
   if (!data->Exists(SortedIndexListName.Data())) {
     long long count = 0;
     std::vector<long long> IndexProxy;
 
-    for (unsigned i = 0; i < n; ++i)
+    for (unsigned i = 0; i < nreal; ++i)
       IndexProxy.push_back(i);
     Sort(IndexProxy);
     for (std::vector<long long>::iterator it = IndexProxy.begin(); it != IndexProxy.end(); ++it)
       data->SetValue(SortedIndexListName.Data(), *it, count++);
   }
 
-  long long location = data->GetInteger(SortedIndexListName.Data(), fN - 1);
+  // loop over the sorted list and find the fN-th ranked member in fInput
+  long long location = -1;
+  long long count = 0;
+  for (unsigned i = 0; i < nreal; ++i) {
+    long long rank_index = data->GetInteger(SortedIndexListName.Data(), i);
+    // check if this rank_index is in fInput
+    for (unsigned j = 0; j < n; ++j) {
+      if (rank_index == data->GetInteger(IndexInput.Data(), j)) {
+        if (++count == fN) {
+          location = rank_index;
+          break;
+        }
+      }
+    }
+    if (location != -1)
+      break;
+  }
+
   data->SetValue(NObjectsOutput.Data(), (long long)1);
   data->SetValue(NameOutput.Data(), RealInput);
   data->SetValue(IndexOutput.Data(), location, 0);
@@ -94,6 +116,8 @@ void internal::NthElementAlgo::Clear (Option_t* /*option*/) {
 
 void internal::FilterTLVAlgo::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
+  TString NObjectsInput = TString::Format("%s:nobjects", fInput.Data());
+  TString IndexInput = TString::Format("%s:index", fInput.Data());
   TString NObjectsOutput = TString::Format("%s:nobjects", GetName().Data());
   TString NameOutput = TString::Format("%s:ref_name", GetName().Data());
   TString IndexOutput = TString::Format("%s:index", GetName().Data());
@@ -102,27 +126,31 @@ void internal::FilterTLVAlgo::Exec (Option_t* /*option*/) {
   long long *InputIndices;
   TLorentzVector **InputVec;
 
-  if (data->Exists(TString::Format("%s:nobjects", fInput.Data()).Data())) {
-    n = data->GetInteger(TString::Format("%s:nobjects", fInput.Data()).Data());
+  if (data->Exists(NObjectsInput.Data())) {
+    n = data->GetInteger(NObjectsInput.Data());
     InputVec = new TLorentzVector*[n];
     InputIndices = new long long[n];
   }
   else
     return;
 
-  for (long long i = 0; i < n; ++i) {
-    if (internal::determineAccessProtocol(data, fInput, RealInput)) {
-      InputIndices[i] = data->GetInteger(TString::Format("%s:index", fInput.Data()).Data(), i);
-      InputVec[i] = (TLorentzVector*)data->GetTObject(TString::Format("%s:4-vec", RealInput.Data()).Data(), InputIndices[i]);
+  if (internal::determineAccessProtocol(data, fInput, RealInput)) {
+    TString RealVec = TString::Format("%s:4-vec", RealInput.Data());
+    for (long long i = 0; i < n; ++i) {
+      InputIndices[i] = data->GetInteger(IndexInput.Data(), i);
+      InputVec[i] = (TLorentzVector*)data->GetTObject(RealVec.Data(), InputIndices[i]);
     }
-    else
-      return;
+  }
+  else {
+    delete[] InputVec;
+    delete[] InputIndices;
+    return;
   }
 
   count = 0;
   for (long long i = 0; i < n; ++i) {
     if (FilterPredicate(InputVec[i])) {
-      data->SetValue(IndexOutput.Data(), InputIndices[i], i);
+      data->SetValue(IndexOutput.Data(), InputIndices[i], count);
       ++count;
     }
   }
@@ -130,6 +158,8 @@ void internal::FilterTLVAlgo::Exec (Option_t* /*option*/) {
     data->SetValue(NameOutput.Data(), RealInput);
     data->SetValue(NObjectsOutput.Data(), count);
   }
+  delete[] InputVec;
+  delete[] InputIndices;
 }
 
 void internal::FilterTLVAlgo::Clear (Option_t* /*option*/) {

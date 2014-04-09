@@ -4,3 +4,4 @@ lib/*.so
 *.swp
 lib/python/*.pyc
 tests/*.pyc
+src/HAL_dict.*
