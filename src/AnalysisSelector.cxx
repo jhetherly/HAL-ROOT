@@ -1,4 +1,5 @@
 #include <HAL/AnalysisSelector.h>
+#include <iostream>
 
 ClassImp(HAL::AnalysisSelector);
 
@@ -23,6 +24,8 @@ Bool_t AnalysisSelector::Notify () {
   // is started when using PROOF. 
   // The return value is currently not used.
 
+  if (fChain->GetCurrentFile())
+    fAnalysisFlow->NotifyAlgo(GetOption());
   return kTRUE;
 }
 

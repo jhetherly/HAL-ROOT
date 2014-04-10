@@ -113,6 +113,13 @@ void Algorithm::SlaveBeginAlgo (Option_t *option) {
     (*algo)->SlaveBeginAlgo(option);
 }
 
+void Algorithm::NotifyAlgo (Option_t *option) {
+  Notify(option);
+  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
+       algo != fAlgorithms.end(); ++algo)
+    (*algo)->NotifyAlgo(option);
+}
+
 void Algorithm::SlaveTerminateAlgo (Option_t *option) {
   for (std::list<Algorithm*>::reverse_iterator algo = fAlgorithms.rbegin();
        algo != fAlgorithms.rend(); ++algo)

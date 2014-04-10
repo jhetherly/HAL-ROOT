@@ -50,6 +50,7 @@ public:
   void          InitializeAlgo (Option_t *option);
   void          BeginAlgo (Option_t *option);
   void          SlaveBeginAlgo (Option_t *option);
+  void          NotifyAlgo (Option_t *option);
   void          SlaveTerminateAlgo (Option_t *option);
   void          TerminateAlgo (Option_t *option);
   // -------------------------------------------
@@ -76,6 +77,7 @@ protected:
   virtual void  Begin (Option_t * /*options*/ = "") {}
   virtual void  SlaveBegin (Option_t * /*options*/ = "") {}
   virtual void  Init (Option_t * /*options*/ = "") {}
+  virtual void  Notify (Option_t * /*options*/ = "") {}
   virtual void  Exec (Option_t * /*options*/ = "") {}
   virtual void  Clear (Option_t * /*options*/ = "") {}
   virtual void  SlaveTerminate (Option_t * /*options*/ = "") {}
