@@ -51,7 +51,7 @@ namespace internal
 bool determineAccessProtocol(HAL::AnalysisData *data, TString &RawInput, TString &RealInput);
 
 /*
- * Algorithm for importing an array of TLorentzVecotr's from and TTree.
+ * Algorithm for importing an array of TLorentzVecotr's from a TTree.
  * */
 class ImportTLVAlgo : public HAL::Algorithm {
 public:
@@ -87,7 +87,7 @@ protected:
 };
 
 /*
- * Algorithm for filtering many particle by their TLV
+ * Algorithm for filtering particles by their TLV
  * */
 class FilterTLVAlgo : public Algorithm {
 public:
@@ -104,7 +104,7 @@ protected:
 };
 
 /*
- * Algorithm for cutting many particle on their TLV
+ * Algorithm for cutting particles on their TLV
  * */
 class ParticlesTLVCut : public CutAlgorithm {
 public:
@@ -302,7 +302,7 @@ protected:
 
 
 /*
- * Select the particles with TLV property less than, greater than,
+ * Select particles with TLV property less than, greater than,
  * or within a window of given values.
  * This property can be:
  * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude, eta, phi
@@ -339,6 +339,36 @@ private:
 };
 
 
+/*
+ * Select particles with TLV within, without, or windowed between
+ * given R values from reference particle
+ *
+ * Prerequisites:
+ *  Stored particles
+ * Required Branch Maps:
+ *  None
+ * UserData Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class SelectDR : public Algorithm {
+public:
+  SelectDR (TString name, TString title, TString input, TString others, 
+      double value, TString topo = "in");
+  SelectDR (TString name, TString title, TString input, TString others, 
+      double low, double high);
+  virtual ~SelectDR () {}
+
+  virtual void Exec (Option_t* /*option*/);
+
+private:
+  double    fHighLimit, fLowLimit;
+  bool      fIn, fOut, fWindow;
+  TString   fInput, fOthers;
+};
+
+
 
 
 /*
@@ -346,8 +376,15 @@ private:
  * */
 
 /*
- * Cut on particles' pT (lower limit)
+ * Cut particles with TLV property less than, greater than,
+ * or within a window of given values.
  * (logical 'and')
+ * This property can be:
+ * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude, eta, phi
+ * pt,                  m,    e,      et,                p3,                   eta, phi
+ * The 'end' parameter describes how to cut the property:
+ * high (upper limit)
+ * low (lower limit)
  *
  * Prerequisites:
  *  Stored particle
@@ -408,6 +445,9 @@ private:
 
 /*
  * Store a TLV property of a particle or particles
+ * This property can be:
+ * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude, eta, phi
+ * pt,                  m,    e,      et,                p3,                   eta, phi
  *
  * Prerequisites:
  *  Stored particle
@@ -424,6 +464,7 @@ public:
 protected:
   virtual double  StoreValue (TLorentzVector*);
 
+private:
   bool            fPt, fM, fE, fEt, fP3, fEta, fPhi;
 };
 

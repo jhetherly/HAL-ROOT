@@ -84,6 +84,9 @@ Bool_t AnalysisSelector::Process (Long64_t entry) {
   //
   // The return value is currently not used.
 
+  if (fMessagePeriod != 0 && entry % fMessagePeriod == 0)
+    std::cout << "Processing event number: " << entry << std::endl;
+
   ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetEntry(entry);
   ((AnalysisTreeWriter*)fInput->FindObject("UserOutput"))->IncrementCount();
 

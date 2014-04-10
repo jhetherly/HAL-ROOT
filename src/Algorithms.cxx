@@ -264,6 +264,13 @@ void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
     output->SetValue(fBranchName.Data(), StoreValue(InputVec[0]));
 }
 
+
+
+
+
+
+
+
 /*
  * Actual classes
  * */
@@ -341,6 +348,7 @@ TLorentzVector* Algorithms::ImportTLV::MakeTLV (unsigned i) {
 /*
  * Reconstruction Algorithms
  * */
+
 Algorithms::VecAddReco::VecAddReco (TString name, TString title, long long length, ...) :
     Algorithm(name, title), fLength(length) {
   fParentNames = new const char*[fLength];
@@ -723,6 +731,28 @@ bool Algorithms::SelectTLV::FilterPredicate(TLorentzVector *vec) {
       return (vec->Phi() <= fHighLimit && vec->Phi() >= fLowLimit);
   }
   throw HAL::HALException(GetName().Prepend("Couldn't determine how to filter: "));
+}
+
+Algorithms::SelectDR::SelectDR (TString name, TString title, TString input, TString others, 
+    double value, TString topo) : 
+  Algorithm(name, title), fIn(false), fOut(false), fWindow(false), fInput(input), 
+  fOthers(others) {
+  if (topo.EqualTo("in", TString::kIgnoreCase)) {
+    fIn = true;
+    fHighLimit = value;
+  }
+  else if (topo.EqualTo("out", TString::kIgnoreCase)) {
+    fOut = true;
+    fLowLimit = value;
+  }
+}
+
+Algorithms::SelectDR::SelectDR (TString name, TString title, TString input, TString others, 
+    double low, double high) :
+  Algorithm(name, title), fHighLimit(high), fLowLimit(low), fIn(false), fOut(false), 
+  fWindow(true), fInput(input), fOthers(others) {}
+
+void Algorithms::SelectDR::Exec (Option_t* /*option*/) {
 }
 
 /*

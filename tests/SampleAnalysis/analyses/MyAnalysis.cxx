@@ -22,39 +22,29 @@ int main(int argc, char *argv[]) {
   //      "/Users/jhetherly/src/root_HAL/tests/SampleAnalysis/algorithms/python", 
   //      "pyalgo", 
   //      "PythonAlgo"));
-  //a.AddAlgo(new HAL::IA0021("jets", "import basic jet objects"));
   a.AddAlgo(new HAL::Algorithms::ImportTLV("jets", "import basic jet objects"));
   a.AddAlgo(new HAL::Algorithms::RankSelectionTLV("leading pt jet", "find highest pt jet", 
-                                "jets", // input algorithm
-                                1, "pt")); // rank in pt
+                                                  "jets", // input algorithm
+                                                  1, "pt")); // rank in pt
   a.AddAlgo(new HAL::Algorithms::RankSelectionTLV("subleading pt jet", "find 2nd highest pt jet", 
-                                "jets", // input algorithm
-                                2, "pt")); // rank in pt
+                                                  "jets", // input algorithm
+                                                  2, "pt")); // rank in pt
   a.AddAlgo(new HAL::Algorithms::VecAddReco("di-jet", "reconstruct a di-jet object", 
-                                2, "leading pt jet", "subleading pt jet"));
-                                //2, "jets", "jets"));
+                                            2, "leading pt jet", "subleading pt jet"));
   a.AddAlgo(new HAL::Algorithms::SelectTLV("di-jet50pt", "filter on di-jet pt >= 50GeV", 
-                                "di-jet", // input algorithm
-                                "pt", 50000)); // pT value
+                                           "di-jet", // input algorithm
+                                           "pt", 50000)); // pT value
   a.AddAlgo(new HAL::Algorithms::SelectTLV("di-jetfinal", "filter on di-jet |eta| <= 1.5", 
-                                "di-jet50pt", // input algorithm
-                                "eta", -1.5, 1.5)); // eta low and high values
-  //a.AddAlgo(new HAL::CA0003("di-jet mass cut", "cut on the mass of the di-jet system", 
-  //                             "di-jet", 
-  //                             500000.0));
-                               //2000.0));
+                                           "di-jet50pt", // input algorithm
+                                           "eta", -1.5, 1.5)); // eta low and high values
   a.AddAlgo(new HAL::Algorithms::CutNObjects("di-jet existence cut", "make sure 1 dijet exists", "and",
-                               1, 1, "di-jetfinal"));
+                                             1, 1, "di-jetfinal"));
   a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet mass", "store the mass of the di-jet system", 
-                               "di-jetfinal", "m", "dijet_mass2")); // input, branch
+                                          "di-jetfinal", "m", "dijet_mass2")); // input, branch
   a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet pt", "store the pt of the di-jet system", 
-                               "di-jetfinal", "pt", "dijet_pt")); // input, branch
+                                          "di-jetfinal", "pt", "dijet_pt")); // input, branch
   a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet eta", "store the eta of the di-jet system", 
-                               "di-jetfinal", "eta", "dijet_eta")); // input, branch
-  //a.AddAlgo(new HAL::EA0013("store di-jet mass", "store the mass of the di-jet system", 
-  //                             "di-jet", 
-  //                             "dijet_mass2"));
-  //a.AddAlgo(new PrintJets());
+                                          "di-jetfinal", "eta", "dijet_eta")); // input, branch
   
   a.AddAlgo(new DiJetReco());
   a.AddAlgo(new DiJetCut());
@@ -81,7 +71,8 @@ int main(int argc, char *argv[]) {
   //a.MapBranch("jet_AntiKt4LCTopo_phi", "jet_phi");
   //a.MapBranch("jet_AntiKt4LCTopo_m", "jet_m");
 
-  // Actually run the analysis
+  a.SetMessagePeriod(100);
+  // Run the analysis
   //a.Process("", 50);
   a.Process();
 

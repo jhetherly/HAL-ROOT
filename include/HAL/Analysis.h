@@ -28,6 +28,7 @@ public:
   void SetOutputFileName (TString fname) {fAnalizer->SetOutputFileName(fname);}
   void SetOutputTreeName (TString tname) {fAnalizer->SetOutputTreeName(tname);}
   void SetOutputTreeDescription (TString tdescription) {fAnalizer->SetOutputTreeDescription(tdescription);}
+  void SetMessagePeriod (unsigned p = 0) {fAnalizer->SetMessagePeriod(p);}
   void PrintTree (Option_t *option = "");
   const char* GetLeafType (TString leafname);
   const char* GetLeafType (TString branchname, TString leafname);
