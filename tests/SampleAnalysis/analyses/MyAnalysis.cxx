@@ -43,14 +43,14 @@ int main(int argc, char *argv[]) {
   //                             "di-jet", 
   //                             500000.0));
                                //2000.0));
-  a.AddAlgo(new HAL::CA0100("di-jet existence cut", "make sure 1 dijet exists", 
+  a.AddAlgo(new HAL::Algorithms::CutNObjects("di-jet existence cut", "make sure 1 dijet exists", "and",
                                1, 1, "di-jetfinal"));
-  a.AddAlgo(new HAL::EA0003("store di-jet mass", "store the mass of the di-jet system", 
-                               "di-jetfinal", "dijet_mass2")); // input, branch
-  a.AddAlgo(new HAL::EA0000("store di-jet pt", "store the pt of the di-jet system", 
-                               "di-jetfinal", "dijet_pt")); // input, branch
-  a.AddAlgo(new HAL::EA0001("store di-jet eta", "store the eta of the di-jet system", 
-                               "di-jetfinal", "dijet_eta")); // input, branch
+  a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet mass", "store the mass of the di-jet system", 
+                               "di-jetfinal", "m", "dijet_mass2")); // input, branch
+  a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet pt", "store the pt of the di-jet system", 
+                               "di-jetfinal", "pt", "dijet_pt")); // input, branch
+  a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet eta", "store the eta of the di-jet system", 
+                               "di-jetfinal", "eta", "dijet_eta")); // input, branch
   //a.AddAlgo(new HAL::EA0013("store di-jet mass", "store the mass of the di-jet system", 
   //                             "di-jet", 
   //                             "dijet_mass2"));

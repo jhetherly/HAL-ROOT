@@ -256,8 +256,12 @@ void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
   else
     return;
 
-  for (long long i = 0; i < n; ++i)
-    output->SetValue(fBranchName.Data(), StoreValue(InputVec[i]), i);
+  if (fMany) {
+    for (long long i = 0; i < n; ++i)
+      output->SetValue(fBranchName.Data(), StoreValue(InputVec[i]), i);
+  }
+  else
+    output->SetValue(fBranchName.Data(), StoreValue(InputVec[0]));
 }
 
 /*
@@ -722,6 +726,198 @@ bool Algorithms::SelectTLV::FilterPredicate(TLorentzVector *vec) {
 }
 
 /*
+ * Cutting Algorithms
+ * */
+
+Algorithms::CutTLV::CutTLV (TString name, TString title, TString input, TString property, 
+    double value, TString end) : 
+  ParticlesTLVCut(name, title, input), 
+  fPt(false), fM(false), fE(false), fEt(false), fP3(false), fEta(false), 
+  fPhi(false), fHigh(false), fLow(false), fWindow(false),
+  fTLVProperty(property), fEnd(end) {
+
+  if (end.EqualTo("low", TString::kIgnoreCase)) {
+    fLow = true;
+    fLowLimit = value;
+  }
+  else if (end.EqualTo("high", TString::kIgnoreCase)) {
+    fHigh = true;
+    fHighLimit = value;
+  }
+  Setup();
+}
+
+Algorithms::CutTLV::CutTLV (TString name, TString title, TString input, TString property, 
+    double low, double high) : 
+  ParticlesTLVCut(name, title, input), 
+  fHighLimit(high), fLowLimit(low), 
+  fPt(false), fM(false), fE(false), fEt(false), fP3(false), fEta(false), 
+  fPhi(false), fHigh(false), fLow(false), fWindow(true),
+  fTLVProperty(property), fEnd("window") {
+  Setup();
+}
+
+void Algorithms::CutTLV::Setup () {
+  if (fTLVProperty.EqualTo("pt", TString::kIgnoreCase))
+    fPt = true;
+  if (fTLVProperty.EqualTo("m", TString::kIgnoreCase))
+    fM = true;
+  if (fTLVProperty.EqualTo("e", TString::kIgnoreCase))
+    fE = true;
+  if (fTLVProperty.EqualTo("et", TString::kIgnoreCase))
+    fEt = true;
+  if (fTLVProperty.EqualTo("p3", TString::kIgnoreCase))
+    fP3 = true;
+  if (fTLVProperty.EqualTo("eta", TString::kIgnoreCase))
+    fEta = true;
+  if (fTLVProperty.EqualTo("phi", TString::kIgnoreCase))
+    fPhi = true;
+}
+
+bool Algorithms::CutTLV::CutPredicate(TLorentzVector *vec) {
+  if (!fWindow) {
+    if (fLow) {
+      if (fPt)
+        return (vec->Pt() >= fLowLimit);
+      else if (fM)
+        return (vec->M() >= fLowLimit);
+      else if (fE)
+        return (vec->E() >= fLowLimit);
+      else if (fEt)
+        return (vec->Et() >= fLowLimit);
+      else if (fP3)
+        return (vec->P() >= fLowLimit);
+      else if (fEta)
+        return (vec->Eta() >= fLowLimit);
+      else if (fPhi)
+        return (vec->Phi() >= fLowLimit);
+    }
+    else if (fHigh) {
+      if (fPt)
+        return (vec->Pt() <= fHighLimit);
+      else if (fM)
+        return (vec->M() <= fHighLimit);
+      else if (fE)
+        return (vec->E() <= fHighLimit);
+      else if (fEt)
+        return (vec->Et() <= fHighLimit);
+      else if (fP3)
+        return (vec->P() <= fHighLimit);
+      else if (fEta)
+        return (vec->Eta() <= fHighLimit);
+      else if (fPhi)
+        return (vec->Phi() <= fHighLimit);
+    }
+  }
+  else { // window cut
+    if (fPt)
+      return (vec->Pt() <= fHighLimit && vec->Pt() >= fLowLimit);
+    else if (fM)
+      return (vec->M() <= fHighLimit && vec->M() >= fLowLimit);
+    else if (fE)
+      return (vec->E() <= fHighLimit && vec->E() >= fLowLimit);
+    else if (fEt)
+      return (vec->Et() <= fHighLimit && vec->Et() >= fLowLimit);
+    else if (fP3)
+      return (vec->P() <= fHighLimit && vec->P() >= fLowLimit);
+    else if (fEta)
+      return (vec->Eta() <= fHighLimit && vec->Eta() >= fLowLimit);
+    else if (fPhi)
+      return (vec->Phi() <= fHighLimit && vec->Phi() >= fLowLimit);
+  }
+  throw HAL::HALException(GetName().Prepend("Couldn't determine how to cut: "));
+}
+
+Algorithms::CutNObjects::CutNObjects (TString name, TString title, TString logic, 
+    long long n, long long length, ...) :
+  CutAlgorithm(name, title), fAnd(false), fOr(false), fLength(length), fN(n) {
+  fParticleNames = new const char*[fLength];
+  va_list arguments;  // store the variable list of arguments
+
+  if (logic.EqualTo("and", TString::kIgnoreCase))
+    fAnd = true;
+  else if (logic.EqualTo("or", TString::kIgnoreCase))
+    fOr = true;
+  va_start (arguments, length); // initializing arguments to store all values after length
+  for (long long i = 0; i < fLength; ++i)
+    fParticleNames[i] = va_arg(arguments, const char*);
+  va_end(arguments); // cleans up the list
+}
+
+void Algorithms::CutNObjects::Exec (Option_t* /*option*/) {
+  AnalysisData *data = GetUserData();
+
+  if (fAnd) {
+    for (long long i = 0; i < fLength; ++i) {
+      TString NObjects = TString::Format("%s:nobjects", fParticleNames[i]);
+      if (!data->Exists(NObjects.Data())) {
+        Abort();
+        return;
+      }
+      else if (data->GetInteger(NObjects.Data()) < fN) {
+        Abort();
+        return;
+      }
+    }
+
+    Passed();
+  }
+  else if (fOr) {
+    for (long long i = 0; i < fLength; ++i) {
+      TString NObjects = TString::Format("%s:nobjects", fParticleNames[i]);
+      if (data->Exists(NObjects.Data()) && data->GetInteger(NObjects.Data()) >= fN) {
+        Passed();
+        return;
+      }
+    }
+
+    Abort();
+  }
+}
+
+/*
+ * Exporting Algorithms
+ * */
+
+Algorithms::StoreTLV::StoreTLV (TString name, TString title, TString input, 
+    TString property, TString bname, TString num) :
+  ParticlesTLVStore(name, title, input, bname, num) {
+
+  if (property.EqualTo("pt", TString::kIgnoreCase))
+    fPt = true;
+  else if (property.EqualTo("m", TString::kIgnoreCase))
+    fM = true;
+  else if (property.EqualTo("e", TString::kIgnoreCase))
+    fE = true;
+  else if (property.EqualTo("et", TString::kIgnoreCase))
+    fEt = true;
+  else if (property.EqualTo("p3", TString::kIgnoreCase))
+    fP3 = true;
+  else if (property.EqualTo("eta", TString::kIgnoreCase))
+    fEta = true;
+  else if (property.EqualTo("phi", TString::kIgnoreCase))
+    fPhi = true;
+}
+
+double Algorithms::StoreTLV::StoreValue (TLorentzVector *vec) {
+  if (fPt)
+    return vec->Pt();
+  if (fM)
+    return vec->M();
+  if (fE)
+    return vec->E();
+  if (fEt)
+    return vec->Et();
+  if (fP3)
+    return vec->P();
+  if (fEta)
+    return vec->Eta();
+  if (fPhi)
+    return vec->Phi();
+  throw HAL::HALException(GetName().Prepend("Couldn't determine what to store: "));
+}
+
+/*
  * Actual classes
  * */
 
@@ -732,146 +928,10 @@ bool Algorithms::SelectTLV::FilterPredicate(TLorentzVector *vec) {
 /*
  * Filtering Algorithms
  * */
-//TString FA0000::SortTag () {
-//  return "4v_pt";
-//}
-//
-//bool FA0000::operator() (long long lhs, long long rhs) {
-//  AnalysisData *data = GetUserData();
-//  TLorentzVector *lhs_vec = (TLorentzVector*)data->GetTObject(fElementName.Data(), lhs);
-//  TLorentzVector *rhs_vec = (TLorentzVector*)data->GetTObject(fElementName.Data(), rhs);
-//
-//  // decending order (greatest to least)
-//  return (lhs_vec->Pt() > rhs_vec->Pt());
-//}
-//
-//void FA0000::Sort (std::vector<long long> &ip) {
-//  std::stable_sort(ip.begin(), ip.end(), *this);
-//}
 
-bool FA0100::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Pt() >= fValue);
-}
-
-bool FA0101::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Eta() >= fValue);
-}
-
-bool FA0102::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Phi() >= fValue);
-}
-
-bool FA0103::FilterPredicate(TLorentzVector *vec) {
-  return (vec->M() >= fValue);
-}
-
-bool FA0104::FilterPredicate(TLorentzVector *vec) {
-  return (vec->E() >= fValue);
-}
-
-bool FA0110::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Pt() <= fValue);
-}
-
-bool FA0111::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Eta() <= fValue);
-}
-
-bool FA0112::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Phi() <= fValue);
-}
-
-bool FA0113::FilterPredicate(TLorentzVector *vec) {
-  return (vec->M() <= fValue);
-}
-
-bool FA0114::FilterPredicate(TLorentzVector *vec) {
-  return (vec->E() <= fValue);
-}
-
-bool FA0120::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Pt() <= fHigh && vec->Pt() >= fLow);
-}
-
-bool FA0121::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Eta() <= fHigh && vec->Eta() >= fLow);
-}
-
-bool FA0122::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Phi() <= fHigh && vec->Phi() >= fLow);
-}
-
-bool FA0123::FilterPredicate(TLorentzVector *vec) {
-  return (vec->M() <= fHigh && vec->M() >= fLow);
-}
-
-bool FA0124::FilterPredicate(TLorentzVector *vec) {
-  return (vec->E() <= fHigh && vec->E() >= fLow);
-}
 /*
  * Cutting Algorithms
  * */
-bool CA0000::CutPredicate (TLorentzVector *vec) {
-  return (vec->Pt() >= fCutValue);
-}
-
-bool CA0003::CutPredicate (TLorentzVector *vec) {
-  return (vec->M() >= fCutValue);
-}
-
-CA0100::CA0100 (TString name, TString title, long long n, long long length, ...) :
-  CutAlgorithm(name, title), fLength(length), fN(n) {
-  fParticleNames = new const char*[fLength];
-  va_list arguments;  // store the variable list of arguments
-
-  va_start (arguments, length); // initializing arguments to store all values after length
-  for (long long i = 0; i < fLength; ++i)
-    fParticleNames[i] = va_arg(arguments, const char*);
-  va_end(arguments); // cleans up the list
-}
-
-void CA0100::Exec (Option_t* /*option*/) {
-  AnalysisData *data = GetUserData();
-
-  for (long long i = 0; i < fLength; ++i) {
-    TString NObjects = TString::Format("%s:nobjects", fParticleNames[i]);
-    if (!data->Exists(NObjects.Data())) {
-      Abort();
-      return;
-    }
-    else if (data->GetInteger(NObjects.Data()) < fN) {
-      Abort();
-      return;
-    }
-  }
-
-  Passed();
-}
-
-CA0101::CA0101 (TString name, TString title, long long n, long long length, ...) :
-  CutAlgorithm(name, title), fLength(length), fN(n) {
-  fParticleNames = new const char*[fLength];
-  va_list arguments;  // store the variable list of arguments
-
-  va_start (arguments, length); // initializing arguments to store all values after length
-  for (long long i = 0; i < fLength; ++i)
-    fParticleNames[i] = va_arg(arguments, const char*);
-  va_end(arguments); // cleans up the list
-}
-
-void CA0101::Exec (Option_t* /*option*/) {
-  AnalysisData *data = GetUserData();
-
-  for (long long i = 0; i < fLength; ++i) {
-    TString NObjects = TString::Format("%s:nobjects", fParticleNames[i]);
-    if (data->Exists(NObjects.Data()) && data->GetInteger(NObjects.Data()) >= fN) {
-      Passed();
-      return;
-    }
-  }
-
-  Abort();
-}
 
 /*
  * Exporting Algorithms
