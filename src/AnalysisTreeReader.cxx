@@ -80,6 +80,17 @@ void AnalysisTreeReader::SetEntry (Long64_t entry) {
   }
 }
 
+bool AnalysisTreeReader::CheckBranchMapNickname (TString name) {
+  TMapIter next(fBranchMap);
+  while(TObjString *key = (TObjString*)next()){
+    TString nn = key->String();
+
+    if (name.EqualTo(nn))
+      return true;
+  }
+  return false;
+}
+
 TString AnalysisTreeReader::GetFullBranchName (TString name) {
   // Remove any leading or trailing whitespace
   name.Strip(TString::kBoth);
@@ -95,17 +106,19 @@ TString AnalysisTreeReader::GetFullBranchName (TString name) {
   while(TObjString *key = (TObjString*)next()){
     TString nn = key->String();
     TString bn = ((TObjString*)(fBranchMap->GetValue(key)))->String();
+    TString oldname = name;
 
     if (name.BeginsWith(nn, TString::kIgnoreCase)) {
       name.Replace(0, nn.Length(), bn);
-      break;
     }
+    
+    // Check if branch or leaf has name
+    if (fChain->FindBranch(name.Data()))
+      return name;
+    if (fChain->FindLeaf(name.Data()))
+      return TString(fChain->GetLeaf(name.Data())->GetBranch()->GetName());
+    name = oldname;
   }
-  // Recheck if branch or leaf has name
-  if (fChain->FindBranch(name.Data()))
-    return name;
-  if (fChain->FindLeaf(name.Data()))
-    return TString(fChain->GetLeaf(name.Data())->GetBranch()->GetName());
 
   throw HALException(name.Prepend("Couldn't find branch: ").Data());
 }

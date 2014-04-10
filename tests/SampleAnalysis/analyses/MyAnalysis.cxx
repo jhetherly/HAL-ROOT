@@ -22,22 +22,23 @@ int main(int argc, char *argv[]) {
   //      "/Users/jhetherly/src/root_HAL/tests/SampleAnalysis/algorithms/python", 
   //      "pyalgo", 
   //      "PythonAlgo"));
-  a.AddAlgo(new HAL::IA0021("jets", "import basic jet objects"));
-  a.AddAlgo(new HAL::FA0000("leading pt jet", "find highest pt jet", 
+  //a.AddAlgo(new HAL::IA0021("jets", "import basic jet objects"));
+  a.AddAlgo(new HAL::Algorithms::ImportTLV("jets", "import basic jet objects"));
+  a.AddAlgo(new HAL::Algorithms::RankSelectionTLV("leading pt jet", "find highest pt jet", 
                                 "jets", // input algorithm
-                                1)); // rank in pt
-  a.AddAlgo(new HAL::FA0000("subleading pt jet", "find 2nd highest pt jet", 
+                                1, "pt")); // rank in pt
+  a.AddAlgo(new HAL::Algorithms::RankSelectionTLV("subleading pt jet", "find 2nd highest pt jet", 
                                 "jets", // input algorithm
-                                2)); // rank in pt
-  a.AddAlgo(new HAL::RA0000("di-jet", "reconstruct a di-jet object", 
+                                2, "pt")); // rank in pt
+  a.AddAlgo(new HAL::Algorithms::VecAddReco("di-jet", "reconstruct a di-jet object", 
                                 2, "leading pt jet", "subleading pt jet"));
                                 //2, "jets", "jets"));
-  a.AddAlgo(new HAL::FA0100("di-jet50pt", "filter on di-jet pt >= 50GeV", 
+  a.AddAlgo(new HAL::Algorithms::SelectTLV("di-jet50pt", "filter on di-jet pt >= 50GeV", 
                                 "di-jet", // input algorithm
-                                100000)); // pT value
-  a.AddAlgo(new HAL::FA0121("di-jetfinal", "filter on di-jet |eta| <= 1.5", 
+                                "pt", 50000)); // pT value
+  a.AddAlgo(new HAL::Algorithms::SelectTLV("di-jetfinal", "filter on di-jet |eta| <= 1.5", 
                                 "di-jet50pt", // input algorithm
-                                -1.5, 1.5)); // eta low and high values
+                                "eta", -1.5, 1.5)); // eta low and high values
   //a.AddAlgo(new HAL::CA0003("di-jet mass cut", "cut on the mass of the di-jet system", 
   //                             "di-jet", 
   //                             500000.0));

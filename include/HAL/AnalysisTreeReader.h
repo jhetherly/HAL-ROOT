@@ -50,6 +50,7 @@ public:
   void SetEntry (Long64_t entry);
   TTree* GetTree () {return fChain;}
   void SetBranchMap (TMap *m) {fBranchMap = m;}
+  bool CheckBranchMapNickname (TString name);
 
   unsigned int              GetDim (TString branchname, Int_t idx_1 = -1);
   bool                      GetBool (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);

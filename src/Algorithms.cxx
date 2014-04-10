@@ -260,7 +260,6 @@ void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
     output->SetValue(fBranchName.Data(), StoreValue(InputVec[i]), i);
 }
 
-
 /*
  * Actual classes
  * */
@@ -268,240 +267,77 @@ void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
 /*
  * Importing Algorithms
  * */
-void IA0000::Exec (Option_t* /*option*/) {
-  AnalysisTreeReader *tr = GetRawData();
-  unsigned n = tr->GetInteger(TString::Format("%s:nentries", GetName().Data()));
 
+Algorithms::ImportTLV::ImportTLV (TString name, TString title, unsigned n) : 
+  ImportTLVAlgo(name, title), fN(n), fIsCart(false), fIsE(false), fIsM(false) {}
+
+void Algorithms::ImportTLV::Init (Option_t* /*option*/) {
+  HAL::AnalysisTreeReader *tr = GetRawData();
+  TString CartEntriesName = TString::Format("%s:x1", GetName().Data());
+  TString MassEntriesName = TString::Format("%s:m", GetName().Data());
+  TString EnergyEntriesName = TString::Format("%s:e", GetName().Data());
+
+  if (tr->CheckBranchMapNickname(CartEntriesName))
+    fIsCart = true;
+  else if (tr->CheckBranchMapNickname(EnergyEntriesName))
+    fIsE = true;
+  else if (tr->CheckBranchMapNickname(MassEntriesName))
+    fIsM = true;
+  if (!fIsCart && !fIsE && !fIsM)
+    HAL::HALException(GetName().Prepend("Couldn't determine how to import data: ").Data());
+}
+
+void Algorithms::ImportTLV::Exec (Option_t* /*option*/) {
+  HAL::AnalysisTreeReader *tr = GetRawData();
+  TString NEntriesName = TString::Format("%s:nentries", GetName().Data());
+  TString CartEntriesName = TString::Format("%s:x1", GetName().Data());
+  TString PtEntriesName = TString::Format("%s:pt", GetName().Data());
+  long long n = fN;
+
+  // determine number of elements to read in
+  if (n == 0) {
+    if (tr->CheckBranchMapNickname(NEntriesName))
+      n = tr->GetInteger(NEntriesName.Data());
+    else if (fIsCart)
+      n = tr->GetDim(CartEntriesName.Data());
+    else if (fIsE || fIsM)
+      n = tr->GetDim(PtEntriesName.Data());
+  }
+  // call actual Exec algo
   ImportTLVAlgo::Exec(n);
 }
 
-TLorentzVector* IA0000::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = GetRawData();
+TLorentzVector* Algorithms::ImportTLV::MakeTLV (unsigned i) {
+  HAL::AnalysisTreeReader *tr = GetRawData();
 
-  long double x0 = tr->GetDecimal(TString::Format("%s:x0", GetName().Data()), i),
-              x1 = tr->GetDecimal(TString::Format("%s:x1", GetName().Data()), i),
-              x2 = tr->GetDecimal(TString::Format("%s:x2", GetName().Data()), i),
-              x3 = tr->GetDecimal(TString::Format("%s:x3", GetName().Data()), i);
-  return new TLorentzVector(x1, x2, x3, x0);
-}
-
-void IA0001::Exec (Option_t* /*option*/) {
-  AnalysisTreeReader *tr = GetRawData();
-  unsigned n = tr->GetDim(TString::Format("%s:x1", GetName().Data()));
-
-  ImportTLVAlgo::Exec(n);
-}
-
-TLorentzVector* IA0001::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = GetRawData();
-
-  long double x0 = tr->GetDecimal(TString::Format("%s:x0", GetName().Data()), i),
-              x1 = tr->GetDecimal(TString::Format("%s:x1", GetName().Data()), i),
-              x2 = tr->GetDecimal(TString::Format("%s:x2", GetName().Data()), i),
-              x3 = tr->GetDecimal(TString::Format("%s:x3", GetName().Data()), i);
-  return new TLorentzVector(x1, x2, x3, x0);
-}
-
-void IA0002::Exec (Option_t* /*option*/) {
-  unsigned n = fNEntries;
-
-  ImportTLVAlgo::Exec(n);
-}
-
-TLorentzVector* IA0002::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = GetRawData();
-
-  long double x0 = tr->GetDecimal(TString::Format("%s:x0", GetName().Data()), i),
-              x1 = tr->GetDecimal(TString::Format("%s:x1", GetName().Data()), i),
-              x2 = tr->GetDecimal(TString::Format("%s:x2", GetName().Data()), i),
-              x3 = tr->GetDecimal(TString::Format("%s:x3", GetName().Data()), i);
-  return new TLorentzVector(x1, x2, x3, x0);
-}
-
-void IA0010::Exec (Option_t* /*option*/) {
-  AnalysisTreeReader *tr = GetRawData();
-  unsigned n = tr->GetInteger(TString::Format("%s:nentries", GetName().Data()));
-
-  ImportTLVAlgo::Exec(n);
-}
-
-TLorentzVector* IA0010::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = GetRawData();
-
-  long double e = tr->GetDecimal(TString::Format("%s:e", GetName().Data()), i),
-              pT = tr->GetDecimal(TString::Format("%s:pt", GetName().Data()), i),
-              eta = tr->GetDecimal(TString::Format("%s:eta", GetName().Data()), i),
-              phi = tr->GetDecimal(TString::Format("%s:phi", GetName().Data()), i);
-  return makeTLVFromPtEtaPhiE(pT, eta, phi, e);
-}
-
-void IA0011::Exec (Option_t* /*option*/) {
-  AnalysisTreeReader *tr = GetRawData();
-  unsigned n = tr->GetDim(TString::Format("%s:pt", GetName().Data()));
-
-  ImportTLVAlgo::Exec(n);
-}
-
-TLorentzVector* IA0011::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = GetRawData();
-
-  long double e = tr->GetDecimal(TString::Format("%s:e", GetName().Data()), i),
-              pT = tr->GetDecimal(TString::Format("%s:pt", GetName().Data()), i),
-              eta = tr->GetDecimal(TString::Format("%s:eta", GetName().Data()), i),
-              phi = tr->GetDecimal(TString::Format("%s:phi", GetName().Data()), i);
-  return makeTLVFromPtEtaPhiE(pT, eta, phi, e);
-}
-
-void IA0012::Exec (Option_t* /*option*/) {
-  unsigned n = fNEntries;
-
-  ImportTLVAlgo::Exec(n);
-}
-
-TLorentzVector* IA0012::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = GetRawData();
-
-  long double e = tr->GetDecimal(TString::Format("%s:e", GetName().Data()), i),
-              pT = tr->GetDecimal(TString::Format("%s:pt", GetName().Data()), i),
-              eta = tr->GetDecimal(TString::Format("%s:eta", GetName().Data()), i),
-              phi = tr->GetDecimal(TString::Format("%s:phi", GetName().Data()), i);
-  return makeTLVFromPtEtaPhiE(pT, eta, phi, e);
-}
-
-void IA0020::Exec (Option_t* /*option*/) {
-  AnalysisTreeReader *tr = GetRawData();
-  unsigned n = tr->GetInteger(TString::Format("%s:nentries", GetName().Data()));
-
-  ImportTLVAlgo::Exec(n);
-}
-
-TLorentzVector* IA0020::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = GetRawData();
-
-  long double m = tr->GetDecimal(TString::Format("%s:m", GetName().Data()), i),
-              pT = tr->GetDecimal(TString::Format("%s:pT", GetName().Data()), i),
-              eta = tr->GetDecimal(TString::Format("%s:eta", GetName().Data()), i),
-              phi = tr->GetDecimal(TString::Format("%s:phi", GetName().Data()), i);
-  return makeTLVFromPtEtaPhiM(pT, eta, phi, m);
-}
-
-void IA0021::Exec (Option_t* /*option*/) {
-  AnalysisTreeReader *tr = GetRawData();
-  unsigned n = tr->GetDim(TString::Format("%s:pt", GetName().Data()));
-
-  ImportTLVAlgo::Exec(n);
-}
-
-TLorentzVector* IA0021::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = GetRawData();
-
-  long double m = tr->GetDecimal(TString::Format("%s:m", GetName().Data()), i),
-              pT = tr->GetDecimal(TString::Format("%s:pt", GetName().Data()), i),
-              eta = tr->GetDecimal(TString::Format("%s:eta", GetName().Data()), i),
-              phi = tr->GetDecimal(TString::Format("%s:phi", GetName().Data()), i);
-  return makeTLVFromPtEtaPhiM(pT, eta, phi, m);
-}
-
-void IA0022::Exec (Option_t* /*option*/) {
-  unsigned n = fNEntries;
-
-  ImportTLVAlgo::Exec(n);
-}
-
-TLorentzVector* IA0022::MakeTLV (unsigned i) {
-  AnalysisTreeReader *tr = GetRawData();
-
-  long double m = tr->GetDecimal(TString::Format("%s:m", GetName().Data()), i),
-              pT = tr->GetDecimal(TString::Format("%s:pt", GetName().Data()), i),
-              eta = tr->GetDecimal(TString::Format("%s:eta", GetName().Data()), i),
-              phi = tr->GetDecimal(TString::Format("%s:phi", GetName().Data()), i);
-  return makeTLVFromPtEtaPhiM(pT, eta, phi, m);
-}
-
-/*
- * Filtering Algorithms
- * */
-TString FA0000::SortTag () {
-  return "pt";
-}
-
-bool FA0000::operator() (long long lhs, long long rhs) {
-  AnalysisData *data = GetUserData();
-  TLorentzVector *lhs_vec = (TLorentzVector*)data->GetTObject(fElementName.Data(), lhs);
-  TLorentzVector *rhs_vec = (TLorentzVector*)data->GetTObject(fElementName.Data(), rhs);
-
-  // decending order (greatest to least)
-  return (lhs_vec->Pt() > rhs_vec->Pt());
-}
-
-void FA0000::Sort (std::vector<long long> &ip) {
-  std::stable_sort(ip.begin(), ip.end(), *this);
-}
-
-bool FA0100::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Pt() >= fValue);
-}
-
-bool FA0101::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Eta() >= fValue);
-}
-
-bool FA0102::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Phi() >= fValue);
-}
-
-bool FA0103::FilterPredicate(TLorentzVector *vec) {
-  return (vec->M() >= fValue);
-}
-
-bool FA0104::FilterPredicate(TLorentzVector *vec) {
-  return (vec->E() >= fValue);
-}
-
-bool FA0110::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Pt() <= fValue);
-}
-
-bool FA0111::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Eta() <= fValue);
-}
-
-bool FA0112::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Phi() <= fValue);
-}
-
-bool FA0113::FilterPredicate(TLorentzVector *vec) {
-  return (vec->M() <= fValue);
-}
-
-bool FA0114::FilterPredicate(TLorentzVector *vec) {
-  return (vec->E() <= fValue);
-}
-
-bool FA0120::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Pt() <= fHigh && vec->Pt() >= fLow);
-}
-
-bool FA0121::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Eta() <= fHigh && vec->Eta() >= fLow);
-}
-
-bool FA0122::FilterPredicate(TLorentzVector *vec) {
-  return (vec->Phi() <= fHigh && vec->Phi() >= fLow);
-}
-
-bool FA0123::FilterPredicate(TLorentzVector *vec) {
-  return (vec->M() <= fHigh && vec->M() >= fLow);
-}
-
-bool FA0124::FilterPredicate(TLorentzVector *vec) {
-  return (vec->E() <= fHigh && vec->E() >= fLow);
+  if (fIsCart) {
+    long double x0 = tr->GetDecimal(TString::Format("%s:x0", GetName().Data()), i),
+                x1 = tr->GetDecimal(TString::Format("%s:x1", GetName().Data()), i),
+                x2 = tr->GetDecimal(TString::Format("%s:x2", GetName().Data()), i),
+                x3 = tr->GetDecimal(TString::Format("%s:x3", GetName().Data()), i);
+    return new TLorentzVector(x1, x2, x3, x0);
+  }
+  else if (fIsE) {
+    long double e = tr->GetDecimal(TString::Format("%s:e", GetName().Data()), i),
+                pT = tr->GetDecimal(TString::Format("%s:pt", GetName().Data()), i),
+                eta = tr->GetDecimal(TString::Format("%s:eta", GetName().Data()), i),
+                phi = tr->GetDecimal(TString::Format("%s:phi", GetName().Data()), i);
+    return HAL::makeTLVFromPtEtaPhiE(pT, eta, phi, e);
+  }
+  else if (fIsM) {
+    long double m = tr->GetDecimal(TString::Format("%s:m", GetName().Data()), i),
+                pT = tr->GetDecimal(TString::Format("%s:pT", GetName().Data()), i),
+                eta = tr->GetDecimal(TString::Format("%s:eta", GetName().Data()), i),
+                phi = tr->GetDecimal(TString::Format("%s:phi", GetName().Data()), i);
+    return HAL::makeTLVFromPtEtaPhiM(pT, eta, phi, m);
+  }
+  throw HAL::HALException("Couldn't identify type in ImportTLV");
 }
 
 /*
  * Reconstruction Algorithms
  * */
-RA0000::RA0000 (TString name, TString title, long long length, ...) :
+Algorithms::VecAddReco::VecAddReco (TString name, TString title, long long length, ...) :
     Algorithm(name, title), fLength(length) {
   fParentNames = new const char*[fLength];
   va_list arguments;  // store the variable list of arguments
@@ -512,11 +348,11 @@ RA0000::RA0000 (TString name, TString title, long long length, ...) :
   va_end(arguments); // cleans up the list
 }
 
-RA0000::~RA0000() {
+Algorithms::VecAddReco::~VecAddReco() {
   delete[] fParentNames;
 }
 
-void RA0000::Exec (Option_t* /*option*/) {
+void Algorithms::VecAddReco::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
   TString *RealInputs = new TString[fLength];
   long long *ParentNObjects = new long long[fLength];
@@ -702,7 +538,7 @@ void RA0000::Exec (Option_t* /*option*/) {
   delete[] ParentVecs2;
 }
 
-void RA0000::Clear (Option_t* /*option*/) {
+void Algorithms::VecAddReco::Clear (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
   TString VectorOutput = TString::Format("%s:4-vec", GetName().Data());
   TString NObjectsOutput = TString::Format("%s:nobjects", GetName().Data());
@@ -714,6 +550,264 @@ void RA0000::Clear (Option_t* /*option*/) {
   data->RemoveAllAssociatedData(GetName().Data());
 }
 
+Algorithms::RankSelectionTLV::RankSelectionTLV (TString name, TString title, 
+    TString input, unsigned rank, TString property, TString end) : 
+  NthElementAlgo(name, title, input, rank), fPt(false), fM(false), fE(false),
+    fEt(false), fP3(false), fHigh(false), fLow(false),
+    fTLVProperty(property), fEnd(end) {
+  if (fTLVProperty.EqualTo("pt", TString::kIgnoreCase))
+    fPt = true;
+  else if (fTLVProperty.EqualTo("m", TString::kIgnoreCase))
+    fM = true;
+  else if (fTLVProperty.EqualTo("e", TString::kIgnoreCase))
+    fE = true;
+  else if (fTLVProperty.EqualTo("et", TString::kIgnoreCase))
+    fEt = true;
+  else if (fTLVProperty.EqualTo("p3", TString::kIgnoreCase))
+    fP3 = true;
+
+  if (fEnd.EqualTo("high", TString::kIgnoreCase))
+    fHigh = true;
+  else if (fEnd.EqualTo("low", TString::kIgnoreCase))
+    fLow = true;
+}
+
+TString Algorithms::RankSelectionTLV::SortTag () {
+  if (fPt)
+    return "4v_pt";
+  if (fM)
+    return "4v_m";
+  if (fE)
+    return "4v_e";
+  if (fEt)
+    return "4v_et";
+  if (fP3)
+    return "4v_p3";
+  throw HAL::HALException(GetName().Prepend("Couldn't determine sorting type: "));
+}
+
+bool Algorithms::RankSelectionTLV::operator() (long long lhs, long long rhs) {
+  AnalysisData *data = GetUserData();
+  TLorentzVector *lhs_vec = (TLorentzVector*)data->GetTObject(fElementName.Data(), lhs);
+  TLorentzVector *rhs_vec = (TLorentzVector*)data->GetTObject(fElementName.Data(), rhs);
+
+  if (fHigh) {
+    if (fPt)
+      return (lhs_vec->Pt() > rhs_vec->Pt());
+    if (fM)
+      return (lhs_vec->M() > rhs_vec->M());
+    if (fE)
+      return (lhs_vec->E() > rhs_vec->E());
+    if (fEt)
+      return (lhs_vec->Et() > rhs_vec->Et());
+    if (fP3)
+      return (lhs_vec->P() > rhs_vec->P());
+  }
+  else if (fLow) {
+    if (fPt)
+      return (lhs_vec->Pt() < rhs_vec->Pt());
+    if (fM)
+      return (lhs_vec->M() < rhs_vec->M());
+    if (fE)
+      return (lhs_vec->E() < rhs_vec->E());
+    if (fEt)
+      return (lhs_vec->Et() < rhs_vec->Et());
+    if (fP3)
+      return (lhs_vec->P() < rhs_vec->P());
+  }
+  throw HAL::HALException(GetName().Prepend("Couldn't determine sorting information: "));
+}
+
+void Algorithms::RankSelectionTLV::Sort (std::vector<long long> &ip) {
+  std::stable_sort(ip.begin(), ip.end(), *this);
+}
+
+Algorithms::SelectTLV::SelectTLV (TString name, TString title, TString input, TString property, 
+    double value, TString end) : 
+  FilterTLVAlgo(name, title, input), 
+  fPt(false), fM(false), fE(false), fEt(false), fP3(false), fEta(false), 
+  fPhi(false), fHigh(false), fLow(false), fWindow(false),
+  fTLVProperty(property), fEnd(end) {
+
+  if (end.EqualTo("low", TString::kIgnoreCase)) {
+    fLow = true;
+    fLowLimit = value;
+  }
+  else if (end.EqualTo("high", TString::kIgnoreCase)) {
+    fHigh = true;
+    fHighLimit = value;
+  }
+  Setup();
+}
+
+Algorithms::SelectTLV::SelectTLV (TString name, TString title, TString input, TString property, 
+    double low, double high) : 
+  FilterTLVAlgo(name, title, input), 
+  fHighLimit(high), fLowLimit(low), 
+  fPt(false), fM(false), fE(false), fEt(false), fP3(false), fEta(false), 
+  fPhi(false), fHigh(false), fLow(false), fWindow(true),
+  fTLVProperty(property), fEnd("window") {
+  Setup();
+}
+
+void Algorithms::SelectTLV::Setup () {
+  if (fTLVProperty.EqualTo("pt", TString::kIgnoreCase))
+    fPt = true;
+  if (fTLVProperty.EqualTo("m", TString::kIgnoreCase))
+    fM = true;
+  if (fTLVProperty.EqualTo("e", TString::kIgnoreCase))
+    fE = true;
+  if (fTLVProperty.EqualTo("et", TString::kIgnoreCase))
+    fEt = true;
+  if (fTLVProperty.EqualTo("p3", TString::kIgnoreCase))
+    fP3 = true;
+  if (fTLVProperty.EqualTo("eta", TString::kIgnoreCase))
+    fEta = true;
+  if (fTLVProperty.EqualTo("phi", TString::kIgnoreCase))
+    fPhi = true;
+}
+
+bool Algorithms::SelectTLV::FilterPredicate(TLorentzVector *vec) {
+  if (!fWindow) {
+    if (fLow) {
+      if (fPt)
+        return (vec->Pt() >= fLowLimit);
+      else if (fM)
+        return (vec->M() >= fLowLimit);
+      else if (fE)
+        return (vec->E() >= fLowLimit);
+      else if (fEt)
+        return (vec->Et() >= fLowLimit);
+      else if (fP3)
+        return (vec->P() >= fLowLimit);
+      else if (fEta)
+        return (vec->Eta() >= fLowLimit);
+      else if (fPhi)
+        return (vec->Phi() >= fLowLimit);
+    }
+    else if (fHigh) {
+      if (fPt)
+        return (vec->Pt() <= fHighLimit);
+      else if (fM)
+        return (vec->M() <= fHighLimit);
+      else if (fE)
+        return (vec->E() <= fHighLimit);
+      else if (fEt)
+        return (vec->Et() <= fHighLimit);
+      else if (fP3)
+        return (vec->P() <= fHighLimit);
+      else if (fEta)
+        return (vec->Eta() <= fHighLimit);
+      else if (fPhi)
+        return (vec->Phi() <= fHighLimit);
+    }
+  }
+  else { // window cut
+    if (fPt)
+      return (vec->Pt() <= fHighLimit && vec->Pt() >= fLowLimit);
+    else if (fM)
+      return (vec->M() <= fHighLimit && vec->M() >= fLowLimit);
+    else if (fE)
+      return (vec->E() <= fHighLimit && vec->E() >= fLowLimit);
+    else if (fEt)
+      return (vec->Et() <= fHighLimit && vec->Et() >= fLowLimit);
+    else if (fP3)
+      return (vec->P() <= fHighLimit && vec->P() >= fLowLimit);
+    else if (fEta)
+      return (vec->Eta() <= fHighLimit && vec->Eta() >= fLowLimit);
+    else if (fPhi)
+      return (vec->Phi() <= fHighLimit && vec->Phi() >= fLowLimit);
+  }
+  throw HAL::HALException(GetName().Prepend("Couldn't determine how to filter: "));
+}
+
+/*
+ * Actual classes
+ * */
+
+/*
+ * Importing Algorithms
+ * */
+
+/*
+ * Filtering Algorithms
+ * */
+//TString FA0000::SortTag () {
+//  return "4v_pt";
+//}
+//
+//bool FA0000::operator() (long long lhs, long long rhs) {
+//  AnalysisData *data = GetUserData();
+//  TLorentzVector *lhs_vec = (TLorentzVector*)data->GetTObject(fElementName.Data(), lhs);
+//  TLorentzVector *rhs_vec = (TLorentzVector*)data->GetTObject(fElementName.Data(), rhs);
+//
+//  // decending order (greatest to least)
+//  return (lhs_vec->Pt() > rhs_vec->Pt());
+//}
+//
+//void FA0000::Sort (std::vector<long long> &ip) {
+//  std::stable_sort(ip.begin(), ip.end(), *this);
+//}
+
+bool FA0100::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Pt() >= fValue);
+}
+
+bool FA0101::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Eta() >= fValue);
+}
+
+bool FA0102::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Phi() >= fValue);
+}
+
+bool FA0103::FilterPredicate(TLorentzVector *vec) {
+  return (vec->M() >= fValue);
+}
+
+bool FA0104::FilterPredicate(TLorentzVector *vec) {
+  return (vec->E() >= fValue);
+}
+
+bool FA0110::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Pt() <= fValue);
+}
+
+bool FA0111::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Eta() <= fValue);
+}
+
+bool FA0112::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Phi() <= fValue);
+}
+
+bool FA0113::FilterPredicate(TLorentzVector *vec) {
+  return (vec->M() <= fValue);
+}
+
+bool FA0114::FilterPredicate(TLorentzVector *vec) {
+  return (vec->E() <= fValue);
+}
+
+bool FA0120::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Pt() <= fHigh && vec->Pt() >= fLow);
+}
+
+bool FA0121::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Eta() <= fHigh && vec->Eta() >= fLow);
+}
+
+bool FA0122::FilterPredicate(TLorentzVector *vec) {
+  return (vec->Phi() <= fHigh && vec->Phi() >= fLow);
+}
+
+bool FA0123::FilterPredicate(TLorentzVector *vec) {
+  return (vec->M() <= fHigh && vec->M() >= fLow);
+}
+
+bool FA0124::FilterPredicate(TLorentzVector *vec) {
+  return (vec->E() <= fHigh && vec->E() >= fLow);
+}
 /*
  * Cutting Algorithms
  * */

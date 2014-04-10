@@ -161,278 +161,62 @@ protected:
 
 
 
+namespace Algorithms
+{
+
+
 /*
  * Importing algorithms
  * */
 
 /*
- * Import algorithm to build particles from the cartesian components
- * of a 4-vector.
+ * Import algorithm to build particles from cartesian,
+ * (pt,eta,phi,energy), or (pt,eta,phi,mass) components of a
+ * 4-vector. It can also determine how many elements to read
+ * in based on whether you give a number to read, branchmap
+ * to scan, or implicitly gather it from the length of the
+ * other required branches. It will also determine the type
+ * of 4-vector to create based on the branchmaps that are 
+ * defined.
  *
  * Prerequisites:
  *  None
- * Branch Maps Needed:
- *  <name>:nentries
+ * Required Branch Maps:
  *  <name>:x0
  *  <name>:x1
  *  <name>:x2
  *  <name>:x3
- * Output:
- *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVectors)
- *  <name>:index (1D array: of indices (used in subsequent algorithms))
- */
-class IA0000 : public internal::ImportTLVAlgo {
-public:
-  IA0000 (TString name, TString title) : ImportTLVAlgo(name, title) {}
-  virtual ~IA0000 () {}
-
-protected:
-  using ImportTLVAlgo::Exec;
-  virtual void Exec (Option_t* /*option*/);
-  virtual TLorentzVector* MakeTLV (unsigned);
-};
-
-
-/*
- * Import algorithm to build particles from the cartesian components
- * of a 4-vector. It uses the dimension of the x1 coordinate array
- * as the number to loop over. This saves the user from having to
- * explicitly give an array length.
- *
- * Prerequisites:
- *  None
- * Branch Maps Needed:
- *  <name>:x0
- *  <name>:x1
- *  <name>:x2
- *  <name>:x3
- * Output:
- *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVectors)
- *  <name>:index (1D array: of indices (used in subsequent algorithms))
- */
-class IA0001 : public internal::ImportTLVAlgo {
-public:
-  IA0001 (TString name, TString title) : ImportTLVAlgo(name, title) {}
-  virtual ~IA0001 () {}
-
-protected:
-  using ImportTLVAlgo::Exec;
-  virtual void Exec (Option_t* /*option*/);
-  virtual TLorentzVector* MakeTLV (unsigned);
-};
-
-
-/*
- * Import algorithm to build particles from the cartesian components
- * of a 4-vector. User must specify number of particles to read in.
- *
- * Prerequisites:
- *  None
- * Branch Maps Needed:
- *  <name>:x0
- *  <name>:x1
- *  <name>:x2
- *  <name>:x3
- * Output:
- *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVectors)
- *  <name>:index (1D array: of indices (used in subsequent algorithms))
- */
-class IA0002 : public internal::ImportTLVAlgo {
-public:
-  IA0002 (TString name, TString title, unsigned n) : ImportTLVAlgo(name, title), fNEntries(n) {}
-  virtual ~IA0002 () {}
-
-protected:
-  using ImportTLVAlgo::Exec;
-  virtual void Exec (Option_t* /*option*/);
-  virtual TLorentzVector* MakeTLV (unsigned);
-
-private:
-  unsigned fNEntries;
-};
-
-/*
- * Import algorithm to build particles from the pT, eta, phi, and 
- * energy components of a 4-vector.
- *
- * Prerequisites:
- *  None
- * Branch Maps Needed:
+ *  OR
+ *  <name>:pt
+ *  <name>:eta
+ *  <name>:phi
+ *  <name>:e
+ *  OR
+ *  <name>:pt
+ *  <name>:eta
+ *  <name>:phi
+ *  <name>:m
+ * Optional Branch Maps:
  *  <name>:nentries
- *  <name>:pt
- *  <name>:eta
- *  <name>:phi
- *  <name>:e
- * Output:
+ * UserData Output:
  *  <name>:nobjects (scalar: number of particles)
  *  <name>:4-vec (1D array: of TLorentzVectors)
- *  <name>:index (1D array: of indices (used in subsequent algorithms))
+ *  <name>:index (1D array: of indices)
  */
-class IA0010 : public internal::ImportTLVAlgo {
+class ImportTLV : public HAL::internal::ImportTLVAlgo {
 public:
-  IA0010 (TString name, TString title) : ImportTLVAlgo(name, title) {}
-  virtual ~IA0010 () {}
+  ImportTLV (TString name, TString title, unsigned n = 0);
+  virtual ~ImportTLV () {}
 
 protected:
   using ImportTLVAlgo::Exec;
-  virtual void Exec (Option_t* /*option*/);
-  virtual TLorentzVector* MakeTLV (unsigned);
-};
-
-
-/*
- * Import algorithm to build particles from the pT, eta, phi, and 
- * energy components of a 4-vector. It uses the dimension of the pT 
- * array as the number to loop over. This saves the user from having 
- * to explicitly give an array length.
- *
- * Prerequisites:
- *  None
- * Branch Maps Needed:
- *  <name>:pt
- *  <name>:eta
- *  <name>:phi
- *  <name>:e
- * Output:
- *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVectors)
- *  <name>:index (1D array: of indices (used in subsequent algorithms))
- */
-class IA0011 : public internal::ImportTLVAlgo {
-public:
-  IA0011 (TString name, TString title) : ImportTLVAlgo(name, title) {}
-  virtual ~IA0011 () {}
-
-protected:
-  using ImportTLVAlgo::Exec;
-  virtual void Exec (Option_t* /*option*/);
-  virtual TLorentzVector* MakeTLV (unsigned);
-};
-
-
-/*
- * Import algorithm to build particles from the pT, eta, phi, and 
- * energy components of a 4-vector. User must specify number of 
- * particles to read in.
- *
- * Prerequisites:
- *  None
- * Branch Maps Needed:
- *  <name>:pt
- *  <name>:eta
- *  <name>:phi
- *  <name>:e
- * Output:
- *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVectors)
- *  <name>:index (1D array: of indices (used in subsequent algorithms))
- */
-class IA0012 : public internal::ImportTLVAlgo {
-public:
-  IA0012 (TString name, TString title, unsigned n) : ImportTLVAlgo(name, title), fNEntries(n) {}
-  virtual ~IA0012 () {}
-
-protected:
-  using ImportTLVAlgo::Exec;
+  virtual void Init (Option_t* /*option*/);
   virtual void Exec (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned);
 
 private:
-  unsigned fNEntries;
-};
-
-
-/*
- * Import algorithm to build particles from the pT, eta, phi, and 
- * mass components of a 4-vector.
- *
- * Prerequisites:
- *  None
- * Branch Maps Needed:
- *  <name>:nentries
- *  <name>:pt
- *  <name>:eta
- *  <name>:phi
- *  <name>:m
- * Output:
- *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVectors)
- *  <name>:index (1D array: of indices (used in subsequent algorithms))
- */
-class IA0020 : public internal::ImportTLVAlgo {
-public:
-  IA0020 (TString name, TString title) : ImportTLVAlgo(name, title) {}
-  virtual ~IA0020 () {}
-
-protected:
-  using ImportTLVAlgo::Exec;
-  virtual void Exec (Option_t* /*option*/);
-  virtual TLorentzVector* MakeTLV (unsigned);
-};
-
-
-/*
- * Import algorithm to build particles from the pT, eta, phi, and 
- * mass components of a 4-vector. It uses the dimension of the pT 
- * array as the number to loop over. This saves the user from having 
- * to explicitly give an array length.
- *
- * Prerequisites:
- *  None
- * Branch Maps Needed:
- *  <name>:pt
- *  <name>:eta
- *  <name>:phi
- *  <name>:m
- * Output:
- *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVectors)
- *  <name>:index (1D array: of indices (used in subsequent algorithms))
- */
-class IA0021 : public internal::ImportTLVAlgo {
-public:
-  IA0021 (TString name, TString title) : ImportTLVAlgo(name, title) {}
-  virtual ~IA0021 () {}
-
-protected:
-  using ImportTLVAlgo::Exec;
-  virtual void Exec (Option_t* /*option*/);
-  virtual TLorentzVector* MakeTLV (unsigned);
-};
-
-
-/*
- * Import algorithm to build particles from the pT, eta, phi, and 
- * mass components of a 4-vector. User must specify number of 
- * particles to read in.
- *
- * Prerequisites:
- *  None
- * Branch Maps Needed:
- *  <name>:pt
- *  <name>:eta
- *  <name>:phi
- *  <name>:m
- * Output:
- *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVectors)
- *  <name>:index (1D array: of indices (used in subsequent algorithms))
- */
-class IA0022 : public internal::ImportTLVAlgo {
-public:
-  IA0022 (TString name, TString title, unsigned n) : ImportTLVAlgo(name, title), fNEntries(n) {}
-  virtual ~IA0022 () {}
-
-protected:
-  using ImportTLVAlgo::Exec;
-  virtual void Exec (Option_t* /*option*/);
-  virtual TLorentzVector* MakeTLV (unsigned);
-
-private:
-  unsigned fNEntries;
+  unsigned  fN;
+  bool      fIsCart, fIsE, fIsM;
 };
 
 
@@ -446,12 +230,13 @@ private:
  * Reconstruction algorithm to build particles from the
  * vector addition of other particles.
  * The unknown parameters should be a series of string literals
+ * representing the algorithms to combine
  *
  * Prerequisites:
  *  Stored Particles
- * Branch Maps Needed:
+ * Required Branch Maps:
  *  None
- * Output:
+ * UserData Output:
  *  <name>:nobjects (scalar: number of particles)
  *  <name>:nparents (scalar: number of parent particles)
  *  <name>:4-vec (1D array: of TLorentzVectors)
@@ -459,17 +244,113 @@ private:
  *  <name>:parent_ref_name (1D array: ref_names of parents)
  *  <name>:parent_index (1D array: indices of parents)
  */
-class RA0000: public Algorithm {
+class VecAddReco : public Algorithm {
 public:
-  RA0000 (TString name, TString title, long long length, ...);
-  virtual ~RA0000();
+  VecAddReco (TString name, TString title, long long length, ...);
+  virtual ~VecAddReco();
 
+protected:
   virtual void  Exec (Option_t* /*option*/);
   virtual void  Clear (Option_t* /*option*/);
+
 private:
   const char**  fParentNames;
   long long     fLength;
 };
+
+
+
+
+/*
+ * Filtering Algorithms
+ * */
+
+/*
+ * Select the particle with nth highest/lowest TLV property.
+ * This property can be:
+ * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude
+ * pt,                  m,    e,      et,                p3
+ * The 'end' parameter describes how to rank the property:
+ * high (rank = nth highest property)
+ * low (rank = nth lowest property)
+ *
+ * Prerequisites:
+ *  Stored particles
+ * Required Branch Maps:
+ *  None
+ * UserData Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices (points to the nth highest pT of ref_name))
+ * */
+class RankSelectionTLV : public internal::NthElementAlgo {
+public:
+  RankSelectionTLV (TString name, TString title, TString input, unsigned rank, 
+                    TString property, TString end = "high");
+  virtual ~RankSelectionTLV () {}
+
+  virtual TString       SortTag ();
+  virtual bool          operator() (long long, long long);
+  virtual void          Sort (std::vector<long long>&);
+
+protected:
+  bool      fPt, fM, fE, fEt, fP3, fHigh, fLow;
+  TString   fTLVProperty, fEnd;
+};
+
+
+/*
+ * Select the particles with TLV property less than, greater than,
+ * or within a window of given values.
+ * This property can be:
+ * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude, eta, phi
+ * pt,                  m,    e,      et,                p3,                   eta, phi
+ * The 'end' parameter describes how to filter the property:
+ * high (upper limit)
+ * low (lower limit)
+ *
+ * Prerequisites:
+ *  Stored particles
+ * Branch Maps Needed:
+ *  None
+ * Output:
+ *  <name>:nobjects (scalar: number of particles)
+ *  <name>:ref_name ((scalar): string name of reference particles to use)
+ *  <name>:index (1D array: of indices)
+ * */
+class SelectTLV : public internal::FilterTLVAlgo {
+public:
+  SelectTLV (TString name, TString title, TString input, TString property, 
+      double value, TString end = "low");
+  SelectTLV (TString name, TString title, TString input, TString property, 
+      double low, double high);
+  virtual ~SelectTLV () {}
+
+  virtual bool FilterPredicate(TLorentzVector*);
+
+private:
+  void      Setup ();
+
+  double    fHighLimit, fLowLimit;
+  bool      fPt, fM, fE, fEt, fP3, fEta, fPhi, fHigh, fLow, fWindow;
+  TString   fTLVProperty, fEnd;
+};
+
+} /* Algorithms */ 
+
+
+
+/*
+ * Importing algorithms
+ * */
+
+
+
+
+/*
+ * Reconstruction Algorithms
+ * */
+
 
 
 
@@ -489,16 +370,16 @@ private:
  *  <name>:ref_name ((scalar): string name of reference particles to use)
  *  <name>:index (1D array: of indices (just one index that points to the nth highest pT of ref_name))
  * */
-class FA0000 : public internal::NthElementAlgo {
-public:
-  FA0000 (TString name, TString title, TString input, unsigned n) : 
-    NthElementAlgo(name, title, input, n) {}
-  virtual ~FA0000 () {}
-
-  virtual TString       SortTag ();
-  virtual bool          operator() (long long, long long);
-  virtual void          Sort (std::vector<long long>&);
-};
+//class FA0000 : public internal::NthElementAlgo {
+//public:
+//  FA0000 (TString name, TString title, TString input, unsigned n) : 
+//    NthElementAlgo(name, title, input, n) {}
+//  virtual ~FA0000 () {}
+//
+//  virtual TString       SortTag ();
+//  virtual bool          operator() (long long, long long);
+//  virtual void          Sort (std::vector<long long>&);
+//};
 
 
 /*
