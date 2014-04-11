@@ -26,6 +26,8 @@ Bool_t AnalysisSelector::Notify () {
 
   if (fChain->GetCurrentFile())
     fAnalysisFlow->NotifyAlgo(GetOption());
+  if (fMessagePeriod != 0)
+    std::cout << std::endl;
   return kTRUE;
 }
 
@@ -84,8 +86,10 @@ Bool_t AnalysisSelector::Process (Long64_t entry) {
   //
   // The return value is currently not used.
 
-  if (fMessagePeriod != 0 && entry % fMessagePeriod == 0)
-    std::cout << "Processing event number: " << entry << std::endl;
+  if (fMessagePeriod != 0 && entry % fMessagePeriod == 0) {
+    std::cout.flush();
+    std::cout << "\r \r" << "Processing event number: " << entry;
+  }
 
   ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetEntry(entry);
   ((AnalysisTreeWriter*)fInput->FindObject("UserOutput"))->IncrementCount();
@@ -116,6 +120,8 @@ void AnalysisSelector::Terminate () {
   // the results graphically or save the results to file.
 
   fAnalysisFlow->TerminateAlgo(GetOption());
+  if (fMessagePeriod != 0)
+    std::cout << std::endl << std::endl;
 }
 
 } /* HAL */ 

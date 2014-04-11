@@ -20,6 +20,8 @@ public:
   ~Analysis ();
   void AddAlgo (Algorithm *a); 
   void PrintAnalysisFlow ();
+  void PrintCounterSummary () {fAnalysisFlow->CounterSummary();}
+  void PrintCutReport () {fAnalysisFlow->CutReport();}
   void SetTreeObjectName (TString name);
   void SetAnalysisName (TString name);
   void SetAnalysisTitle (TString title);

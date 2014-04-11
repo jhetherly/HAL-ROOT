@@ -9,16 +9,13 @@ namespace HAL {
 
 class CutAlgorithm : public Algorithm {
 public:
-  CutAlgorithm(TString name = "", TString title = "") : Algorithm(name, title), fNPassed(0) {}
+  CutAlgorithm(TString name = "", TString title = "") : Algorithm(name, title) {
+    fAlgorithmType = "cut";
+  }
   virtual ~CutAlgorithm() {}
-
-  long long   GetNumberPassed () {return fNPassed;}
 
 protected:
   void        Passed ();
-
-private:
-  long long   fNPassed;
 };
 
 } /* HAL  */ 

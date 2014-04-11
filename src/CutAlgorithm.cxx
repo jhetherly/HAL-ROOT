@@ -4,7 +4,7 @@ namespace HAL
 {
 
 void CutAlgorithm::Passed () {
-  ++fNPassed;
+  ++fCounter;
 }
   
 } /* HAL */ 

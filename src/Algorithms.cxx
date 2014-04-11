@@ -38,6 +38,7 @@ void internal::ImportTLVAlgo::Exec (unsigned n) {
     data->SetValue(IndexOutput.Data(), i, i);
   }
   data->SetValue(NObjectsOutput.Data(), n);
+  IncreaseCounter(data->GetInteger(NObjectsOutput.Data()));
 }
 
 void internal::ImportTLVAlgo::Clear (Option_t* /*option*/) {
@@ -107,6 +108,7 @@ void internal::NthElementAlgo::Exec (Option_t* /*option*/) {
   data->SetValue(NObjectsOutput.Data(), (long long)1);
   data->SetValue(NameOutput.Data(), RealInput);
   data->SetValue(IndexOutput.Data(), location, 0);
+  IncreaseCounter(data->GetInteger(NObjectsOutput.Data()));
 }
 
 void internal::NthElementAlgo::Clear (Option_t* /*option*/) {
@@ -157,6 +159,7 @@ void internal::FilterTLVAlgo::Exec (Option_t* /*option*/) {
   if (count > 0) {
     data->SetValue(NameOutput.Data(), RealInput);
     data->SetValue(NObjectsOutput.Data(), count);
+    IncreaseCounter(data->GetInteger(NObjectsOutput.Data()));
   }
   delete[] InputVec;
   delete[] InputIndices;
@@ -199,35 +202,6 @@ void internal::ParticlesTLVCut::Exec (Option_t* /*option*/) {
     }
   }
   Passed();
-}
-
-void internal::SingleParticleTLVStore::Exec (Option_t* /*option*/) {
-  HAL::AnalysisData *data = GetUserData();
-  HAL::AnalysisTreeWriter *output = GetUserOutput();
-  long long n;
-  TString NObjectsInput = TString::Format("%s:nobjects", fInput.Data());
-  TString IndexInput = TString::Format("%s:index", fInput.Data());
-  TString RealInput;
-  TLorentzVector **InputVec;
-
-  if (data->Exists(NObjectsInput.Data())) {
-    n = data->GetInteger(NObjectsInput.Data());
-    InputVec = new TLorentzVector*[n];
-  }
-  else
-    return;
-
-  if (internal::determineAccessProtocol(data, fInput, RealInput)) {
-    TString RealVec = TString::Format("%s:4-vec", RealInput.Data());
-    for (long long i = 0; i < n; ++i) {
-      long long inputIndex = data->GetInteger(IndexInput.Data(), i);
-      InputVec[i] = (TLorentzVector*)data->GetTObject(RealVec.Data(), inputIndex);
-    }
-  }
-  else
-    return;
-
-  output->SetValue(fBranchName.Data(), StoreValue(InputVec[0]));
 }
 
 void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
@@ -540,6 +514,7 @@ void Algorithms::VecAddReco::Exec (Option_t* /*option*/) {
       data->SetValue(ParentIndicesOutput.Data(), UniqueTuplesValues[i][j], i, j);
     }
   }
+  IncreaseCounter(data->GetInteger(NObjectsOutput.Data()));
   delete[] RealInputs;
   delete[] ParentNObjects;
   for (int i = 0; i < fLength; ++i) {
@@ -733,10 +708,11 @@ bool Algorithms::SelectTLV::FilterPredicate(TLorentzVector *vec) {
   throw HAL::HALException(GetName().Prepend("Couldn't determine how to filter: "));
 }
 
-Algorithms::SelectDR::SelectDR (TString name, TString title, TString input, TString others, 
-    double value, TString topo) : 
-  Algorithm(name, title), fIn(false), fOut(false), fWindow(false), fInput(input), 
-  fOthers(others) {
+Algorithms::SelectDeltaTLV::SelectDeltaTLV (TString name, TString title, TString input, TString others, 
+    double value, TString topo, TString type) : 
+  Algorithm(name, title), fIn(false), fOut(false), fWindow(false), fDeltaR(false), fDeltaPhi(false), 
+  fInput(input), fOthers(others) {
+
   if (topo.EqualTo("in", TString::kIgnoreCase)) {
     fIn = true;
     fHighLimit = value;
@@ -745,14 +721,129 @@ Algorithms::SelectDR::SelectDR (TString name, TString title, TString input, TStr
     fOut = true;
     fLowLimit = value;
   }
+  if (type.EqualTo("r", TString::kIgnoreCase)) 
+    fDeltaR = true;
+  else if (type.EqualTo("phi", TString::kIgnoreCase)) 
+    fDeltaPhi = true;
 }
 
-Algorithms::SelectDR::SelectDR (TString name, TString title, TString input, TString others, 
-    double low, double high) :
+Algorithms::SelectDeltaTLV::SelectDeltaTLV (TString name, TString title, TString input, TString others, 
+    double low, double high, TString type) :
   Algorithm(name, title), fHighLimit(high), fLowLimit(low), fIn(false), fOut(false), 
-  fWindow(true), fInput(input), fOthers(others) {}
+  fWindow(true), fDeltaR(false), fDeltaPhi(false), fInput(input), fOthers(others) {
 
-void Algorithms::SelectDR::Exec (Option_t* /*option*/) {
+  if (type.EqualTo("r", TString::kIgnoreCase)) 
+    fDeltaR = true;
+  else if (type.EqualTo("phi", TString::kIgnoreCase)) 
+    fDeltaPhi = true;
+}
+
+void Algorithms::SelectDeltaTLV::Exec (Option_t* /*option*/) {
+  HAL::AnalysisData *data = GetUserData();
+  TString NObjectsInput = TString::Format("%s:nobjects", fInput.Data());
+  TString IndexInput = TString::Format("%s:index", fInput.Data());
+  TString NObjectsOthers = TString::Format("%s:nobjects", fOthers.Data());
+  TString IndexOthers = TString::Format("%s:index", fOthers.Data());
+  TString NObjectsOutput = TString::Format("%s:nobjects", GetName().Data());
+  TString NameOutput = TString::Format("%s:ref_name", GetName().Data());
+  TString IndexOutput = TString::Format("%s:index", GetName().Data());
+  long long n, nothers, count;
+  TString RealInput, RealOthers;
+  long long *InputIndices, *OthersIndices;
+  TLorentzVector **InputVec, **OthersVec;
+
+  if (data->Exists(NObjectsInput.Data()) && data->Exists(NObjectsOthers.Data())) {
+    n = data->GetInteger(NObjectsInput.Data());
+    nothers = data->GetInteger(NObjectsOthers.Data());
+    InputVec = new TLorentzVector*[n];
+    OthersVec = new TLorentzVector*[nothers];
+    InputIndices = new long long[n];
+    OthersIndices = new long long[nothers];
+  }
+  else
+    return;
+
+  if (n != 1)
+    return;
+
+  if (internal::determineAccessProtocol(data, fInput, RealInput) &&
+      internal::determineAccessProtocol(data, fOthers, RealOthers)) {
+    TString RealVec = TString::Format("%s:4-vec", RealInput.Data());
+    TString RealOthersVec = TString::Format("%s:4-vec", RealOthers.Data());
+    InputIndices[0] = data->GetInteger(IndexInput.Data(), 0);
+    InputVec[0] = (TLorentzVector*)data->GetTObject(RealVec.Data(), InputIndices[0]);
+    for (long long i = 0; i < nothers; ++i) {
+      OthersIndices[i] = data->GetInteger(IndexOthers.Data(), i);
+      OthersVec[i] = (TLorentzVector*)data->GetTObject(RealOthersVec.Data(), OthersIndices[i]);
+    }
+  }
+  else {
+    delete[] InputVec;
+    delete[] InputIndices;
+    delete[] OthersVec;
+    delete[] OthersIndices;
+    return;
+  }
+
+  count = 0;
+  for (long long i = 0; i < nothers; ++i) {
+    if (fDeltaR) {
+      double dR = InputVec[0]->DeltaR(*OthersVec[i]);
+      if (fIn) {
+        if (dR <= fHighLimit) {
+          data->SetValue(IndexOutput.Data(), OthersIndices[i], count);
+          ++count;
+        }
+      }
+      else if (fOut) {
+        if (dR >= fLowLimit) {
+          data->SetValue(IndexOutput.Data(), OthersIndices[i], count);
+          ++count;
+        }
+      }
+      else if (fWindow) {
+        if (dR >= fLowLimit && dR <= fHighLimit) {
+          data->SetValue(IndexOutput.Data(), OthersIndices[i], count);
+          ++count;
+        }
+      }
+    }
+    else if (fDeltaPhi) {
+      double dPhi = InputVec[0]->DeltaPhi(*OthersVec[i]);
+      if (fIn) {
+        if (dPhi <= fHighLimit) {
+          data->SetValue(IndexOutput.Data(), OthersIndices[i], count);
+          ++count;
+        }
+      }
+      else if (fOut) {
+        if (dPhi >= fLowLimit) {
+          data->SetValue(IndexOutput.Data(), OthersIndices[i], count);
+          ++count;
+        }
+      }
+      else if (fWindow) {
+        if (dPhi >= fLowLimit && dPhi <= fHighLimit) {
+          data->SetValue(IndexOutput.Data(), OthersIndices[i], count);
+          ++count;
+        }
+      }
+    }
+  }
+  if (count > 0) {
+    data->SetValue(NameOutput.Data(), RealOthers);
+    data->SetValue(NObjectsOutput.Data(), count);
+    IncreaseCounter(data->GetInteger(NObjectsOutput.Data()));
+  }
+  delete[] InputVec;
+  delete[] InputIndices;
+  delete[] OthersVec;
+  delete[] OthersIndices;
+}
+
+void Algorithms::SelectDeltaTLV::Clear (Option_t* /*option*/) {
+  HAL::AnalysisData *data = GetUserData();
+  data->RemoveAllAssociatedData(GetName().Data());
 }
 
 /*

@@ -5,6 +5,7 @@
 #include <TNamed.h>
 #include <TObject.h>
 #include <TList.h>
+#include <TMath.h>
 #include <list>
 #include <iostream>
 #include <HAL/Common.h>
@@ -36,6 +37,8 @@ public:
   // Setup -------------------------------------
   void          Add (Algorithm *algo) { fAlgorithms.push_back(algo); }
   void          ls ();
+  void          CounterSummary ();
+  void          CutReport ();
   void          DeleteAlgos ();
   void          SetName (TString name) {fName = name;}
   void          SetTitle (TString title) {fTitle = title;}
@@ -61,15 +64,17 @@ public:
   Bool_t        CheckData (TString name);
   void          DeleteData (TString name);
   void          AssignDataList (TList *list); 
+  AnalysisTreeReader*   GetRawData () {return ((AnalysisTreeReader*)fDataList->FindObject("RawData"));}
+  AnalysisData*         GetUserData () {return ((AnalysisData*)fDataList->FindObject("UserData"));}
+  AnalysisTreeWriter*   GetUserOutput () {return ((AnalysisTreeWriter*)fDataList->FindObject("UserOutput"));}
   // -------------------------------------------
   
   // Data related ------------------------------
   TString       GetName () {return fName;}
   TString       GetTitle () {return fTitle;}
   TString       GetOutputFileName () {return fOutputFileName;}
-  AnalysisTreeReader*   GetRawData () {return ((AnalysisTreeReader*)fDataList->FindObject("RawData"));}
-  AnalysisData*         GetUserData () {return ((AnalysisData*)fDataList->FindObject("UserData"));}
-  AnalysisTreeWriter*   GetUserOutput () {return ((AnalysisTreeWriter*)fDataList->FindObject("UserOutput"));}
+  void          IncreaseCounter (long long n = 1) {fPrintCounter = true; fCounter += n;}
+  long long     GetCounter () {return fCounter;}
   // -------------------------------------------
 
 protected:
@@ -85,11 +90,16 @@ protected:
   // -------------------------------------------
 
   TList     *fDataList; // borrowed ptr
+  TString    fAlgorithmType;
+  long long  fCounter;
 
 private:
-  void        ls(TString indention);
+  void       ls(TString indention);
+  void       counter_summary(TString indention);
+  void       cut_report(TString indention, long long &base_number, long long &prev_number);
 
-  TString     fName, fTitle, fOutputFileName;
+  TString    fName, fTitle, fOutputFileName;
+  bool       fPrintCounter;
 
   // ~Carbon copy from the TTask class
   std::list<Algorithm*> fAlgorithms;

@@ -122,24 +122,6 @@ protected:
 };
 
 /*
- * Algorithm for the exporting of simple quantities from a
- * particle's TLV
- * */
-class SingleParticleTLVStore : public Algorithm {
-public:
-  SingleParticleTLVStore (TString name, TString title, TString input, TString bname) :
-    Algorithm(name, title), fBranchName(bname), fInput(input) {}
-  virtual ~SingleParticleTLVStore () {}
-
-
-protected:
-  virtual void    Exec (Option_t* /*option*/);
-  virtual double  StoreValue (TLorentzVector*) = 0;
-
-  TString         fBranchName, fInput;
-};
-
-/*
  * Algorithm for the exporting of simple quantities from
  * several particles' TLVs
  * */
@@ -341,7 +323,7 @@ private:
 
 /*
  * Select particles with TLV within, without, or windowed between
- * given R values from reference particle
+ * given R/Phi value(s) from reference particle
  *
  * Prerequisites:
  *  Stored particles
@@ -352,19 +334,20 @@ private:
  *  <name>:ref_name ((scalar): string name of reference particles to use)
  *  <name>:index (1D array: of indices)
  * */
-class SelectDR : public Algorithm {
+class SelectDeltaTLV : public Algorithm {
 public:
-  SelectDR (TString name, TString title, TString input, TString others, 
-      double value, TString topo = "in");
-  SelectDR (TString name, TString title, TString input, TString others, 
-      double low, double high);
-  virtual ~SelectDR () {}
+  SelectDeltaTLV (TString name, TString title, TString input, TString others, 
+      double value, TString topo = "in", TString type = "r");
+  SelectDeltaTLV (TString name, TString title, TString input, TString others, 
+      double low, double high, TString type = "r");
+  virtual ~SelectDeltaTLV () {}
 
   virtual void Exec (Option_t* /*option*/);
+  virtual void Clear (Option_t* /*option*/);
 
 private:
   double    fHighLimit, fLowLimit;
-  bool      fIn, fOut, fWindow;
+  bool      fIn, fOut, fWindow, fDeltaR, fDeltaPhi;
   TString   fInput, fOthers;
 };
 
@@ -374,6 +357,26 @@ private:
 /*
  * Cutting Algorithms
  * */
+
+/*
+ * Empty cut. This is useful for giving the total number of 
+ * events processed.
+ *
+ * Prerequisites:
+ *  None
+ * Required Branch Maps:
+ *  None
+ * UserData Output:
+ *  None
+ * */
+class EmptyCut : public HAL::CutAlgorithm {
+public:
+  EmptyCut (TString name, TString title) : CutAlgorithm(name, title) {}
+  virtual ~EmptyCut () {}
+
+protected:
+  virtual void Exec (Option_t* /*option*/) {Passed();}
+};
 
 /*
  * Cut particles with TLV property less than, greater than,

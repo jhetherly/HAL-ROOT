@@ -23,6 +23,7 @@ int main(int argc, char *argv[]) {
   //      "pyalgo", 
   //      "PythonAlgo"));
   a.AddAlgo(new HAL::Algorithms::ImportTLV("jets", "import basic jet objects"));
+  a.AddAlgo(new HAL::Algorithms::EmptyCut("number of events", "baseline event number"));
   a.AddAlgo(new HAL::Algorithms::RankSelectionTLV("leading pt jet", "find highest pt jet", 
                                                   "jets", // input algorithm
                                                   1, "pt")); // rank in pt
@@ -37,6 +38,9 @@ int main(int argc, char *argv[]) {
   a.AddAlgo(new HAL::Algorithms::SelectTLV("di-jetfinal", "filter on di-jet |eta| <= 1.5", 
                                            "di-jet50pt", // input algorithm
                                            "eta", -1.5, 1.5)); // eta low and high values
+  a.AddAlgo(new HAL::Algorithms::SelectDeltaTLV("jets close", "filter on jets within deltaR of di-jet", 
+                                                "di-jetfinal", "jets", // input, reference algorithms
+                                                0.4)); // Delta R value
   a.AddAlgo(new HAL::Algorithms::CutNObjects("di-jet existence cut", "make sure 1 dijet exists", "and",
                                              1, 1, "di-jetfinal"));
   a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet mass", "store the mass of the di-jet system", 
@@ -73,8 +77,10 @@ int main(int argc, char *argv[]) {
 
   a.SetMessagePeriod(100);
   // Run the analysis
-  //a.Process("", 50);
-  a.Process();
+  a.Process("", 1000);
+  //a.Process();
 
+  a.PrintCutReport();
+  a.PrintCounterSummary();
   return 0;
 }

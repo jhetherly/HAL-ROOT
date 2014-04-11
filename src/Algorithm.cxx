@@ -5,8 +5,8 @@ ClassImp(HAL::Algorithm);
 namespace HAL {
 
 Algorithm::Algorithm (TString name, TString title) : 
-  fDataList(0), fName(name), fTitle(title), fAlgorithms(), 
-  fHasExecuted(kFALSE), fAbort(kFALSE) {
+  fDataList(0), fAlgorithmType(""), fCounter(0), fName(name), fTitle(title), 
+  fPrintCounter(false), fAlgorithms(), fHasExecuted(kFALSE), fAbort(kFALSE) {
 }
 
 Algorithm::Algorithm (const Algorithm &other) {
@@ -19,6 +19,7 @@ Algorithm::Algorithm (const Algorithm &other) {
   fTitle = other.fTitle;
   fDataList = other.fDataList; 
   fOption = other.fOption;
+  fCounter = other.fCounter;
   fHasExecuted = kFALSE;
   fAbort = kFALSE;
 }
@@ -36,6 +37,22 @@ void Algorithm::SetOutputFileName (TString filename) {
 void Algorithm::ls () {
   TString indent("");
   ls(indent);
+}
+
+void Algorithm::CounterSummary () {
+  TString indent("");
+  std::cout << "Object Creation Summary:" << std::endl;
+  counter_summary(indent);
+  std::cout << "End of Object Summary" << std::endl << std::endl;
+}
+
+void Algorithm::CutReport () {
+  TString indent("");
+  long long base_number = -1;
+  long long prev_number = -1;
+  std::cout << "Efficiency Report (absolute and relative):" << std::endl;
+  cut_report(indent, base_number, prev_number);
+  std::cout << "End of Efficiency Report" << std::endl << std::endl;
 }
 
 void Algorithm::DeleteAlgos () {
@@ -169,6 +186,32 @@ void Algorithm::ls (TString indent) {
   for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
        algo != fAlgorithms.end(); ++algo)
     (*algo)->ls(indent);
+}
+
+void Algorithm::counter_summary(TString indent) {
+  if (fPrintCounter)
+    std::cout << indent << fName << ": " << fCounter << std::endl;
+  indent.Prepend("  ");
+  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
+       algo != fAlgorithms.end(); ++algo)
+    (*algo)->counter_summary(indent);
+}
+
+void Algorithm::cut_report(TString indent, long long &bn, long long &pn) {
+  if (fAlgorithmType.EqualTo("cut", TString::kIgnoreCase)) {
+    if (bn == -1 && fCounter != 0)
+      bn = fCounter;
+    if (pn == -1 && fCounter != 0)
+      pn = fCounter;
+    std::cout << indent << fName << ": " << TMath::Abs((double)(fCounter)/(double)(bn)) << "%     ";
+    std::cout << TMath::Abs((double)(fCounter)/(double)(pn)) << "%" << std::endl;
+    if (fCounter != 0)
+      pn = fCounter;
+  }
+  indent.Prepend("  ");
+  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
+       algo != fAlgorithms.end(); ++algo)
+    (*algo)->cut_report(indent, bn, pn);
 }
 
 } /* HAL */ 
