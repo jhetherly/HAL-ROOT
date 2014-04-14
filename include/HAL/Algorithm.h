@@ -10,10 +10,11 @@
 #include <iostream>
 #include <HAL/Common.h>
 #include <HAL/Exceptions.h>
+#include <HAL/AnalysisData.h>
 
 namespace HAL
 {
-class AnalysisData;
+//class AnalysisData;
 class AnalysisTreeReader;
 class AnalysisTreeWriter;
 } /* HAL */ 
@@ -101,13 +102,13 @@ private:
   TString    fName, fTitle, fOutputFileName;
   bool       fPrintCounter;
 
-  // ~Carbon copy from the TTask class
   std::list<Algorithm*> fAlgorithms;
   TString               fOption;       //Option specified in ExecuteAlgo
   Bool_t                fHasExecuted;  //True if algo has executed
   Bool_t                fAbort;        //True if algo has signaled an abort
 
   ClassDef(Algorithm, 0);
+
 };
 
 } /* HAL */ 

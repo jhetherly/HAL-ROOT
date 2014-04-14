@@ -77,35 +77,35 @@ public:
   virtual void Clear (Option_t* option) {}
 };
 
-class PrintJets : public HAL::Algorithm {
-public:
-  PrintJets () : Algorithm("PrintJets", "printing leading and subleading jet pt") {}
-  virtual ~PrintJets() {}
-
-  virtual void Exec (Option_t* option) {
-    HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
-    int nobjects = data->GetInteger("jets:nobjects");
-    int leading_index = data->GetInteger("leading pt jet:index", 0);
-    int subleading_index;
-    if (data->Exists("subleading pt jet:index"))
-      subleading_index = data->GetInteger("subleading pt jet:index", 0);
-    std::string leading_name = data->GetString("leading pt jet:ref_name");
-    std::string subleading_name;
-    if (data->Exists("subleading pt jet:ref_name"))
-      subleading_name = data->GetString("subleading pt jet:ref_name");
-    TLorentzVector *leading_vec = (TLorentzVector*)data->GetTObject(leading_name.append(":4-vec"), leading_index);
-    TLorentzVector *subleading_vec;
-    if (data->Exists("subleading pt jet:ref_name"))
-      subleading_vec = (TLorentzVector*)data->GetTObject(subleading_name.append(":4-vec"), subleading_index);
-
-    //if (data->Exists("subleading pt jet:ref_name") && leading_vec->Pt() < subleading_vec->Pt()) {
-    if (data->Exists("subleading pt jet:ref_name")) {
-      std::cout << leading_vec->Pt() << "   " << subleading_vec->Pt() << std::endl;
-      for (int i = 0; i < nobjects; ++i) {
-        TLorentzVector *vec = (TLorentzVector*)data->GetTObject("jets:4-vec", i);
-        std::cout << vec->Pt() << "   ";
-      }
-      std::cout << std::endl;
-    }
-  }
-};
+//class PrintJets : public HAL::Algorithm {
+//public:
+//  PrintJets () : Algorithm("PrintJets", "printing leading and subleading jet pt") {}
+//  virtual ~PrintJets() {}
+//
+//  virtual void Exec (Option_t* option) {
+//    HAL::AnalysisData *data = (HAL::AnalysisData*)GetData("UserData");
+//    int nobjects = data->GetInteger("jets:nobjects");
+//    int leading_index = data->GetInteger("leading pt jet:index", 0);
+//    int subleading_index;
+//    if (data->Exists("subleading pt jet:index"))
+//      subleading_index = data->GetInteger("subleading pt jet:index", 0);
+//    std::string leading_name = data->GetString("leading pt jet:ref_name");
+//    std::string subleading_name;
+//    if (data->Exists("subleading pt jet:ref_name"))
+//      subleading_name = data->GetString("subleading pt jet:ref_name");
+//    TLorentzVector *leading_vec = (TLorentzVector*)data->GetTObject(leading_name.append(":4-vec"), leading_index);
+//    TLorentzVector *subleading_vec;
+//    if (data->Exists("subleading pt jet:ref_name"))
+//      subleading_vec = (TLorentzVector*)data->GetTObject(subleading_name.append(":4-vec"), subleading_index);
+//
+//    //if (data->Exists("subleading pt jet:ref_name") && leading_vec->Pt() < subleading_vec->Pt()) {
+//    if (data->Exists("subleading pt jet:ref_name")) {
+//      std::cout << leading_vec->Pt() << "   " << subleading_vec->Pt() << std::endl;
+//      for (int i = 0; i < nobjects; ++i) {
+//        TLorentzVector *vec = (TLorentzVector*)data->GetTObject("jets:4-vec", i);
+//        std::cout << vec->Pt() << "   ";
+//      }
+//      std::cout << std::endl;
+//    }
+//  }
+//};

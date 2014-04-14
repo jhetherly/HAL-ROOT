@@ -16,28 +16,28 @@ namespace HAL
 
 class AnalysisTreeWriter : public AnalysisData {
 public:
-  AnalysisTreeWriter (TString ofile);
-  void          SetTreeName (TString tname) {fTreeName = tname;}
-  void          SetTreeDescription (TString tdescription) {fTreeDescription = tdescription;}
+  AnalysisTreeWriter (const TString &ofile);
+  void          SetTreeName (const TString &tname) {fTreeName = tname;}
+  void          SetTreeDescription (const TString &tdescription) {fTreeDescription = tdescription;}
   void          IncrementCount () {++fCount;}
   void          WriteData ();
   using AnalysisData::SetValue;
   // Bool values
-  virtual void  SetValue (std::string n, bool v);
-  virtual void  SetValue (std::string n, bool v, long long i);
-  //void          Set1DValue (std::string n, bool v);
+  virtual void  SetValue (const TString &n, const bool &v);
+  virtual void  SetValue (const TString &n, const bool &v, const long long &i);
+  //void          Set1DValue (const std::string &n, bool v);
   // Decimal values
-  virtual void  SetValue (std::string n, long double v);
-  virtual void  SetValue (std::string n, long double v, long long i);
-  //void          Set1DValue (std::string n, long double v);
+  virtual void  SetValue (const TString &n, const long double &v);
+  virtual void  SetValue (const TString &n, const long double &v, const long long &i);
+  //void          Set1DValue (const std::string &n, long double v);
   // Integer values
-  virtual void  SetValue (std::string n, long long v);
-  virtual void  SetValue (std::string n, long long v, long long i);
-  //void          Set1DValue (std::string n, long long v);
+  virtual void  SetValue (const TString &n, const long long &v);
+  virtual void  SetValue (const TString &n, const long long &v, const long long &i);
+  //void          Set1DValue (const std::string &n, long long v);
   // Counting values
-  virtual void  SetValue (std::string n, unsigned long long v);
-  virtual void  SetValue (std::string n, unsigned long long v, long long i);
-  //void          Set1DValue (std::string n, unsigned long long v);
+  virtual void  SetValue (const TString &n, const unsigned long long &v);
+  virtual void  SetValue (const TString &n, const unsigned long long &v, const long long &i);
+  //void          Set1DValue (const std::string &n, unsigned long long v);
 
   ClassDefNV(AnalysisTreeWriter, 0);
 

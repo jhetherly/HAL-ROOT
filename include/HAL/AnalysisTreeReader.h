@@ -50,18 +50,18 @@ public:
   void SetEntry (Long64_t entry);
   TTree* GetTree () {return fChain;}
   void SetBranchMap (TMap *m) {fBranchMap = m;}
-  bool CheckBranchMapNickname (TString name);
+  bool CheckBranchMapNickname (const TString &name);
 
-  unsigned int              GetDim (TString branchname, Int_t idx_1 = -1);
-  bool                      GetBool (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  long long                 GetInteger (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  unsigned long long        GetCounting (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  long double               GetDecimal (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  TString                   GetString (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  TObjArray&                GetObjArray (TString branchname, Int_t idx_1 = -1);
-  TClonesArray&             GetClonesArray (TString branchname, Int_t idx_1 = -1);
-  TRef&                     GetRef (TString branchname, Int_t idx_1 = -1, Int_t idx_2 = -1);
-  TRefArray&                GetRefArray (TString branchname, Int_t idx_1 = -1);
+  unsigned int              GetDim (const TString &branchname, const long long &idx_1 = -1);
+  bool                      GetBool (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
+  long long                 GetInteger (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
+  unsigned long long        GetCounting (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
+  long double               GetDecimal (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
+  TString                   GetString (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
+  TObjArray&                GetObjArray (const TString &branchname, const long long &idx_1 = -1);
+  TClonesArray&             GetClonesArray (const TString &branchname, const long long &idx_1 = -1);
+  TRef&                     GetRef (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
+  TRefArray&                GetRefArray (const TString &branchname, const long long &idx_1 = -1);
 
   ClassDef(AnalysisTreeReader, 0);
 

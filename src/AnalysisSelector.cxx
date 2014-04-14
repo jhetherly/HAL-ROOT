@@ -46,23 +46,21 @@ void AnalysisSelector::SlaveBegin (TTree * /*tree*/) {
 
   TString option = GetOption();
 
+  fAnalysisFlow->AssignDataList(fInput);
+  fAnalysisFlow->SetOutputFileName(fOutputFileName);
+
   AnalysisTreeReader *atr = new AnalysisTreeReader();
-  atr->SetName("RawData");
   atr->SetBranchMap(fBranchMap);
-  fInput->AddFirst(atr);
 
   AnalysisData *ad = new AnalysisData();
-  ad->SetName("UserData");
-  fInput->AddFirst(ad);
 
   AnalysisTreeWriter *atw = new AnalysisTreeWriter(fOutputFileName);
   atw->SetTreeName(fOutputTreeName);
   atw->SetTreeDescription(fOutputTreeDescription);
-  atw->SetName("UserOutput");
-  fInput->AddFirst(atw);
-  
-  fAnalysisFlow->AssignDataList(fInput);
-  fAnalysisFlow->SetOutputFileName(fOutputFileName);
+
+  fAnalysisFlow->AddData("RawData", atr);
+  fAnalysisFlow->AddData("UserData", ad);
+  fAnalysisFlow->AddData("UserOutput", atw);
 
   fAnalysisFlow->SlaveBeginAlgo(GetOption());
 }

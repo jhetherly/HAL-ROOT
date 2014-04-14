@@ -27,6 +27,7 @@
 #include <HAL/AnalysisUtils.h>
 #include <HAL/Algorithm.h>
 #include <HAL/CutAlgorithm.h>
+#include <HAL/AnalysisUtils.h>
 #include <HAL/AnalysisData.h>
 #include <HAL/AnalysisTreeReader.h>
 #include <HAL/AnalysisTreeWriter.h>
@@ -37,18 +38,12 @@ namespace HAL
 {
 
 /*
- * Generic base class algorithms and functions
+ * Generic base class algorithms
  * Most of these are ABC's
  * */
 
 namespace internal
 {
-
-/*
- * General function for determining how to access information
- * stored in AnalysisData (either reference or direct access)
- * */
-bool determineAccessProtocol(HAL::AnalysisData *data, TString &RawInput, TString &RealInput);
 
 /*
  * Algorithm for importing an array of TLorentzVecotr's from a TTree.
@@ -96,6 +91,7 @@ public:
   virtual ~FilterTLVAlgo () {}
 
   virtual bool FilterPredicate (TLorentzVector*) = 0;
+  
 protected:
   virtual void Exec (Option_t* /*option*/);
   virtual void Clear (Option_t* /*option*/);
@@ -104,22 +100,41 @@ protected:
 };
 
 /*
- * Algorithm for cutting particles on their TLV
+ * Algorithm for filtering particles compared to a reference particle
+ * by their TLVs
  * */
-class ParticlesTLVCut : public CutAlgorithm {
+class FilterRefTLVAlgo : public Algorithm {
 public:
-  ParticlesTLVCut (TString name, TString title, TString input) :
-    CutAlgorithm(name, title), fInput(input) {}
-  virtual ~ParticlesTLVCut () {}
+  FilterRefTLVAlgo (TString name, TString title, TString input, TString others) :
+    Algorithm(name, title), fInput(input), fOthers(others) {}
+  virtual ~FilterRefTLVAlgo () {}
 
-  // this should return true if particle passed cut
-  virtual bool CutPredicate (TLorentzVector*) = 0;
+  virtual bool FilterPredicate (TLorentzVector*, TLorentzVector*) = 0;
 
 protected:
   virtual void Exec (Option_t* /*option*/);
+  virtual void Clear (Option_t* /*option*/);
 
-  TString   fInput;
+  TString fInput, fOthers;
 };
+
+///*
+// * Algorithm for cutting particles on their TLV
+// * */
+//class ParticlesTLVCut : public CutAlgorithm {
+//public:
+//  ParticlesTLVCut (TString name, TString title, TString input) :
+//    CutAlgorithm(name, title), fInput(input) {}
+//  virtual ~ParticlesTLVCut () {}
+//
+//  // this should return true if particle passed cut
+//  virtual bool CutPredicate (TLorentzVector*) = 0;
+//
+//protected:
+//  virtual void Exec (Option_t* /*option*/);
+//
+//  TString   fInput;
+//};
 
 /*
  * Algorithm for the exporting of simple quantities from
@@ -334,7 +349,7 @@ private:
  *  <name>:ref_name ((scalar): string name of reference particles to use)
  *  <name>:index (1D array: of indices)
  * */
-class SelectDeltaTLV : public Algorithm {
+class SelectDeltaTLV : public internal::FilterRefTLVAlgo {
 public:
   SelectDeltaTLV (TString name, TString title, TString input, TString others, 
       double value, TString topo = "in", TString type = "r");
@@ -342,13 +357,11 @@ public:
       double low, double high, TString type = "r");
   virtual ~SelectDeltaTLV () {}
 
-  virtual void Exec (Option_t* /*option*/);
-  virtual void Clear (Option_t* /*option*/);
+  virtual bool FilterPredicate (TLorentzVector*, TLorentzVector*);
 
 private:
   double    fHighLimit, fLowLimit;
   bool      fIn, fOut, fWindow, fDeltaR, fDeltaPhi;
-  TString   fInput, fOthers;
 };
 
 
@@ -378,41 +391,41 @@ protected:
   virtual void Exec (Option_t* /*option*/) {Passed();}
 };
 
-/*
- * Cut particles with TLV property less than, greater than,
- * or within a window of given values.
- * (logical 'and')
- * This property can be:
- * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude, eta, phi
- * pt,                  m,    e,      et,                p3,                   eta, phi
- * The 'end' parameter describes how to cut the property:
- * high (upper limit)
- * low (lower limit)
- *
- * Prerequisites:
- *  Stored particle
- * Required Branch Maps:
- *  None
- * UserData Output:
- *  None
- * */
-class CutTLV : public internal::ParticlesTLVCut {
-public:
-  CutTLV (TString name, TString title, TString input, TString property, 
-      double value, TString end = "low");
-  CutTLV (TString name, TString title, TString input, TString property, 
-      double low, double high);
-  virtual ~CutTLV () {}
-
-  virtual bool CutPredicate (TLorentzVector *vec);
-
-private:
-  void      Setup ();
-
-  double    fHighLimit, fLowLimit;
-  bool      fPt, fM, fE, fEt, fP3, fEta, fPhi, fHigh, fLow, fWindow;
-  TString   fTLVProperty, fEnd;
-};
+///*
+// * Cut particles with TLV property less than, greater than,
+// * or within a window of given values.
+// * (logical 'and')
+// * This property can be:
+// * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude, eta, phi
+// * pt,                  m,    e,      et,                p3,                   eta, phi
+// * The 'end' parameter describes how to cut the property:
+// * high (upper limit)
+// * low (lower limit)
+// *
+// * Prerequisites:
+// *  Stored particle
+// * Required Branch Maps:
+// *  None
+// * UserData Output:
+// *  None
+// * */
+//class CutTLV : public internal::ParticlesTLVCut {
+//public:
+//  CutTLV (TString name, TString title, TString input, TString property, 
+//      double value, TString end = "low");
+//  CutTLV (TString name, TString title, TString input, TString property, 
+//      double low, double high);
+//  virtual ~CutTLV () {}
+//
+//  virtual bool CutPredicate (TLorentzVector *vec);
+//
+//private:
+//  void      Setup ();
+//
+//  double    fHighLimit, fLowLimit;
+//  bool      fPt, fM, fE, fEt, fP3, fEta, fPhi, fHigh, fLow, fWindow;
+//  TString   fTLVProperty, fEnd;
+//};
 
 /*
  * Cut on number of objects

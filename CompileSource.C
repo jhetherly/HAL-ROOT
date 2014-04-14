@@ -25,7 +25,7 @@ CompileSource ()
   TString makeLibResult;
   TList *files;
   Int_t versionNumber = gROOT->GetVersionInt();
-  Bool_t hasPython = (gSystem->GetFromPipe("root-config --has-python") == "yes") ? kTRUE: KFALSE;
+  Bool_t hasPython = (gSystem->GetFromPipe("root-config --has-python") == "yes") ? kTRUE: kFALSE;
 
   // Create full paths
   srcPathString = srcDir;

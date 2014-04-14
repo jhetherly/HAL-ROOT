@@ -80,7 +80,7 @@ void AnalysisTreeReader::SetEntry (Long64_t entry) {
   }
 }
 
-bool AnalysisTreeReader::CheckBranchMapNickname (TString name) {
+bool AnalysisTreeReader::CheckBranchMapNickname (const TString &name) {
   TMapIter next(fBranchMap);
   while(TObjString *key = (TObjString*)next()){
     TString nn = key->String();
@@ -123,7 +123,7 @@ TString AnalysisTreeReader::GetFullBranchName (TString name) {
   throw HALException(name.Prepend("Couldn't find branch: ").Data());
 }
 
-unsigned int AnalysisTreeReader::GetDim (TString branchname, Int_t idx_1) {
+unsigned int AnalysisTreeReader::GetDim (const TString &branchname, const long long &idx_1) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
@@ -209,7 +209,7 @@ unsigned int AnalysisTreeReader::GetDim (TString branchname, Int_t idx_1) {
   throw HALException(bname.Prepend("Error in finding dimensions in branch: ").Data());
 }
 
-bool AnalysisTreeReader::GetBool (TString branchname, Int_t idx_1, Int_t idx_2) {
+bool AnalysisTreeReader::GetBool (const TString &branchname, const long long &idx_1, const long long &idx_2) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
@@ -236,7 +236,7 @@ bool AnalysisTreeReader::GetBool (TString branchname, Int_t idx_1, Int_t idx_2) 
   throw HALException(bname.Prepend("Couldn't find bool data in branch: ").Data());
 }
 
-long long AnalysisTreeReader::GetInteger (TString branchname, Int_t idx_1, Int_t idx_2) {
+long long AnalysisTreeReader::GetInteger (const TString &branchname, const long long &idx_1, const long long &idx_2) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
@@ -278,7 +278,7 @@ long long AnalysisTreeReader::GetInteger (TString branchname, Int_t idx_1, Int_t
   throw HALException(bname.Prepend("Couldn't find integer number data in branch: ").Data());
 }
 
-unsigned long long AnalysisTreeReader::GetCounting (TString branchname, Int_t idx_1, Int_t idx_2) {
+unsigned long long AnalysisTreeReader::GetCounting (const TString &branchname, const long long &idx_1, const long long &idx_2) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
@@ -317,7 +317,7 @@ unsigned long long AnalysisTreeReader::GetCounting (TString branchname, Int_t id
   throw HALException(bname.Prepend("Couldn't find counting number data in branch: ").Data());
 }
 
-long double AnalysisTreeReader::GetDecimal (TString branchname, Int_t idx_1, Int_t idx_2) {
+long double AnalysisTreeReader::GetDecimal (const TString &branchname, const long long &idx_1, const long long &idx_2) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
@@ -356,7 +356,7 @@ long double AnalysisTreeReader::GetDecimal (TString branchname, Int_t idx_1, Int
   throw HALException(bname.Prepend("Couldn't find decimal number data in branch: ").Data());
 }
 
-TString AnalysisTreeReader::GetString (TString branchname, Int_t idx_1, Int_t idx_2) {
+TString AnalysisTreeReader::GetString (const TString &branchname, const long long &idx_1, const long long &idx_2) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
@@ -401,7 +401,7 @@ TString AnalysisTreeReader::GetString (TString branchname, Int_t idx_1, Int_t id
   throw HALException(bname.Prepend("Couldn't find string data in branch: ").Data());
 }
 
-TObjArray& AnalysisTreeReader::GetObjArray (TString branchname, Int_t idx_1) {
+TObjArray& AnalysisTreeReader::GetObjArray (const TString &branchname, const long long &idx_1) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
@@ -426,7 +426,7 @@ TObjArray& AnalysisTreeReader::GetObjArray (TString branchname, Int_t idx_1) {
   throw HALException(bname.Prepend("Couldn't find TObjArray data in branch: ").Data());
 }
 
-TClonesArray& AnalysisTreeReader::GetClonesArray (TString branchname, Int_t idx_1) {
+TClonesArray& AnalysisTreeReader::GetClonesArray (const TString &branchname, const long long &idx_1) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
@@ -451,7 +451,7 @@ TClonesArray& AnalysisTreeReader::GetClonesArray (TString branchname, Int_t idx_
   throw HALException(bname.Prepend("Couldn't find TClonesArray data in branch: ").Data());
 }
 
-TRef& AnalysisTreeReader::GetRef (TString branchname, Int_t idx_1, Int_t idx_2) {
+TRef& AnalysisTreeReader::GetRef (const TString &branchname, const long long &idx_1, const long long &idx_2) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
@@ -478,7 +478,7 @@ TRef& AnalysisTreeReader::GetRef (TString branchname, Int_t idx_1, Int_t idx_2) 
   throw HALException(bname.Prepend("Couldn't find TRef data in branch: ").Data());
 }
 
-TRefArray& AnalysisTreeReader::GetRefArray (TString branchname, Int_t idx_1) {
+TRefArray& AnalysisTreeReader::GetRefArray (const TString &branchname, const long long &idx_1) {
   TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 

@@ -7,9 +7,40 @@
 #include <TString.h>
 #include <TArrayI.h>
 #include <HAL/Common.h>
+#include <HAL/AnalysisData.h>
 
 namespace HAL
 {
+
+// /////////////////////////////////////
+// Generic Algorithm (GA) data interface functions
+// /////////////////////////////////////
+
+/*
+ * Make a data label compatable with the HAL generic algorithms interface
+ * */
+TString gaMakeNObjectsLabel (const TString &input);
+TString gaMakeIndexLabel (const TString &input);
+TString gaMakeRefNameLabel (const TString &input);
+TString gaMakeVecLabel (const TString &input);
+TString gaMakeSortedListLabel (const TString &input, const TString &tag);
+TString gaMakeNParentsLabel (const TString &input);
+TString gaMakeParentIndexLabel (const TString &input);
+TString gaMakeParentRefNameLabel (const TString &input);
+
+bool    gaCheckRefName (AnalysisData *data, const TString &input, TString &ref_name);
+
+namespace internal
+{
+
+/*
+ * General function for determining how to access information
+ * stored in 'UserData' (either reference or direct access)
+ * */
+bool determineAccessProtocol(HAL::AnalysisData *data, const TString &RawInput, TString &RealInput);
+
+} // end namespace internal
+
 
 // /////////////////////////////////////
 // General utility functions

@@ -16,98 +16,99 @@ namespace HAL
 class AnalysisData : public TNamed {
 public:
   // Bool values
-  virtual void SetValue (std::string, bool);
+  virtual void SetValue (const TString&, const bool&);
   // Decimal values
-  virtual void SetValue (std::string, long double);
-  virtual void SetValue (std::string n, double v) {SetValue(n, (long double)v);}
-  virtual void SetValue (std::string n, float v) {SetValue(n, (long double)v);}
+  virtual void SetValue (const TString&, const long double&);
+  virtual void SetValue (const TString n, const double &v) {SetValue(n, (long double)v);}
+  virtual void SetValue (const TString &n, const float &v) {SetValue(n, (long double)v);}
   // Integer values
-  virtual void SetValue (std::string, long long);
-  virtual void SetValue (std::string n, short v) {SetValue(n, (long long)v);}
-  virtual void SetValue (std::string n, long v) {SetValue(n, (long long)v);}
-  virtual void SetValue (std::string n, int v) {SetValue(n, (long long)v);}
-  virtual void SetValue (std::string n, signed char v) {SetValue(n, (long long)v);}
+  virtual void SetValue (const TString&, const long long&);
+  virtual void SetValue (const TString &n, const short &v) {SetValue(n, (long long)v);}
+  virtual void SetValue (const TString &n, const long &v) {SetValue(n, (long long)v);}
+  virtual void SetValue (const TString &n, const int &v) {SetValue(n, (long long)v);}
+  virtual void SetValue (const TString &n, const signed char &v) {SetValue(n, (long long)v);}
   // Counting values
-  virtual void SetValue (std::string, unsigned long long);
-  virtual void SetValue (std::string n, unsigned short v) {SetValue(n, (unsigned long long)v);}
-  virtual void SetValue (std::string n, unsigned long v) {SetValue(n, (unsigned long long)v);}
-  virtual void SetValue (std::string n, unsigned int v) {SetValue(n, (unsigned long long)v);}
-  virtual void SetValue (std::string n, unsigned char v) {SetValue(n, (unsigned long long)v);}
+  virtual void SetValue (const TString&, const unsigned long long&);
+  virtual void SetValue (const TString &n, const unsigned short &v) {SetValue(n, (unsigned long long)v);}
+  virtual void SetValue (const TString &n, const unsigned long &v) {SetValue(n, (unsigned long long)v);}
+  virtual void SetValue (const TString &n, const unsigned int &v) {SetValue(n, (unsigned long long)v);}
+  virtual void SetValue (const TString &n, const unsigned char &v) {SetValue(n, (unsigned long long)v);}
   // String values
-  virtual void SetValue (std::string, std::string);
-  virtual void SetValue (std::string n, TString v) {SetValue(n, (std::string)v.Data());}
-  virtual void SetValue (std::string n, char v) {SetValue(n, std::string(1, v));}
+  virtual void SetValue (const TString &n, const std::string &v);
+  virtual void SetValue (const TString &n, const TString &v) {SetValue(n, std::string(v.Data()));}
+  virtual void SetValue (const TString &n, const char &v) {SetValue(n, std::string(1, v));}
   // TObjects
-  virtual void SetValue (std::string, TObject*);
+  virtual void SetValue (const TString&, TObject*);
   // 2D maps
   // Bool values
-  virtual void SetValue (std::string, bool, long long);
+  virtual void SetValue (const TString&, const bool&, const long long&);
   // Decimal values
-  virtual void SetValue (std::string, long double, long long);
-  virtual void SetValue (std::string n, double v, long long i) {SetValue(n, (long double)v, i);}
-  virtual void SetValue (std::string n, float v, long long i) {SetValue(n, (long double)v, i);}
+  virtual void SetValue (const TString&, const long double&, const long long&);
+  virtual void SetValue (const TString &n, const double &v, const long long &i) {SetValue(n, (long double)v, i);}
+  virtual void SetValue (const TString &n, const float &v, const long long &i) {SetValue(n, (long double)v, i);}
   // Integer values
-  virtual void SetValue (std::string, long long, long long);
-  virtual void SetValue (std::string n, short v, long long i) {SetValue(n, (long long)v, i);}
-  virtual void SetValue (std::string n, long v, long long i) {SetValue(n, (long long)v, i);}
-  virtual void SetValue (std::string n, int v, long long i) {SetValue(n, (long long)v, i);}
-  virtual void SetValue (std::string n, signed char v, long long i) {SetValue(n, (long long)v, i);}
+  virtual void SetValue (const TString&, const long long&, const long long&);
+  virtual void SetValue (const TString &n, const short &v, const long long &i) {SetValue(n, (long long)v, i);}
+  virtual void SetValue (const TString &n, const long &v, const long long &i) {SetValue(n, (long long)v, i);}
+  virtual void SetValue (const TString &n, const int &v, const long long &i) {SetValue(n, (long long)v, i);}
+  virtual void SetValue (const TString &n, const signed char &v, const long long &i) {SetValue(n, (long long)v, i);}
   // Counting values
-  virtual void SetValue (std::string, unsigned long long, long long);
-  virtual void SetValue (std::string n, unsigned short v, long long i) {SetValue(n, (unsigned long long)v, i);}
-  virtual void SetValue (std::string n, unsigned long v, long long i) {SetValue(n, (unsigned long long)v, i);}
-  virtual void SetValue (std::string n, unsigned int v, long long i) {SetValue(n, (unsigned long long)v, i);}
-  virtual void SetValue (std::string n, unsigned char v, long long i) {SetValue(n, (unsigned long long)v, i);}
+  virtual void SetValue (const TString&, const unsigned long long&, const long long&);
+  virtual void SetValue (const TString &n, const unsigned short &v, const long long &i) {SetValue(n, (unsigned long long)v, i);}
+  virtual void SetValue (const TString &n, const unsigned long &v, const long long &i) {SetValue(n, (unsigned long long)v, i);}
+  virtual void SetValue (const TString &n, const unsigned int &v, const long long &i) {SetValue(n, (unsigned long long)v, i);}
+  virtual void SetValue (const TString &n, const unsigned char &v, const long long &i) {SetValue(n, (unsigned long long)v, i);}
   // String values
-  virtual void SetValue (std::string, std::string, long long);
-  virtual void SetValue (std::string n, TString v, long long i) {SetValue(n, (std::string)v.Data(), i);}
-  virtual void SetValue (std::string n, char v, long long i) {SetValue(n, std::string(1, v), i);}
+  virtual void SetValue (const TString&, const std::string&, const long long&);
+  virtual void SetValue (const TString &n, const TString &v, const long long &i) {SetValue(n, std::string(v.Data()), i);}
+  virtual void SetValue (const TString &n, const char &v, const long long &i) {SetValue(n, std::string(1, v), i);}
   // TObjects
-  virtual void SetValue (std::string, TObject*, long long);
+  virtual void SetValue (const TString&, TObject*, const long long&);
   // 2D integer maps
   // Bool values
-  virtual void SetValue (std::string, bool, long long, long long);
+  virtual void SetValue (const TString&, const bool&, const long long&, const long long&);
   // Decimal values
-  virtual void SetValue (std::string, long double, long long, long long);
-  virtual void SetValue (std::string n, double v, long long i, long long j) {SetValue(n, (long double)v, i, j);}
-  virtual void SetValue (std::string n, float v, long long i, long long j) {SetValue(n, (long double)v, i, j);}
+  virtual void SetValue (const TString&, const long double&, const long long&, const long long&);
+  virtual void SetValue (const TString &n, const double &v, const long long &i, const long long &j) {SetValue(n, (long double)v, i, j);}
+  virtual void SetValue (const TString &n, const float &v, const long long &i, const long long &j) {SetValue(n, (long double)v, i, j);}
   // Integer values
-  virtual void SetValue (std::string, long long, long long, long long);
-  virtual void SetValue (std::string n, short v, long long i, long long j) {SetValue(n, (long long)v, i, j);}
-  virtual void SetValue (std::string n, long v, long long i, long long j) {SetValue(n, (long long)v, i, j);}
-  virtual void SetValue (std::string n, int v, long long i, long long j) {SetValue(n, (long long)v, i, j);}
-  virtual void SetValue (std::string n, signed char v, long long i, long long j) {SetValue(n, (long long)v, i, j);}
+  virtual void SetValue (const TString&, const long long&, const long long&, const long long&);
+  virtual void SetValue (const TString &n, const short &v, const long long &i, const long long &j) {SetValue(n, (long long)v, i, j);}
+  virtual void SetValue (const TString &n, const long &v, const long long &i, const long long &j) {SetValue(n, (long long)v, i, j);}
+  virtual void SetValue (const TString &n, const int &v, const long long &i, const long long &j) {SetValue(n, (long long)v, i, j);}
+  virtual void SetValue (const TString &n, const signed char &v, const long long &i, const long long &j) {SetValue(n, (long long)v, i, j);}
   // Counting values
-  virtual void SetValue (std::string, unsigned long long, long long, long long);
-  virtual void SetValue (std::string n, unsigned short v, long long i, long long j) {SetValue(n, (unsigned long long)v, i, j);}
-  virtual void SetValue (std::string n, unsigned long v, long long i, long long j) {SetValue(n, (unsigned long long)v, i , j);}
-  virtual void SetValue (std::string n, unsigned int v, long long i, long long j) {SetValue(n, (unsigned long long)v, i, j);}
-  virtual void SetValue (std::string n, unsigned char v, long long i, long long j) {SetValue(n, (unsigned long long)v, i, j);}
+  virtual void SetValue (const TString&, const unsigned long long&, const long long&, const long long&);
+  virtual void SetValue (const TString &n, const unsigned short &v, const long long &i, const long long &j) {SetValue(n, (unsigned long long)v, i, j);}
+  virtual void SetValue (const TString &n, const unsigned long &v, const long long &i, const long long &j) {SetValue(n, (unsigned long long)v, i , j);}
+  virtual void SetValue (const TString &n, const unsigned int &v, const long long &i, const long long &j) {SetValue(n, (unsigned long long)v, i, j);}
+  virtual void SetValue (const TString &n, const unsigned char &v, const long long &i, const long long &j) {SetValue(n, (unsigned long long)v, i, j);}
   // String values
-  virtual void SetValue (std::string, std::string, long long, long long);
-  virtual void SetValue (std::string n, TString v, long long i, long long j) {SetValue(n, (std::string)v.Data(), i, j);}
-  virtual void SetValue (std::string n, char v, long long i, long long j) {SetValue(n, std::string(1, v), i, j);}
+  virtual void SetValue (const TString&, const std::string&, const long long&, const long long&);
+  virtual void SetValue (const TString &n, const TString &v, const long long &i, const long long &j) {SetValue(n, std::string(v.Data()), i, j);}
+  virtual void SetValue (const TString &n, const char &v, const long long &i, const long long &j) {SetValue(n, std::string(1, v), i, j);}
   // TObjects
-  virtual void SetValue (std::string, TObject*, long long, long long);
+  virtual void SetValue (const TString&, TObject*, const long long&, const long long&);
 
-  bool                GetBool (std::string, long long i = -1, long long j = -1);
-  long double         GetDecimal (std::string, long long i = -1, long long j = -1);
-  long long           GetInteger (std::string, long long i = -1, long long j = -1);
-  unsigned long long  GetCounting (std::string, long long i = -1, long long j = -1);
-  std::string         GetString (std::string, long long i = -1, long long j = -1);
-  TObject*            GetTObject (std::string, long long i = -1, long long j = -1);
+  bool                GetBool (const TString&, const long long &i = -1, const long long &j = -1);
+  long double         GetDecimal (const TString&, const long long &i = -1, const long long &j = -1);
+  long long           GetInteger (const TString&, const long long &i = -1, const long long &j = -1);
+  unsigned long long  GetCounting (const TString&, const long long &i = -1, const long long &j = -1);
+  TString             GetString (const TString&, const long long &i = -1, const long long &j = -1);
+  TObject*            GetTObject (const TString&, const long long &i = -1, const long long &j = -1);
 
-  bool                      Exists (std::string n, long long i = -1, long long j = -1);
+  bool                      Exists (const TString &n, const long long &i = -1, const long long &j = -1);
   unsigned                  TypeDim (std::string n);
-  std::vector<std::string>  GetSimilarNames (std::string n, unsigned min_dim);
+  unsigned                  TypeDim (const TString &n) {return TypeDim(std::string(n.Data()));}
+  std::vector<TString>      GetSimilarNames (const TString &n, unsigned min_dim);
   // Copy value(s) stored in <map>[from] to <map>[to]
-  void                      CopyValues (std::string from, std::string to);
+  void                      CopyValues (const TString &from, const TString &to);
   // Swap elements in a 1D or 2D IntMap or IntIntMap
-  void                      SwapValues (std::string n, long long i, long long j);
+  void                      SwapValues (const TString &n, long long i, long long j);
   void                      Reset ();
-  void                      RemoveNameAndData (std::string);
-  void                      RemoveData (std::string);
-  void                      RemoveAllAssociatedData (std::string);
+  void                      RemoveNameAndData (const TString&);
+  void                      RemoveData (const TString&);
+  void                      RemoveAllAssociatedData (const TString&);
 
 public:
   std::map<std::string, bool>                                 fBoolMap;
@@ -141,7 +142,7 @@ private:
 
   std::map<std::string, StorageType>  fNameTypeMap;
 
-  bool NameAlreadyStored (std::string n) {return fNameTypeMap.count(n) != 0 ? true : false;}
+  inline bool NameAlreadyStored (const std::string &n) {return fNameTypeMap.count(n) != 0 ? true : false;}
 };
 
 } /*  HAL */ 

@@ -5,7 +5,9 @@ ClassImp(HAL::AnalysisData);
 namespace HAL
 {
 
-void AnalysisData::SetValue (std::string name, bool v) {
+void AnalysisData::SetValue (const TString &n, const bool &v) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kB;
@@ -18,7 +20,9 @@ void AnalysisData::SetValue (std::string name, bool v) {
     fBoolMap.insert(std::pair<std::string, bool>(name, v));
 }
 
-void AnalysisData::SetValue (std::string name, long double v) {
+void AnalysisData::SetValue (const TString &n, const long double &v) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kD;
@@ -35,7 +39,9 @@ void AnalysisData::SetValue (std::string name, long double v) {
     fDecimalMap.insert(std::pair<std::string, long double>(name, v));
 }
 
-void AnalysisData::SetValue (std::string name, long long v) {
+void AnalysisData::SetValue (const TString &n, const long long &v) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kI;
@@ -52,7 +58,9 @@ void AnalysisData::SetValue (std::string name, long long v) {
     fIntegerMap.insert(std::pair<std::string, long long>(name, v));
 }
 
-void AnalysisData::SetValue (std::string name, unsigned long long v) {
+void AnalysisData::SetValue (const TString &n, const unsigned long long &v) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kC;
@@ -69,7 +77,9 @@ void AnalysisData::SetValue (std::string name, unsigned long long v) {
     fCountingMap.insert(std::pair<std::string, unsigned long long>(name, v));
 }
 
-void AnalysisData::SetValue (std::string name, std::string v) {
+void AnalysisData::SetValue (const TString &n, const std::string &v) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kS;
@@ -82,7 +92,9 @@ void AnalysisData::SetValue (std::string name, std::string v) {
     fStringMap.insert(std::pair<std::string, std::string>(name, v));
 }
 
-void AnalysisData::SetValue (std::string name, TObject *v) { 
+void AnalysisData::SetValue (const TString &n, TObject *v) { 
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kO;
@@ -95,7 +107,9 @@ void AnalysisData::SetValue (std::string name, TObject *v) {
     fTObjectMap.insert(std::pair<std::string, TObject*>(name, v));
 }
 
-void AnalysisData::SetValue (std::string name, bool v, long long i) {
+void AnalysisData::SetValue (const TString &n, const bool &v, const long long &i) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kIB;
@@ -113,7 +127,9 @@ void AnalysisData::SetValue (std::string name, bool v, long long i) {
   }
 }
 
-void AnalysisData::SetValue (std::string name, long double v, long long i) {
+void AnalysisData::SetValue (const TString &n, const long double &v, const long long &i) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kID;
@@ -135,7 +151,9 @@ void AnalysisData::SetValue (std::string name, long double v, long long i) {
   }
 }
 
-void AnalysisData::SetValue (std::string name, long long v, long long i) {
+void AnalysisData::SetValue (const TString &n, const long long &v, const long long &i) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kII;
@@ -157,7 +175,9 @@ void AnalysisData::SetValue (std::string name, long long v, long long i) {
   }
 }
 
-void AnalysisData::SetValue (std::string name, unsigned long long v, long long i) {
+void AnalysisData::SetValue (const TString &n, const unsigned long long &v, const long long &i) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kIC;
@@ -179,7 +199,9 @@ void AnalysisData::SetValue (std::string name, unsigned long long v, long long i
   }
 }
 
-void AnalysisData::SetValue (std::string name, std::string v, long long i) {
+void AnalysisData::SetValue (const TString &n, const std::string &v, const long long &i) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kIS;
@@ -197,7 +219,9 @@ void AnalysisData::SetValue (std::string name, std::string v, long long i) {
   }
 }
 
-void AnalysisData::SetValue (std::string name, TObject *v, long long i) {
+void AnalysisData::SetValue (const TString &n, TObject *v, const long long &i) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kIO;
@@ -215,7 +239,9 @@ void AnalysisData::SetValue (std::string name, TObject *v, long long i) {
   }
 }
 
-void AnalysisData::SetValue (std::string name, bool v, long long i, long long j) {
+void AnalysisData::SetValue (const TString &n, const bool &v, const long long &i, const long long &j) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kIIB;
@@ -240,7 +266,9 @@ void AnalysisData::SetValue (std::string name, bool v, long long i, long long j)
   }
 }
 
-void AnalysisData::SetValue (std::string name, long double v, long long i, long long j) {
+void AnalysisData::SetValue (const TString &n, const long double &v, const long long &i, const long long &j) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kIID;
@@ -269,7 +297,9 @@ void AnalysisData::SetValue (std::string name, long double v, long long i, long 
   }
 }
 
-void AnalysisData::SetValue (std::string name, long long v, long long i, long long j) {
+void AnalysisData::SetValue (const TString &n, const long long &v, const long long &i, const long long &j) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kIII;
@@ -298,7 +328,9 @@ void AnalysisData::SetValue (std::string name, long long v, long long i, long lo
   }
 }
 
-void AnalysisData::SetValue (std::string name, unsigned long long v, long long i, long long j) {
+void AnalysisData::SetValue (const TString &n, const unsigned long long &v, const long long &i, const long long &j) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kIIC;
@@ -327,7 +359,9 @@ void AnalysisData::SetValue (std::string name, unsigned long long v, long long i
   }
 }
 
-void AnalysisData::SetValue (std::string name, std::string v, long long i, long long j) {
+void AnalysisData::SetValue (const TString &n, const std::string &v, const long long &i, const long long &j) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kIIS;
@@ -352,7 +386,9 @@ void AnalysisData::SetValue (std::string name, std::string v, long long i, long 
   }
 }
 
-void AnalysisData::SetValue (std::string name, TObject *v, long long i, long long j) {
+void AnalysisData::SetValue (const TString &n, TObject *v, const long long &i, const long long &j) {
+  std::string name(n.Data());
+
   // check if 'name' already has a container
   if (!NameAlreadyStored(name))
     fNameTypeMap[name] = kIIO;
@@ -379,7 +415,9 @@ void AnalysisData::SetValue (std::string name, TObject *v, long long i, long lon
 
 
 
-bool AnalysisData::GetBool (std::string name, long long i, long long j) {
+bool AnalysisData::GetBool (const TString &n, const long long &i, const long long &j) {
+  std::string name(n.Data());
+
   if (fBoolMap.count(name) != 0)
     return fBoolMap[name];
   if (fBoolIntMap.count(name) != 0)
@@ -390,7 +428,9 @@ bool AnalysisData::GetBool (std::string name, long long i, long long j) {
   throw HALException(name.insert(0, "Error retrieving data: ").c_str());
 }
 
-long double AnalysisData::GetDecimal (std::string name, long long i, long long j) {
+long double AnalysisData::GetDecimal (const TString &n, const long long &i, const long long &j) {
+  std::string name(n.Data());
+
   if (fDecimalMap.count(name) != 0)
     return fDecimalMap[name];
   if (fDecimalIntMap.count(name) != 0)
@@ -413,7 +453,9 @@ long double AnalysisData::GetDecimal (std::string name, long long i, long long j
   throw HALException(name.insert(0, "Error retrieving data: ").c_str());
 }
 
-long long AnalysisData::GetInteger (std::string name, long long i, long long j) {
+long long AnalysisData::GetInteger (const TString &n, const long long &i, const long long &j) {
+  std::string name(n.Data());
+
   if (fDecimalMap.count(name) != 0)
     return fDecimalMap[name];
   if (fDecimalIntMap.count(name) != 0)
@@ -436,7 +478,9 @@ long long AnalysisData::GetInteger (std::string name, long long i, long long j) 
   throw HALException(name.insert(0, "Error retrieving data: ").c_str());
 }
 
-unsigned long long AnalysisData::GetCounting (std::string name, long long i, long long j) {
+unsigned long long AnalysisData::GetCounting (const TString &n, const long long &i, const long long &j) {
+  std::string name(n.Data());
+
   if (fDecimalMap.count(name) != 0)
     return fDecimalMap[name];
   if (fDecimalIntMap.count(name) != 0)
@@ -459,7 +503,9 @@ unsigned long long AnalysisData::GetCounting (std::string name, long long i, lon
   throw HALException(name.insert(0, "Error retrieving data: ").c_str());
 }
 
-std::string AnalysisData::GetString (std::string name, long long i, long long j) {
+TString AnalysisData::GetString (const TString &n, const long long &i, const long long &j) {
+  std::string name(n.Data());
+
   if (fStringMap.count(name) != 0)
     return fStringMap[name];
   if (fStringIntMap.count(name) != 0)
@@ -470,7 +516,9 @@ std::string AnalysisData::GetString (std::string name, long long i, long long j)
   throw HALException(name.insert(0, "Error retrieving data: ").c_str());
 }
 
-TObject* AnalysisData::GetTObject (std::string name, long long i, long long j) {
+TObject* AnalysisData::GetTObject (const TString &n, const long long &i, const long long &j) {
+  std::string name(n.Data());
+
   if (fTObjectMap.count(name) != 0)
     return fTObjectMap[name];
   if (fTObjectIntMap.count(name) != 0)
@@ -481,7 +529,9 @@ TObject* AnalysisData::GetTObject (std::string name, long long i, long long j) {
   throw HALException(name.insert(0, "Error retrieving data: ").c_str());
 }
 
-bool AnalysisData::Exists (std::string n, long long i, long long j) {
+bool AnalysisData::Exists (const TString &name, const long long &i, const long long &j) {
+  std::string n(name.Data());
+
   if (NameAlreadyStored(n) && i == -1 && j == -1)
     return true;
   if (NameAlreadyStored(n) && j == -1) {
@@ -543,8 +593,10 @@ unsigned AnalysisData::TypeDim (std::string n) {
   throw HALException("Type dimension couldn't be determined.");
 }
 
-std::vector<std::string> AnalysisData::GetSimilarNames (std::string n, unsigned min_dim) {
-  std::vector<std::string> names;
+std::vector<TString> AnalysisData::GetSimilarNames (const TString &nn, unsigned min_dim) {
+  std::string n(nn.Data());
+
+  std::vector<TString> names;
   std::map<std::string, StorageType>::iterator  it;
   // pick out ^<name>:
   TRegexp pat(n.substr(0, n.find_first_of(':')).insert(0, "^").c_str());
@@ -558,7 +610,10 @@ std::vector<std::string> AnalysisData::GetSimilarNames (std::string n, unsigned 
   return names;
 }
 
-void AnalysisData::CopyValues (std::string from, std::string to) {
+void AnalysisData::CopyValues (const TString &f, const TString &t) {
+  std::string from(f.Data());
+  std::string to(t.Data());
+
   if (TypeDim(from) == 0) {
     if (fNameTypeMap[from] == kB)
       fBoolMap[to] = fBoolMap[from];
@@ -603,7 +658,9 @@ void AnalysisData::CopyValues (std::string from, std::string to) {
   }
 }
 
-void AnalysisData::SwapValues (std::string n, long long i, long long j) {
+void AnalysisData::SwapValues (const TString &name, long long i, long long j) {
+  std::string n(name.Data());
+
   if (TypeDim(n) == 1) {
     if (fNameTypeMap[n] == kIB) {
       bool temp = fBoolIntMap[n][i];
@@ -674,12 +731,16 @@ void AnalysisData::Reset () {
   fNameTypeMap.clear();
 }
 
-void AnalysisData::RemoveNameAndData (std::string n) {
-  RemoveData(n);
+void AnalysisData::RemoveNameAndData (const TString &name) {
+  std::string n(name.Data());
+
+  RemoveData(name);
   fNameTypeMap.erase(n);
 }
 
-void AnalysisData::RemoveData (std::string n) {
+void AnalysisData::RemoveData (const TString &name) {
+  std::string n(name.Data());
+
   if (fNameTypeMap[n] == kB)
     fBoolMap.erase(n);
   else if (fNameTypeMap[n] == kD)
@@ -718,7 +779,9 @@ void AnalysisData::RemoveData (std::string n) {
     fTObjectIntIntMap.erase(n);
 }
 
-void AnalysisData::RemoveAllAssociatedData (std::string n) {
+void AnalysisData::RemoveAllAssociatedData (const TString &nn) {
+  std::string n(nn.Data());
+
   TRegexp prefix(TString::Format("^%s:.*", n.c_str()));
   std::vector<std::string> names;
 
