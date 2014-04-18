@@ -37,6 +37,7 @@
 #include <deque>
 #include <vector>
 #include <set>
+#include <map>
 #include <HAL/Common.h>
 #include <HAL/Exceptions.h>
 
@@ -46,11 +47,12 @@ class AnalysisTreeReader : public TNamed {
 public:
   AnalysisTreeReader (TTree *tree = 0);
   virtual ~AnalysisTreeReader ();
-  void SetTree (TTree *tree) {fChain = tree; fChain->SetMakeClass(1);}
-  void SetEntry (Long64_t entry);
-  TTree* GetTree () {return fChain;}
-  void SetBranchMap (TMap *m) {fBranchMap = m;}
-  bool CheckBranchMapNickname (const TString &name);
+  void    SetTree (TTree *tree) {fChain = tree; fChain->SetMakeClass(1);}
+  void    SetEntry (Long64_t entry);
+  TTree*  GetTree () {return fChain;}
+  void    Init ();
+  void    SetBranchMap (TMap *m) {fBranchMap = m;}
+  bool    CheckBranchMapNickname (const TString &name);
 
   unsigned int              GetDim (const TString &branchname, const long long &idx_1 = -1);
   bool                      GetBool (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
@@ -93,10 +95,6 @@ private:
   std::deque<long double>              fD;  // decimal number  (float, double, etc...)
   std::deque<long long>                fI;  // integer number  (Byte_t, int, long, short, etc...)
   std::deque<unsigned long long>       fC;  // counting number (unsigned int, unsigned etc...)
-  //std::deque<Bool_t>                   fB;  // bool type
-  //std::deque<LongDouble_t>             fD;  // decimal number  (float, double, etc...)
-  //std::deque<Long64_t>                 fI;  // integer number  (Byte_t, int, long, short, etc...)
-  //std::deque<ULong64_t>                fC;  // counting number (unsigned int, unsigned etc...)
   std::deque<TString>                  fS;  // string types    (char, TString, ...)
   std::deque<TObjArray>                fOA; // TObjArray
   std::deque<TClonesArray>             fCA; // TClonesArray
@@ -108,10 +106,6 @@ private:
   std::deque<std::vector<long double> >         fvD;  // decimal number
   std::deque<std::vector<long long> >           fvI;  // integer number
   std::deque<std::vector<unsigned long long> >  fvC;  // counting number
-  //std::deque<std::vector<Bool_t> >        fvB;  // bool type
-  //std::deque<std::vector<LongDouble_t> >  fvD;  // decimal number
-  //std::deque<std::vector<Long64_t> >      fvI;  // integer number
-  //std::deque<std::vector<ULong64_t> >     fvC;  // counting number
   std::deque<std::vector<TString> >             fvS;  // string types
   std::deque<std::vector<TObjArray> >           fvOA; // TObjArray
   std::deque<std::vector<TClonesArray> >        fvCA; // TClonesArray
@@ -123,10 +117,6 @@ private:
   std::deque<std::vector<std::vector<long double> > >         fvvD;  // decimal number
   std::deque<std::vector<std::vector<long long> > >           fvvI;  // integer number
   std::deque<std::vector<std::vector<unsigned long long> > >  fvvC;  // counting number
-  //std::deque<std::vector<std::vector<Bool_t> > >        fvvB;  // bool type
-  //std::deque<std::vector<std::vector<LongDouble_t> > >  fvvD;  // decimal number
-  //std::deque<std::vector<std::vector<Long64_t> > >      fvvI;  // integer number
-  //std::deque<std::vector<std::vector<ULong64_t> > >     fvvC;  // counting number
   std::deque<std::vector<std::vector<TString> > >             fvvS;  // string types
   std::deque<std::vector<std::vector<TRef> > >                fvvR;  // TRef
 
@@ -136,18 +126,19 @@ private:
   public:
     BranchManager (AnalysisTreeReader *tr = 0);
     ~BranchManager ();
-    TString GetName () {return fBranchName;}
-    TString GetFullType () {return fType;}
-    TString GetScalarType () {return fScalarType;}
-    Bool_t IsScalar () {return fScalar;}
-    Bool_t IsCArray1D () {return fCArray1D;}
-    Bool_t IsCArray2D () {return fCArray2D;}
-    Bool_t IsVec1D () {return fVec1D;}
-    Bool_t IsVec2D () {return fVec2D;}
-    Bool_t Create (TString branchname);
-    void SetEntry (Long64_t entry);
+    TString     GetName () {return fBranchName;}
+    TString     GetFullType () {return fType;}
+    TString     GetScalarType () {return fScalarType;}
+    Bool_t      IsScalar () {return fScalar;}
+    Bool_t      IsCArray1D () {return fCArray1D;}
+    Bool_t      IsCArray2D () {return fCArray2D;}
+    Bool_t      IsVec1D () {return fVec1D;}
+    Bool_t      IsVec2D () {return fVec2D;}
+    Bool_t      Create (TString branchname);
+    void        Init ();
+    void        SetEntry (Long64_t entry);
     StorageType GetStorageType () {return fStorageID;}
-    Int_t GetStorageIndex () {return fStorageIndex;}
+    Int_t       GetStorageIndex () {return fStorageIndex;}
 
   private:
     StorageType            fStorageID; // this will be the proprietary type to use in the ATR
@@ -160,10 +151,121 @@ private:
 
     Int_t                  GetArrayLength (Int_t dim);
     void                   FindTypeInformation ();
+
+    bool                                fB;
+    signed char                         fSC;
+    int                                 fI;
+    short                               fSI;
+    long                                fL;
+    long long                           fLL;
+    unsigned char                       fUC;
+    unsigned int                        fUI;
+    unsigned short                      fUSI;
+    unsigned long                       fUL;
+    unsigned long long                  fULL;
+    float                               fF;
+    double                              fD;
+    long double                         fLD;
+    char                                fC;
+    TString                             fTS;
+    TObjString                          fTOS;
+    std::string                         fstdS;
+    TObjArray                           fTOA;
+    TClonesArray                        fTCA;
+    TRef                                fTR;
+    TRefArray                           fTRA;
+    bool                                *fcB;
+    signed char                         *fcSC;
+    int                                 *fcI;
+    short                               *fcSI;
+    long                                *fcL;
+    long long                           *fcLL;
+    unsigned char                       *fcUC;
+    unsigned int                        *fcUI;
+    unsigned short                      *fcUSI;
+    unsigned long                       *fcUL;
+    unsigned long long                  *fcULL;
+    float                               *fcF;
+    double                              *fcD;
+    long double                         *fcLD;
+    char                                *fcC;
+    TString                             *fcTS;
+    TObjString                          *fcTOS;
+    std::string                         *fcstdS;
+    TObjArray                           *fcTOA;
+    TClonesArray                        *fcTCA;
+    TRef                                *fcTR;
+    TRefArray                           *fcTRA;
+    bool                                **fccB;
+    signed char                         **fccSC;
+    int                                 **fccI;
+    short                               **fccSI;
+    long                                **fccL;
+    long long                           **fccLL;
+    unsigned char                       **fccUC;
+    unsigned int                        **fccUI;
+    unsigned short                      **fccUSI;
+    unsigned long                       **fccUL;
+    unsigned long long                  **fccULL;
+    float                               **fccF;
+    double                              **fccD;
+    long double                         **fccLD;
+    char                                **fccC;
+    TString                             **fccTS;
+    TObjString                          **fccTOS;
+    std::string                         **fccstdS;
+    TRef                                **fccTR;
+    std::vector<bool>                   *fvB;
+    std::vector<signed char>            *fvSC;
+    std::vector<int>                    *fvI;
+    std::vector<short>                  *fvSI;
+    std::vector<long>                   *fvL;
+    std::vector<long long>              *fvLL;
+    std::vector<unsigned char>          *fvUC;
+    std::vector<unsigned int>           *fvUI;
+    std::vector<unsigned short>         *fvUSI;
+    std::vector<unsigned long>          *fvUL;
+    std::vector<unsigned long long>     *fvULL;
+    std::vector<float>                  *fvF;
+    std::vector<double>                 *fvD;
+    std::vector<long double>            *fvLD;
+    std::vector<char>                   *fvC;
+    std::vector<TString>                *fvTS;
+    std::vector<TObjString>             *fvTOS;
+    std::vector<std::string>            *fvstdS;
+    std::vector<TObjArray>              *fvTOA;
+    std::vector<TClonesArray>           *fvTCA;
+    std::vector<TRef>                   *fvTR;
+    std::vector<TRefArray>              *fvTRA;
+    std::vector<std::vector<bool> >                 *fvvB;
+    std::vector<std::vector<signed char> >          *fvvSC;
+    std::vector<std::vector<int> >                  *fvvI;
+    std::vector<std::vector<short> >                *fvvSI;
+    std::vector<std::vector<long> >                 *fvvL;
+    std::vector<std::vector<long long> >            *fvvLL;
+    std::vector<std::vector<unsigned char> >        *fvvUC;
+    std::vector<std::vector<unsigned int> >         *fvvUI;
+    std::vector<std::vector<unsigned short> >       *fvvUSI;
+    std::vector<std::vector<unsigned long> >        *fvvUL;
+    std::vector<std::vector<unsigned long long> >   *fvvULL;
+    std::vector<std::vector<float> >                *fvvF;
+    std::vector<std::vector<double> >               *fvvD;
+    std::vector<std::vector<long double> >          *fvvLD;
+    std::vector<std::vector<char> >                 *fvvC;
+    std::vector<std::vector<TString> >              *fvvTS;
+    std::vector<std::vector<TObjString> >           *fvvTOS;
+    std::vector<std::vector<std::string> >          *fvvstdS;
+    std::vector<std::vector<TRef> >                 *fvvTR;
+
+    Int_t       fRows, fColumns;
+    bool        fIsB, fIsSC, fIsI, fIsSI, fIsL, fIsLL, fIsUC, fIsUI;
+    bool        fIsUSI, fIsUL, fIsULL, fIsF, fIsD, fIsLD, fIsC, fIsTS;
+    bool        fIsTOS, fIsstdS, fIsTOA, fIsTCA, fIsTR, fIsTRA;
   };
 
   friend class BranchManager;
-  std::vector<BranchManager*>         fBranchManagers;
+  std::vector<BranchManager*>             fBranchManagers;
+  std::map<std::string, BranchManager*>   fNickNameBranchMap;
 
 };
 

@@ -6,29 +6,31 @@ namespace HAL
 /*
  * Generic classes
  * */
+internal::ImportTLVAlgo::ImportTLVAlgo (TString name, TString title) : 
+  HAL::Algorithm(name, title) {
+  fVectorOutput = gaMakeVecLabel(GetName());
+  fIndexOutput = gaMakeIndexLabel(GetName());
+  fNObjectsOutput = gaMakeNObjectsLabel(GetName());
+}
+
 void internal::ImportTLVAlgo::Exec (unsigned n) {
   HAL::AnalysisData *data = GetUserData();
-  TString VectorOutput = gaMakeVecLabel(GetName());
-  TString IndexOutput = gaMakeIndexLabel(GetName());
-  TString NObjectsOutput = gaMakeNObjectsLabel(GetName());
 
   for (unsigned i = 0; i < n; ++i) {
     TLorentzVector *vec = MakeTLV(i);
-    data->SetValue(VectorOutput, vec, i);
-    data->SetValue(IndexOutput, i, i);
+    data->SetValue(fVectorOutput, vec, i);
+    data->SetValue(fIndexOutput, i, i);
   }
-  data->SetValue(NObjectsOutput, n);
-  IncreaseCounter(data->GetInteger(NObjectsOutput));
+  data->SetValue(fNObjectsOutput, n);
+  IncreaseCounter(n);
 }
 
 void internal::ImportTLVAlgo::Clear (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
-  TString NObjectsOutput = gaMakeNObjectsLabel(GetName());
-  TString VecOutput = gaMakeVecLabel(GetName());
-  long long n = data->GetInteger(NObjectsOutput);
+  long long n = data->GetInteger(fNObjectsOutput);
 
   for (long long i = 0; i < n; ++i)
-    delete data->GetTObject(VecOutput, i);
+    delete data->GetTObject(fVectorOutput, i);
   data->RemoveAllAssociatedData(GetName());
 }
 
@@ -220,6 +222,27 @@ void internal::FilterRefTLVAlgo::Clear (Option_t* /*option*/) {
   data->RemoveAllAssociatedData(GetName());
 }
 
+internal::FilterParentAlgo::FilterParentAlgo (TString name, TString title, 
+    TString input, TString logic, long long length, ...) :
+  Algorithm(name, title), fExclude(logic.EqualTo("ex", TString::kIgnoreCase)), fInput(input) {
+
+  fRefNames = new const char*[length];
+  va_list arguments;  // store the variable list of arguments
+
+  va_start (arguments, length); // initializing arguments to store all values after length
+  for (long long i = 0; i < length; ++i)
+    fRefNames[i] = va_arg(arguments, const char*);
+  va_end(arguments); // cleans up the list
+}
+
+void internal::FilterParentAlgo::Exec (Option_t* /*option*/) {
+}
+
+void internal::FilterParentAlgo::Clear (Option_t* /*option*/) {
+  HAL::AnalysisData *data = GetUserData();
+  data->RemoveAllAssociatedData(GetName());
+}
+
 //void internal::ParticlesTLVCut::Exec (Option_t* /*option*/) {
 //  HAL::AnalysisData *data = GetUserData();
 //  long long n;
@@ -320,23 +343,33 @@ void Algorithms::ImportTLV::Init (Option_t* /*option*/) {
     fIsM = true;
   if (!fIsCart && !fIsE && !fIsM)
     HAL::HALException(GetName().Prepend("Couldn't determine how to import data: ").Data());
+
+  fCartX0 = TString::Format("%s:x0", GetName().Data());
+  fCartX1 = TString::Format("%s:x1", GetName().Data());
+  fCartX2 = TString::Format("%s:x2", GetName().Data());
+  fCartX3 = TString::Format("%s:x3", GetName().Data());
+  fPt = TString::Format("%s:pt", GetName().Data());
+  fEta = TString::Format("%s:eta", GetName().Data());
+  fPhi = TString::Format("%s:phi", GetName().Data());
+  fM = TString::Format("%s:m", GetName().Data());
+  fE = TString::Format("%s:e", GetName().Data());
+  fNEntriesName = TString::Format("%s:nentries", GetName().Data());
+  fCartEntriesName = TString::Format("%s:x1", GetName().Data());
+  fPtEntriesName = TString::Format("%s:pt", GetName().Data());
 }
 
 void Algorithms::ImportTLV::Exec (Option_t* /*option*/) {
   HAL::AnalysisTreeReader *tr = GetRawData();
-  TString NEntriesName = TString::Format("%s:nentries", GetName().Data());
-  TString CartEntriesName = TString::Format("%s:x1", GetName().Data());
-  TString PtEntriesName = TString::Format("%s:pt", GetName().Data());
   long long n = fN;
 
   // determine number of elements to read in
   if (n == 0) {
-    if (tr->CheckBranchMapNickname(NEntriesName))
-      n = tr->GetInteger(NEntriesName);
+    if (tr->CheckBranchMapNickname(fNEntriesName))
+      n = tr->GetInteger(fNEntriesName);
     else if (fIsCart)
-      n = tr->GetDim(CartEntriesName);
+      n = tr->GetDim(fCartEntriesName);
     else if (fIsE || fIsM)
-      n = tr->GetDim(PtEntriesName);
+      n = tr->GetDim(fPtEntriesName);
   }
   // call actual Exec algo
   ImportTLVAlgo::Exec(n);
@@ -346,24 +379,24 @@ TLorentzVector* Algorithms::ImportTLV::MakeTLV (unsigned i) {
   HAL::AnalysisTreeReader *tr = GetRawData();
 
   if (fIsCart) {
-    long double x0 = tr->GetDecimal(TString::Format("%s:x0", GetName().Data()), i),
-                x1 = tr->GetDecimal(TString::Format("%s:x1", GetName().Data()), i),
-                x2 = tr->GetDecimal(TString::Format("%s:x2", GetName().Data()), i),
-                x3 = tr->GetDecimal(TString::Format("%s:x3", GetName().Data()), i);
+    long double x0 = tr->GetDecimal(fCartX0, i),
+                x1 = tr->GetDecimal(fCartX1, i),
+                x2 = tr->GetDecimal(fCartX2, i),
+                x3 = tr->GetDecimal(fCartX3, i);
     return new TLorentzVector(x1, x2, x3, x0);
   }
   else if (fIsE) {
-    long double e = tr->GetDecimal(TString::Format("%s:e", GetName().Data()), i),
-                pT = tr->GetDecimal(TString::Format("%s:pt", GetName().Data()), i),
-                eta = tr->GetDecimal(TString::Format("%s:eta", GetName().Data()), i),
-                phi = tr->GetDecimal(TString::Format("%s:phi", GetName().Data()), i);
+    long double e = tr->GetDecimal(fE, i),
+                pT = tr->GetDecimal(fPt, i),
+                eta = tr->GetDecimal(fEta, i),
+                phi = tr->GetDecimal(fPhi, i);
     return HAL::makeTLVFromPtEtaPhiE(pT, eta, phi, e);
   }
   else if (fIsM) {
-    long double m = tr->GetDecimal(TString::Format("%s:m", GetName().Data()), i),
-                pT = tr->GetDecimal(TString::Format("%s:pT", GetName().Data()), i),
-                eta = tr->GetDecimal(TString::Format("%s:eta", GetName().Data()), i),
-                phi = tr->GetDecimal(TString::Format("%s:phi", GetName().Data()), i);
+    long double m = tr->GetDecimal(fM, i),
+                pT = tr->GetDecimal(fPt, i),
+                eta = tr->GetDecimal(fEta, i),
+                phi = tr->GetDecimal(fPhi, i);
     return HAL::makeTLVFromPtEtaPhiM(pT, eta, phi, m);
   }
   throw HAL::HALException("Couldn't identify type in ImportTLV");
@@ -411,9 +444,10 @@ void Algorithms::VecAddReco::Exec (Option_t* /*option*/) {
   // 2D arrays
   TString ParentIndicesOutput = gaMakeParentIndexLabel(GetName());
 
+  // Modify to look at parents too and assume that parents already form unique tuples
   for (long long i = 0; i < fLength; ++i) {
     TString pname(fParentNames[i]);
-    if (internal::determineAccessProtocol(data, pname, RefInputs[i])) {
+    if (gaCheckRefName(data, pname, RefInputs[i])) {
       UniqueRefInput.insert(RefInputs[i]);
       ParentNObjects[i] = data->GetInteger(gaMakeNObjectsLabel(fParentNames[i]).Data());
       ParentIndices2[i] = new long long[ParentNObjects[i]];

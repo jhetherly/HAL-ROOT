@@ -50,7 +50,7 @@ namespace internal
  * */
 class ImportTLVAlgo : public HAL::Algorithm {
 public:
-  ImportTLVAlgo (TString name, TString title) : HAL::Algorithm(name, title) {}
+  ImportTLVAlgo (TString name, TString title);
   virtual ~ImportTLVAlgo () {}
 
 protected:
@@ -58,6 +58,10 @@ protected:
   virtual void Exec (unsigned n);
   virtual void Clear (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned) = 0;
+
+private:
+  TString fVectorOutput, fIndexOutput, fNObjectsOutput;
+
 };
 
 /*
@@ -116,6 +120,27 @@ protected:
   virtual void Clear (Option_t* /*option*/);
 
   TString fInput, fOthers;
+};
+
+/*
+ * Algorithm for filtering if a particle is a parent of the input refernece
+ * logic: 'ex' or 'in'
+ * */
+class FilterParentAlgo : public Algorithm {
+public:
+  FilterParentAlgo (TString name, TString title, TString input, TString logic, long long length, ...);
+  virtual ~FilterParentAlgo () {}
+
+  virtual bool FilterPredicate (long long in, long long ref) = 0;
+  
+protected:
+  virtual void Exec (Option_t* /*option*/);
+  virtual void Clear (Option_t* /*option*/);
+
+  const char          **fRefNames;
+  bool                  fExclude;
+  std::set<long long>   fRefIndices;
+  TString               fInput;
 };
 
 ///*
@@ -216,6 +241,9 @@ protected:
 private:
   unsigned  fN;
   bool      fIsCart, fIsE, fIsM;
+  TString   fCartX0, fCartX1, fCartX2, fCartX3, fPt;
+  TString   fEta, fPhi, fM, fE;
+  TString   fNEntriesName, fCartEntriesName, fPtEntriesName;
 };
 
 
