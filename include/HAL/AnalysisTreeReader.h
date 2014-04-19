@@ -264,8 +264,8 @@ private:
   };
 
   friend class BranchManager;
-  std::vector<BranchManager*>             fBranchManagers;
-  std::map<std::string, BranchManager*>   fNickNameBranchMap;
+  std::vector<BranchManager*>                               fBranchManagers;
+  std::map<TString, BranchManager*, internal::string_cmp>   fNickNameBranchMap;
 
 };
 

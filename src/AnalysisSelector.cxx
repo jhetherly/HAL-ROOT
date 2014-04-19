@@ -14,6 +14,7 @@ void AnalysisSelector::Init (TTree *tree) {
   if (!tree) return;
 
   ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetTree(tree);
+  ((AnalysisTreeReader*)fInput->FindObject("RawData"))->Init();
 
   fAnalysisFlow->InitializeAlgo(GetOption());
 }

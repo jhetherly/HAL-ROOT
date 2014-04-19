@@ -111,6 +111,27 @@ public:
   void                      RemoveAllAssociatedData (const TString&);
 
 public:
+  //std::map<std::string, bool, internal::string_cmp>           fBoolMap;
+  //std::map<std::string, long double, internal::string_cmp>                          fDecimalMap;
+  //std::map<std::string, long long, internal::string_cmp>                            fIntegerMap;
+  //std::map<std::string, unsigned long long, internal::string_cmp>                   fCountingMap;
+  //std::map<std::string, std::string, internal::string_cmp>                          fStringMap;
+  //std::map<std::string, TObject*, internal::string_cmp>                             fTObjectMap;
+  //// the integer maps are the "index" of the element
+  //// this allows for disjoint indices without wasted space
+  //std::map<std::string, std::map<long long, bool>, internal::string_cmp >               fBoolIntMap;
+  //std::map<std::string, std::map<long long, long double>, internal::string_cmp >        fDecimalIntMap;
+  //std::map<std::string, std::map<long long, long long>, internal::string_cmp >          fIntegerIntMap;
+  //std::map<std::string, std::map<long long, unsigned long long>, internal::string_cmp > fCountingIntMap;
+  //std::map<std::string, std::map<long long, std::string>, internal::string_cmp >        fStringIntMap;
+  //std::map<std::string, std::map<long long, TObject*>, internal::string_cmp >           fTObjectIntMap;
+  //// for 2D "indexing"
+  //std::map<std::string, std::map<long long, std::map<long long, bool> >, internal::string_cmp >               fBoolIntIntMap;
+  //std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >        fDecimalIntIntMap;
+  //std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >          fIntegerIntIntMap;
+  //std::map<std::string, std::map<long long, std::map<long long, unsigned long long> >, internal::string_cmp > fCountingIntIntMap;
+  //std::map<std::string, std::map<long long, std::map<long long, std::string> >, internal::string_cmp >        fStringIntIntMap;
+  //std::map<std::string, std::map<long long, std::map<long long, TObject*> >, internal::string_cmp >           fTObjectIntIntMap;
   std::map<std::string, bool>                                 fBoolMap;
   std::map<std::string, long double>                          fDecimalMap;
   std::map<std::string, long long>                            fIntegerMap;

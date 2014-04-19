@@ -74,18 +74,16 @@ void AnalysisTreeReader::SetEntry (Long64_t entry) {
   fEntry = entry;
 
   // Update all branches
-  for (std::vector<BranchManager*>::iterator bm = fBranchManagers.begin(); 
-       bm != fBranchManagers.end(); ++bm) {
-    (*bm)->SetEntry(entry);
-  }
+  for (std::map<TString, BranchManager*, internal::string_cmp>::iterator bm = fNickNameBranchMap.begin(); 
+       bm != fNickNameBranchMap.end(); ++bm)
+    bm->second->SetEntry(entry);
 }
 
 void AnalysisTreeReader::Init () {
   // Init all branches
-  for (std::vector<BranchManager*>::iterator bm = fBranchManagers.begin(); 
-       bm != fBranchManagers.end(); ++bm) {
-    (*bm)->Init();
-  }
+  for (std::map<TString, BranchManager*, internal::string_cmp>::iterator bm = fNickNameBranchMap.begin(); 
+       bm != fNickNameBranchMap.end(); ++bm)
+    bm->second->Init();
 }
 
 bool AnalysisTreeReader::CheckBranchMapNickname (const TString &name) {
@@ -132,21 +130,18 @@ TString AnalysisTreeReader::GetFullBranchName (TString name) {
 }
 
 unsigned int AnalysisTreeReader::GetDim (const TString &branchname, const long long &idx_1) {
-  TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
-  for (std::vector<BranchManager*>::iterator bm = fBranchManagers.begin(); 
-       bm != fBranchManagers.end(); ++bm) {
-    if ((*bm)->GetName() == bname)
-      branchmanager = *bm;
-  }
-  if (branchmanager == NULL) {
+  if (fNickNameBranchMap.count(branchname) == 0) {
     branchmanager = new BranchManager(this);
+    TString bname = GetFullBranchName( branchname );
     if (branchmanager->Create(bname))
-      fBranchManagers.push_back(branchmanager);
+      fNickNameBranchMap[branchname] = branchmanager;
     else
       throw HALException(bname.Prepend("Couldn't find branch: ").Data());
   }
+  else
+    branchmanager = fNickNameBranchMap[branchname];
 
   if (branchmanager->GetStorageType() == kOA)
     return (unsigned int)fOA[branchmanager->GetStorageIndex()].GetEntries();
@@ -155,7 +150,7 @@ unsigned int AnalysisTreeReader::GetDim (const TString &branchname, const long l
   if (branchmanager->GetStorageType() == kRA)
     return (unsigned int)fRA[branchmanager->GetStorageIndex()].GetEntries();
   if (branchmanager->IsScalar())
-    throw HALException(bname.Prepend("Tried getting dimension of scalar in branch: ").Data());
+    throw HALException(GetFullBranchName( branchname ).Prepend("Tried getting dimension of scalar in branch: ").Data());
   if (branchmanager->GetStorageType() == kvB && idx_1 == -1)
     return fvB[branchmanager->GetStorageIndex()].size();
   if (branchmanager->GetStorageType() == kvD && idx_1 == -1)
@@ -214,25 +209,22 @@ unsigned int AnalysisTreeReader::GetDim (const TString &branchname, const long l
     return fvvR[branchmanager->GetStorageIndex()][idx_1].size();
   }
 
-  throw HALException(bname.Prepend("Error in finding dimensions in branch: ").Data());
+  throw HALException(GetFullBranchName( branchname ).Prepend("Error in finding dimensions in branch: ").Data());
 }
 
 bool AnalysisTreeReader::GetBool (const TString &branchname, const long long &idx_1, const long long &idx_2) {
-  TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
-  for (std::vector<BranchManager*>::iterator bm = fBranchManagers.begin(); 
-       bm != fBranchManagers.end(); ++bm) {
-    if ((*bm)->GetName() == bname)
-      branchmanager = *bm;
-  }
-  if (branchmanager == NULL) {
+  if (fNickNameBranchMap.count(branchname) == 0) {
     branchmanager = new BranchManager(this);
+    TString bname = GetFullBranchName( branchname );
     if (branchmanager->Create(bname))
-      fBranchManagers.push_back(branchmanager);
+      fNickNameBranchMap[branchname] = branchmanager;
     else
       throw HALException(bname.Prepend("Couldn't find branch: ").Data());
   }
+  else
+    branchmanager = fNickNameBranchMap[branchname];
 
   if (branchmanager->GetStorageType() == kB)
     return fB[branchmanager->GetStorageIndex()];
@@ -241,25 +233,22 @@ bool AnalysisTreeReader::GetBool (const TString &branchname, const long long &id
   if (branchmanager->GetStorageType() == kvvB)
     return fvvB[branchmanager->GetStorageIndex()][idx_1][idx_2];
 
-  throw HALException(bname.Prepend("Couldn't find bool data in branch: ").Data());
+  throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find bool data in branch: ").Data());
 }
 
 long long AnalysisTreeReader::GetInteger (const TString &branchname, const long long &idx_1, const long long &idx_2) {
-  TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
-  for (std::vector<BranchManager*>::iterator bm = fBranchManagers.begin(); 
-       bm != fBranchManagers.end(); ++bm) {
-    if ((*bm)->GetName() == bname)
-      branchmanager = *bm;
-  }
-  if (branchmanager == NULL) {
+  if (fNickNameBranchMap.count(branchname) == 0) {
     branchmanager = new BranchManager(this);
+    TString bname = GetFullBranchName( branchname );
     if (branchmanager->Create(bname))
-      fBranchManagers.push_back(branchmanager);
+      fNickNameBranchMap[branchname] = branchmanager;
     else
       throw HALException(bname.Prepend("Couldn't find branch: ").Data());
   }
+  else
+    branchmanager = fNickNameBranchMap[branchname];
 
   if (branchmanager->GetStorageType() == kI)
     return fI[branchmanager->GetStorageIndex()];
@@ -283,25 +272,22 @@ long long AnalysisTreeReader::GetInteger (const TString &branchname, const long 
   if (branchmanager->GetStorageType() == kvS && fChar.count(branchmanager->GetScalarType()) != 0)
     return (signed char)fvS[branchmanager->GetStorageIndex()][idx_1].Data()[0];
 
-  throw HALException(bname.Prepend("Couldn't find integer number data in branch: ").Data());
+  throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find integer number data in branch: ").Data());
 }
 
 unsigned long long AnalysisTreeReader::GetCounting (const TString &branchname, const long long &idx_1, const long long &idx_2) {
-  TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
-  for (std::vector<BranchManager*>::iterator bm = fBranchManagers.begin(); 
-       bm != fBranchManagers.end(); ++bm) {
-    if ((*bm)->GetName() == bname)
-      branchmanager = *bm;
-  }
-  if (branchmanager == NULL) {
+  if (fNickNameBranchMap.count(branchname) == 0) {
     branchmanager = new BranchManager(this);
+    TString bname = GetFullBranchName( branchname );
     if (branchmanager->Create(bname))
-      fBranchManagers.push_back(branchmanager);
+      fNickNameBranchMap[branchname] = branchmanager;
     else
       throw HALException(bname.Prepend("Couldn't find branch: ").Data());
   }
+  else
+    branchmanager = fNickNameBranchMap[branchname];
 
   if (branchmanager->GetStorageType() == kC)
     return fC[branchmanager->GetStorageIndex()];
@@ -322,25 +308,22 @@ unsigned long long AnalysisTreeReader::GetCounting (const TString &branchname, c
   if (branchmanager->GetStorageType() == kvvD)
     return fvvD[branchmanager->GetStorageIndex()][idx_1][idx_2];
 
-  throw HALException(bname.Prepend("Couldn't find counting number data in branch: ").Data());
+  throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find counting number data in branch: ").Data());
 }
 
 long double AnalysisTreeReader::GetDecimal (const TString &branchname, const long long &idx_1, const long long &idx_2) {
-  TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
-  for (std::vector<BranchManager*>::iterator bm = fBranchManagers.begin(); 
-       bm != fBranchManagers.end(); ++bm) {
-    if ((*bm)->GetName() == bname)
-      branchmanager = *bm;
-  }
-  if (branchmanager == NULL) {
+  if (fNickNameBranchMap.count(branchname) == 0) {
     branchmanager = new BranchManager(this);
+    TString bname = GetFullBranchName( branchname );
     if (branchmanager->Create(bname))
-      fBranchManagers.push_back(branchmanager);
+      fNickNameBranchMap[branchname] = branchmanager;
     else
-      throw HALException(bname.Prepend("Error in setting up branch: ").Data());
+      throw HALException(bname.Prepend("Couldn't find branch: ").Data());
   }
+  else
+    branchmanager = fNickNameBranchMap[branchname];
 
   if (branchmanager->GetStorageType() == kD)
     return fD[branchmanager->GetStorageIndex()];
@@ -361,25 +344,22 @@ long double AnalysisTreeReader::GetDecimal (const TString &branchname, const lon
   if (branchmanager->GetStorageType() == kvvC)
     return fvvC[branchmanager->GetStorageIndex()][idx_1][idx_2];
 
-  throw HALException(bname.Prepend("Couldn't find decimal number data in branch: ").Data());
+  throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find decimal number data in branch: ").Data());
 }
 
 TString AnalysisTreeReader::GetString (const TString &branchname, const long long &idx_1, const long long &idx_2) {
-  TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
-  for (std::vector<BranchManager*>::iterator bm = fBranchManagers.begin(); 
-       bm != fBranchManagers.end(); ++bm) {
-    if ((*bm)->GetName() == bname)
-      branchmanager = *bm;
-  }
-  if (branchmanager == NULL) {
+  if (fNickNameBranchMap.count(branchname) == 0) {
     branchmanager = new BranchManager(this);
+    TString bname = GetFullBranchName( branchname );
     if (branchmanager->Create(bname))
-      fBranchManagers.push_back(branchmanager);
+      fNickNameBranchMap[branchname] = branchmanager;
     else
-      throw HALException(bname.Prepend("Error in setting up branch: ").Data());
+      throw HALException(bname.Prepend("Couldn't find branch: ").Data());
   }
+  else
+    branchmanager = fNickNameBranchMap[branchname];
 
   if (branchmanager->GetStorageType() == kS)
     return fS[branchmanager->GetStorageIndex()];
@@ -406,75 +386,66 @@ TString AnalysisTreeReader::GetString (const TString &branchname, const long lon
   if (branchmanager->GetStorageType() == kvvS)
     return fvvS[branchmanager->GetStorageIndex()][idx_1][idx_2];
 
-  throw HALException(bname.Prepend("Couldn't find string data in branch: ").Data());
+  throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find string data in branch: ").Data());
 }
 
 TObjArray& AnalysisTreeReader::GetObjArray (const TString &branchname, const long long &idx_1) {
-  TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
-  for (std::vector<BranchManager*>::iterator bm = fBranchManagers.begin(); 
-       bm != fBranchManagers.end(); ++bm) {
-    if ((*bm)->GetName() == bname)
-      branchmanager = *bm;
-  }
-  if (branchmanager == NULL) {
+  if (fNickNameBranchMap.count(branchname) == 0) {
     branchmanager = new BranchManager(this);
+    TString bname = GetFullBranchName( branchname );
     if (branchmanager->Create(bname))
-      fBranchManagers.push_back(branchmanager);
+      fNickNameBranchMap[branchname] = branchmanager;
     else
-      throw HALException(bname.Prepend("Error in setting up branch: ").Data());
+      throw HALException(bname.Prepend("Couldn't find branch: ").Data());
   }
+  else
+    branchmanager = fNickNameBranchMap[branchname];
 
   if (branchmanager->GetStorageType() == kOA)
     return fOA[branchmanager->GetStorageIndex()];
   if (branchmanager->GetStorageType() == kvOA)
     return fvOA[branchmanager->GetStorageIndex()][idx_1];
 
-  throw HALException(bname.Prepend("Couldn't find TObjArray data in branch: ").Data());
+  throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find TObjArray data in branch: ").Data());
 }
 
 TClonesArray& AnalysisTreeReader::GetClonesArray (const TString &branchname, const long long &idx_1) {
-  TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
-  for (std::vector<BranchManager*>::iterator bm = fBranchManagers.begin(); 
-       bm != fBranchManagers.end(); ++bm) {
-    if ((*bm)->GetName() == bname)
-      branchmanager = *bm;
-  }
-  if (branchmanager == NULL) {
+  if (fNickNameBranchMap.count(branchname) == 0) {
     branchmanager = new BranchManager(this);
+    TString bname = GetFullBranchName( branchname );
     if (branchmanager->Create(bname))
-      fBranchManagers.push_back(branchmanager);
+      fNickNameBranchMap[branchname] = branchmanager;
     else
-      throw HALException(bname.Prepend("Error in setting up branch: ").Data());
+      throw HALException(bname.Prepend("Couldn't find branch: ").Data());
   }
+  else
+    branchmanager = fNickNameBranchMap[branchname];
 
   if (branchmanager->GetStorageType() == kCA)
     return fCA[branchmanager->GetStorageIndex()];
   if (branchmanager->GetStorageType() == kvCA)
     return fvCA[branchmanager->GetStorageIndex()][idx_1];
 
-  throw HALException(bname.Prepend("Couldn't find TClonesArray data in branch: ").Data());
+  throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find TClonesArray data in branch: ").Data());
 }
 
 TRef& AnalysisTreeReader::GetRef (const TString &branchname, const long long &idx_1, const long long &idx_2) {
-  TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
-  for (std::vector<BranchManager*>::iterator bm = fBranchManagers.begin(); 
-       bm != fBranchManagers.end(); ++bm) {
-    if ((*bm)->GetName() == bname)
-      branchmanager = *bm;
-  }
-  if (branchmanager == NULL) {
+  if (fNickNameBranchMap.count(branchname) == 0) {
     branchmanager = new BranchManager(this);
+    TString bname = GetFullBranchName( branchname );
     if (branchmanager->Create(bname))
-      fBranchManagers.push_back(branchmanager);
+      fNickNameBranchMap[branchname] = branchmanager;
     else
-      throw HALException(bname.Prepend("Error in setting up branch: ").Data());
+      throw HALException(bname.Prepend("Couldn't find branch: ").Data());
   }
+  else
+    branchmanager = fNickNameBranchMap[branchname];
 
   if (branchmanager->GetStorageType() == kR)
     return fR[branchmanager->GetStorageIndex()];
@@ -483,32 +454,29 @@ TRef& AnalysisTreeReader::GetRef (const TString &branchname, const long long &id
   if (branchmanager->GetStorageType() == kvvR)
     return fvvR[branchmanager->GetStorageIndex()][idx_1][idx_2];
 
-  throw HALException(bname.Prepend("Couldn't find TRef data in branch: ").Data());
+  throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find TRef data in branch: ").Data());
 }
 
 TRefArray& AnalysisTreeReader::GetRefArray (const TString &branchname, const long long &idx_1) {
-  TString bname = GetFullBranchName( branchname );
   BranchManager *branchmanager = NULL;
 
-  for (std::vector<BranchManager*>::iterator bm = fBranchManagers.begin(); 
-       bm != fBranchManagers.end(); ++bm) {
-    if ((*bm)->GetName() == bname)
-      branchmanager = *bm;
-  }
-  if (branchmanager == NULL) {
+  if (fNickNameBranchMap.count(branchname) == 0) {
     branchmanager = new BranchManager(this);
+    TString bname = GetFullBranchName( branchname );
     if (branchmanager->Create(bname))
-      fBranchManagers.push_back(branchmanager);
+      fNickNameBranchMap[branchname] = branchmanager;
     else
-      throw HALException(bname.Prepend("Error in setting up branch: ").Data());
+      throw HALException(bname.Prepend("Couldn't find branch: ").Data());
   }
+  else
+    branchmanager = fNickNameBranchMap[branchname];
 
   if (branchmanager->GetStorageType() == kRA)
     return fRA[branchmanager->GetStorageIndex()];
   if (branchmanager->GetStorageType() == kvRA)
     return fvRA[branchmanager->GetStorageIndex()][idx_1];
 
-  throw HALException(bname.Prepend("Couldn't find TRefArray data in branch: ").Data());
+  throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find TRefArray data in branch: ").Data());
 }
 
 

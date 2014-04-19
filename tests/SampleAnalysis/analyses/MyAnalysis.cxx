@@ -50,8 +50,8 @@ int main(int argc, char *argv[]) {
   a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet eta", "store the eta of the di-jet system", 
                                           "di-jetfinal", "eta", "dijet_eta")); // input, branch
   
-  a.AddAlgo(new DiJetReco());
-  a.AddAlgo(new DiJetCut());
+  //a.AddAlgo(new DiJetReco());
+  //a.AddAlgo(new DiJetCut());
 
   // Assign any branch maps
   a.MapBranch("jet_AntiKt4TruthJets_pt", "jets:pT");
@@ -77,10 +77,10 @@ int main(int argc, char *argv[]) {
 
   a.SetMessagePeriod(100);
   // Run the analysis
-  a.Process("", 1000);
-  //a.Process();
+  //a.Process("", 1000);
+  a.Process();
 
-  a.PrintCutReport();
-  a.PrintCounterSummary();
+  //a.PrintCutReport();
+  //a.PrintCounterSummary();
   return 0;
 }
