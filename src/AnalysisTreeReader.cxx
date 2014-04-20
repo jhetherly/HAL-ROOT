@@ -1,4 +1,6 @@
 #include <HAL/AnalysisTreeReader.h>
+#include <TFile.h>
+#include <iostream>
 
 ClassImp(HAL::AnalysisTreeReader);
 
@@ -850,238 +852,428 @@ Bool_t AnalysisTreeReader::BranchManager::Create (TString branchname) {
 
 void AnalysisTreeReader::BranchManager::Init () {
 
-  if (fBranch != NULL)
-    fBranch->ResetAddress();
+  if (fBranch != NULL) {
+    fBranch = fTreeReader->fChain->GetBranch(fBranchName.Data());
+    if (fBranch == NULL)
+      throw HALException(fBranchName.Prepend("Couldn't find branch: "));
+    fFileName = fTreeReader->fChain->GetCurrentFile()->GetName();
+  }
 
   if (fScalar) {
     if (fIsB)
-      fBranch->SetAddress(&fB);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fB, &fBranch);
+      //fBranch->SetAddress(&fB);
     else if (fIsI)
-      fBranch->SetAddress(&fI);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fI, &fBranch);
+      //fBranch->SetAddress(&fI);
     else if (fIsSI)
-      fBranch->SetAddress(&fSI);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fSI, &fBranch);
+      //fBranch->SetAddress(&fSI);
     else if (fIsL)
-      fBranch->SetAddress(&fL);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fL, &fBranch);
+      //fBranch->SetAddress(&fL);
     else if (fIsLL)
-      fBranch->SetAddress(&fLL);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fLL, &fBranch);
+      //fBranch->SetAddress(&fLL);
     else if (fIsSC)
-      fBranch->SetAddress(&fSC);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fSC, &fBranch);
+      //fBranch->SetAddress(&fSC);
     else if (fIsUI)
-      fBranch->SetAddress(&fUI);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fUI, &fBranch);
+      //fBranch->SetAddress(&fUI);
     else if (fIsUSI)
-      fBranch->SetAddress(&fUSI);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fUSI, &fBranch);
+      //fBranch->SetAddress(&fUSI);
     else if (fIsUL)
-      fBranch->SetAddress(&fUL);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fUL, &fBranch);
+      //fBranch->SetAddress(&fUL);
     else if (fIsULL)
-      fBranch->SetAddress(&fULL);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fULL, &fBranch);
+      //fBranch->SetAddress(&fULL);
     else if (fIsUC)
-      fBranch->SetAddress(&fUC);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fUC, &fBranch);
+      //fBranch->SetAddress(&fUC);
     else if (fIsF)
-      fBranch->SetAddress(&fF);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fF, &fBranch);
+      //fBranch->SetAddress(&fF);
     else if (fIsD)
-      fBranch->SetAddress(&fD);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fD, &fBranch);
+      //fBranch->SetAddress(&fD);
     else if (fIsLD)
-      fBranch->SetAddress(&fLD);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fLD, &fBranch);
+      //fBranch->SetAddress(&fLD);
     else if (fIsC)
-      fBranch->SetAddress(&fC);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fC, &fBranch);
+      //fBranch->SetAddress(&fC);
     else if (fIsstdS)
-      fBranch->SetAddress(&fstdS);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fstdS, &fBranch);
+      //fBranch->SetAddress(&fstdS);
     else if (fIsTS)
-      fBranch->SetAddress(&fTS);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fTS, &fBranch);
+      //fBranch->SetAddress(&fTS);
     else if (fIsTOS)
-      fBranch->SetAddress(&fTOS);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fTOS, &fBranch);
+      //fBranch->SetAddress(&fTOS);
     else if (fIsTOA)
-      fBranch->SetAddress(&fTOA);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fTOA, &fBranch);
+      //fBranch->SetAddress(&fTOA);
     else if (fIsTCA)
-      fBranch->SetAddress(&fTCA);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fTCA, &fBranch);
+      //fBranch->SetAddress(&fTCA);
     else if (fIsTR)
-      fBranch->SetAddress(&fTR);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fTR, &fBranch);
+      //fBranch->SetAddress(&fTR);
     else if (fIsTRA)
-      fBranch->SetAddress(&fTRA);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fTRA, &fBranch);
+      //fBranch->SetAddress(&fTRA);
   } // end if scalar
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
   else if (fCArray1D) {
     if (fIsB)
-      fBranch->SetAddress(fcB);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcB, &fBranch);
+      //fBranch->SetAddress(fcB);
     else if (fIsI)
-      fBranch->SetAddress(fcI);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcI, &fBranch);
+      //fBranch->SetAddress(fcI);
     else if (fIsSI)
-      fBranch->SetAddress(fcSI);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcSI, &fBranch);
+      //fBranch->SetAddress(fcSI);
     else if (fIsL)
-      fBranch->SetAddress(fcL);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcL, &fBranch);
+      //fBranch->SetAddress(fcL);
     else if (fIsLL)
-      fBranch->SetAddress(fcLL);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcLL, &fBranch);
+      //fBranch->SetAddress(fcLL);
     else if (fIsSC)
-      fBranch->SetAddress(fcSC);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcSC, &fBranch);
+      //fBranch->SetAddress(fcSC);
     else if (fIsUI)
-      fBranch->SetAddress(fcUI);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcUI, &fBranch);
+      //fBranch->SetAddress(fcUI);
     else if (fIsUSI)
-      fBranch->SetAddress(fcUSI);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcUSI, &fBranch);
+      //fBranch->SetAddress(fcUSI);
     else if (fIsUL)
-      fBranch->SetAddress(fcUL);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcUL, &fBranch);
+      //fBranch->SetAddress(fcUL);
     else if (fIsULL)
-      fBranch->SetAddress(fcULL);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcULL, &fBranch);
+      //fBranch->SetAddress(fcULL);
     else if (fIsUC)
-      fBranch->SetAddress(fcUC);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcUC, &fBranch);
+      //fBranch->SetAddress(fcUC);
     else if (fIsF)
-      fBranch->SetAddress(fcF);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcF, &fBranch);
+      //fBranch->SetAddress(fcF);
     else if (fIsD)
-      fBranch->SetAddress(fcD);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcD, &fBranch);
+      //fBranch->SetAddress(fcD);
     else if (fIsLD)
-      fBranch->SetAddress(fcLD);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcLD, &fBranch);
+      //fBranch->SetAddress(fcLD);
     else if (fIsC)
-      fBranch->SetAddress(fcC);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcC, &fBranch);
+      //fBranch->SetAddress(fcC);
     else if (fIsstdS)
-      fBranch->SetAddress(fcstdS);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcstdS, &fBranch);
+      //fBranch->SetAddress(fcstdS);
     else if (fIsTS)
-      fBranch->SetAddress(fcTS);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTS, &fBranch);
+      //fBranch->SetAddress(fcTS);
     else if (fIsTOS)
-      fBranch->SetAddress(fcTOS);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTOS, &fBranch);
+      //fBranch->SetAddress(fcTOS);
     else if (fIsTOA)
-      fBranch->SetAddress(fcTOA);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTOA, &fBranch);
+      //fBranch->SetAddress(fcTOA);
     else if (fIsTCA)
-      fBranch->SetAddress(fcTCA);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTCA, &fBranch);
+      //fBranch->SetAddress(fcTCA);
     else if (fIsTR)
-      fBranch->SetAddress(fcTR);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTR, &fBranch);
+      //fBranch->SetAddress(fcTR);
     else if (fIsTRA)
-      fBranch->SetAddress(fcTRA);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTRA, &fBranch);
+      //fBranch->SetAddress(fcTRA);
   } // end if 1D c-array
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
   else if (fCArray2D) {
     if (fIsB)
-      fBranch->SetAddress(fccB);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccB, &fBranch);
+      //fBranch->SetAddress(fccB);
     else if (fIsI)
-      fBranch->SetAddress(fccI);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccI, &fBranch);
+      //fBranch->SetAddress(fccI);
     else if (fIsSI)
-      fBranch->SetAddress(fccSI);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccSI, &fBranch);
+      //fBranch->SetAddress(fccSI);
     else if (fIsL)
-      fBranch->SetAddress(fccL);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccL, &fBranch);
+      //fBranch->SetAddress(fccL);
     else if (fIsLL)
-      fBranch->SetAddress(fccLL);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccLL, &fBranch);
+      //fBranch->SetAddress(fccLL);
     else if (fIsSC)
-      fBranch->SetAddress(fccSC);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccSC, &fBranch);
+      //fBranch->SetAddress(fccSC);
     else if (fIsUI)
-      fBranch->SetAddress(fccUI);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccUI, &fBranch);
+      //fBranch->SetAddress(fccUI);
     else if (fIsUSI)
-      fBranch->SetAddress(fccUSI);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccUSI, &fBranch);
+      //fBranch->SetAddress(fccUSI);
     else if (fIsUL)
-      fBranch->SetAddress(fccUL);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccUL, &fBranch);
+      //fBranch->SetAddress(fccUL);
     else if (fIsULL)
-      fBranch->SetAddress(fccULL);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccULL, &fBranch);
+      //fBranch->SetAddress(fccULL);
     else if (fIsUC)
-      fBranch->SetAddress(fccUC);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccUC, &fBranch);
+      //fBranch->SetAddress(fccUC);
     else if (fIsF)
-      fBranch->SetAddress(fccF);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccF, &fBranch);
+      //fBranch->SetAddress(fccF);
     else if (fIsD)
-      fBranch->SetAddress(fccD);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccD, &fBranch);
+      //fBranch->SetAddress(fccD);
     else if (fIsLD)
-      fBranch->SetAddress(fccLD);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccLD, &fBranch);
+      //fBranch->SetAddress(fccLD);
     else if (fIsC)
-      fBranch->SetAddress(fccC);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccC, &fBranch);
+      //fBranch->SetAddress(fccC);
     else if (fIsstdS)
-      fBranch->SetAddress(fccstdS);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccstdS, &fBranch);
+      //fBranch->SetAddress(fccstdS);
     else if (fIsTS)
-      fBranch->SetAddress(fccTS);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccTS, &fBranch);
+      //fBranch->SetAddress(fccTS);
     else if (fIsTOS)
-      fBranch->SetAddress(fccTOS);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccTOS, &fBranch);
+      //fBranch->SetAddress(fccTOS);
     else if (fIsTR)
-      fBranch->SetAddress(fccTR);
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccTR, &fBranch);
+      //fBranch->SetAddress(fccTR);
   }  //end if 2D c-array
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
   else if (fVec1D) {
-    if (fIsB)
-      fBranch->SetAddress(&fvB);
-    else if (fIsI)
-      fBranch->SetAddress(&fvI);
-    else if (fIsSI)
-      fBranch->SetAddress(&fvSI);
-    else if (fIsL)
-      fBranch->SetAddress(&fvL);
-    else if (fIsLL)
-      fBranch->SetAddress(&fvLL);
-    else if (fIsSC)
-      fBranch->SetAddress(&fvSC);
-    else if (fIsUI)
-      fBranch->SetAddress(&fvUI);
-    else if (fIsUSI)
-      fBranch->SetAddress(&fvUSI);
-    else if (fIsUL)
-      fBranch->SetAddress(&fvUL);
-    else if (fIsULL)
-      fBranch->SetAddress(&fvULL);
-    else if (fIsUC)
-      fBranch->SetAddress(&fvUC);
-    else if (fIsF)
-      fBranch->SetAddress(&fvF);
-    else if (fIsD)
-      fBranch->SetAddress(&fvD);
-    else if (fIsLD)
-      fBranch->SetAddress(&fvLD);
-    else if (fIsC)
-      fBranch->SetAddress(&fvC);
-    else if (fIsstdS)
-      fBranch->SetAddress(&fvstdS);
-    else if (fIsTS)
-      fBranch->SetAddress(&fvTS);
-    else if (fIsTOS)
-      fBranch->SetAddress(&fvTOS);
-    else if (fIsTOA)
-      fBranch->SetAddress(&fvTOA);
-    else if (fIsTCA)
-      fBranch->SetAddress(&fvTCA);
-    else if (fIsTR)
-      fBranch->SetAddress(&fvTR);
-    else if (fIsTRA)
-      fBranch->SetAddress(&fvTRA);
+    if (fIsB) {
+      fvB = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvB, &fBranch);
+      //fBranch->SetAddress(&fvB);
+    }
+    else if (fIsI) {
+      fvI = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvI, &fBranch);
+      //fBranch->SetAddress(&fvI);
+    }
+    else if (fIsSI) {
+      fvSI = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvSI, &fBranch);
+      //fBranch->SetAddress(&fvSI);
+    }
+    else if (fIsL) {
+      fvL = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvL, &fBranch);
+      //fBranch->SetAddress(&fvL);
+    }
+    else if (fIsLL) {
+      fvLL = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvLL, &fBranch);
+      //fBranch->SetAddress(&fvLL);
+    }
+    else if (fIsSC) {
+      fvSC = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvSC, &fBranch);
+      //fBranch->SetAddress(&fvSC);
+    }
+    else if (fIsUI) {
+      fvUI = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvUI, &fBranch);
+      //fBranch->SetAddress(&fvUI);
+    }
+    else if (fIsUSI) {
+      fvUSI = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvUSI, &fBranch);
+      //fBranch->SetAddress(&fvUSI);
+    }
+    else if (fIsUL) {
+      fvUL = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvUL, &fBranch);
+      //fBranch->SetAddress(&fvUL);
+    }
+    else if (fIsULL) {
+      fvULL = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvULL, &fBranch);
+      //fBranch->SetAddress(&fvULL);
+    }
+    else if (fIsUC) {
+      fvUC = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvUC, &fBranch);
+      //fBranch->SetAddress(&fvUC);
+    }
+    else if (fIsF) {
+      fvF = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvF, &fBranch);
+      //fBranch->SetAddress(&fvF);
+    }
+    else if (fIsD) {
+      fvD = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvD, &fBranch);
+      //fBranch->SetAddress(&fvD);
+    }
+    else if (fIsLD) {
+      fvLD = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvLD, &fBranch);
+      //fBranch->SetAddress(&fvLD);
+    }
+    else if (fIsC) {
+      fvC = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvC, &fBranch);
+      //fBranch->SetAddress(&fvC);
+    }
+    else if (fIsstdS) {
+      fvstdS = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvstdS, &fBranch);
+      //fBranch->SetAddress(&fvstdS);
+    }
+    else if (fIsTS) {
+      fvTS = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvTS, &fBranch);
+      //fBranch->SetAddress(&fvTS);
+    }
+    else if (fIsTOS) {
+      fvTOS = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvTOS, &fBranch);
+      //fBranch->SetAddress(&fvTOS);
+    }
+    else if (fIsTOA) {
+      fvTOA = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvTOA, &fBranch);
+      //fBranch->SetAddress(&fvTOA);
+    }
+    else if (fIsTCA) {
+      fvTCA = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvTCA, &fBranch);
+      //fBranch->SetAddress(&fvTCA);
+    }
+    else if (fIsTR) {
+      fvTR = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvTR, &fBranch);
+      //fBranch->SetAddress(&fvTR);
+    }
+    else if (fIsTRA) {
+      fvTRA = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvTRA, &fBranch);
+      //fBranch->SetAddress(&fvTRA);
+    }
   } // end if 1D vector
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
   else if (fVec2D) {
-    if (fIsB)
-      fBranch->SetAddress(&fvvB);
-    else if (fIsI)
-      fBranch->SetAddress(&fvvI);
-    else if (fIsSI)
-      fBranch->SetAddress(&fvvSI);
-    else if (fIsL)
-      fBranch->SetAddress(&fvvL);
-    else if (fIsLL)
-      fBranch->SetAddress(&fvvLL);
-    else if (fIsSC)
-      fBranch->SetAddress(&fvvSC);
-    else if (fIsUI)
-      fBranch->SetAddress(&fvvUI);
-    else if (fIsUSI)
-      fBranch->SetAddress(&fvvUSI);
-    else if (fIsUL)
-      fBranch->SetAddress(&fvvUL);
-    else if (fIsULL)
-      fBranch->SetAddress(&fvvULL);
-    else if (fIsUC)
-      fBranch->SetAddress(&fvvUC);
-    else if (fIsF)
-      fBranch->SetAddress(&fvvF);
-    else if (fIsD)
-      fBranch->SetAddress(&fvvD);
-    else if (fIsLD)
-      fBranch->SetAddress(&fvvLD);
-    else if (fIsC)
-      fBranch->SetAddress(&fvvC);
-    else if (fIsstdS)
-      fBranch->SetAddress(&fvvstdS);
-    else if (fIsTS)
-      fBranch->SetAddress(&fvvTS);
-    else if (fIsTOS)
-      fBranch->SetAddress(&fvvTOS);
-    else if (fIsTR)
-      fBranch->SetAddress(&fvvTR);
+    if (fIsB) {
+      fvvB = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvB, &fBranch);
+      //fBranch->SetAddress(&fvvB);
+    }
+    else if (fIsI) {
+      fvvI = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvI, &fBranch);
+      //fBranch->SetAddress(&fvvI);
+    }
+    else if (fIsSI) {
+      fvvSI = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvSI, &fBranch);
+      //fBranch->SetAddress(&fvvSI);
+    }
+    else if (fIsL) {
+      fvvL = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvL, &fBranch);
+      //fBranch->SetAddress(&fvvL);
+    }
+    else if (fIsLL) {
+      fvvLL = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvLL, &fBranch);
+      //fBranch->SetAddress(&fvvLL);
+    }
+    else if (fIsSC) {
+      fvvSC = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvSC, &fBranch);
+      //fBranch->SetAddress(&fvvSC);
+    }
+    else if (fIsUI) {
+      fvvUI = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvUI, &fBranch);
+      //fBranch->SetAddress(&fvvUI);
+    }
+    else if (fIsUSI) {
+      fvvUSI = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvUSI, &fBranch);
+      //fBranch->SetAddress(&fvvUSI);
+    }
+    else if (fIsUL) {
+      fvvUL = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvUL, &fBranch);
+      //fBranch->SetAddress(&fvvUL);
+    }
+    else if (fIsULL) {
+      fvvULL = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvULL, &fBranch);
+      //fBranch->SetAddress(&fvvULL);
+    }
+    else if (fIsUC) {
+      fvvUC = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvUC, &fBranch);
+      //fBranch->SetAddress(&fvvUC);
+    }
+    else if (fIsF) {
+      fvvF = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvF, &fBranch);
+      //fBranch->SetAddress(&fvvF);
+    }
+    else if (fIsD) {
+      fvvD = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvD, &fBranch);
+      //fBranch->SetAddress(&fvvD);
+    }
+    else if (fIsLD) {
+      fvvLD = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvLD, &fBranch);
+      //fBranch->SetAddress(&fvvLD);
+    }
+    else if (fIsC) {
+      fvvC = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvC, &fBranch);
+      //fBranch->SetAddress(&fvvC);
+    }
+    else if (fIsstdS) {
+      fvvstdS = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvstdS, &fBranch);
+      //fBranch->SetAddress(&fvvstdS);
+    }
+    else if (fIsTS) {
+      fvvTS = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvTS, &fBranch);
+      //fBranch->SetAddress(&fvvTS);
+    }
+    else if (fIsTOS) {
+      fvvTOS = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvTOS, &fBranch);
+      //fBranch->SetAddress(&fvvTOS);
+    }
+    else if (fIsTR) {
+      fvvTR = NULL;
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvTR, &fBranch);
+      //fBranch->SetAddress(&fvvTR);
+    }
   } // end if 2D vector
   // ////////////////////////////////////////////////////
   // ////////////////////////////////////////////////////

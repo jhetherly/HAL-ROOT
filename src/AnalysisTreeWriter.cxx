@@ -82,7 +82,7 @@ void AnalysisTreeWriter::WriteData() {
   std::map<std::string, std::vector<unsigned long long> > bCountingIntValues;
   
   // Loop over maps to record how many trees to create
-  for (std::map<std::string, std::map<long long, bool> >::iterator outer = fBoolIntMap.begin();
+  for (std::map<std::string, std::map<long long, bool>, internal::string_cmp>::iterator outer = fBoolIntMap.begin();
       outer != fBoolIntMap.end(); ++outer) {
     unsigned length = outer->second.size();
     if (trees.count(length) == 0) {
@@ -91,7 +91,7 @@ void AnalysisTreeWriter::WriteData() {
       fill[length] = false;
     }
   }
-  for (std::map<std::string, std::map<long long, long double> >::iterator outer = fDecimalIntMap.begin();
+  for (std::map<std::string, std::map<long long, long double>, internal::string_cmp >::iterator outer = fDecimalIntMap.begin();
       outer != fDecimalIntMap.end(); ++outer) {
     unsigned length = outer->second.size();
     if (trees.count(length) == 0) {
@@ -100,7 +100,7 @@ void AnalysisTreeWriter::WriteData() {
       fill[length] = false;
     }
   }
-  for (std::map<std::string, std::map<long long, long long> >::iterator outer = fIntegerIntMap.begin();
+  for (std::map<std::string, std::map<long long, long long>, internal::string_cmp >::iterator outer = fIntegerIntMap.begin();
       outer != fIntegerIntMap.end(); ++outer) {
     unsigned length = outer->second.size();
     if (trees.count(length) == 0) {
@@ -109,7 +109,7 @@ void AnalysisTreeWriter::WriteData() {
       fill[length] = false;
     }
   }
-  for (std::map<std::string, std::map<long long, unsigned long long> >::iterator outer = fCountingIntMap.begin();
+  for (std::map<std::string, std::map<long long, unsigned long long>, internal::string_cmp >::iterator outer = fCountingIntMap.begin();
       outer != fCountingIntMap.end(); ++outer) {
     unsigned length = outer->second.size();
     if (trees.count(length) == 0) {
@@ -118,7 +118,7 @@ void AnalysisTreeWriter::WriteData() {
       fill[length] = false;
     }
   }
-  for (std::map<std::string, std::map<long long, std::map<long long, bool> > >::iterator outer = fBoolIntIntMap.begin();
+  for (std::map<std::string, std::map<long long, std::map<long long, bool> >, internal::string_cmp >::iterator outer = fBoolIntIntMap.begin();
       outer != fBoolIntIntMap.end(); ++outer) {
     unsigned length = outer->second.size();
     if (trees.count(length) == 0) {
@@ -127,7 +127,7 @@ void AnalysisTreeWriter::WriteData() {
       fill[length] = false;
     }
   }
-  for (std::map<std::string, std::map<long long, std::map<long long, long double> > >::iterator outer = fDecimalIntIntMap.begin();
+  for (std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >::iterator outer = fDecimalIntIntMap.begin();
       outer != fDecimalIntIntMap.end(); ++outer) {
     unsigned length = outer->second.size();
     if (trees.count(length) == 0) {
@@ -136,7 +136,7 @@ void AnalysisTreeWriter::WriteData() {
       fill[length] = false;
     }
   }
-  for (std::map<std::string, std::map<long long, std::map<long long, long long> > >::iterator outer = fIntegerIntIntMap.begin();
+  for (std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >::iterator outer = fIntegerIntIntMap.begin();
       outer != fIntegerIntIntMap.end(); ++outer) {
     unsigned length = outer->second.size();
     if (trees.count(length) == 0) {
@@ -145,7 +145,7 @@ void AnalysisTreeWriter::WriteData() {
       fill[length] = false;
     }
   }
-  for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> > >::iterator outer = fCountingIntIntMap.begin();
+  for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> >, internal::string_cmp >::iterator outer = fCountingIntIntMap.begin();
       outer != fCountingIntIntMap.end(); ++outer) {
     unsigned length = outer->second.size();
     if (trees.count(length) == 0) {
@@ -157,7 +157,7 @@ void AnalysisTreeWriter::WriteData() {
 
   // Loop over maps - each key is a branch name
   std::cout << std::endl;
-  for (std::map<std::string, std::map<long long, bool> >::iterator outer = fBoolIntMap.begin();
+  for (std::map<std::string, std::map<long long, bool>, internal::string_cmp >::iterator outer = fBoolIntMap.begin();
       outer != fBoolIntMap.end(); ++outer) {
     std::string bname = outer->first;
     unsigned length = outer->second.size();
@@ -165,7 +165,7 @@ void AnalysisTreeWriter::WriteData() {
     std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
     trees[length]->Branch(bname.c_str(), &bBoolValues[bname]);
   }
-  for (std::map<std::string, std::map<long long, long double> >::iterator outer = fDecimalIntMap.begin();
+  for (std::map<std::string, std::map<long long, long double>, internal::string_cmp >::iterator outer = fDecimalIntMap.begin();
       outer != fDecimalIntMap.end(); ++outer) {
     std::string bname = outer->first;
     unsigned length = outer->second.size();
@@ -173,7 +173,7 @@ void AnalysisTreeWriter::WriteData() {
     std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
     trees[length]->Branch(bname.c_str(), &bDecimalValues[bname]);
   }
-  for (std::map<std::string, std::map<long long, long long> >::iterator outer = fIntegerIntMap.begin();
+  for (std::map<std::string, std::map<long long, long long>, internal::string_cmp >::iterator outer = fIntegerIntMap.begin();
       outer != fIntegerIntMap.end(); ++outer) {
     std::string bname = outer->first;
     unsigned length = outer->second.size();
@@ -181,7 +181,7 @@ void AnalysisTreeWriter::WriteData() {
     std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
     trees[length]->Branch(bname.c_str(), &bIntegerValues[bname]);
   }
-  for (std::map<std::string, std::map<long long, unsigned long long> >::iterator outer = fCountingIntMap.begin();
+  for (std::map<std::string, std::map<long long, unsigned long long>, internal::string_cmp >::iterator outer = fCountingIntMap.begin();
       outer != fCountingIntMap.end(); ++outer) {
     std::string bname = outer->first;
     unsigned length = outer->second.size();
@@ -189,7 +189,7 @@ void AnalysisTreeWriter::WriteData() {
     std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
     trees[length]->Branch(bname.c_str(), &bCountingValues[bname]);
   }
-  for (std::map<std::string, std::map<long long, std::map<long long, bool> > >::iterator outer = fBoolIntIntMap.begin();
+  for (std::map<std::string, std::map<long long, std::map<long long, bool> >, internal::string_cmp >::iterator outer = fBoolIntIntMap.begin();
       outer != fBoolIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
     unsigned length = outer->second.size();
@@ -197,7 +197,7 @@ void AnalysisTreeWriter::WriteData() {
     std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
     trees[length]->Branch(bname.c_str(), &bBoolIntValues[bname]);
   }
-  for (std::map<std::string, std::map<long long, std::map<long long, long double> > >::iterator outer = fDecimalIntIntMap.begin();
+  for (std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >::iterator outer = fDecimalIntIntMap.begin();
       outer != fDecimalIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
     unsigned length = outer->second.size();
@@ -205,7 +205,7 @@ void AnalysisTreeWriter::WriteData() {
     std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
     trees[length]->Branch(bname.c_str(), &bDecimalIntValues[bname]);
   }
-  for (std::map<std::string, std::map<long long, std::map<long long, long long> > >::iterator outer = fIntegerIntIntMap.begin();
+  for (std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >::iterator outer = fIntegerIntIntMap.begin();
       outer != fIntegerIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
     unsigned length = outer->second.size();
@@ -213,7 +213,7 @@ void AnalysisTreeWriter::WriteData() {
     std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
     trees[length]->Branch(bname.c_str(), &bIntegerIntValues[bname]);
   }
-  for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> > >::iterator outer = fCountingIntIntMap.begin();
+  for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> >, internal::string_cmp >::iterator outer = fCountingIntIntMap.begin();
       outer != fCountingIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
     unsigned length = outer->second.size();
@@ -224,7 +224,7 @@ void AnalysisTreeWriter::WriteData() {
 
   // actual loop to fill in the TTree
   for (long long i = 1; i <= fCount; ++i) {
-    for (std::map<std::string, std::map<long long, bool> >::iterator outer = fBoolIntMap.begin();
+    for (std::map<std::string, std::map<long long, bool>, internal::string_cmp >::iterator outer = fBoolIntMap.begin();
         outer != fBoolIntMap.end(); ++outer) {
       std::string bname = outer->first;
       unsigned length = outer->second.size();
@@ -236,7 +236,7 @@ void AnalysisTreeWriter::WriteData() {
       else
         trees[length]->SetBranchStatus(bname.c_str(), 0);
     }
-    for (std::map<std::string, std::map<long long, long double> >::iterator outer = fDecimalIntMap.begin();
+    for (std::map<std::string, std::map<long long, long double>, internal::string_cmp >::iterator outer = fDecimalIntMap.begin();
         outer != fDecimalIntMap.end(); ++outer) {
       std::string bname = outer->first;
       unsigned length = outer->second.size();
@@ -248,7 +248,7 @@ void AnalysisTreeWriter::WriteData() {
       else
         trees[length]->SetBranchStatus(bname.c_str(), 0);
     }
-    for (std::map<std::string, std::map<long long, long long> >::iterator outer = fIntegerIntMap.begin();
+    for (std::map<std::string, std::map<long long, long long>, internal::string_cmp >::iterator outer = fIntegerIntMap.begin();
         outer != fIntegerIntMap.end(); ++outer) {
       std::string bname = outer->first;
       unsigned length = outer->second.size();
@@ -260,7 +260,7 @@ void AnalysisTreeWriter::WriteData() {
       else
         trees[length]->SetBranchStatus(bname.c_str(), 0);
     }
-    for (std::map<std::string, std::map<long long, unsigned long long> >::iterator outer = fCountingIntMap.begin();
+    for (std::map<std::string, std::map<long long, unsigned long long>, internal::string_cmp >::iterator outer = fCountingIntMap.begin();
         outer != fCountingIntMap.end(); ++outer) {
       std::string bname = outer->first;
       unsigned length = outer->second.size();
@@ -272,7 +272,7 @@ void AnalysisTreeWriter::WriteData() {
       else
         trees[length]->SetBranchStatus(bname.c_str(), 0);
     }
-    for (std::map<std::string, std::map<long long, std::map<long long, bool> > >::iterator outer = fBoolIntIntMap.begin();
+    for (std::map<std::string, std::map<long long, std::map<long long, bool> >, internal::string_cmp >::iterator outer = fBoolIntIntMap.begin();
         outer != fBoolIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
       unsigned length = outer->second.size();
@@ -288,7 +288,7 @@ void AnalysisTreeWriter::WriteData() {
       else
         trees[length]->SetBranchStatus(bname.c_str(), 0);
     }
-    for (std::map<std::string, std::map<long long, std::map<long long, long double> > >::iterator outer = fDecimalIntIntMap.begin();
+    for (std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >::iterator outer = fDecimalIntIntMap.begin();
         outer != fDecimalIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
       unsigned length = outer->second.size();
@@ -304,7 +304,7 @@ void AnalysisTreeWriter::WriteData() {
       else
         trees[length]->SetBranchStatus(bname.c_str(), 0);
     }
-    for (std::map<std::string, std::map<long long, std::map<long long, long long> > >::iterator outer = fIntegerIntIntMap.begin();
+    for (std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >::iterator outer = fIntegerIntIntMap.begin();
         outer != fIntegerIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
       unsigned length = outer->second.size();
@@ -320,7 +320,7 @@ void AnalysisTreeWriter::WriteData() {
       else
         trees[length]->SetBranchStatus(bname.c_str(), 0);
     }
-    for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> > >::iterator outer = fCountingIntIntMap.begin();
+    for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> >, internal::string_cmp >::iterator outer = fCountingIntIntMap.begin();
         outer != fCountingIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
       unsigned length = outer->second.size();

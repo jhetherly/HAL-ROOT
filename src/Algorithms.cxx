@@ -1,5 +1,7 @@
 #include <HAL/Algorithms.h>
 
+ClassImp(HAL::GenericData);
+
 namespace HAL
 {
 

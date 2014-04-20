@@ -1,5 +1,4 @@
 #include <HAL/AnalysisSelector.h>
-#include <iostream>
 
 ClassImp(HAL::AnalysisSelector);
 
@@ -85,9 +84,9 @@ Bool_t AnalysisSelector::Process (Long64_t entry) {
   //
   // The return value is currently not used.
 
-  if (fMessagePeriod != 0 && entry % fMessagePeriod == 0) {
+  if (fMessagePeriod != 0 && (entry + 1) % fMessagePeriod == 0) {
     std::cout.flush();
-    std::cout << "\r \r" << "Processing event number: " << entry;
+    std::cout << "\r" << "Processing event: " << entry + 1;
   }
 
   ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetEntry(entry);

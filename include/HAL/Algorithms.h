@@ -13,6 +13,7 @@
 #define HAL_ALGORITHMS
 
 #include <TRandom3.h>
+#include <TNamed.h>
 #include <TString.h>
 #include <TLorentzVector.h>
 #include <cstdarg>
@@ -36,6 +37,30 @@
 
 namespace HAL
 {
+
+// Data container for generic algorithms
+class GenericData : public TNamed {
+public:
+  typedef std::vector<long long>::iterator                Index;
+  typedef std::vector<TLorentzVector*>::iterator          Vector;
+  typedef std::vector<TString*>::iterator                 ParentReferenceName;
+  typedef std::vector<std::vector<long long> >::iterator  ParentReferenceIndex;
+
+  GenericData () : fIndices(25), fVectors(25), fParentReferenceNames(25), fParentReferenceIndices(25) {}
+  virtual ~GenericData () {/*loop over vectors and parent reference names and delete*/}
+
+  void AddTLV (TLorentzVector *vec) {fVectors.push_back(vec);}
+
+  ClassDef(GenericData, 0);
+
+private:
+  long long                             fNObjects;
+  TString                               fReferenceName;
+  std::vector<long long>                fIndices;
+  std::vector<TLorentzVector*>          fVectors;
+  std::vector<TString*>                 fParentReferenceNames;
+  std::vector<std::vector<long long> >  fParentReferenceIndices;
+};
 
 /*
  * Generic base class algorithms

@@ -597,7 +597,7 @@ std::vector<TString> AnalysisData::GetSimilarNames (const TString &nn, unsigned 
   std::string n(nn.Data());
 
   std::vector<TString> names;
-  std::map<std::string, StorageType>::iterator  it;
+  std::map<std::string, StorageType, internal::string_cmp>::iterator  it;
   // pick out ^<name>:
   TRegexp pat(n.substr(0, n.find_first_of(':')).insert(0, "^").c_str());
 
@@ -782,10 +782,10 @@ void AnalysisData::RemoveData (const TString &name) {
 void AnalysisData::RemoveAllAssociatedData (const TString &nn) {
   std::string n(nn.Data());
 
-  TRegexp prefix(TString::Format("^%s:.*", n.c_str()));
+  TRegexp prefix(TString::Format("^%s:*.*", n.c_str()));
   std::vector<std::string> names;
 
-  for (std::map<std::string, StorageType>::iterator name = fNameTypeMap.begin();
+  for (std::map<std::string, StorageType, internal::string_cmp>::iterator name = fNameTypeMap.begin();
        name != fNameTypeMap.end(); ++name) {
     if (TString(name->first.c_str()).Contains(prefix)) {
       RemoveData(name->first);

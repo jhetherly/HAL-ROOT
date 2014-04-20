@@ -144,7 +144,7 @@ private:
     StorageType            fStorageID; // this will be the proprietary type to use in the ATR
     Int_t                  fStorageIndex; // this will be the proprietary index in the deque to use in the ATR
     Bool_t                 fScalar, fCArray1D, fCArray2D, fVec1D, fVec2D;
-    TString                fBranchName, fBranchTitle, fLeafTitle, fType, fScalarType;
+    TString                fBranchName, fBranchTitle, fLeafTitle, fType, fScalarType, fFileName;
     Int_t                  fLeafNdata;
     TBranch               *fBranch;
     AnalysisTreeReader    *fTreeReader;
