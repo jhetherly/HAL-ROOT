@@ -55,10 +55,16 @@ int main(int argc, char *argv[]) {
   //a.AddAlgo(new DiJetCut());
 
   // Assign any branch maps
+  a.MapBranch("jet_AntiKt4TruthJets_n", "jets:nentries");
   a.MapBranch("jet_AntiKt4TruthJets_pt", "jets:pT");
   a.MapBranch("jet_AntiKt4TruthJets_eta", "jets:eta");
   a.MapBranch("jet_AntiKt4TruthJets_phi", "jets:phi");
   a.MapBranch("jet_AntiKt4TruthJets_m", "jets:m");
+  //a.MapBranch("Jet_size", "jets:nentries");
+  //a.MapBranch("Jet.PT", "jets:pT");
+  //a.MapBranch("Jet.Eta", "jets:eta");
+  //a.MapBranch("Jet.Phi", "jets:phi");
+  //a.MapBranch("Jet.Mass", "jets:m");
 
   a.MapBranch("jet_AntiKt4TruthJets_n", "jet_n");
   a.MapBranch("jet_AntiKt4TruthJets_pt", "jet_pt");

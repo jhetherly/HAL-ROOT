@@ -78,7 +78,7 @@ private:
                     kvvB, kvvD, kvvI, kvvC, kvvS, kvvR};
   // regex's for how to identify scalars, vec's, and arrays
   TRegexp fScalar, fVector, fVector2D, fArray, fArray2D;
-  // type lists (these are for the typedefs root defines, i.e. synonyms)
+  // type lists (these are for the typedefs ROOT defines, i.e. synonyms)
   std::set<TString> fBool,
                     fInteger, fShort, fLong, fLLong, fSChar,
                     fUInteger, fUShort, fULong, fULLong, fUChar,
@@ -149,7 +149,8 @@ private:
     TBranch               *fBranch;
     AnalysisTreeReader    *fTreeReader;
 
-    Int_t                  GetArrayLength (Int_t dim);
+    Int_t                  GetArrayLength (Int_t rank);
+    Int_t                  GetMaxArrayLength (Int_t rank);
     void                   FindTypeInformation ();
 
     bool                                fB;
