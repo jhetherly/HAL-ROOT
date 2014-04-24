@@ -1,227 +1,256 @@
 #include <HAL/Algorithms.h>
 
+ClassImp(HAL::GenericParticle);
 ClassImp(HAL::GenericData);
 
 namespace HAL
 {
 
 /*
+ * Generic algorithm data containers
+ * */
+HAL::GenericParticle::GenericParticle (const TString &origin, const TString &name) : 
+  fOrigin(origin), fP(NULL) {
+
+  if(!name.EqualTo("")) 
+    SetName(name.Data());
+}
+
+HAL::GenericParticle::GenericParticle (const GenericParticle &particle) {
+  fID = particle.fID;
+  fCharge = particle.fCharge;
+  fP = new TLorentzVector(*particle.fP);
+  fScalarAttributes = particle.fScalarAttributes;
+  f1DParticles = particle.f1DParticles;
+}
+
+HAL::GenericParticle::~GenericParticle () {
+  if (fP) delete fP;
+}
+
+void HAL::GenericParticle::SetAttribute (const TString &name, const long double &value) {
+  fScalarAttributes[name] = value;
+}
+
+void HAL::GenericParticle::SetParticle (const TString &name, 
+                                        GenericParticle *particle, 
+                                        const long long &index) {
+  if (index == -1)
+    f1DParticles[name].push_back(particle);
+  else
+    f1DParticles[name][index] = particle;
+  std::stable_sort(f1DParticles[name].begin(), f1DParticles[name].end());
+}
+
+void HAL::GenericParticle::Set1DParticle (const TString &name, std::vector<GenericParticle*> &particles) {
+  f1DParticles[name] = particles;
+  std::stable_sort(f1DParticles[name].begin(), f1DParticles[name].end());
+}
+
+bool HAL::GenericParticle::HasSameParticles (const TString &name, ParticlePtr particle) {
+  size_t n = GetNParticles(name);
+  size_t m = particle->GetNParticles(name);
+
+  if (n == m) {
+    if (n != 0)
+      return (f1DParticles[name] == particle->GetParticles(name));
+    else
+      return true;
+  }
+  return false;
+}
+
+std::ostream& operator<<(std::ostream& os, const HAL::GenericParticle &particle) {
+  os << particle.fOrigin << std::endl;
+  if (particle.fP != NULL) {
+    os << "4-vector properties:\tpT\teta\tphi\tmass\tenergy\n";
+    os << "                    " << particle.fP->Pt() << "\t" << particle.fP->Eta() << "\t" << particle.fP->Phi()
+       << "\t" << particle.fP->M() << "\t" << particle.fP->E() << std::endl;
+  }
+  // TODO: loop over attributes and particles
+  //       print out the ID and charge
+  return os;
+}
+
+HAL::GenericData::GenericData (const TString &name, bool is_owner) : fIsOwner(is_owner) {
+  fParticles.reserve(20);
+  SetName(name.Data());
+}
+
+HAL::GenericData::GenericData (const GenericData &data) {
+  fUserDataRefName = data.fUserDataRefName; 
+  fParticles.reserve(20);
+  for (ParticlePtrsConstIt particle = data.fParticles.begin(); 
+       particle != data.fParticles.end(); ++particle) {
+    fParticles.push_back(new Particle(*(*particle)));
+  }
+  if (fParticles.size() > 0)
+    fIsOwner = true;
+  f1DParticles = data.f1DParticles;
+}
+
+HAL::GenericData::~GenericData () {
+  if (fIsOwner) {
+    for (ParticlePtrsIt particle = GetParticleBegin(); particle != GetParticleEnd(); ++particle) 
+      delete (*particle);
+  }
+}
+
+std::ostream& operator<<(std::ostream& os, HAL::GenericData &data) {
+  // TODO: print out other members
+  for (HAL::ParticlePtrsIt particle = data.GetParticleBegin();
+       particle != data.GetParticleEnd(); ++particle) {
+    os << **particle << std::endl;
+  }
+  return os;
+}
+
+/*
  * Generic classes
  * */
 internal::ImportTLVAlgo::ImportTLVAlgo (TString name, TString title) : 
   HAL::Algorithm(name, title) {
-  fVectorOutput = gaMakeVecLabel(GetName());
-  fIndexOutput = gaMakeIndexLabel(GetName());
-  fNObjectsOutput = gaMakeNObjectsLabel(GetName());
 }
 
 void internal::ImportTLVAlgo::Exec (unsigned n) {
   HAL::AnalysisData *data = GetUserData();
+  HAL::GenericData *gen_data = new GenericData(GetName(), true);
+
+  data->SetValue(GetName(), gen_data);
 
   for (unsigned i = 0; i < n; ++i) {
+    HAL::ParticlePtr particle = new HAL::Particle(GetName());
     TLorentzVector *vec = MakeTLV(i);
-    data->SetValue(fVectorOutput, vec, i);
-    data->SetValue(fIndexOutput, i, i);
+
+    particle->SetP (vec);
+    gen_data->AddParticle(particle);
   }
-  data->SetValue(fNObjectsOutput, n);
-  IncreaseCounter(n);
+
+  IncreaseCounter(gen_data->GetNParticles());
 }
 
 void internal::ImportTLVAlgo::Clear (Option_t* /*option*/) {
-  HAL::AnalysisData *data = GetUserData();
-  long long n = data->GetInteger(fNObjectsOutput);
-
-  for (long long i = 0; i < n; ++i)
-    delete data->GetTObject(fVectorOutput, i);
-  data->RemoveAllAssociatedData(GetName());
+  delete GetUserData()->GetTObject(GetName());
 }
 
 void internal::NthElementAlgo::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
-  long long n, nreal;
-  TString RefInput;
-  TString SortedIndexListName;
-  TString NObjectsInput = gaMakeNObjectsLabel(fInput);
-  TString IndexInput = gaMakeIndexLabel(fInput);
-  TString NObjectsOutput = gaMakeNObjectsLabel(GetName());
-  TString NameOutput = gaMakeRefNameLabel(GetName());
-  TString IndexOutput = gaMakeIndexLabel(GetName());
+  HAL::GenericData *gen_data = new GenericData(GetName());
+  HAL::GenericData *input_data = NULL;
+  HAL::GenericData *original_data = NULL;
+  long long n, norigin;
 
-  if (gaCheckRefName(data, fInput, RefInput)) {
-    SortedIndexListName = gaMakeSortedListLabel(RefInput, SortTag());
-    fElementName = gaMakeVecLabel(RefInput);
-    n = data->GetInteger(NObjectsInput);
-    nreal = data->GetInteger(gaMakeNObjectsLabel(RefInput));
-  }
+  data->SetValue(GetName(), gen_data);
+
+  if (data->Exists(fInput)) 
+    input_data = (GenericData*)data->GetTObject(fInput);
   else
     return;
 
+  // Need to look for actual owner for sorting purposes
+  if (input_data->IsOwner())
+    original_data = input_data;
+  else
+    original_data = (GenericData*)data->GetTObject(input_data->GetOwner());
+
+  n = input_data->GetNParticles();
+  norigin = original_data->GetNParticles();
   if (n < fN)
     return;
 
-  // create sorted list for real data
-  if (!data->Exists(SortedIndexListName)) {
-    long long count = 0;
-    std::vector<long long> IndexProxy;
+  // create sorted list for original data
+  if (!original_data->HasParticles(SortTag())) {
+    HAL::ParticlePtrs sorted_particles;
 
-    for (unsigned i = 0; i < nreal; ++i)
-      IndexProxy.push_back(i);
-    Sort(IndexProxy);
-    for (std::vector<long long>::iterator it = IndexProxy.begin(); it != IndexProxy.end(); ++it)
-      data->SetValue(SortedIndexListName, *it, count++);
+    for (unsigned i = 0; i < norigin; ++i) {
+      sorted_particles.push_back(original_data->GetParticle(i));
+    }
+    Sort(sorted_particles);
+    original_data->SetParticles(SortTag(), sorted_particles);
   }
 
   // loop over the sorted list and find the fN-th ranked member in fInput
-  long long location = -1;
+  ParticlePtr result = NULL;
+  ParticlePtrs sorted_list = original_data->GetParticles(SortTag());
   long long count = 0;
-  for (long long i = 0; i < nreal; ++i) {
-    long long rank_index = data->GetInteger(SortedIndexListName, i);
-    // check if this rank_index is in fInput
-    for (long long j = 0; j < n; ++j) {
-      if (rank_index == data->GetInteger(IndexInput, j)) {
+  for (ParticlePtrsIt particle = sorted_list.begin(); particle != sorted_list.end(); ++ particle) {
+    for (ParticlePtrsIt my_particle = input_data->GetParticleBegin(); 
+         my_particle != input_data->GetParticleEnd(); ++ my_particle) {
+      if (*particle == *my_particle) {
         if (++count == fN) {
-          location = rank_index;
+          result = *particle;
           break;
         }
       }
     }
-    if (location != -1)
+    if (result != NULL)
       break;
   }
 
-  data->SetValue(NObjectsOutput, (long long)1);
-  data->SetValue(NameOutput, RefInput);
-  data->SetValue(IndexOutput, location, 0);
-  IncreaseCounter(data->GetInteger(NObjectsOutput));
+  gen_data->AddParticle(result);
+  IncreaseCounter(gen_data->GetNParticles());
 }
 
 void internal::NthElementAlgo::Clear (Option_t* /*option*/) {
-  HAL::AnalysisData *data = GetUserData();
-  data->RemoveAllAssociatedData(GetName());
+  delete GetUserData()->GetTObject(GetName());
 }
 
-void internal::FilterTLVAlgo::Exec (Option_t* /*option*/) {
+void internal::FilterParticleAlgo::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
-  TString NObjectsInput = gaMakeNObjectsLabel(fInput);
-  TString IndexInput = gaMakeIndexLabel(fInput);
-  TString NObjectsOutput = gaMakeNObjectsLabel(GetName());
-  TString NameOutput = gaMakeRefNameLabel(GetName());
-  TString IndexOutput = gaMakeIndexLabel(GetName());
-  long long n, count;
-  TString RefInput;
-  long long *InputIndices;
-  TLorentzVector **InputVec;
+  HAL::GenericData *gen_data = new GenericData(GetName());
+  HAL::GenericData *input_data = NULL;
 
-  if (data->Exists(NObjectsInput)) {
-    n = data->GetInteger(NObjectsInput);
-    InputVec = new TLorentzVector*[n];
-    InputIndices = new long long[n];
-  }
+  data->SetValue(GetName(), gen_data);
+
+  if (data->Exists(fInput)) 
+    input_data = (GenericData*)data->GetTObject(fInput);
   else
     return;
 
-  if (gaCheckRefName(data, fInput, RefInput)) {
-    TString RealVec = gaMakeVecLabel(RefInput);
-    for (long long i = 0; i < n; ++i) {
-      InputIndices[i] = data->GetInteger(IndexInput, i);
-      InputVec[i] = (TLorentzVector*)data->GetTObject(RealVec, InputIndices[i]);
-    }
-  }
-  else {
-    delete[] InputVec;
-    delete[] InputIndices;
-    return;
+  for (ParticlePtrsIt particle = input_data->GetParticleBegin(); 
+       particle != input_data->GetParticleEnd(); ++ particle) {
+    if (FilterPredicate(*particle))
+      gen_data->AddParticle(*particle);
   }
 
-  count = 0;
-  for (long long i = 0; i < n; ++i) {
-    if (FilterPredicate(InputVec[i])) {
-      data->SetValue(IndexOutput, InputIndices[i], count);
-      ++count;
-    }
-  }
-  if (count > 0) {
-    data->SetValue(NameOutput, RefInput);
-    data->SetValue(NObjectsOutput, count);
-    IncreaseCounter(data->GetInteger(NObjectsOutput));
-  }
-  delete[] InputVec;
-  delete[] InputIndices;
+  IncreaseCounter(gen_data->GetNParticles());
 }
 
-void internal::FilterTLVAlgo::Clear (Option_t* /*option*/) {
-  HAL::AnalysisData *data = GetUserData();
-  data->RemoveAllAssociatedData(GetName());
+void internal::FilterParticleAlgo::Clear (Option_t* /*option*/) {
+  delete GetUserData()->GetTObject(GetName());
 }
 
 void internal::FilterRefTLVAlgo::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
-  TString NObjectsInput = gaMakeNObjectsLabel(fInput);
-  TString IndexInput = gaMakeIndexLabel(fInput);
-  TString NObjectsOthers = gaMakeNObjectsLabel(fOthers);
-  TString IndexOthers = gaMakeIndexLabel(fOthers);
-  TString NObjectsOutput = gaMakeNObjectsLabel(GetName());
-  TString NameOutput = gaMakeRefNameLabel(GetName());
-  TString IndexOutput = gaMakeIndexLabel(GetName());
-  long long n, nothers, count;
-  TString RefInput, RefOthers;
-  long long *InputIndices, *OthersIndices;
-  TLorentzVector **InputVec, **OthersVec;
+  HAL::GenericData *gen_data = new GenericData(GetName());
+  HAL::GenericData *input_data = NULL;
+  HAL::GenericData *others_data = NULL;
+  HAL::ParticlePtr  reference;
 
-  if (data->Exists(NObjectsInput) && data->Exists(NObjectsOthers)) {
-    n = data->GetInteger(NObjectsInput);
-    nothers = data->GetInteger(NObjectsOthers);
-    InputVec = new TLorentzVector*[n];
-    OthersVec = new TLorentzVector*[nothers];
-    InputIndices = new long long[n];
-    OthersIndices = new long long[nothers];
+  data->SetValue(GetName(), gen_data);
+
+  if (data->Exists(fInput) && data->Exists(fOthers)) {
+    input_data = (GenericData*)data->GetTObject(fInput);
+    others_data = (GenericData*)data->GetTObject(fOthers);
   }
   else
     return;
 
-  if (n != 1)
+  if (input_data->GetNParticles() != 1)
     return;
 
-  if (gaCheckRefName(data, fInput, RefInput) &&
-      gaCheckRefName(data, fOthers, RefOthers)) {
-    TString RealVec = gaMakeVecLabel(RefInput);
-    TString RefOthersVec = gaMakeVecLabel(RefOthers);
-    InputIndices[0] = data->GetInteger(IndexInput, 0);
-    InputVec[0] = (TLorentzVector*)data->GetTObject(RealVec, InputIndices[0]);
-    for (long long i = 0; i < nothers; ++i) {
-      OthersIndices[i] = data->GetInteger(IndexOthers, i);
-      OthersVec[i] = (TLorentzVector*)data->GetTObject(RefOthersVec, OthersIndices[i]);
-    }
+  reference = input_data->GetParticle(0);
+  for (ParticlePtrsIt particle = others_data->GetParticleBegin(); 
+       particle != others_data->GetParticleEnd(); ++ particle) {
+    if (reference == *particle || reference->HasSameParticles("parents", *particle))
+      continue;
+    if (FilterPredicate(reference, *particle))
+      gen_data->AddParticle(*particle);
   }
-  else {
-    delete[] InputVec;
-    delete[] InputIndices;
-    delete[] OthersVec;
-    delete[] OthersIndices;
-    return;
-  }
-
-  count = 0;
-  for (long long i = 0; i < nothers; ++i) {
-    if (FilterPredicate(InputVec[0], OthersVec[i])) {
-      data->SetValue(IndexOutput, OthersIndices[i], count);
-      ++count;
-    }
-  }
-  if (count > 0) {
-    data->SetValue(NameOutput, RefOthers);
-    data->SetValue(NObjectsOutput, count);
-    IncreaseCounter(data->GetInteger(NObjectsOutput));
-  }
-  delete[] InputVec;
-  delete[] InputIndices;
-  delete[] OthersVec;
-  delete[] OthersIndices;
 }
 
 void internal::FilterRefTLVAlgo::Clear (Option_t* /*option*/) {
-  HAL::AnalysisData *data = GetUserData();
-  data->RemoveAllAssociatedData(GetName());
+  delete GetUserData()->GetTObject(GetName());
 }
 
 internal::FilterParentAlgo::FilterParentAlgo (TString name, TString title, 
@@ -241,76 +270,31 @@ void internal::FilterParentAlgo::Exec (Option_t* /*option*/) {
 }
 
 void internal::FilterParentAlgo::Clear (Option_t* /*option*/) {
-  HAL::AnalysisData *data = GetUserData();
-  data->RemoveAllAssociatedData(GetName());
+  delete GetUserData()->GetTObject(GetName());
 }
-
-//void internal::ParticlesTLVCut::Exec (Option_t* /*option*/) {
-//  HAL::AnalysisData *data = GetUserData();
-//  long long n;
-//  TString NObjectsInput = gaMakeNObjectsLabel(fInput);
-//  TString IndexInput = gaMakeIndexLabel(fInput);
-//  TString RefInput;
-//  TLorentzVector **InputVec;
-//
-//  if (data->Exists(NObjectsInput)) {
-//    n = data->GetInteger(NObjectsInput);
-//    InputVec = new TLorentzVector*[n];
-//  }
-//  else
-//    return;
-//
-//  if (gaCheckRefName(data, fInput, RefInput)) {
-//    TString RefVec = gaMakeVecLabel(RefInput);
-//    for (long long i = 0; i < n; ++i) {
-//      long long inputIndex = data->GetInteger(IndexInput, i);
-//      InputVec[i] = (TLorentzVector*)data->GetTObject(RefVec, inputIndex);
-//    }
-//  }
-//  else
-//    return;
-//
-//  for (long long i = 0; i < n; ++i) {
-//    if (!CutPredicate(InputVec[i])) {
-//      Abort();
-//      return;
-//    }
-//  }
-//  Passed();
-//}
 
 void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
   HAL::AnalysisTreeWriter *output = GetUserOutput();
-  long long n;
-  TString NObjectsInput = gaMakeNObjectsLabel(fInput);
-  TString IndexInput = gaMakeIndexLabel(fInput);
-  TString RefInput;
-  TLorentzVector **InputVec;
+  HAL::GenericData *input_data = NULL;
 
-  if (data->Exists(NObjectsInput)) {
-    n = data->GetInteger(NObjectsInput);
-    InputVec = new TLorentzVector*[n];
-  }
+  if (data->Exists(fInput))
+    input_data = (GenericData*)data->GetTObject(fInput);
   else
     return;
 
-  if (gaCheckRefName(data, fInput, RefInput)) {
-    TString RefVec = gaMakeVecLabel(RefInput);
-    for (long long i = 0; i < n; ++i) {
-      long long inputIndex = data->GetInteger(IndexInput, i);
-      InputVec[i] = (TLorentzVector*)data->GetTObject(RefVec, inputIndex);
-    }
-  }
-  else
+  if (input_data->GetNParticles() == 0)
     return;
 
   if (fMany) {
-    for (long long i = 0; i < n; ++i)
-      output->SetValue(fBranchName, StoreValue(InputVec[i]), i);
+    long long i = 0;
+    for (ParticlePtrsIt particle = input_data->GetParticleBegin(); 
+        particle != input_data->GetParticleEnd(); ++ particle) {
+      output->SetValue(fBranchName, StoreValue(*particle), i++);
+    }
   }
   else
-    output->SetValue(fBranchName, StoreValue(InputVec[0]));
+    output->SetValue(fBranchName, StoreValue(input_data->GetParticle(0)));
 }
 
 
@@ -425,206 +409,110 @@ Algorithms::VecAddReco::~VecAddReco() {
 
 void Algorithms::VecAddReco::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
-  TString *RefInputs = new TString[fLength];
-  long long *ParentNObjects = new long long[fLength];
-  long long **ParentIndices2 = new long long*[fLength];
-  TLorentzVector ***ParentVecs2 = new TLorentzVector**[fLength];
-  std::set<TString> UniqueRefInput;
-  std::map<TString, std::set<std::set<long long> > > UniqueTuples;
-  long long UniqueTuplesMaxLength = 0;
-  std::map<TString, long long> UniqueTuplesLengths;
-  std::vector<TString> UniqueTuplesLabels;
-  std::deque<std::vector<long long> > UniqueTuplesValues;
-  std::vector<TLorentzVector*> UniqueTuplesVectors;
-  // scalars
-  TString NObjectsOutput = gaMakeNObjectsLabel(GetName());
-  TString NParentsOutput = gaMakeNParentsLabel(GetName());
-  // 1D arrays
-  TString VectorOutput = gaMakeVecLabel(GetName());
-  TString IndexOutput = gaMakeIndexLabel(GetName());
-  TString ParentNamesOutput = gaMakeParentRefNameLabel(GetName());
-  // 2D arrays
-  TString ParentIndicesOutput = gaMakeParentIndexLabel(GetName());
+  HAL::GenericData *gen_data = new GenericData(GetName());
+  HAL::GenericData *input_data = NULL;
+  std::set<std::set<ParticlePtr> > UniqueTuples;
 
-  // Modify to look at parents too and assume that parents already form unique tuples
+  data->SetValue(GetName(), gen_data);
+
+  // Find unique sets of tuples 
+  // (relies on unique particles having unique addresses)
   for (long long i = 0; i < fLength; ++i) {
-    TString pname(fParentNames[i]);
-    if (gaCheckRefName(data, pname, RefInputs[i])) {
-      UniqueRefInput.insert(RefInputs[i]);
-      ParentNObjects[i] = data->GetInteger(gaMakeNObjectsLabel(fParentNames[i]).Data());
-      ParentIndices2[i] = new long long[ParentNObjects[i]];
-      ParentVecs2[i] = new TLorentzVector*[ParentNObjects[i]];
-      for (long long j = 0; j < ParentNObjects[i]; ++j) {
-        ParentIndices2[i][j] = data->GetInteger(gaMakeIndexLabel(fParentNames[i]).Data(), j);
-        ParentVecs2[i][j] = (TLorentzVector*)data->GetTObject(gaMakeVecLabel(RefInputs[i]), ParentIndices2[i][j]);
-      }
-    }
+    if (data->Exists(fParentNames[i]))
+      input_data = (GenericData*)data->GetTObject(fParentNames[i]);
     else
       return;
-  }
 
-  // remove any overlap
-  // loop over unique real names
-  for (std::set<TString>::iterator name = UniqueRefInput.begin(); name != UniqueRefInput.end(); ++name) {
-    for (long long i = 0; i < fLength; ++i) {
-      if (RefInputs[i] == *name) {
-        if (UniqueTuples.count(*name) == 0) {
-          std::set<std::set<long long> > index_tuples;
-          for (long long j = 0; j < ParentNObjects[i]; ++j) {
-            std::set<long long> index_tuple;
-            index_tuple.insert(ParentIndices2[i][j]);
-            index_tuples.insert(index_tuple);
-          }
-          UniqueTuples[*name] = index_tuples;
-        }
-        else {
-          std::set<std::set<long long> > index_tuples;
-          for (std::set<std::set<long long> >::iterator tuple = UniqueTuples[*name].begin();
-               tuple != UniqueTuples[*name].end(); ++tuple) {
-            for (long long j = 0; j < ParentNObjects[i]; ++j) {
-              std::set<long long> index_tuple = *tuple;
-              index_tuple.insert(ParentIndices2[i][j]);
-              index_tuples.insert(index_tuple);
+    std::set<std::set<ParticlePtr> > NewTuples;
+    if (UniqueTuples.size() == 0) {
+      // Loop over current set of particles and add either the particle 
+      // or its parents to the ntuple
+      for (ParticlePtrsIt particle = input_data->GetParticleBegin(); 
+           particle != input_data->GetParticleEnd(); ++ particle) {
+
+        bool                  unique = true;
+        std::set<ParticlePtr> new_tuple;
+
+        if ((*particle)->GetNParticles("parents") > 0) {
+          ParticlePtrs parents = (*particle)->GetParticles("parents");
+          for (ParticlePtrsIt parent = parents.begin(); 
+              parent != parents.end(); ++ parent) {
+            if (new_tuple.insert(*parent).second == false) {
+              unique = false;
+              break;
             }
           }
-          UniqueTuples[*name] = index_tuples;
         }
-      }
-    }
-  }
-  // find largest size of set for each type, then remove all that are smaller than this
-  for (std::map<TString, std::set<std::set<long long> > >::iterator mapit = UniqueTuples.begin();
-       mapit != UniqueTuples.end(); ++mapit) {
-    unsigned max_size = 0;
-    for (std::set<std::set<long long> >::iterator setit = mapit->second.begin();
-         setit != mapit->second.end(); ++setit) {
-      if (setit->size() > max_size)
-        max_size = setit->size();
-    }
-    UniqueTuplesMaxLength += max_size;
-    UniqueTuplesLengths[mapit->first] = max_size;
-    for (std::set<std::set<long long> >::iterator setit = mapit->second.begin();
-         setit != mapit->second.end(); ) {
-      if (setit->size() < max_size)
-        mapit->second.erase(setit++);
-      else
-        ++setit;
-    }
-  }
-  // print out UniqueTuples
-  //for (std::map<TString, std::set<std::set<long long> > >::iterator mapit = UniqueTuples.begin();
-  //     mapit != UniqueTuples.end(); ++mapit) {
-  //  std::cout << mapit->first << std::endl;
-  //  for (std::set<std::set<long long> >::iterator setit = mapit->second.begin();
-  //       setit != mapit->second.end(); ++setit) {
-  //    for (std::set<long long>::iterator value = setit->begin(); value != setit->end(); ++value) {
-  //      std::cout << *value << "   ";
-  //    }
-  //    std::cout << std::endl;
-  //  }
-  //}
+        else {
+          if (new_tuple.insert(*particle).second == false)
+            continue;
+        }
 
-  // merge tuples to form array of indices
-  for (std::map<TString, std::set<std::set<long long> > >::iterator mapit = UniqueTuples.begin();
-       mapit != UniqueTuples.end(); ++mapit) {
-    for (long long i = 0; i < UniqueTuplesLengths[mapit->first]; ++i)
-      UniqueTuplesLabels.push_back(mapit->first);
-    if (UniqueTuplesValues.size() == 0) {
-      for (std::set<std::set<long long> >::iterator setit = mapit->second.begin();
-          setit != mapit->second.end(); ++setit) {
-        std::vector<long long> indices;
-        for (std::set<long long>::iterator value = setit->begin(); value != setit->end(); ++value) {
-          indices.push_back(*value);
-        }
-        UniqueTuplesValues.push_back(indices);
+        if (unique)
+          NewTuples.insert(new_tuple);
       }
     }
     else {
-      for (std::deque<std::vector<long long> >::iterator tuple = UniqueTuplesValues.begin();
-           tuple != UniqueTuplesValues.end(); ++tuple) {
-        for (unsigned i = 0; i < mapit->second.size(); ++i) {
-          UniqueTuplesValues.insert(tuple++, *tuple);
-        }
-      }
-      for (std::deque<std::vector<long long> >::iterator tuple = UniqueTuplesValues.begin();
-           tuple != UniqueTuplesValues.end(); ++tuple) {
-        for (std::set<std::set<long long> >::iterator setit = mapit->second.begin();
-            setit != mapit->second.end(); ++setit) {
-          for (std::set<long long>::iterator value = setit->begin(); value != setit->end(); ++value) {
-            tuple->push_back(*value);
-            ++tuple;
+      for (std::set<std::set<ParticlePtr> >::iterator current_tuple = UniqueTuples.begin();
+           current_tuple != UniqueTuples.end(); ++current_tuple) {
+
+        // Loop over current set of particles and add either the particle 
+        // or its parents to the ntuple
+        for (ParticlePtrsIt particle = input_data->GetParticleBegin(); 
+             particle != input_data->GetParticleEnd(); ++ particle) {
+
+          bool                  unique = true;
+          std::set<ParticlePtr> new_tuple = *current_tuple;
+
+          if ((*particle)->GetNParticles("parents") > 0) {
+            ParticlePtrs parents = (*particle)->GetParticles("parents");
+            for (ParticlePtrsIt parent = parents.begin(); 
+                 parent != parents.end(); ++ parent) {
+              if (new_tuple.insert(*parent).second == false) {
+                unique = false;
+                break;
+              }
+            }
           }
+          else {
+            if (new_tuple.insert(*particle).second == false)
+              continue;
+          }
+
+          if (unique)
+            NewTuples.insert(new_tuple);
         }
       }
     }
+
+    UniqueTuples = NewTuples;
   }
-  if (UniqueTuplesMaxLength != fLength)
-    return;
-  // print out final result
-  //for (std::vector<TString>::iterator name = UniqueTuplesLabels.begin(); name != UniqueTuplesLabels.end(); ++name) {
-  //  std::cout << *name << "\t\t";
-  //}
-  //std::cout << std::endl;
-  //for (std::deque<std::vector<long long> >::iterator tuple = UniqueTuplesValues.begin();
-  //     tuple != UniqueTuplesValues.end(); ++tuple) {
-  //  for (std::vector<long long>::iterator value = tuple->begin(); value != tuple->end(); ++value) {
-  //    std::cout << *value << "\t\t";
-  //  }
-  //  std::cout << std::endl;
-  //}
 
-
-  for (unsigned i = 0; i < UniqueTuplesValues.size(); ++i) {
-    for (unsigned j = 0; j < UniqueTuplesValues[i].size(); ++j) { // loop over all indices
-      if (j == 0)
-        UniqueTuplesVectors.push_back(new TLorentzVector(*((TLorentzVector*)data->GetTObject(gaMakeVecLabel(UniqueTuplesLabels[j]), UniqueTuplesValues[i][j]))));
-      else
-        UniqueTuplesVectors[i]->operator+=(*((TLorentzVector*)data->GetTObject(gaMakeVecLabel(UniqueTuplesLabels[j]), UniqueTuplesValues[i][j])));
+  // Loop over UniqueTuples to make vectors
+  for (std::set<std::set<ParticlePtr> >::iterator current_tuple = UniqueTuples.begin();
+       current_tuple != UniqueTuples.end(); ++current_tuple) {
+    int new_charge = 0;
+    HAL::ParticlePtr new_particle = new HAL::Particle(GetName());
+    HAL::ParticlePtrs new_parents;
+    TLorentzVector *vec = new TLorentzVector();
+    for (std::set<ParticlePtr>::iterator particle = current_tuple->begin();
+         particle != current_tuple->end(); ++particle) {
+      new_charge += (*particle)->GetCharge();
+      vec->operator+=(*((*particle)->GetP()));
+      new_parents.push_back(*particle);
     }
+    new_particle->SetCharge(new_charge);
+    new_particle->SetP(vec);
+    new_particle->Set1DParticle("parents", new_parents);
+    gen_data->AddParticle(new_particle);
   }
-  //for (std::vector<TLorentzVector*>::iterator vec = UniqueTuplesVectors.begin();
-  //     vec != UniqueTuplesVectors.end(); ++vec) {
-  //  std::cout << (*vec)->Pt() << "    ";
-  //}
-  //std::cout << std::endl;
-
-  data->SetValue(NParentsOutput, fLength);
-  data->SetValue(NObjectsOutput, UniqueTuplesVectors.size());
-  for (unsigned i = 0; i < UniqueTuplesVectors.size(); ++i) {
-    data->SetValue(VectorOutput, UniqueTuplesVectors[i], i);
-    data->SetValue(IndexOutput, i, i);
-  }
-  for (unsigned i = 0; i < UniqueTuplesLabels.size(); ++i)
-    data->SetValue(ParentNamesOutput, UniqueTuplesLabels[i], i);
-  for (unsigned i = 0; i < UniqueTuplesValues.size(); ++i) {
-    for (unsigned j = 0; j < UniqueTuplesValues[i].size(); ++j) {
-      data->SetValue(ParentIndicesOutput, UniqueTuplesValues[i][j], i, j);
-    }
-  }
-  IncreaseCounter(data->GetInteger(NObjectsOutput));
-  delete[] RefInputs;
-  delete[] ParentNObjects;
-  for (int i = 0; i < fLength; ++i) {
-    delete[] ParentIndices2[i];
-    delete[] ParentVecs2[i];
-  }
-  delete[] ParentIndices2;
-  delete[] ParentVecs2;
 }
 
 void Algorithms::VecAddReco::Clear (Option_t* /*option*/) {
-  HAL::AnalysisData *data = GetUserData();
-  TString VectorOutput = gaMakeVecLabel(GetName());
-  TString NObjectsOutput = gaMakeNObjectsLabel(GetName());
-
-  if (data->Exists(VectorOutput)) {
-    for (long long i = 0; i < data->GetInteger(NObjectsOutput); ++i)
-      delete data->GetTObject(VectorOutput, i);
-  }
-  data->RemoveAllAssociatedData(GetName());
+  delete GetUserData()->GetTObject(GetName());
 }
 
-Algorithms::RankSelectionTLV::RankSelectionTLV (TString name, TString title, 
+Algorithms::ParticleRankSelection::ParticleRankSelection (TString name, TString title, 
     TString input, unsigned rank, TString property, TString end) : 
   NthElementAlgo(name, title, input, rank), fPt(false), fM(false), fE(false),
     fEt(false), fP3(false), fHigh(false), fLow(false),
@@ -646,7 +534,7 @@ Algorithms::RankSelectionTLV::RankSelectionTLV (TString name, TString title,
     fLow = true;
 }
 
-TString Algorithms::RankSelectionTLV::SortTag () {
+TString Algorithms::ParticleRankSelection::SortTag () {
   if (fPt)
     return "4v_pt";
   if (fM)
@@ -657,13 +545,12 @@ TString Algorithms::RankSelectionTLV::SortTag () {
     return "4v_et";
   if (fP3)
     return "4v_p3";
-  throw HAL::HALException(GetName().Prepend("Couldn't determine sorting type: "));
+  throw HALException(GetName().Prepend("Couldn't determine sorting type: "));
 }
 
-bool Algorithms::RankSelectionTLV::operator() (long long lhs, long long rhs) {
-  AnalysisData *data = GetUserData();
-  TLorentzVector *lhs_vec = (TLorentzVector*)data->GetTObject(fElementName, lhs);
-  TLorentzVector *rhs_vec = (TLorentzVector*)data->GetTObject(fElementName, rhs);
+bool Algorithms::ParticleRankSelection::operator() (ParticlePtr lhs, ParticlePtr rhs) {
+  TLorentzVector *lhs_vec = lhs->GetP();
+  TLorentzVector *rhs_vec = rhs->GetP();
 
   if (fHigh) {
     if (fPt)
@@ -689,16 +576,16 @@ bool Algorithms::RankSelectionTLV::operator() (long long lhs, long long rhs) {
     if (fP3)
       return (lhs_vec->P() < rhs_vec->P());
   }
-  throw HAL::HALException(GetName().Prepend("Couldn't determine sorting information: "));
+  throw HALException(GetName().Prepend("Couldn't determine sorting information: "));
 }
 
-void Algorithms::RankSelectionTLV::Sort (std::vector<long long> &ip) {
-  std::stable_sort(ip.begin(), ip.end(), *this);
+void Algorithms::ParticleRankSelection::Sort (ParticlePtrs &sl) {
+  std::stable_sort(sl.begin(), sl.end(), *this);
 }
 
-Algorithms::SelectTLV::SelectTLV (TString name, TString title, TString input, TString property, 
+Algorithms::SelectParticle::SelectParticle (TString name, TString title, TString input, TString property, 
     double value, TString end) : 
-  FilterTLVAlgo(name, title, input), 
+  FilterParticleAlgo(name, title, input), 
   fPt(false), fM(false), fE(false), fEt(false), fP3(false), fEta(false), 
   fPhi(false), fHigh(false), fLow(false), fWindow(false),
   fTLVProperty(property), fEnd(end) {
@@ -714,9 +601,9 @@ Algorithms::SelectTLV::SelectTLV (TString name, TString title, TString input, TS
   Setup();
 }
 
-Algorithms::SelectTLV::SelectTLV (TString name, TString title, TString input, TString property, 
+Algorithms::SelectParticle::SelectParticle (TString name, TString title, TString input, TString property, 
     double low, double high) : 
-  FilterTLVAlgo(name, title, input), 
+  FilterParticleAlgo(name, title, input), 
   fHighLimit(high), fLowLimit(low), 
   fPt(false), fM(false), fE(false), fEt(false), fP3(false), fEta(false), 
   fPhi(false), fHigh(false), fLow(false), fWindow(true),
@@ -724,7 +611,7 @@ Algorithms::SelectTLV::SelectTLV (TString name, TString title, TString input, TS
   Setup();
 }
 
-void Algorithms::SelectTLV::Setup () {
+void Algorithms::SelectParticle::Setup () {
   if (fTLVProperty.EqualTo("pt", TString::kIgnoreCase))
     fPt = true;
   if (fTLVProperty.EqualTo("m", TString::kIgnoreCase))
@@ -741,7 +628,8 @@ void Algorithms::SelectTLV::Setup () {
     fPhi = true;
 }
 
-bool Algorithms::SelectTLV::FilterPredicate(TLorentzVector *vec) {
+bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
+  TLorentzVector *vec = particle->GetP();
   if (!fWindow) {
     if (fLow) {
       if (fPt)
@@ -825,7 +713,9 @@ Algorithms::SelectDeltaTLV::SelectDeltaTLV (TString name, TString title, TString
     fDeltaPhi = true;
 }
 
-bool Algorithms::SelectDeltaTLV::FilterPredicate (TLorentzVector *ref, TLorentzVector *vec) {
+bool Algorithms::SelectDeltaTLV::FilterPredicate (HAL::ParticlePtr p_ref, HAL::ParticlePtr particle) {
+  TLorentzVector *ref = p_ref->GetP();
+  TLorentzVector *vec = particle->GetP();
   if (fDeltaR) {
     double dR = ref->DeltaR(*vec);
     if (fIn) {
@@ -863,105 +753,6 @@ bool Algorithms::SelectDeltaTLV::FilterPredicate (TLorentzVector *ref, TLorentzV
  * Cutting Algorithms
  * */
 
-//Algorithms::CutTLV::CutTLV (TString name, TString title, TString input, TString property, 
-//    double value, TString end) : 
-//  ParticlesTLVCut(name, title, input), 
-//  fPt(false), fM(false), fE(false), fEt(false), fP3(false), fEta(false), 
-//  fPhi(false), fHigh(false), fLow(false), fWindow(false),
-//  fTLVProperty(property), fEnd(end) {
-//
-//  if (end.EqualTo("low", TString::kIgnoreCase)) {
-//    fLow = true;
-//    fLowLimit = value;
-//  }
-//  else if (end.EqualTo("high", TString::kIgnoreCase)) {
-//    fHigh = true;
-//    fHighLimit = value;
-//  }
-//  Setup();
-//}
-//
-//Algorithms::CutTLV::CutTLV (TString name, TString title, TString input, TString property, 
-//    double low, double high) : 
-//  ParticlesTLVCut(name, title, input), 
-//  fHighLimit(high), fLowLimit(low), 
-//  fPt(false), fM(false), fE(false), fEt(false), fP3(false), fEta(false), 
-//  fPhi(false), fHigh(false), fLow(false), fWindow(true),
-//  fTLVProperty(property), fEnd("window") {
-//  Setup();
-//}
-//
-//void Algorithms::CutTLV::Setup () {
-//  if (fTLVProperty.EqualTo("pt", TString::kIgnoreCase))
-//    fPt = true;
-//  if (fTLVProperty.EqualTo("m", TString::kIgnoreCase))
-//    fM = true;
-//  if (fTLVProperty.EqualTo("e", TString::kIgnoreCase))
-//    fE = true;
-//  if (fTLVProperty.EqualTo("et", TString::kIgnoreCase))
-//    fEt = true;
-//  if (fTLVProperty.EqualTo("p3", TString::kIgnoreCase))
-//    fP3 = true;
-//  if (fTLVProperty.EqualTo("eta", TString::kIgnoreCase))
-//    fEta = true;
-//  if (fTLVProperty.EqualTo("phi", TString::kIgnoreCase))
-//    fPhi = true;
-//}
-//
-//bool Algorithms::CutTLV::CutPredicate(TLorentzVector *vec) {
-//  if (!fWindow) {
-//    if (fLow) {
-//      if (fPt)
-//        return (vec->Pt() >= fLowLimit);
-//      else if (fM)
-//        return (vec->M() >= fLowLimit);
-//      else if (fE)
-//        return (vec->E() >= fLowLimit);
-//      else if (fEt)
-//        return (vec->Et() >= fLowLimit);
-//      else if (fP3)
-//        return (vec->P() >= fLowLimit);
-//      else if (fEta)
-//        return (vec->Eta() >= fLowLimit);
-//      else if (fPhi)
-//        return (vec->Phi() >= fLowLimit);
-//    }
-//    else if (fHigh) {
-//      if (fPt)
-//        return (vec->Pt() <= fHighLimit);
-//      else if (fM)
-//        return (vec->M() <= fHighLimit);
-//      else if (fE)
-//        return (vec->E() <= fHighLimit);
-//      else if (fEt)
-//        return (vec->Et() <= fHighLimit);
-//      else if (fP3)
-//        return (vec->P() <= fHighLimit);
-//      else if (fEta)
-//        return (vec->Eta() <= fHighLimit);
-//      else if (fPhi)
-//        return (vec->Phi() <= fHighLimit);
-//    }
-//  }
-//  else { // window cut
-//    if (fPt)
-//      return (vec->Pt() <= fHighLimit && vec->Pt() >= fLowLimit);
-//    else if (fM)
-//      return (vec->M() <= fHighLimit && vec->M() >= fLowLimit);
-//    else if (fE)
-//      return (vec->E() <= fHighLimit && vec->E() >= fLowLimit);
-//    else if (fEt)
-//      return (vec->Et() <= fHighLimit && vec->Et() >= fLowLimit);
-//    else if (fP3)
-//      return (vec->P() <= fHighLimit && vec->P() >= fLowLimit);
-//    else if (fEta)
-//      return (vec->Eta() <= fHighLimit && vec->Eta() >= fLowLimit);
-//    else if (fPhi)
-//      return (vec->Phi() <= fHighLimit && vec->Phi() >= fLowLimit);
-//  }
-//  throw HAL::HALException(GetName().Prepend("Couldn't determine how to cut: "));
-//}
-
 Algorithms::CutNObjects::CutNObjects (TString name, TString title, TString logic, 
     long long n, long long length, ...) :
   CutAlgorithm(name, title), fAnd(false), fOr(false), fLength(length), fN(n) {
@@ -980,15 +771,16 @@ Algorithms::CutNObjects::CutNObjects (TString name, TString title, TString logic
 
 void Algorithms::CutNObjects::Exec (Option_t* /*option*/) {
   AnalysisData *data = GetUserData();
+  HAL::GenericData *input_data = NULL;
 
   if (fAnd) {
     for (long long i = 0; i < fLength; ++i) {
-      TString NObjects = gaMakeNObjectsLabel(fParticleNames[i]);
-      if (!data->Exists(NObjects)) {
+      if (!data->Exists(fParticleNames[i])) {
         Abort();
         return;
       }
-      else if (data->GetInteger(NObjects) < fN) {
+      input_data = (GenericData*)data->GetTObject(fParticleNames[i]);
+      if (input_data->GetNParticles() < (size_t)fN) {
         Abort();
         return;
       }
@@ -998,15 +790,41 @@ void Algorithms::CutNObjects::Exec (Option_t* /*option*/) {
   }
   else if (fOr) {
     for (long long i = 0; i < fLength; ++i) {
-      TString NObjects = gaMakeNObjectsLabel(fParticleNames[i]);
-      if (data->Exists(NObjects) && data->GetInteger(NObjects) >= fN) {
-        Passed();
-        return;
+      if (data->Exists(fParticleNames[i])) {
+        input_data = (GenericData*)data->GetTObject(fParticleNames[i]);
+        if (input_data->GetNParticles() >= (size_t)fN) {
+          Passed();
+          return;
+        }
       }
     }
 
     Abort();
   }
+}
+
+/*
+ * Monitoring Algorithms
+ * */
+
+void Algorithms::MonitorAlgorithm::Exec (Option_t* /*option*/) {
+  HAL::AnalysisData *data = GetUserData();
+  HAL::GenericData *input_data = NULL;
+
+  (*fOS) << "Algorithm: " << fInput.Data() << std::endl;
+
+  if (data->Exists(fInput))
+    input_data = (GenericData*)data->GetTObject(fInput);
+  else
+    return;
+
+  (*fOS) << *input_data << std::endl;
+}
+
+void Algorithms::MonitorUserData::Exec (Option_t* /*option*/) {
+  //HAL::AnalysisData *data = GetUserData();
+
+  (*fOS) << "UserData has the following elements:" << std::endl;
 }
 
 /*
@@ -1033,7 +851,9 @@ Algorithms::StoreTLV::StoreTLV (TString name, TString title, TString input,
     fPhi = true;
 }
 
-double Algorithms::StoreTLV::StoreValue (TLorentzVector *vec) {
+double Algorithms::StoreTLV::StoreValue (HAL::ParticlePtr particle) {
+  TLorentzVector *vec = particle->GetP();
+
   if (fPt)
     return vec->Pt();
   if (fM)

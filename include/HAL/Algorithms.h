@@ -23,6 +23,7 @@
 #include <map>
 #include <set>
 #include <algorithm>
+#include <iostream>
 #include <HAL/Common.h>
 #include <HAL/Exceptions.h>
 #include <HAL/AnalysisUtils.h>
@@ -33,33 +34,96 @@
 #include <HAL/AnalysisTreeReader.h>
 #include <HAL/AnalysisTreeWriter.h>
 
-#include <iostream>
 
 namespace HAL
 {
 
-// Data container for generic algorithms
+/*
+ * Data containers for generic algorithms
+ * */
+
+class GenericParticle;
+
+typedef GenericParticle               Particle;
+typedef Particle*                     ParticlePtr;
+typedef std::vector<ParticlePtr>      ParticlePtrs;
+typedef ParticlePtrs::iterator        ParticlePtrsIt;
+typedef ParticlePtrs::const_iterator  ParticlePtrsConstIt;
+
+class GenericParticle : public TNamed {
+public:
+  GenericParticle (const TString &origin, const TString &name = "");
+  GenericParticle (const GenericParticle &particle);
+  ~GenericParticle ();
+
+  void            SetOrigin (const TString &origin) {fOrigin = origin;}
+  void            SetID (const int &id) {fID = id;}
+  void            SetCharge (const int &charge) {fCharge = charge;}
+  void            SetP (TLorentzVector *p) {fP = p;}
+  void            SetVector (TLorentzVector *vec) {fP = vec;}
+  void            SetAttribute (const TString &name, const long double &value);
+  void            SetParticle (const TString &name, GenericParticle *particle, const long long &index = -1);
+  void            Set1DParticle (const TString &name, std::vector<GenericParticle*> &particles);
+  inline TString  GetOrigin () {return fOrigin;}
+  inline int      GetID () {return fID;}
+  inline int      GetCharge () {return fCharge;}
+  inline TLorentzVector*    GetP () {return fP;}
+  inline TLorentzVector*    GetVector () {return fP;}
+  inline long double        GetAttribute (const TString &name) {return fScalarAttributes[name];}
+  inline ParticlePtr        GetParticle (const TString &name, const long long &index) {return f1DParticles[name][index];}
+  inline ParticlePtrs&      GetParticles (const TString &name) {return f1DParticles[name];}
+
+  inline bool     HasAttribute (const TString &name) {return (fScalarAttributes.count(name) == 0) ? false : true;}
+  inline bool     HasParticles (const TString &name) {return (f1DParticles.count(name) == 0) ? false : true;}
+  inline size_t   GetNParticles (const TString &name) {return HasParticles(name) ? f1DParticles[name].size() : 0;}
+  bool            HasSameParticles (const TString &name, ParticlePtr particle);
+
+  friend std::ostream& operator<<(std::ostream& os, const GenericParticle &particle);
+  
+  ClassDef(GenericParticle, 0);
+
+private:
+  TString                                      fOrigin; // what algorithm made this particle
+  int                                          fID, fCharge;
+  TLorentzVector                              *fP;
+  std::map<TString, long double, internal::string_cmp>    fScalarAttributes;
+  // the following is for parent/child lists etc...
+  std::map<TString, ParticlePtrs, internal::string_cmp>   f1DParticles;
+};
+
 class GenericData : public TNamed {
 public:
-  typedef std::vector<long long>::iterator                Index;
-  typedef std::vector<TLorentzVector*>::iterator          Vector;
-  typedef std::vector<TString*>::iterator                 ParentReferenceName;
-  typedef std::vector<std::vector<long long> >::iterator  ParentReferenceIndex;
+  GenericData (const TString &name, bool is_owner = false);
+  GenericData (const GenericData &data);
+  virtual ~GenericData ();
 
-  GenericData () : fIndices(25), fVectors(25), fParentReferenceNames(25), fParentReferenceIndices(25) {}
-  virtual ~GenericData () {/*loop over vectors and parent reference names and delete*/}
+  void          SetRefName (const TString &name) {fUserDataRefName = name;}
+  void          AddParticle (ParticlePtr particle) {fParticles.push_back(particle);}
+  void          SetParticles (const TString &name, ParticlePtrs &particles) {f1DParticles[name] = particles;}
+  inline TString        GetRefName () {return fUserDataRefName;}
+  inline ParticlePtr    GetParticle (const long long &index) {return fParticles[index];}
+  inline ParticlePtrsIt GetParticleBegin () {return fParticles.begin();}
+  inline ParticlePtrsIt GetParticleEnd () {return fParticles.end();}
+  inline ParticlePtrs&  GetParticles (const TString &name) {return f1DParticles[name];}
 
-  void AddTLV (TLorentzVector *vec) {fVectors.push_back(vec);}
+  inline bool       IsOwner () {return fIsOwner;}
+  inline TString    GetOwner () {return (fParticles.size() >= 1) ? fParticles[0]->GetOrigin() : "";}
+  inline bool       HasParticles (const TString &name) {return (f1DParticles.count(name) != 0) ? true : false;}
+  inline size_t     GetNParticles () {return fParticles.size();}
+  inline size_t     GetNParticles (const TString &name) {return HasParticles(name) ? f1DParticles[name].size() : 0;}
+
+  friend std::ostream& operator<<(std::ostream& os, GenericData &data);
 
   ClassDef(GenericData, 0);
 
 private:
-  long long                             fNObjects;
-  TString                               fReferenceName;
-  std::vector<long long>                fIndices;
-  std::vector<TLorentzVector*>          fVectors;
-  std::vector<TString*>                 fParentReferenceNames;
-  std::vector<std::vector<long long> >  fParentReferenceIndices;
+  bool                                                  fIsOwner;
+  // used if value is stored in 'UserData' (i.e. a trigger boolean)
+  TString                                               fUserDataRefName; 
+  // list of actual particles (and actual owner of memory)
+  ParticlePtrs                                          fParticles;
+  // the following is for sorted lists, etc...
+  std::map<TString, ParticlePtrs, internal::string_cmp> f1DParticles;
 };
 
 /*
@@ -84,9 +148,6 @@ protected:
   virtual void Clear (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned) = 0;
 
-private:
-  TString fVectorOutput, fIndexOutput, fNObjectsOutput;
-
 };
 
 /*
@@ -99,27 +160,27 @@ public:
   virtual ~NthElementAlgo () {}
 
   virtual TString   SortTag () = 0;
-  virtual bool      operator() (long long, long long) = 0;
-  virtual void      Sort (std::vector<long long>&) = 0;
+  virtual bool      operator() (HAL::ParticlePtr, HAL::ParticlePtr) = 0;
+  virtual void      Sort (HAL::ParticlePtrs&) = 0;
 
 protected:
   virtual void      Exec (Option_t* /*option*/);
   virtual void      Clear (Option_t* /*option*/);
 
-  unsigned  fN;
-  TString   fInput, fElementName;
+  unsigned           fN;
+  TString            fInput;
 };
 
 /*
  * Algorithm for filtering particles by their TLV
  * */
-class FilterTLVAlgo : public Algorithm {
+class FilterParticleAlgo : public Algorithm {
 public:
-  FilterTLVAlgo (TString name, TString title, TString input) :
+  FilterParticleAlgo (TString name, TString title, TString input) :
     Algorithm(name, title), fInput(input) {}
-  virtual ~FilterTLVAlgo () {}
+  virtual ~FilterParticleAlgo () {}
 
-  virtual bool FilterPredicate (TLorentzVector*) = 0;
+  virtual bool FilterPredicate (HAL::ParticlePtr) = 0;
   
 protected:
   virtual void Exec (Option_t* /*option*/);
@@ -138,7 +199,7 @@ public:
     Algorithm(name, title), fInput(input), fOthers(others) {}
   virtual ~FilterRefTLVAlgo () {}
 
-  virtual bool FilterPredicate (TLorentzVector*, TLorentzVector*) = 0;
+  virtual bool FilterPredicate (HAL::ParticlePtr, HAL::ParticlePtr) = 0;
 
 protected:
   virtual void Exec (Option_t* /*option*/);
@@ -168,24 +229,6 @@ protected:
   TString               fInput;
 };
 
-///*
-// * Algorithm for cutting particles on their TLV
-// * */
-//class ParticlesTLVCut : public CutAlgorithm {
-//public:
-//  ParticlesTLVCut (TString name, TString title, TString input) :
-//    CutAlgorithm(name, title), fInput(input) {}
-//  virtual ~ParticlesTLVCut () {}
-//
-//  // this should return true if particle passed cut
-//  virtual bool CutPredicate (TLorentzVector*) = 0;
-//
-//protected:
-//  virtual void Exec (Option_t* /*option*/);
-//
-//  TString   fInput;
-//};
-
 /*
  * Algorithm for the exporting of simple quantities from
  * several particles' TLVs
@@ -200,7 +243,7 @@ public:
 
 protected:
   virtual void    Exec (Option_t* /*option*/);
-  virtual double  StoreValue (TLorentzVector*) = 0;
+  virtual double  StoreValue (HAL::ParticlePtr) = 0;
 
   bool            fMany;
   TString         fBranchName, fInput;
@@ -255,6 +298,8 @@ namespace Algorithms
 class ImportTLV : public HAL::internal::ImportTLVAlgo {
 public:
   ImportTLV (TString name, TString title, unsigned n = 0);
+  // type should be MET, etc... (for special vectors)
+  //ImportTLV (TString name, TString title, TString type);
   virtual ~ImportTLV () {}
 
 protected:
@@ -335,15 +380,15 @@ private:
  *  <name>:ref_name ((scalar): string name of reference particles to use)
  *  <name>:index (1D array: of indices (points to the nth highest pT of ref_name))
  * */
-class RankSelectionTLV : public internal::NthElementAlgo {
+class ParticleRankSelection : public internal::NthElementAlgo {
 public:
-  RankSelectionTLV (TString name, TString title, TString input, unsigned rank, 
-                    TString property, TString end = "high");
-  virtual ~RankSelectionTLV () {}
+  ParticleRankSelection (TString name, TString title, TString input, unsigned rank, 
+                         TString property, TString end = "high");
+  virtual ~ParticleRankSelection () {}
 
   virtual TString       SortTag ();
-  virtual bool          operator() (long long, long long);
-  virtual void          Sort (std::vector<long long>&);
+  virtual bool          operator() (ParticlePtr, ParticlePtr);
+  virtual void          Sort (ParticlePtrs&);
 
 protected:
   bool      fPt, fM, fE, fEt, fP3, fHigh, fLow;
@@ -370,15 +415,15 @@ protected:
  *  <name>:ref_name ((scalar): string name of reference particles to use)
  *  <name>:index (1D array: of indices)
  * */
-class SelectTLV : public internal::FilterTLVAlgo {
+class SelectParticle : public internal::FilterParticleAlgo {
 public:
-  SelectTLV (TString name, TString title, TString input, TString property, 
+  SelectParticle (TString name, TString title, TString input, TString property, 
       double value, TString end = "low");
-  SelectTLV (TString name, TString title, TString input, TString property, 
+  SelectParticle (TString name, TString title, TString input, TString property, 
       double low, double high);
-  virtual ~SelectTLV () {}
+  virtual ~SelectParticle () {}
 
-  virtual bool FilterPredicate(TLorentzVector*);
+  virtual bool FilterPredicate(HAL::ParticlePtr);
 
 private:
   void      Setup ();
@@ -410,7 +455,7 @@ public:
       double low, double high, TString type = "r");
   virtual ~SelectDeltaTLV () {}
 
-  virtual bool FilterPredicate (TLorentzVector*, TLorentzVector*);
+  virtual bool FilterPredicate (HAL::ParticlePtr, HAL::ParticlePtr);
 
 private:
   double    fHighLimit, fLowLimit;
@@ -444,41 +489,6 @@ protected:
   virtual void Exec (Option_t* /*option*/) {Passed();}
 };
 
-///*
-// * Cut particles with TLV property less than, greater than,
-// * or within a window of given values.
-// * (logical 'and')
-// * This property can be:
-// * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude, eta, phi
-// * pt,                  m,    e,      et,                p3,                   eta, phi
-// * The 'end' parameter describes how to cut the property:
-// * high (upper limit)
-// * low (lower limit)
-// *
-// * Prerequisites:
-// *  Stored particle
-// * Required Branch Maps:
-// *  None
-// * UserData Output:
-// *  None
-// * */
-//class CutTLV : public internal::ParticlesTLVCut {
-//public:
-//  CutTLV (TString name, TString title, TString input, TString property, 
-//      double value, TString end = "low");
-//  CutTLV (TString name, TString title, TString input, TString property, 
-//      double low, double high);
-//  virtual ~CutTLV () {}
-//
-//  virtual bool CutPredicate (TLorentzVector *vec);
-//
-//private:
-//  void      Setup ();
-//
-//  double    fHighLimit, fLowLimit;
-//  bool      fPt, fM, fE, fEt, fP3, fEta, fPhi, fHigh, fLow, fWindow;
-//  TString   fTLVProperty, fEnd;
-//};
 
 /*
  * Cut on number of objects
@@ -509,6 +519,47 @@ private:
 
 
 /*
+ * Monitoring Algorithms
+ * */
+
+/*
+ * Prints the output of an algorithm to the given ostream
+ * */
+class MonitorAlgorithm : public HAL::Algorithm {
+public:
+  MonitorAlgorithm (TString name, TString title, TString input, std::ostream &os = std::cout) :
+    Algorithm(name, title), fInput(input), fOS(&os) {}
+  virtual ~MonitorAlgorithm () {}
+
+protected:
+  virtual void Exec (Option_t* /*option*/);
+
+private:
+  TString        fInput;
+  std::ostream  *fOS;
+};
+
+
+/*
+ * Prints the contents of "UserData" to the given ostream
+ * */
+class MonitorUserData : public HAL::Algorithm {
+public:
+  MonitorUserData (TString name, TString title, std::ostream &os = std::cout) :
+    Algorithm(name, title), fOS(&os) {}
+  virtual ~MonitorUserData () {}
+
+protected:
+  virtual void Exec (Option_t* /*option*/);
+
+private:
+  std::ostream  *fOS;
+};
+
+
+
+
+/*
  * Exporting Algorithms
  * */
 
@@ -531,13 +582,16 @@ public:
   virtual ~StoreTLV () {}
 
 protected:
-  virtual double  StoreValue (TLorentzVector*);
+  virtual double  StoreValue (HAL::ParticlePtr);
 
 private:
   bool            fPt, fM, fE, fEt, fP3, fEta, fPhi;
 };
 
 } /* Algorithms */ 
+
+std::ostream& operator<<(std::ostream& os, const HAL::GenericParticle &particle);
+std::ostream& operator<<(std::ostream& os, HAL::GenericData &data);
 
 } /* HAL */ 
 
