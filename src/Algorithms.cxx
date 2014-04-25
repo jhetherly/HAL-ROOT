@@ -61,11 +61,11 @@ bool HAL::GenericParticle::HasSameParticles (const TString &name, ParticlePtr pa
 }
 
 std::ostream& operator<<(std::ostream& os, const HAL::GenericParticle &particle) {
-  os << particle.fOrigin << std::endl;
+  os << "Origin: " << particle.fOrigin << std::endl;
   if (particle.fP != NULL) {
-    os << "4-vector properties:\tpT\teta\tphi\tmass\tenergy\n";
-    os << "                    " << particle.fP->Pt() << "\t" << particle.fP->Eta() << "\t" << particle.fP->Phi()
-       << "\t" << particle.fP->M() << "\t" << particle.fP->E() << std::endl;
+    os << "4-vector properties:\n\tpT\t\teta\t\tphi\t\tmass\t\tenergy\n"
+       << "\t" << particle.fP->Pt() << "\t\t" << particle.fP->Eta() << "\t\t" << particle.fP->Phi()
+       << "\t\t" << particle.fP->M() << "\t\t" << particle.fP->E() << std::endl;
   }
   // TODO: loop over attributes and particles
   //       print out the ID and charge
@@ -313,35 +313,46 @@ void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
  * */
 
 Algorithms::ImportTLV::ImportTLV (TString name, TString title, unsigned n) : 
-  ImportTLVAlgo(name, title), fN(n), fIsCart(false), fIsE(false), fIsM(false) {}
+  ImportTLVAlgo(name, title), fN(n), fIsCart(false), fIsE(false), fIsM(false), 
+  fIsCartMET(false), fIsPhiEtMET(false) {
+}
 
 void Algorithms::ImportTLV::Init (Option_t* /*option*/) {
   HAL::AnalysisTreeReader *tr = GetRawData();
-  TString CartEntriesName = TString::Format("%s:x1", GetName().Data());
-  TString MassEntriesName = TString::Format("%s:m", GetName().Data());
-  TString EnergyEntriesName = TString::Format("%s:e", GetName().Data());
-
-  if (tr->CheckBranchMapNickname(CartEntriesName))
-    fIsCart = true;
-  else if (tr->CheckBranchMapNickname(EnergyEntriesName))
-    fIsE = true;
-  else if (tr->CheckBranchMapNickname(MassEntriesName))
-    fIsM = true;
-  if (!fIsCart && !fIsE && !fIsM)
-    HAL::HALException(GetName().Prepend("Couldn't determine how to import data: ").Data());
 
   fCartX0 = TString::Format("%s:x0", GetName().Data());
   fCartX1 = TString::Format("%s:x1", GetName().Data());
   fCartX2 = TString::Format("%s:x2", GetName().Data());
   fCartX3 = TString::Format("%s:x3", GetName().Data());
   fPt = TString::Format("%s:pt", GetName().Data());
+  fEt = TString::Format("%s:et", GetName().Data());
   fEta = TString::Format("%s:eta", GetName().Data());
   fPhi = TString::Format("%s:phi", GetName().Data());
   fM = TString::Format("%s:m", GetName().Data());
   fE = TString::Format("%s:e", GetName().Data());
   fNEntriesName = TString::Format("%s:nentries", GetName().Data());
-  fCartEntriesName = TString::Format("%s:x1", GetName().Data());
-  fPtEntriesName = TString::Format("%s:pt", GetName().Data());
+
+  if (tr->CheckBranchMapNickname(fCartX0) && tr->CheckBranchMapNickname(fCartX1) && 
+      tr->CheckBranchMapNickname(fCartX2) && tr->CheckBranchMapNickname(fCartX3))
+    fIsCart = true;
+  else if (tr->CheckBranchMapNickname(fE) && tr->CheckBranchMapNickname(fPt) &&
+           tr->CheckBranchMapNickname(fEta) && tr->CheckBranchMapNickname(fPhi))
+    fIsE = true;
+  else if (tr->CheckBranchMapNickname(fM) && tr->CheckBranchMapNickname(fPt) &&
+           tr->CheckBranchMapNickname(fEta) && tr->CheckBranchMapNickname(fPhi))
+    fIsM = true;
+  else if (!tr->CheckBranchMapNickname(fCartX0) && tr->CheckBranchMapNickname(fCartX1) &&
+           tr->CheckBranchMapNickname(fCartX2) && !tr->CheckBranchMapNickname(fCartX3))
+    fIsCartMET = true;
+  else if ((tr->CheckBranchMapNickname(fEt) || tr->CheckBranchMapNickname(fPt)) &&
+           tr->CheckBranchMapNickname(fPhi) && !tr->CheckBranchMapNickname(fEta))
+    fIsPhiEtMET = true;
+  if (!fIsCart && !fIsE && !fIsM && !fIsCartMET && !fIsPhiEtMET)
+    HAL::HALException(GetName().Prepend("Couldn't determine how to import data: ").Data());
+
+  // Use only one since these are synonyms
+  if (tr->CheckBranchMapNickname(fEt))
+    fPt = fEt;
 }
 
 void Algorithms::ImportTLV::Exec (Option_t* /*option*/) {
@@ -352,10 +363,10 @@ void Algorithms::ImportTLV::Exec (Option_t* /*option*/) {
   if (n == 0) {
     if (tr->CheckBranchMapNickname(fNEntriesName))
       n = tr->GetInteger(fNEntriesName);
-    else if (fIsCart)
-      n = tr->GetDim(fCartEntriesName);
-    else if (fIsE || fIsM)
-      n = tr->GetDim(fPtEntriesName);
+    else if (fIsCart || fIsCartMET)
+      n = tr->GetDim(fCartX1);
+    else if (fIsE || fIsM || fIsPhiEtMET)
+      n = tr->GetDim(fPhi);
   }
   // call actual Exec algo
   ImportTLVAlgo::Exec(n);
@@ -384,6 +395,16 @@ TLorentzVector* Algorithms::ImportTLV::MakeTLV (unsigned i) {
                 eta = tr->GetDecimal(fEta, i),
                 phi = tr->GetDecimal(fPhi, i);
     return HAL::makeTLVFromPtEtaPhiM(pT, eta, phi, m);
+  }
+  else if (fIsCartMET) {
+    long double x1 = tr->GetDecimal(fCartX1, i),
+                x2 = tr->GetDecimal(fCartX2, i);
+    return new TLorentzVector(x1, x2, 0.0, TMath::Sqrt(x1*x1 + x2*x2));
+  }
+  else if (fIsPhiEtMET) {
+    long double phi = tr->GetDecimal(fPhi, i),
+                pt = tr->GetDecimal(fPt, i);
+    return new TLorentzVector(pt*TMath::Cos(phi), pt*TMath::Sin(phi), 0.0, pt);
   }
   throw HAL::HALException("Couldn't identify type in ImportTLV");
 }

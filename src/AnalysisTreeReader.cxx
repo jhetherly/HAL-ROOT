@@ -94,7 +94,7 @@ bool AnalysisTreeReader::CheckBranchMapNickname (const TString &name) {
   while(TObjString *key = (TObjString*)next()){
     TString nn = key->String();
 
-    if (name.EqualTo(nn))
+    if (name.EqualTo(nn, TString::kIgnoreCase))
       return true;
   }
   return false;

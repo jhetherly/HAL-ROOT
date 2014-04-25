@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
                                                        2, "pt")); // rank in pt
   a.AddAlgo(new HAL::Algorithms::VecAddReco("di-jet", "reconstruct a di-jet object", 
                                             2, "leading pt jet", "subleading pt jet"));
-  a.AddAlgo(new HAL::Algorithms::MonitorAlgorithm("di-jet monitor", "look at the di-jet object", "di-jet"));
+  //a.AddAlgo(new HAL::Algorithms::MonitorAlgorithm("di-jet monitor", "look at the di-jet object", "di-jet"));
   a.AddAlgo(new HAL::Algorithms::SelectParticle("di-jet50pt", "filter on di-jet pt >= 50GeV", 
                                            "di-jet", // input algorithm
                                            "pt", 50000)); // pT value

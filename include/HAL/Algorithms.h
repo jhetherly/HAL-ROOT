@@ -16,6 +16,7 @@
 #include <TNamed.h>
 #include <TString.h>
 #include <TLorentzVector.h>
+#include <TMath.h>
 #include <cstdarg>
 #include <string>
 #include <deque>
@@ -299,7 +300,6 @@ class ImportTLV : public HAL::internal::ImportTLVAlgo {
 public:
   ImportTLV (TString name, TString title, unsigned n = 0);
   // type should be MET, etc... (for special vectors)
-  //ImportTLV (TString name, TString title, TString type);
   virtual ~ImportTLV () {}
 
 protected:
@@ -311,9 +311,10 @@ protected:
 private:
   unsigned  fN;
   bool      fIsCart, fIsE, fIsM;
-  TString   fCartX0, fCartX1, fCartX2, fCartX3, fPt;
+  bool      fIsCartMET, fIsPhiEtMET;
+  TString   fCartX0, fCartX1, fCartX2, fCartX3, fPt, fEt;
   TString   fEta, fPhi, fM, fE;
-  TString   fNEntriesName, fCartEntriesName, fPtEntriesName;
+  TString   fNEntriesName;
 };
 
 
