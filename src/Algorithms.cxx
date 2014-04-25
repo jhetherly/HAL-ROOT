@@ -16,7 +16,8 @@ HAL::GenericParticle::GenericParticle (const TString &origin, const TString &nam
     SetName(name.Data());
 }
 
-HAL::GenericParticle::GenericParticle (const GenericParticle &particle) {
+HAL::GenericParticle::GenericParticle (const GenericParticle &particle) : 
+  TNamed() {
   fID = particle.fID;
   fCharge = particle.fCharge;
   fP = new TLorentzVector(*particle.fP);
@@ -77,7 +78,8 @@ HAL::GenericData::GenericData (const TString &name, bool is_owner) : fIsOwner(is
   SetName(name.Data());
 }
 
-HAL::GenericData::GenericData (const GenericData &data) {
+HAL::GenericData::GenericData (const GenericData &data) : 
+  TNamed() {
   fUserDataRefName = data.fUserDataRefName; 
   fParticles.reserve(20);
   for (ParticlePtrsConstIt particle = data.fParticles.begin(); 
