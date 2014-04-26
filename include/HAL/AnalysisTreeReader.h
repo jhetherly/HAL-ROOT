@@ -49,6 +49,7 @@ public:
   virtual ~AnalysisTreeReader ();
   void    SetTree (TTree *tree) {fChain = tree; fChain->SetMakeClass(1);}
   void    SetEntry (Long64_t entry);
+  Long64_t GetEntryNumber () {return fEntry;}
   TTree*  GetTree () {return fChain;}
   void    Init ();
   void    SetBranchMap (TMap *m) {fBranchMap = m;}

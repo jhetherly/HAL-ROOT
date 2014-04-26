@@ -10,7 +10,7 @@ namespace HAL
  * Generic algorithm data containers
  * */
 HAL::GenericParticle::GenericParticle (const TString &origin, const TString &name) : 
-  fOrigin(origin), fP(NULL) {
+  fOrigin(origin), fID(0), fCharge(0), fP(NULL) {
 
   if(!name.EqualTo("")) 
     SetName(name.Data());
@@ -62,18 +62,46 @@ bool HAL::GenericParticle::HasSameParticles (const TString &name, ParticlePtr pa
 }
 
 std::ostream& operator<<(std::ostream& os, const HAL::GenericParticle &particle) {
-  os << "Origin: " << particle.fOrigin << std::endl;
+  os << "Origin: " << particle.fOrigin << "\t\tIndex: " << particle.fOriginIndex << std::endl;
+  os << "ID: " << particle.fID << "\t\tCharge: " << particle.fCharge << std::endl;
+  os.precision(4);
+  os << std::scientific;
   if (particle.fP != NULL) {
     os << "4-vector properties:\n\tpT\t\teta\t\tphi\t\tmass\t\tenergy\n"
-       << "\t" << particle.fP->Pt() << "\t\t" << particle.fP->Eta() << "\t\t" << particle.fP->Phi()
-       << "\t\t" << particle.fP->M() << "\t\t" << particle.fP->E() << std::endl;
+       << "\t" << particle.fP->Pt() << "\t" << particle.fP->Eta() << "\t" << particle.fP->Phi()
+       << "\t" << particle.fP->M() << "\t" << particle.fP->E() << "\n";
   }
-  // TODO: loop over attributes and particles
-  //       print out the ID and charge
+  if (!particle.fScalarAttributes.empty()) {
+    os << "Scalar attributes:" << std::endl;
+    for (std::map<TString, long double>::const_iterator sa = particle.fScalarAttributes.begin();
+         sa != particle.fScalarAttributes.end(); ++sa) {
+      os << "\tName: " << sa->first << "\t\tValue: " << sa->second << "\n";
+    }
+  }
+  if (!particle.f1DParticles.empty()) {
+    os << "Particle arrays:" << std::endl;
+    for (std::map<TString, ParticlePtrs>::const_iterator p = particle.f1DParticles.begin();
+         p != particle.f1DParticles.end(); ++p) {
+      size_t count = 0, 
+             n = p->second.size();
+      os << "\tName: " << p->first << "\t\tNumber of particles: " << n;
+      if (n > 0)
+        os << "\n\tList of particles: ";
+      for (ParticlePtrsConstIt part = p->second.begin(); part != p->second.end(); ++part) {
+        os << (*part)->GetOrigin() << "  " << (*part)->GetOriginIndex();
+        if (++count < n)
+          os << ",    ";
+      }
+      os << "\n";
+    }
+  }
+  os.unsetf(std::ios_base::floatfield);
+  os.flush();
   return os;
 }
 
-HAL::GenericData::GenericData (const TString &name, bool is_owner) : fIsOwner(is_owner) {
+HAL::GenericData::GenericData (const TString &name, bool is_owner) : 
+  fIsOwner(is_owner), fUserDataRefName("") {
   fParticles.reserve(20);
   SetName(name.Data());
 }
@@ -99,11 +127,37 @@ HAL::GenericData::~GenericData () {
 }
 
 std::ostream& operator<<(std::ostream& os, HAL::GenericData &data) {
-  // TODO: print out other members
-  for (HAL::ParticlePtrsIt particle = data.GetParticleBegin();
-       particle != data.GetParticleEnd(); ++particle) {
-    os << **particle << std::endl;
+  size_t  np = data.GetNParticles();
+  if (data.IsOwner())
+    os << "This algorithm owns " << np << " particles." << std::endl;
+  else
+    os << "This algorithm references " << np << " particles." << std::endl;
+  if (np > 0) {
+    for (HAL::ParticlePtrsIt particle = data.GetParticleBegin();
+        particle != data.GetParticleEnd(); ++particle) {
+      os << **particle << std::endl;
+    }
   }
+  if (!data.GetRefName().EqualTo(""))
+    os << "This algorithm references " << data.GetRefName() << "in \"UserData\"" << std::endl;
+  if (!data.f1DParticles.empty()) {
+    os << "Particle arrays:" << std::endl;
+    for (std::map<TString, ParticlePtrs>::iterator it = data.f1DParticles.begin();
+         it != data.f1DParticles.end(); ++it) {
+      size_t count = 0, 
+             n = it->second.size();
+      os << "\tName: " << it->first << "\t\tNumber of particles: " << n;
+      if (n > 0)
+        os << "\n\tList of particles: ";
+      for (ParticlePtrsIt part = it->second.begin(); part != it->second.end(); ++part) {
+        os << (*part)->GetOrigin() << "  " << (*part)->GetOriginIndex();
+        if (++count < n)
+          os << ",    ";
+      }
+      os << "\n";
+    }
+  }
+  os.flush();
   return os;
 }
 
@@ -835,12 +889,14 @@ void Algorithms::MonitorAlgorithm::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
   HAL::GenericData *input_data = NULL;
 
-  (*fOS) << "Algorithm: " << fInput.Data() << std::endl;
+  (*fOS) << "Summary for algorithm - " << fInput.Data() << std::endl;
 
   if (data->Exists(fInput))
     input_data = (GenericData*)data->GetTObject(fInput);
-  else
+  else {
+    (*fOS) << "Algorithm is empty!" << std::endl;
     return;
+  }
 
   (*fOS) << *input_data << std::endl;
 }
