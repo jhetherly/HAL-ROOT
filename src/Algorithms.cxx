@@ -126,6 +126,7 @@ void internal::ImportTLVAlgo::Exec (unsigned n) {
 
     particle->SetP (vec);
     gen_data->AddParticle(particle);
+    particle->SetOriginIndex(gen_data->GetNParticles() - 1);
   }
 
   IncreaseCounter(gen_data->GetNParticles());

@@ -58,6 +58,7 @@ public:
   ~GenericParticle ();
 
   void            SetOrigin (const TString &origin) {fOrigin = origin;}
+  void            SetOriginIndex (const size_t &oi) {fOriginIndex = oi;}
   void            SetID (const int &id) {fID = id;}
   void            SetCharge (const int &charge) {fCharge = charge;}
   void            SetP (TLorentzVector *p) {fP = p;}
@@ -66,6 +67,7 @@ public:
   void            SetParticle (const TString &name, GenericParticle *particle, const long long &index = -1);
   void            Set1DParticle (const TString &name, std::vector<GenericParticle*> &particles);
   inline TString  GetOrigin () {return fOrigin;}
+  inline size_t   GetOriginIndex () {return fOriginIndex;}
   inline int      GetID () {return fID;}
   inline int      GetCharge () {return fCharge;}
   inline TLorentzVector*    GetP () {return fP;}
@@ -85,6 +87,7 @@ public:
 
 private:
   TString                                      fOrigin; // what algorithm made this particle
+  size_t                                       fOriginIndex;
   int                                          fID, fCharge;
   TLorentzVector                              *fP;
   std::map<TString, long double, internal::string_cmp>    fScalarAttributes;
