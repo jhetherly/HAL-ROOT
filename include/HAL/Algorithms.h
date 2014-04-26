@@ -34,101 +34,12 @@
 #include <HAL/AnalysisData.h>
 #include <HAL/AnalysisTreeReader.h>
 #include <HAL/AnalysisTreeWriter.h>
+#include <HAL/GenericParticle.h>
+#include <HAL/GenericData.h>
 
 
 namespace HAL
 {
-
-/*
- * Data containers for generic algorithms
- * */
-
-class GenericParticle;
-
-typedef GenericParticle               Particle;
-typedef Particle*                     ParticlePtr;
-typedef std::vector<ParticlePtr>      ParticlePtrs;
-typedef ParticlePtrs::iterator        ParticlePtrsIt;
-typedef ParticlePtrs::const_iterator  ParticlePtrsConstIt;
-
-class GenericParticle : public TNamed {
-public:
-  GenericParticle (const TString &origin, const TString &name = "");
-  GenericParticle (const GenericParticle &particle);
-  ~GenericParticle ();
-
-  void            SetOrigin (const TString &origin) {fOrigin = origin;}
-  void            SetOriginIndex (const size_t &oi) {fOriginIndex = oi;}
-  void            SetID (const int &id) {fID = id;}
-  void            SetCharge (const int &charge) {fCharge = charge;}
-  void            SetP (TLorentzVector *p) {fP = p;}
-  void            SetVector (TLorentzVector *vec) {fP = vec;}
-  void            SetAttribute (const TString &name, const long double &value);
-  void            SetParticle (const TString &name, GenericParticle *particle, const long long &index = -1);
-  void            Set1DParticle (const TString &name, std::vector<GenericParticle*> &particles);
-  inline TString  GetOrigin () {return fOrigin;}
-  inline size_t   GetOriginIndex () {return fOriginIndex;}
-  inline int      GetID () {return fID;}
-  inline int      GetCharge () {return fCharge;}
-  inline TLorentzVector*    GetP () {return fP;}
-  inline TLorentzVector*    GetVector () {return fP;}
-  inline long double        GetAttribute (const TString &name) {return fScalarAttributes[name];}
-  inline ParticlePtr        GetParticle (const TString &name, const long long &index) {return f1DParticles[name][index];}
-  inline ParticlePtrs&      GetParticles (const TString &name) {return f1DParticles[name];}
-
-  inline bool     HasAttribute (const TString &name) {return (fScalarAttributes.count(name) == 0) ? false : true;}
-  inline bool     HasParticles (const TString &name) {return (f1DParticles.count(name) == 0) ? false : true;}
-  inline size_t   GetNParticles (const TString &name) {return HasParticles(name) ? f1DParticles[name].size() : 0;}
-  bool            HasSameParticles (const TString &name, ParticlePtr particle);
-
-  friend std::ostream& operator<<(std::ostream& os, const GenericParticle &particle);
-  
-  ClassDef(GenericParticle, 0);
-
-private:
-  TString                                      fOrigin; // what algorithm made this particle
-  size_t                                       fOriginIndex;
-  int                                          fID, fCharge;
-  TLorentzVector                              *fP;
-  std::map<TString, long double, internal::string_cmp>    fScalarAttributes;
-  // the following is for parent/child lists etc...
-  std::map<TString, ParticlePtrs, internal::string_cmp>   f1DParticles;
-};
-
-class GenericData : public TNamed {
-public:
-  GenericData (const TString &name, bool is_owner = false);
-  GenericData (const GenericData &data);
-  virtual ~GenericData ();
-
-  void          SetRefName (const TString &name) {fUserDataRefName = name;}
-  void          AddParticle (ParticlePtr particle) {fParticles.push_back(particle);}
-  void          SetParticles (const TString &name, ParticlePtrs &particles) {f1DParticles[name] = particles;}
-  inline TString        GetRefName () {return fUserDataRefName;}
-  inline ParticlePtr    GetParticle (const long long &index) {return fParticles[index];}
-  inline ParticlePtrsIt GetParticleBegin () {return fParticles.begin();}
-  inline ParticlePtrsIt GetParticleEnd () {return fParticles.end();}
-  inline ParticlePtrs&  GetParticles (const TString &name) {return f1DParticles[name];}
-
-  inline bool       IsOwner () {return fIsOwner;}
-  inline TString    GetOwner () {return (fParticles.size() >= 1) ? fParticles[0]->GetOrigin() : "";}
-  inline bool       HasParticles (const TString &name) {return (f1DParticles.count(name) != 0) ? true : false;}
-  inline size_t     GetNParticles () {return fParticles.size();}
-  inline size_t     GetNParticles (const TString &name) {return HasParticles(name) ? f1DParticles[name].size() : 0;}
-
-  friend std::ostream& operator<<(std::ostream& os, GenericData &data);
-
-  ClassDef(GenericData, 0);
-
-private:
-  bool                                                  fIsOwner;
-  // used if value is stored in 'UserData' (i.e. a trigger boolean)
-  TString                                               fUserDataRefName; 
-  // list of actual particles (and actual owner of memory)
-  ParticlePtrs                                          fParticles;
-  // the following is for sorted lists, etc...
-  std::map<TString, ParticlePtrs, internal::string_cmp> f1DParticles;
-};
 
 /*
  * Generic base class algorithms
@@ -593,9 +504,6 @@ private:
 };
 
 } /* Algorithms */ 
-
-std::ostream& operator<<(std::ostream& os, const HAL::GenericParticle &particle);
-std::ostream& operator<<(std::ostream& os, HAL::GenericData &data);
 
 } /* HAL */ 
 

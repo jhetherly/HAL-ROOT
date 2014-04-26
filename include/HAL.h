@@ -9,6 +9,8 @@
 #include <HAL/AnalysisUtils.h>
 #include <HAL/CutAlgorithm.h>
 #include <HAL/CutOptimizer.h>
+#include <HAL/GenericData.h>
+#include <HAL/GenericParticle.h>
 #include <HAL/Integrator.h>
 #include <HAL/Interpolator.h>
 #include <HAL/PlotUtils.h>

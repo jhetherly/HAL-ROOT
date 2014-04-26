@@ -1,165 +1,7 @@
 #include <HAL/Algorithms.h>
 
-ClassImp(HAL::GenericParticle);
-ClassImp(HAL::GenericData);
-
 namespace HAL
 {
-
-/*
- * Generic algorithm data containers
- * */
-HAL::GenericParticle::GenericParticle (const TString &origin, const TString &name) : 
-  fOrigin(origin), fOriginIndex(0), fID(0), fCharge(0), fP(NULL) {
-
-  if(!name.EqualTo("")) 
-    SetName(name.Data());
-}
-
-HAL::GenericParticle::GenericParticle (const GenericParticle &particle) : 
-  TNamed() {
-  fID = particle.fID;
-  fCharge = particle.fCharge;
-  fP = new TLorentzVector(*particle.fP);
-  fScalarAttributes = particle.fScalarAttributes;
-  f1DParticles = particle.f1DParticles;
-}
-
-HAL::GenericParticle::~GenericParticle () {
-  if (fP) delete fP;
-}
-
-void HAL::GenericParticle::SetAttribute (const TString &name, const long double &value) {
-  fScalarAttributes[name] = value;
-}
-
-void HAL::GenericParticle::SetParticle (const TString &name, 
-                                        GenericParticle *particle, 
-                                        const long long &index) {
-  if (index == -1)
-    f1DParticles[name].push_back(particle);
-  else
-    f1DParticles[name][index] = particle;
-  std::stable_sort(f1DParticles[name].begin(), f1DParticles[name].end());
-}
-
-void HAL::GenericParticle::Set1DParticle (const TString &name, std::vector<GenericParticle*> &particles) {
-  f1DParticles[name] = particles;
-  std::stable_sort(f1DParticles[name].begin(), f1DParticles[name].end());
-}
-
-bool HAL::GenericParticle::HasSameParticles (const TString &name, ParticlePtr particle) {
-  size_t n = GetNParticles(name);
-  size_t m = particle->GetNParticles(name);
-
-  if (n == m) {
-    if (n != 0)
-      return (f1DParticles[name] == particle->GetParticles(name));
-    else
-      return true;
-  }
-  return false;
-}
-
-std::ostream& operator<<(std::ostream& os, const HAL::GenericParticle &particle) {
-  os << "Origin: " << particle.fOrigin << "\t\tIndex: " << particle.fOriginIndex << std::endl;
-  os << "ID: " << particle.fID << "\t\tCharge: " << particle.fCharge << std::endl;
-  os.precision(4);
-  os << std::scientific;
-  if (particle.fP != NULL) {
-    os << "4-vector properties:\n\tpT\t\teta\t\tphi\t\tmass\t\tenergy\n"
-       << "\t" << particle.fP->Pt() << "\t" << particle.fP->Eta() << "\t" << particle.fP->Phi()
-       << "\t" << particle.fP->M() << "\t" << particle.fP->E() << "\n";
-  }
-  if (!particle.fScalarAttributes.empty()) {
-    os << "Scalar attributes:" << std::endl;
-    for (std::map<TString, long double>::const_iterator sa = particle.fScalarAttributes.begin();
-         sa != particle.fScalarAttributes.end(); ++sa) {
-      os << "\tName: " << sa->first << "\t\tValue: " << sa->second << "\n";
-    }
-  }
-  if (!particle.f1DParticles.empty()) {
-    os << "Particle arrays:" << std::endl;
-    for (std::map<TString, ParticlePtrs>::const_iterator p = particle.f1DParticles.begin();
-         p != particle.f1DParticles.end(); ++p) {
-      size_t count = 0, 
-             n = p->second.size();
-      os << "\tName: " << p->first << "\t\tNumber of particles: " << n;
-      if (n > 0)
-        os << "\n\tList of particles: ";
-      for (ParticlePtrsConstIt part = p->second.begin(); part != p->second.end(); ++part) {
-        os << (*part)->GetOrigin() << "  " << (*part)->GetOriginIndex();
-        if (++count < n)
-          os << ",    ";
-      }
-      os << "\n";
-    }
-  }
-  os.unsetf(std::ios_base::floatfield);
-  os.flush();
-  return os;
-}
-
-HAL::GenericData::GenericData (const TString &name, bool is_owner) : 
-  fIsOwner(is_owner), fUserDataRefName("") {
-  fParticles.reserve(20);
-  SetName(name.Data());
-}
-
-HAL::GenericData::GenericData (const GenericData &data) : 
-  TNamed() {
-  fUserDataRefName = data.fUserDataRefName; 
-  fParticles.reserve(20);
-  for (ParticlePtrsConstIt particle = data.fParticles.begin(); 
-       particle != data.fParticles.end(); ++particle) {
-    fParticles.push_back(new Particle(*(*particle)));
-  }
-  if (fParticles.size() > 0)
-    fIsOwner = true;
-  f1DParticles = data.f1DParticles;
-}
-
-HAL::GenericData::~GenericData () {
-  if (fIsOwner) {
-    for (ParticlePtrsIt particle = GetParticleBegin(); particle != GetParticleEnd(); ++particle) 
-      delete (*particle);
-  }
-}
-
-std::ostream& operator<<(std::ostream& os, HAL::GenericData &data) {
-  size_t  np = data.GetNParticles();
-  if (data.IsOwner())
-    os << "This algorithm owns " << np << " particles." << std::endl;
-  else
-    os << "This algorithm references " << np << " particles." << std::endl;
-  if (np > 0) {
-    for (HAL::ParticlePtrsIt particle = data.GetParticleBegin();
-        particle != data.GetParticleEnd(); ++particle) {
-      os << **particle << std::endl;
-    }
-  }
-  if (!data.GetRefName().EqualTo(""))
-    os << "This algorithm references " << data.GetRefName() << "in \"UserData\"" << std::endl;
-  if (!data.f1DParticles.empty()) {
-    os << "Particle arrays:" << std::endl;
-    for (std::map<TString, ParticlePtrs>::iterator it = data.f1DParticles.begin();
-         it != data.f1DParticles.end(); ++it) {
-      size_t count = 0, 
-             n = it->second.size();
-      os << "\tName: " << it->first << "\t\tNumber of particles: " << n;
-      if (n > 0)
-        os << "\n\tList of particles: ";
-      for (ParticlePtrsIt part = it->second.begin(); part != it->second.end(); ++part) {
-        os << (*part)->GetOrigin() << "  " << (*part)->GetOriginIndex();
-        if (++count < n)
-          os << ",    ";
-      }
-      os << "\n";
-    }
-  }
-  os.flush();
-  return os;
-}
 
 /*
  * Generic classes
@@ -487,7 +329,7 @@ Algorithms::VecAddReco::~VecAddReco() {
 
 void Algorithms::VecAddReco::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
-  HAL::GenericData *gen_data = new GenericData(GetName());
+  HAL::GenericData *gen_data = new GenericData(GetName(), true);
   HAL::GenericData *input_data = NULL;
   std::set<std::set<ParticlePtr> > UniqueTuples;
 
@@ -583,6 +425,7 @@ void Algorithms::VecAddReco::Exec (Option_t* /*option*/) {
     new_particle->SetP(vec);
     new_particle->Set1DParticle("parents", new_parents);
     gen_data->AddParticle(new_particle);
+    new_particle->SetOriginIndex(gen_data->GetNParticles() - 1);
   }
 }
 

@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
 
   // Output settings
   a.SetOutputFileName("test.root");
-  a.SetOutputTreeName("physics");
+  a.SetOutputTreeName("sample");
   a.SetOutputTreeDescription("This is just a test");
 
   // Create algorithm flow
@@ -35,8 +35,11 @@ int main(int argc, char *argv[]) {
                                             2, "leading pt jet", "subleading pt jet"));
   //a.AddAlgo(new HAL::Algorithms::VecAddReco("di-jet any", "reconstruct a di-jet object", 
   //                                          2, "jets", "jets"));
+  //a.AddAlgo(new HAL::Algorithms::VecAddReco("double di-jet any", "reconstruct a double di-jet object", 
+  //                                          2, "di-jet any", "di-jet any"));
   //a.AddAlgo(new HAL::Algorithms::MonitorAlgorithm("jet monitor", "look at the jet objects", "jets"));
-  //a.AddAlgo(new HAL::Algorithms::MonitorAlgorithm("di-jet monitor", "look at the di-jet object", "di-jet any"));
+  a.AddAlgo(new HAL::Algorithms::MonitorAlgorithm("di-jet monitor", "look at the di-jet object", "di-jet"));
+  //a.AddAlgo(new HAL::Algorithms::MonitorAlgorithm("di-jet monitor", "look at the di-jet object", "double di-jet any"));
   a.AddAlgo(new HAL::Algorithms::SelectParticle("di-jet50pt", "filter on di-jet pt >= 50GeV", 
                                            "di-jet", // input algorithm
                                            "pt", 50000)); // pT value

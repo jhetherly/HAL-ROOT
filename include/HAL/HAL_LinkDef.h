@@ -1,5 +1,4 @@
 #include <vector>
-#include <string>
 
 #ifdef __CINT__
 
@@ -19,6 +18,8 @@
 #pragma link C++ defined_in "HAL/Common.h";
 #pragma link C++ defined_in "HAL/CutAlgorithm.h";
 #pragma link C++ defined_in "HAL/CutOptimizer.h";
+#pragma link C++ defined_in "HAL/GenericData.h";
+#pragma link C++ defined_in "HAL/GenericParticle.h";
 #pragma link C++ defined_in "HAL/Integrator.h";
 #pragma link C++ defined_in "HAL/Interpolator.h";
 #pragma link C++ defined_in "HAL/PlotUtils.h";
