@@ -132,6 +132,30 @@ TString AnalysisTreeReader::GetFullBranchName (TString name) {
   throw HALException(name.Prepend("Couldn't find branch: ").Data());
 }
 
+unsigned int AnalysisTreeReader::GetRank (const TString &branchname) {
+  BranchManager *branchmanager = NULL;
+
+  if (fNickNameBranchMap.count(branchname) == 0) {
+    branchmanager = new BranchManager(this);
+    TString bname = GetFullBranchName( branchname );
+    if (branchmanager->Create(bname))
+      fNickNameBranchMap[branchname] = branchmanager;
+    else
+      throw HALException(bname.Prepend("Couldn't configure branch: ").Data());
+  }
+  else
+    branchmanager = fNickNameBranchMap[branchname];
+
+  if (branchmanager->IsScalar())
+    return 0;
+  if (branchmanager->IsCArray1D() || branchmanager->IsVec1D())
+    return 1;
+  if (branchmanager->IsCArray2D() || branchmanager->IsVec2D())
+    return 2;
+
+  throw HALException(branchmanager->GetName().Prepend("Couldn't find rank for branch: ").Data());
+}
+
 unsigned int AnalysisTreeReader::GetDim (const TString &branchname, const long long &idx_1) {
   BranchManager *branchmanager = NULL;
 

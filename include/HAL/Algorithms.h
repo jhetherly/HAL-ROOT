@@ -66,6 +66,21 @@ protected:
 };
 
 /*
+ * Algorithm for importing a scalar value from a TTree.
+ * */
+class ImportValueAlgo : public HAL::Algorithm {
+public:
+  ImportValueAlgo (TString name, TString title);
+  virtual ~ImportValueAlgo () {}
+
+  virtual void  StoreValue (HAL::GenericData*) = 0;
+
+protected:
+  virtual void  Exec (Option_t* /*option*/);
+  virtual void  Clear (Option_t* /*option*/);
+};
+
+/*
  * Algorithm for finding the nth highest/lowest element in an AnalysisData object
  * */
 class NthElementAlgo : public HAL::Algorithm {
@@ -213,7 +228,6 @@ namespace Algorithms
 class ImportTLV : public HAL::internal::ImportTLVAlgo {
 public:
   ImportTLV (TString name, TString title, unsigned n = 0);
-  // type should be MET, etc... (for special vectors)
   virtual ~ImportTLV () {}
 
 protected:
@@ -229,6 +243,32 @@ private:
   TString   fCartX0, fCartX1, fCartX2, fCartX3, fPt, fEt;
   TString   fEta, fPhi, fM, fE;
   TString   fNEntriesName;
+};
+
+
+/*
+ * Import algorithm to store a bool value from a TTree
+ *
+ * Prerequisites:
+ *  None
+ * Required Branch Maps:
+ *  <name>:bool
+ * UserData Output:
+ *  <name>
+ *  <name>:value
+ */
+class ImportBool : public HAL::internal::ImportValueAlgo {
+public:
+  ImportBool (TString name, TString title) : 
+    ImportValueAlgo(name, title) {
+    fValue = TString::Format("%s:bool", name.Data());
+  }
+  virtual ~ImportBool () {}
+
+  virtual void  StoreValue (HAL::GenericData*);
+
+private:
+  TString   fValue;
 };
 
 

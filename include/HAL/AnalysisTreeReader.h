@@ -55,6 +55,7 @@ public:
   void    SetBranchMap (TMap *m) {fBranchMap = m;}
   bool    CheckBranchMapNickname (const TString &name);
 
+  unsigned int              GetRank (const TString &branchname);
   unsigned int              GetDim (const TString &branchname, const long long &idx_1 = -1);
   bool                      GetBool (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
   long long                 GetInteger (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);

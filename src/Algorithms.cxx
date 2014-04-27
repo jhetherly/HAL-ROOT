@@ -32,6 +32,23 @@ void internal::ImportTLVAlgo::Clear (Option_t* /*option*/) {
   delete GetUserData()->GetTObject(GetName());
 }
 
+internal::ImportValueAlgo::ImportValueAlgo (TString name, TString title) : 
+  HAL::Algorithm(name, title) {
+}
+
+void  internal::ImportValueAlgo::Exec (Option_t* /*option*/) {
+  HAL::AnalysisData *data = GetUserData();
+  HAL::GenericData *gen_data = new GenericData(GetName());
+
+  data->SetValue(GetName(), gen_data);
+
+  StoreValue(gen_data);
+}
+
+void  internal::ImportValueAlgo::Clear (Option_t* /*option*/) {
+  delete GetUserData()->GetTObject(GetName());
+}
+
 void internal::NthElementAlgo::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
   HAL::GenericData *gen_data = new GenericData(GetName());
@@ -260,12 +277,21 @@ void Algorithms::ImportTLV::Exec (Option_t* /*option*/) {
 
   // determine number of elements to read in
   if (n == 0) {
-    if (tr->CheckBranchMapNickname(fNEntriesName))
+    if (tr->CheckBranchMapNickname(fNEntriesName)) {
       n = tr->GetInteger(fNEntriesName);
-    else if (fIsCart || fIsCartMET)
-      n = tr->GetDim(fCartX1);
-    else if (fIsE || fIsM || fIsPhiEtMET)
-      n = tr->GetDim(fPhi);
+    }
+    else if (fIsCart || fIsCartMET) {
+      if (tr->GetRank(fCartX1) == 1)
+        n = tr->GetDim(fCartX1);
+      else if (tr->GetRank(fCartX1) == 0)
+        n = 1;
+    }
+    else if (fIsE || fIsM || fIsPhiEtMET) {
+      if (tr->GetRank(fPhi) == 1)
+        n = tr->GetDim(fPhi);
+      else if (tr->GetRank(fPhi) == 0)
+        n = 1;
+    }
   }
   // call actual Exec algo
   ImportTLVAlgo::Exec(n);
@@ -306,6 +332,14 @@ TLorentzVector* Algorithms::ImportTLV::MakeTLV (unsigned i) {
     return new TLorentzVector(pt*TMath::Cos(phi), pt*TMath::Sin(phi), 0.0, pt);
   }
   throw HAL::HALException("Couldn't identify type in ImportTLV");
+}
+
+void Algorithms::ImportBool::StoreValue (HAL::GenericData * /*gen_data*/) {
+  //HAL::AnalysisData *data = GetUserData();
+  //HAL::AnalysisTreeReader *tr = GetRawData();
+
+  //data->SetValue(fValue, );
+  //gen_data->
 }
 
 /*
