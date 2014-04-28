@@ -78,6 +78,8 @@ public:
 protected:
   virtual void  Exec (Option_t* /*option*/);
   virtual void  Clear (Option_t* /*option*/);
+
+  TString   fUserDataLabel;
 };
 
 /*
@@ -259,11 +261,77 @@ private:
  */
 class ImportBool : public HAL::internal::ImportValueAlgo {
 public:
-  ImportBool (TString name, TString title) : 
-    ImportValueAlgo(name, title) {
-    fValue = TString::Format("%s:bool", name.Data());
-  }
+  ImportBool (TString name, TString title);
   virtual ~ImportBool () {}
+
+  virtual void  StoreValue (HAL::GenericData*);
+
+private:
+  TString   fValue;
+};
+
+
+/*
+ * Import algorithm to store a integer value from a TTree
+ *
+ * Prerequisites:
+ *  None
+ * Required Branch Maps:
+ *  <name>:integer
+ * UserData Output:
+ *  <name>
+ *  <name>:value
+ */
+class ImportInteger : public HAL::internal::ImportValueAlgo {
+public:
+  ImportInteger (TString name, TString title);
+  virtual ~ImportInteger () {}
+
+  virtual void  StoreValue (HAL::GenericData*);
+
+private:
+  TString   fValue;
+};
+
+
+/*
+ * Import algorithm to store a counting value from a TTree
+ *
+ * Prerequisites:
+ *  None
+ * Required Branch Maps:
+ *  <name>:counting
+ * UserData Output:
+ *  <name>
+ *  <name>:value
+ */
+class ImportCounting : public HAL::internal::ImportValueAlgo {
+public:
+  ImportCounting (TString name, TString title);
+  virtual ~ImportCounting () {}
+
+  virtual void  StoreValue (HAL::GenericData*);
+
+private:
+  TString   fValue;
+};
+
+
+/*
+ * Import algorithm to store a decimal value from a TTree
+ *
+ * Prerequisites:
+ *  None
+ * Required Branch Maps:
+ *  <name>:decimal
+ * UserData Output:
+ *  <name>
+ *  <name>:value
+ */
+class ImportDecimal : public HAL::internal::ImportValueAlgo {
+public:
+  ImportDecimal (TString name, TString title);
+  virtual ~ImportDecimal () {}
 
   virtual void  StoreValue (HAL::GenericData*);
 
@@ -445,29 +513,95 @@ protected:
 };
 
 
+///*
+// * Cut on number of objects
+// * (logical 'and' or 'or')
+// *
+// * Prerequisites:
+// *  Stored objects
+// * Required Branch Maps:
+// *  None
+// * UserData Output:
+// *  None
+// * */
+//class CutNObjects : public CutAlgorithm {
+//public:
+//  CutNObjects (TString name, TString title, TString logic, long long n, long long length, ...);
+//  virtual ~CutNObjects () {}
+//
+//protected:
+//  virtual void Exec (Option_t* /*option*/);
+//
+//private:
+//  bool          fAnd, fOr;
+//  long long     fLength, fN;
+//  const char**  fParticleNames;
+//};
+
+
 /*
- * Cut on number of objects
+ * Cut on value and/or number of particles in the given algorithms
  * (logical 'and' or 'or')
+ * Requires: algorithms - literal string name of algorithm
+ *           type - literal string type: bool, integer, counting, decimal, particle
+ *           relational operator - literal string of: ==, !=, <, >, <=, >=
+ *           value - literal value of the above types
+ *           
  *
  * Prerequisites:
- *  Stored objects
+ *  Stored data
  * Required Branch Maps:
  *  None
  * UserData Output:
  *  None
  * */
-class CutNObjects : public CutAlgorithm {
+class Cut : public CutAlgorithm {
 public:
-  CutNObjects (TString name, TString title, TString logic, long long n, long long length, ...);
-  virtual ~CutNObjects () {}
+  Cut (TString name, TString title, TString logic, long long length, ...);
+  virtual ~Cut ();
 
 protected:
   virtual void Exec (Option_t* /*option*/);
 
 private:
   bool          fAnd, fOr;
-  long long     fLength, fN;
-  const char**  fParticleNames;
+
+  struct AlgoInfo {
+    AlgoInfo () 
+      : fEqual(false), fNotEqual(false), fLessThan(false), 
+        fGreaterThan(false), fLessThanEqual(false), fGreaterThanEqual(false) {}
+    virtual ~AlgoInfo () {}
+    const char    *fName;
+    bool           fEqual, fNotEqual, fLessThan, fGreaterThan, fLessThanEqual, fGreaterThanEqual;
+    virtual bool  Eval (HAL::AnalysisData*, HAL::GenericData*) = 0;
+  };
+
+  struct BoolAlgoInfo : public AlgoInfo {
+    bool           fValue;
+    virtual bool  Eval (HAL::AnalysisData*, HAL::GenericData*);
+  };
+  
+  struct IntegerAlgoInfo : public AlgoInfo {
+    long long      fValue;
+    virtual bool  Eval (HAL::AnalysisData*, HAL::GenericData*);
+  };
+
+  struct CountingAlgoInfo : public AlgoInfo {
+    unsigned long long fValue;
+    virtual bool  Eval (HAL::AnalysisData*, HAL::GenericData*);
+  };
+
+  struct DecimalAlgoInfo : public AlgoInfo {
+    long double    fValue;
+    virtual bool  Eval (HAL::AnalysisData*, HAL::GenericData*);
+  };
+
+  struct NParticlesAlgoInfo : public AlgoInfo {
+    long long      fValue;
+    virtual bool  Eval (HAL::AnalysisData*, HAL::GenericData*);
+  };
+
+  std::vector<AlgoInfo*>    fAlgorithms;
 };
 
 

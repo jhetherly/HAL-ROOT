@@ -25,6 +25,7 @@ void internal::ImportTLVAlgo::Exec (unsigned n) {
     particle->SetOriginIndex(gen_data->GetNParticles() - 1);
   }
 
+  gen_data->SetRefType("none");
   IncreaseCounter(gen_data->GetNParticles());
 }
 
@@ -34,6 +35,8 @@ void internal::ImportTLVAlgo::Clear (Option_t* /*option*/) {
 
 internal::ImportValueAlgo::ImportValueAlgo (TString name, TString title) : 
   HAL::Algorithm(name, title) {
+
+  fUserDataLabel = TString::Format("%s:value", name.Data());
 }
 
 void  internal::ImportValueAlgo::Exec (Option_t* /*option*/) {
@@ -334,12 +337,64 @@ TLorentzVector* Algorithms::ImportTLV::MakeTLV (unsigned i) {
   throw HAL::HALException("Couldn't identify type in ImportTLV");
 }
 
-void Algorithms::ImportBool::StoreValue (HAL::GenericData * /*gen_data*/) {
-  //HAL::AnalysisData *data = GetUserData();
-  //HAL::AnalysisTreeReader *tr = GetRawData();
+Algorithms::ImportBool::ImportBool (TString name, TString title) : 
+  ImportValueAlgo(name, title) {
 
-  //data->SetValue(fValue, );
-  //gen_data->
+  fValue = TString::Format("%s:bool", name.Data());
+}
+
+void Algorithms::ImportBool::StoreValue (HAL::GenericData *gen_data) {
+  HAL::AnalysisData *data = GetUserData();
+  HAL::AnalysisTreeReader *tr = GetRawData();
+
+  data->SetValue(fUserDataLabel, tr->GetBool(fValue));
+  gen_data->SetRefName(fUserDataLabel);
+  gen_data->SetRefType("bool");
+}
+
+Algorithms::ImportInteger::ImportInteger (TString name, TString title) : 
+  ImportValueAlgo(name, title) {
+
+  fValue = TString::Format("%s:integer", name.Data());
+}
+
+void Algorithms::ImportInteger::StoreValue (HAL::GenericData *gen_data) {
+  HAL::AnalysisData *data = GetUserData();
+  HAL::AnalysisTreeReader *tr = GetRawData();
+
+  data->SetValue(fUserDataLabel, tr->GetInteger(fValue));
+  gen_data->SetRefName(fUserDataLabel);
+  gen_data->SetRefType("integer");
+}
+
+Algorithms::ImportCounting::ImportCounting (TString name, TString title) : 
+  ImportValueAlgo(name, title) {
+
+  fValue = TString::Format("%s:counting", name.Data());
+}
+
+void Algorithms::ImportCounting::StoreValue (HAL::GenericData *gen_data) {
+  HAL::AnalysisData *data = GetUserData();
+  HAL::AnalysisTreeReader *tr = GetRawData();
+
+  data->SetValue(fUserDataLabel, tr->GetCounting(fValue));
+  gen_data->SetRefName(fUserDataLabel);
+  gen_data->SetRefType("counting");
+}
+
+Algorithms::ImportDecimal::ImportDecimal (TString name, TString title) : 
+  ImportValueAlgo(name, title) {
+
+  fValue = TString::Format("%s:decimal", name.Data());
+}
+
+void Algorithms::ImportDecimal::StoreValue (HAL::GenericData *gen_data) {
+  HAL::AnalysisData *data = GetUserData();
+  HAL::AnalysisTreeReader *tr = GetRawData();
+
+  data->SetValue(fUserDataLabel, tr->GetDecimal(fValue));
+  gen_data->SetRefName(fUserDataLabel);
+  gen_data->SetRefType("decimal");
 }
 
 /*
@@ -461,6 +516,7 @@ void Algorithms::VecAddReco::Exec (Option_t* /*option*/) {
     gen_data->AddParticle(new_particle);
     new_particle->SetOriginIndex(gen_data->GetNParticles() - 1);
   }
+  gen_data->SetRefType("none");
 }
 
 void Algorithms::VecAddReco::Clear (Option_t* /*option*/) {
@@ -708,10 +764,60 @@ bool Algorithms::SelectDeltaTLV::FilterPredicate (HAL::ParticlePtr p_ref, HAL::P
  * Cutting Algorithms
  * */
 
-Algorithms::CutNObjects::CutNObjects (TString name, TString title, TString logic, 
-    long long n, long long length, ...) :
-  CutAlgorithm(name, title), fAnd(false), fOr(false), fLength(length), fN(n) {
-  fParticleNames = new const char*[fLength];
+//Algorithms::CutNObjects::CutNObjects (TString name, TString title, TString logic, 
+//    long long n, long long length, ...) :
+//  CutAlgorithm(name, title), fAnd(false), fOr(false), fLength(length), fN(n) {
+//  fParticleNames = new const char*[fLength];
+//  va_list arguments;  // store the variable list of arguments
+//
+//  if (logic.EqualTo("and", TString::kIgnoreCase))
+//    fAnd = true;
+//  else if (logic.EqualTo("or", TString::kIgnoreCase))
+//    fOr = true;
+//  va_start (arguments, length); // initializing arguments to store all values after length
+//  for (long long i = 0; i < fLength; ++i)
+//    fParticleNames[i] = va_arg(arguments, const char*);
+//  va_end(arguments); // cleans up the list
+//}
+//
+//void Algorithms::CutNObjects::Exec (Option_t* /*option*/) {
+//  AnalysisData *data = GetUserData();
+//  HAL::GenericData *input_data = NULL;
+//
+//  if (fAnd) {
+//    for (long long i = 0; i < fLength; ++i) {
+//      if (!data->Exists(fParticleNames[i])) {
+//        Abort();
+//        return;
+//      }
+//      input_data = (GenericData*)data->GetTObject(fParticleNames[i]);
+//      if (input_data->GetNParticles() < (size_t)fN) {
+//        Abort();
+//        return;
+//      }
+//    }
+//
+//    Passed();
+//  }
+//  else if (fOr) {
+//    for (long long i = 0; i < fLength; ++i) {
+//      if (data->Exists(fParticleNames[i])) {
+//        input_data = (GenericData*)data->GetTObject(fParticleNames[i]);
+//        if (input_data->GetNParticles() >= (size_t)fN) {
+//          Passed();
+//          return;
+//        }
+//      }
+//    }
+//
+//    Abort();
+//  }
+//}
+
+Algorithms::Cut::Cut (TString name, TString title, TString logic, 
+    long long length, ...) :
+  CutAlgorithm(name, title), fAnd(false), fOr(false) {
+  length *= 4; // arguements should come as sets of four
   va_list arguments;  // store the variable list of arguments
 
   if (logic.EqualTo("and", TString::kIgnoreCase))
@@ -719,43 +825,228 @@ Algorithms::CutNObjects::CutNObjects (TString name, TString title, TString logic
   else if (logic.EqualTo("or", TString::kIgnoreCase))
     fOr = true;
   va_start (arguments, length); // initializing arguments to store all values after length
-  for (long long i = 0; i < fLength; ++i)
-    fParticleNames[i] = va_arg(arguments, const char*);
+  for (long long i = 0; i < length; i += 4) {
+    const char* algo_name = va_arg(arguments, const char*);
+    const char* type = va_arg(arguments, const char*);
+    TString Type(type);
+    const char* op = va_arg(arguments, const char*);
+    TString Op(op);
+
+    if (Type.EqualTo("bool")) {
+      BoolAlgoInfo *Algo = new BoolAlgoInfo();
+      Algo->fValue = (bool)va_arg(arguments, int);
+      Algo->fName = algo_name;
+      if (Op.EqualTo("==") || Op.EqualTo("="))
+        Algo->fEqual = true;
+      else if (Op.EqualTo("!="))
+        Algo->fNotEqual = true;
+      else if (Op.EqualTo(">"))
+        Algo->fGreaterThan = true;
+      else if (Op.EqualTo("<"))
+        Algo->fLessThan = true;
+      else if (Op.EqualTo(">="))
+        Algo->fGreaterThanEqual = true;
+      else if (Op.EqualTo("<="))
+        Algo->fLessThanEqual = true;
+      fAlgorithms.push_back(Algo);
+    }
+    else if (Type.EqualTo("integer")) {
+      IntegerAlgoInfo *Algo = new IntegerAlgoInfo();
+      Algo->fValue = va_arg(arguments, long long);
+      Algo->fName = algo_name;
+      if (Op.EqualTo("==") || Op.EqualTo("="))
+        Algo->fEqual = true;
+      else if (Op.EqualTo("!="))
+        Algo->fNotEqual = true;
+      else if (Op.EqualTo(">"))
+        Algo->fGreaterThan = true;
+      else if (Op.EqualTo("<"))
+        Algo->fLessThan = true;
+      else if (Op.EqualTo(">="))
+        Algo->fGreaterThanEqual = true;
+      else if (Op.EqualTo("<="))
+        Algo->fLessThanEqual = true;
+      fAlgorithms.push_back(Algo);
+    }
+    else if (Type.EqualTo("counting")) {
+      CountingAlgoInfo *Algo = new CountingAlgoInfo();
+      Algo->fValue = va_arg(arguments, unsigned long long);
+      Algo->fName = algo_name;
+      if (Op.EqualTo("==") || Op.EqualTo("="))
+        Algo->fEqual = true;
+      else if (Op.EqualTo("!="))
+        Algo->fNotEqual = true;
+      else if (Op.EqualTo(">"))
+        Algo->fGreaterThan = true;
+      else if (Op.EqualTo("<"))
+        Algo->fLessThan = true;
+      else if (Op.EqualTo(">="))
+        Algo->fGreaterThanEqual = true;
+      else if (Op.EqualTo("<="))
+        Algo->fLessThanEqual = true;
+      fAlgorithms.push_back(Algo);
+    }
+    else if (Type.EqualTo("decimal")) {
+      DecimalAlgoInfo *Algo = new DecimalAlgoInfo();
+      Algo->fValue = va_arg(arguments, long double);
+      Algo->fName = algo_name;
+      if (Op.EqualTo("==") || Op.EqualTo("="))
+        Algo->fEqual = true;
+      else if (Op.EqualTo("!="))
+        Algo->fNotEqual = true;
+      else if (Op.EqualTo(">"))
+        Algo->fGreaterThan = true;
+      else if (Op.EqualTo("<"))
+        Algo->fLessThan = true;
+      else if (Op.EqualTo(">="))
+        Algo->fGreaterThanEqual = true;
+      else if (Op.EqualTo("<="))
+        Algo->fLessThanEqual = true;
+      fAlgorithms.push_back(Algo);
+    }
+    else if (Type.EqualTo("particle")) {
+      NParticlesAlgoInfo *Algo = new NParticlesAlgoInfo();
+      Algo->fValue = va_arg(arguments, long long);
+      Algo->fName = algo_name;
+      if (Op.EqualTo("==") || Op.EqualTo("="))
+        Algo->fEqual = true;
+      else if (Op.EqualTo("!="))
+        Algo->fNotEqual = true;
+      else if (Op.EqualTo(">"))
+        Algo->fGreaterThan = true;
+      else if (Op.EqualTo("<"))
+        Algo->fLessThan = true;
+      else if (Op.EqualTo(">="))
+        Algo->fGreaterThanEqual = true;
+      else if (Op.EqualTo("<="))
+        Algo->fLessThanEqual = true;
+      fAlgorithms.push_back(Algo);
+    }
+  }
   va_end(arguments); // cleans up the list
 }
 
-void Algorithms::CutNObjects::Exec (Option_t* /*option*/) {
+Algorithms::Cut::~Cut () {
+  for (std::vector<AlgoInfo*>::iterator it = fAlgorithms.begin();
+      it != fAlgorithms.end(); ++it) {
+    delete *it;
+  }
+}
+
+void Algorithms::Cut::Exec (Option_t* /*option*/) {
   AnalysisData *data = GetUserData();
   HAL::GenericData *input_data = NULL;
 
   if (fAnd) {
-    for (long long i = 0; i < fLength; ++i) {
-      if (!data->Exists(fParticleNames[i])) {
+    for (std::vector<AlgoInfo*>::iterator it = fAlgorithms.begin();
+         it != fAlgorithms.end(); ++it) {
+      if (!data->Exists((*it)->fName)) {
         Abort();
         return;
       }
-      input_data = (GenericData*)data->GetTObject(fParticleNames[i]);
-      if (input_data->GetNParticles() < (size_t)fN) {
+      input_data = (GenericData*)data->GetTObject((*it)->fName);
+      if (!(*it)->Eval(data, input_data)) {
         Abort();
         return;
       }
     }
-
     Passed();
   }
   else if (fOr) {
-    for (long long i = 0; i < fLength; ++i) {
-      if (data->Exists(fParticleNames[i])) {
-        input_data = (GenericData*)data->GetTObject(fParticleNames[i]);
-        if (input_data->GetNParticles() >= (size_t)fN) {
+    for (std::vector<AlgoInfo*>::iterator it = fAlgorithms.begin();
+         it != fAlgorithms.end(); ++it) {
+      if (!data->Exists((*it)->fName)) {
+        input_data = (GenericData*)data->GetTObject((*it)->fName);
+        if (!(*it)->Eval(data, input_data)) {
           Passed();
           return;
         }
       }
     }
-
     Abort();
   }
+}
+
+bool  Algorithms::Cut::BoolAlgoInfo::Eval (HAL::AnalysisData *data, HAL::GenericData *gen_data) {
+  bool current_value = data->GetBool(gen_data->GetRefName());
+
+  if (fEqual && current_value == fValue)
+    return true;
+  if (fNotEqual && current_value != fValue)
+    return true;
+  return false;
+}
+
+bool  Algorithms::Cut::IntegerAlgoInfo::Eval (HAL::AnalysisData *data, HAL::GenericData *gen_data) {
+  long long current_value = data->GetInteger(gen_data->GetRefName());
+
+  if (fEqual && current_value == fValue)
+    return true;
+  if (fNotEqual && current_value != fValue)
+    return true;
+  if (fLessThan && current_value < fValue)
+    return true;
+  if (fGreaterThan && current_value > fValue)
+    return true;
+  if (fLessThanEqual && current_value <= fValue)
+    return true;
+  if (fGreaterThanEqual && current_value >= fValue)
+    return true;
+  return false;
+}
+
+bool  Algorithms::Cut::CountingAlgoInfo::Eval (HAL::AnalysisData *data, HAL::GenericData *gen_data) {
+  unsigned long long current_value = data->GetCounting(gen_data->GetRefName());
+
+  if (fEqual && current_value == fValue)
+    return true;
+  if (fNotEqual && current_value != fValue)
+    return true;
+  if (fLessThan && current_value < fValue)
+    return true;
+  if (fGreaterThan && current_value > fValue)
+    return true;
+  if (fLessThanEqual && current_value <= fValue)
+    return true;
+  if (fGreaterThanEqual && current_value >= fValue)
+    return true;
+  return false;
+}
+
+bool  Algorithms::Cut::DecimalAlgoInfo::Eval (HAL::AnalysisData *data, HAL::GenericData *gen_data) {
+  long double current_value = data->GetDecimal(gen_data->GetRefName());
+
+  if (fEqual && current_value == fValue)
+    return true;
+  if (fNotEqual && current_value != fValue)
+    return true;
+  if (fLessThan && current_value < fValue)
+    return true;
+  if (fGreaterThan && current_value > fValue)
+    return true;
+  if (fLessThanEqual && current_value <= fValue)
+    return true;
+  if (fGreaterThanEqual && current_value >= fValue)
+    return true;
+  return false;
+}
+
+bool  Algorithms::Cut::NParticlesAlgoInfo::Eval (HAL::AnalysisData * /*data*/, HAL::GenericData *gen_data) {
+  long long current_value = gen_data->GetNParticles();
+
+  if (fEqual && current_value == fValue)
+    return true;
+  if (fNotEqual && current_value != fValue)
+    return true;
+  if (fLessThan && current_value < fValue)
+    return true;
+  if (fGreaterThan && current_value > fValue)
+    return true;
+  if (fLessThanEqual && current_value <= fValue)
+    return true;
+  if (fGreaterThanEqual && current_value >= fValue)
+    return true;
+  return false;
 }
 
 /*

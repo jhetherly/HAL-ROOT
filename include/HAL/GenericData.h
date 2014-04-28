@@ -24,9 +24,11 @@ public:
   virtual ~GenericData ();
 
   void          SetRefName (const TString &name) {fUserDataRefName = name;}
+  void          SetRefType (const TString &type) {fUserDataRefType = type;}
   void          AddParticle (ParticlePtr particle) {fParticles.push_back(particle);}
   void          SetParticles (const TString &name, ParticlePtrs &particles) {f1DParticles[name] = particles;}
   inline TString        GetRefName () {return fUserDataRefName;}
+  inline TString        GetRefType () {return fUserDataRefType;}
   inline ParticlePtr    GetParticle (const long long &index) {return fParticles[index];}
   inline ParticlePtrsIt GetParticleBegin () {return fParticles.begin();}
   inline ParticlePtrsIt GetParticleEnd () {return fParticles.end();}
@@ -45,7 +47,7 @@ public:
 private:
   bool                                                  fIsOwner;
   // used if value is stored in 'UserData' (i.e. a trigger boolean)
-  TString                                               fUserDataRefName; 
+  TString                                               fUserDataRefName, fUserDataRefType; 
   // list of actual particles (and actual owner of memory)
   ParticlePtrs                                          fParticles;
   // the following is for sorted lists, etc...

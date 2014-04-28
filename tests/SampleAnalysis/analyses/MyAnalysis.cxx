@@ -49,8 +49,10 @@ int main(int argc, char *argv[]) {
   a.AddAlgo(new HAL::Algorithms::SelectDeltaTLV("jets close", "filter on jets within deltaR of di-jet", 
                                                 "di-jetfinal", "jets", // input, reference algorithms
                                                 0.4)); // Delta R value
-  a.AddAlgo(new HAL::Algorithms::CutNObjects("di-jet existence cut", "make sure 1 dijet exists", "and",
-                                             1, 1, "di-jetfinal"));
+  //a.AddAlgo(new HAL::Algorithms::CutNObjects("di-jet existence cut", "make sure 1 dijet exists", "and",
+  //                                           1, 1, "di-jetfinal"));
+  a.AddAlgo(new HAL::Algorithms::Cut("di-jet existence cut", "make sure 1 dijet exists", "and", 1,
+                                     "di-jetfinal", "particle", "==", 1));
   a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet mass", "store the mass of the di-jet system", 
                                           "di-jetfinal", "m", "dijet_mass2")); // input, branch
   a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet pt", "store the pt of the di-jet system", 

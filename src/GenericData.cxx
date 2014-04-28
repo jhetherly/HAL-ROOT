@@ -6,7 +6,7 @@ namespace HAL
 {
 
 HAL::GenericData::GenericData (const TString &name, bool is_owner) : 
-  fIsOwner(is_owner), fUserDataRefName("") {
+  fIsOwner(is_owner), fUserDataRefName(""), fUserDataRefType("") {
   fParticles.reserve(20);
   SetName(name.Data());
 }
@@ -14,6 +14,7 @@ HAL::GenericData::GenericData (const TString &name, bool is_owner) :
 HAL::GenericData::GenericData (const GenericData &data) : 
   TNamed() {
   fUserDataRefName = data.fUserDataRefName; 
+  fUserDataRefType = data.fUserDataRefType; 
   fParticles.reserve(20);
   for (ParticlePtrsConstIt particle = data.fParticles.begin(); 
        particle != data.fParticles.end(); ++particle) {
@@ -44,7 +45,8 @@ std::ostream& operator<<(std::ostream& os, HAL::GenericData &data) {
     }
   }
   if (!data.GetRefName().EqualTo(""))
-    os << "This algorithm references " << data.GetRefName() << "in \"UserData\"" << std::endl;
+    os << "This algorithm references " << data.GetRefName() << " of type " 
+       << data.GetRefType() << " in \"UserData\"" << std::endl;
   if (!data.f1DParticles.empty()) {
     os << "Particle arrays:" << std::endl;
     for (std::map<TString, ParticlePtrs>::iterator it = data.f1DParticles.begin();
