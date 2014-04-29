@@ -23,46 +23,45 @@ int main(int argc, char *argv[]) {
   //      "/Users/jhetherly/src/root_HAL/tests/SampleAnalysis/algorithms/python", 
   //      "pyalgo", 
   //      "PythonAlgo"));
-  a.AddAlgo(new HAL::Algorithms::ImportTLV("jets", "import basic jet objects"));
+  a.AddAlgo(new HAL::Algorithms::ImportParticle("jets", "import basic jet objects"));
+
   a.AddAlgo(new HAL::Algorithms::EmptyCut("number of events", "baseline event number"));
+
   a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("leading pt jet", "find highest pt jet", 
                                                        "jets", // input algorithm
                                                        1, "pt")); // rank in pt
   a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("subleading pt jet", "find 2nd highest pt jet", 
                                                        "jets", // input algorithm
                                                        2, "pt")); // rank in pt
+
   a.AddAlgo(new HAL::Algorithms::VecAddReco("di-jet", "reconstruct a di-jet object from highest pt", 
                                             2, "leading pt jet", "subleading pt jet"));
   //a.AddAlgo(new HAL::Algorithms::VecAddReco("di-jet any", "reconstruct a di-jet object", 
   //                                          2, "jets", "jets"));
   //a.AddAlgo(new HAL::Algorithms::VecAddReco("double di-jet any", "reconstruct a double di-jet object", 
   //                                          2, "di-jet any", "di-jet any"));
-  //a.AddAlgo(new HAL::Algorithms::MonitorAlgorithm("jet monitor", "look at the jet objects", "jets"));
-  a.AddAlgo(new HAL::Algorithms::MonitorAlgorithm("di-jet monitor", "look at the di-jet object", "di-jet"));
-  //a.AddAlgo(new HAL::Algorithms::MonitorAlgorithm("di-jet monitor", "look at the di-jet object", "double di-jet any"));
+  //a.AddAlgo(new HAL::Algorithms::MonitorAlgorithm("di-jet monitor", "look at the di-jet object", "double di-jet any", 100));
+
   a.AddAlgo(new HAL::Algorithms::SelectParticle("di-jet50pt", "filter on di-jet pt >= 50GeV", 
                                            "di-jet", // input algorithm
-                                           "pt", 50000)); // pT value
+                                           "pt", ">=", 50000)); // pT value
   a.AddAlgo(new HAL::Algorithms::SelectParticle("di-jetfinal", "filter on di-jet |eta| <= 1.5", 
                                            "di-jet50pt", // input algorithm
                                            "eta", -1.5, 1.5)); // eta low and high values
   a.AddAlgo(new HAL::Algorithms::SelectDeltaTLV("jets close", "filter on jets within deltaR of di-jet", 
                                                 "di-jetfinal", "jets", // input, reference algorithms
                                                 0.4)); // Delta R value
-  //a.AddAlgo(new HAL::Algorithms::CutNObjects("di-jet existence cut", "make sure 1 dijet exists", "and",
-  //                                           1, 1, "di-jetfinal"));
+
   a.AddAlgo(new HAL::Algorithms::Cut("di-jet existence cut", "make sure 1 dijet exists", "and", 1,
                                      "di-jetfinal", "particle", "==", 1));
-  a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet mass", "store the mass of the di-jet system", 
-                                          "di-jetfinal", "m", "dijet_mass2")); // input, branch
-  a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet pt", "store the pt of the di-jet system", 
-                                          "di-jetfinal", "pt", "dijet_pt")); // input, branch
-  a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet eta", "store the eta of the di-jet system", 
-                                          "di-jetfinal", "eta", "dijet_eta")); // input, branch
-  
-  //a.AddAlgo(new DiJetReco());
-  //a.AddAlgo(new DiJetCut());
 
+  a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet mass", "store the mass of the di-jet system", 
+                                          "di-jetfinal", "m", "dijet_mass")); // input, type, branch
+  a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet", "store the di-jet system", 
+                                          "di-jetfinal", "all", "dijet")); // input, type, branch
+  a.AddAlgo(new HAL::Algorithms::StoreTLV("store jets", "store jets", 
+                                          "jets", "all", "jets", "many")); // input, type, branch, number
+  
   // Assign any branch maps
   a.MapBranch("jet_AntiKt4TruthJets_n", "jets:nentries");
   a.MapBranch("jet_AntiKt4TruthJets_pt", "jets:pT");
@@ -94,8 +93,8 @@ int main(int argc, char *argv[]) {
   //a.SetMessagePeriod();
   a.SetMessagePeriod(1000);
   // Run the analysis
-  a.Process("", 10);
-  //a.Process();
+  //a.Process("", 1000);
+  a.Process();
 
   a.PrintCutReport();
   a.PrintCounterSummary();

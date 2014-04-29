@@ -52,17 +52,25 @@ namespace internal
 /*
  * Algorithm for importing an array of TLorentzVecotr's from a TTree.
  * */
-class ImportTLVAlgo : public HAL::Algorithm {
+class ImportParticleAlgo : public HAL::Algorithm {
 public:
-  ImportTLVAlgo (TString name, TString title);
-  virtual ~ImportTLVAlgo () {}
+  ImportParticleAlgo (TString name, TString title);
+  virtual ~ImportParticleAlgo () {}
 
 protected:
+  virtual void Init (Option_t* /*option*/);
   virtual void Exec (Option_t* /*option*/) {}
   virtual void Exec (unsigned n);
   virtual void Clear (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned) = 0;
 
+  bool      fIsCart, fIsE, fIsM;
+  bool      fIsCartMET, fIsPhiEtMET;
+  bool      fHasCharge, fHasID;
+  TString   fCartX0, fCartX1, fCartX2, fCartX3, fPt, fEt;
+  TString   fEta, fPhi, fM, fE;
+  TString   fCharge, fID;
+  TString   fNEntriesName;
 };
 
 /*
@@ -175,7 +183,7 @@ public:
 
 protected:
   virtual void    Exec (Option_t* /*option*/);
-  virtual double  StoreValue (HAL::ParticlePtr) = 0;
+  virtual void    StoreValue (HAL::AnalysisTreeWriter*, long long, HAL::ParticlePtr) = 0;
 
   bool            fMany;
   TString         fBranchName, fInput;
@@ -220,31 +228,34 @@ namespace Algorithms
  *  <name>:eta
  *  <name>:phi
  *  <name>:m
+ *  OR
+ *  <name>:x1
+ *  <name>:x2
+ *  OR
+ *  <name>:pt
+ *  <name>:phi
+ *  OR
+ *  <name>:et
+ *  <name>:phi
  * Optional Branch Maps:
  *  <name>:nentries
+ *  <name>:charge
+ *  <name>:id
  * UserData Output:
- *  <name>:nobjects (scalar: number of particles)
- *  <name>:4-vec (1D array: of TLorentzVectors)
- *  <name>:index (1D array: of indices)
+ *  <name>
  */
-class ImportTLV : public HAL::internal::ImportTLVAlgo {
+class ImportParticle : public HAL::internal::ImportParticleAlgo {
 public:
-  ImportTLV (TString name, TString title, unsigned n = 0);
-  virtual ~ImportTLV () {}
+  ImportParticle (TString name, TString title, unsigned n = 0);
+  virtual ~ImportParticle () {}
 
 protected:
-  using ImportTLVAlgo::Exec;
-  virtual void Init (Option_t* /*option*/);
+  using ImportParticleAlgo::Exec;
   virtual void Exec (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned);
 
 private:
   unsigned  fN;
-  bool      fIsCart, fIsE, fIsM;
-  bool      fIsCartMET, fIsPhiEtMET;
-  TString   fCartX0, fCartX1, fCartX2, fCartX3, fPt, fEt;
-  TString   fEta, fPhi, fM, fE;
-  TString   fNEntriesName;
 };
 
 
@@ -441,9 +452,11 @@ protected:
 class SelectParticle : public internal::FilterParticleAlgo {
 public:
   SelectParticle (TString name, TString title, TString input, TString property, 
-      double value, TString end = "low");
+      TString op, double value);
   SelectParticle (TString name, TString title, TString input, TString property, 
       double low, double high);
+  SelectParticle (TString name, TString title, TString input, TString property, 
+      int length, ...);
   virtual ~SelectParticle () {}
 
   virtual bool FilterPredicate(HAL::ParticlePtr);
@@ -452,8 +465,11 @@ private:
   void      Setup ();
 
   double    fHighLimit, fLowLimit;
-  bool      fPt, fM, fE, fEt, fP3, fEta, fPhi, fHigh, fLow, fWindow;
-  TString   fTLVProperty, fEnd;
+  bool      fPt, fM, fE, fEt, fP3, fEta, fPhi, fCharge, fID;
+  bool      fEqual, fNotEqual, fLessThan, fGreaterThan, fLessThanEqual, fGreaterThanEqual;
+  bool      fSingleEnd, fWindow, fList;
+  TString   fProperty;
+  std::vector<double> fListValues;
 };
 
 
@@ -511,32 +527,6 @@ public:
 protected:
   virtual void Exec (Option_t* /*option*/) {Passed();}
 };
-
-
-///*
-// * Cut on number of objects
-// * (logical 'and' or 'or')
-// *
-// * Prerequisites:
-// *  Stored objects
-// * Required Branch Maps:
-// *  None
-// * UserData Output:
-// *  None
-// * */
-//class CutNObjects : public CutAlgorithm {
-//public:
-//  CutNObjects (TString name, TString title, TString logic, long long n, long long length, ...);
-//  virtual ~CutNObjects () {}
-//
-//protected:
-//  virtual void Exec (Option_t* /*option*/);
-//
-//private:
-//  bool          fAnd, fOr;
-//  long long     fLength, fN;
-//  const char**  fParticleNames;
-//};
 
 
 /*
@@ -616,14 +606,15 @@ private:
  * */
 class MonitorAlgorithm : public HAL::Algorithm {
 public:
-  MonitorAlgorithm (TString name, TString title, TString input, std::ostream &os = std::cout) :
-    Algorithm(name, title), fInput(input), fOS(&os) {}
+  MonitorAlgorithm (TString name, TString title, TString input, long long n = 1, std::ostream &os = std::cout) :
+    Algorithm(name, title), fN(n), fInput(input), fOS(&os) {}
   virtual ~MonitorAlgorithm () {}
 
 protected:
   virtual void Exec (Option_t* /*option*/);
 
 private:
+  long long      fN;
   TString        fInput;
   std::ostream  *fOS;
 };
@@ -671,10 +662,11 @@ public:
   virtual ~StoreTLV () {}
 
 protected:
-  virtual double  StoreValue (HAL::ParticlePtr);
+  virtual void  StoreValue (HAL::AnalysisTreeWriter*, long long, HAL::ParticlePtr);
 
 private:
-  bool            fPt, fM, fE, fEt, fP3, fEta, fPhi;
+  bool            fAll, fPt, fM, fE, fEt, fP3, fEta, fPhi;
+  TString         fPtLabel, fEtaLabel, fPhiLabel, fMLabel, fELabel;
 };
 
 } /* Algorithms */ 

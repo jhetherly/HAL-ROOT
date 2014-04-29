@@ -6,12 +6,59 @@ namespace HAL
 /*
  * Generic classes
  * */
-internal::ImportTLVAlgo::ImportTLVAlgo (TString name, TString title) : 
-  HAL::Algorithm(name, title) {
+internal::ImportParticleAlgo::ImportParticleAlgo (TString name, TString title) : 
+  HAL::Algorithm(name, title), fIsCart(false), fIsE(false), fIsM(false), 
+  fIsCartMET(false), fIsPhiEtMET(false), fHasCharge(false), fHasID(false) {
+
+  fCartX0 = TString::Format("%s:x0", GetName().Data());
+  fCartX1 = TString::Format("%s:x1", GetName().Data());
+  fCartX2 = TString::Format("%s:x2", GetName().Data());
+  fCartX3 = TString::Format("%s:x3", GetName().Data());
+  fPt = TString::Format("%s:pt", GetName().Data());
+  fEt = TString::Format("%s:et", GetName().Data());
+  fEta = TString::Format("%s:eta", GetName().Data());
+  fPhi = TString::Format("%s:phi", GetName().Data());
+  fM = TString::Format("%s:m", GetName().Data());
+  fE = TString::Format("%s:e", GetName().Data());
+  fCharge = TString::Format("%s:charge", GetName().Data());
+  fID = TString::Format("%s:id", GetName().Data());
+  fNEntriesName = TString::Format("%s:nentries", GetName().Data());
 }
 
-void internal::ImportTLVAlgo::Exec (unsigned n) {
+void internal::ImportParticleAlgo::Init (Option_t* /*option*/) {
+  HAL::AnalysisTreeReader *tr = GetRawData();
+
+  if (tr->CheckBranchMapNickname(fCartX0) && tr->CheckBranchMapNickname(fCartX1) && 
+      tr->CheckBranchMapNickname(fCartX2) && tr->CheckBranchMapNickname(fCartX3))
+    fIsCart = true;
+  else if (tr->CheckBranchMapNickname(fE) && tr->CheckBranchMapNickname(fPt) &&
+           tr->CheckBranchMapNickname(fEta) && tr->CheckBranchMapNickname(fPhi))
+    fIsE = true;
+  else if (tr->CheckBranchMapNickname(fM) && tr->CheckBranchMapNickname(fPt) &&
+           tr->CheckBranchMapNickname(fEta) && tr->CheckBranchMapNickname(fPhi))
+    fIsM = true;
+  else if (!tr->CheckBranchMapNickname(fCartX0) && tr->CheckBranchMapNickname(fCartX1) &&
+           tr->CheckBranchMapNickname(fCartX2) && !tr->CheckBranchMapNickname(fCartX3))
+    fIsCartMET = true;
+  else if ((tr->CheckBranchMapNickname(fEt) || tr->CheckBranchMapNickname(fPt)) &&
+           tr->CheckBranchMapNickname(fPhi) && !tr->CheckBranchMapNickname(fEta) &&
+           !tr->CheckBranchMapNickname(fM) && !tr->CheckBranchMapNickname(fE))
+    fIsPhiEtMET = true;
+  if (!fIsCart && !fIsE && !fIsM && !fIsCartMET && !fIsPhiEtMET)
+    HAL::HALException(GetName().Prepend("Couldn't determine how to import data: ").Data());
+
+  if (tr->CheckBranchMapNickname(fCharge))
+    fHasCharge = true;
+  if (tr->CheckBranchMapNickname(fID))
+    fHasID = true;
+  // Use only one since these are synonyms
+  if (tr->CheckBranchMapNickname(fEt))
+    fPt = fEt;
+}
+
+void internal::ImportParticleAlgo::Exec (unsigned n) {
   HAL::AnalysisData *data = GetUserData();
+  HAL::AnalysisTreeReader *tr = GetRawData();
   HAL::GenericData *gen_data = new GenericData(GetName(), true);
 
   data->SetValue(GetName(), gen_data);
@@ -21,6 +68,8 @@ void internal::ImportTLVAlgo::Exec (unsigned n) {
     TLorentzVector *vec = MakeTLV(i);
 
     particle->SetP (vec);
+    if (fHasCharge) particle->SetCharge(tr->GetInteger(fCharge, i));
+    if (fHasID) particle->SetID(tr->GetInteger(fID, i));
     gen_data->AddParticle(particle);
     particle->SetOriginIndex(gen_data->GetNParticles() - 1);
   }
@@ -29,7 +78,7 @@ void internal::ImportTLVAlgo::Exec (unsigned n) {
   IncreaseCounter(gen_data->GetNParticles());
 }
 
-void internal::ImportTLVAlgo::Clear (Option_t* /*option*/) {
+void internal::ImportParticleAlgo::Clear (Option_t* /*option*/) {
   delete GetUserData()->GetTObject(GetName());
 }
 
@@ -208,12 +257,13 @@ void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
   if (fMany) {
     long long i = 0;
     for (ParticlePtrsIt particle = input_data->GetParticleBegin(); 
-        particle != input_data->GetParticleEnd(); ++ particle) {
-      output->SetValue(fBranchName, StoreValue(*particle), i++);
-    }
+        particle != input_data->GetParticleEnd(); ++ particle)
+      //output->SetValue(fBranchName, StoreValue(*particle), i++);
+      StoreValue(output, i++, (*particle));
   }
   else
-    output->SetValue(fBranchName, StoreValue(input_data->GetParticle(0)));
+    //output->SetValue(fBranchName, StoreValue(input_data->GetParticle(0)));
+    StoreValue(output, 0, input_data->GetParticle(0));
 }
 
 
@@ -231,50 +281,11 @@ void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
  * Importing Algorithms
  * */
 
-Algorithms::ImportTLV::ImportTLV (TString name, TString title, unsigned n) : 
-  ImportTLVAlgo(name, title), fN(n), fIsCart(false), fIsE(false), fIsM(false), 
-  fIsCartMET(false), fIsPhiEtMET(false) {
+Algorithms::ImportParticle::ImportParticle (TString name, TString title, unsigned n) : 
+  ImportParticleAlgo(name, title), fN(n) {
 }
 
-void Algorithms::ImportTLV::Init (Option_t* /*option*/) {
-  HAL::AnalysisTreeReader *tr = GetRawData();
-
-  fCartX0 = TString::Format("%s:x0", GetName().Data());
-  fCartX1 = TString::Format("%s:x1", GetName().Data());
-  fCartX2 = TString::Format("%s:x2", GetName().Data());
-  fCartX3 = TString::Format("%s:x3", GetName().Data());
-  fPt = TString::Format("%s:pt", GetName().Data());
-  fEt = TString::Format("%s:et", GetName().Data());
-  fEta = TString::Format("%s:eta", GetName().Data());
-  fPhi = TString::Format("%s:phi", GetName().Data());
-  fM = TString::Format("%s:m", GetName().Data());
-  fE = TString::Format("%s:e", GetName().Data());
-  fNEntriesName = TString::Format("%s:nentries", GetName().Data());
-
-  if (tr->CheckBranchMapNickname(fCartX0) && tr->CheckBranchMapNickname(fCartX1) && 
-      tr->CheckBranchMapNickname(fCartX2) && tr->CheckBranchMapNickname(fCartX3))
-    fIsCart = true;
-  else if (tr->CheckBranchMapNickname(fE) && tr->CheckBranchMapNickname(fPt) &&
-           tr->CheckBranchMapNickname(fEta) && tr->CheckBranchMapNickname(fPhi))
-    fIsE = true;
-  else if (tr->CheckBranchMapNickname(fM) && tr->CheckBranchMapNickname(fPt) &&
-           tr->CheckBranchMapNickname(fEta) && tr->CheckBranchMapNickname(fPhi))
-    fIsM = true;
-  else if (!tr->CheckBranchMapNickname(fCartX0) && tr->CheckBranchMapNickname(fCartX1) &&
-           tr->CheckBranchMapNickname(fCartX2) && !tr->CheckBranchMapNickname(fCartX3))
-    fIsCartMET = true;
-  else if ((tr->CheckBranchMapNickname(fEt) || tr->CheckBranchMapNickname(fPt)) &&
-           tr->CheckBranchMapNickname(fPhi) && !tr->CheckBranchMapNickname(fEta))
-    fIsPhiEtMET = true;
-  if (!fIsCart && !fIsE && !fIsM && !fIsCartMET && !fIsPhiEtMET)
-    HAL::HALException(GetName().Prepend("Couldn't determine how to import data: ").Data());
-
-  // Use only one since these are synonyms
-  if (tr->CheckBranchMapNickname(fEt))
-    fPt = fEt;
-}
-
-void Algorithms::ImportTLV::Exec (Option_t* /*option*/) {
+void Algorithms::ImportParticle::Exec (Option_t* /*option*/) {
   HAL::AnalysisTreeReader *tr = GetRawData();
   long long n = fN;
 
@@ -297,10 +308,10 @@ void Algorithms::ImportTLV::Exec (Option_t* /*option*/) {
     }
   }
   // call actual Exec algo
-  ImportTLVAlgo::Exec(n);
+  ImportParticleAlgo::Exec(n);
 }
 
-TLorentzVector* Algorithms::ImportTLV::MakeTLV (unsigned i) {
+TLorentzVector* Algorithms::ImportParticle::MakeTLV (unsigned i) {
   HAL::AnalysisTreeReader *tr = GetRawData();
 
   if (fIsCart) {
@@ -594,55 +605,182 @@ void Algorithms::ParticleRankSelection::Sort (ParticlePtrs &sl) {
   std::stable_sort(sl.begin(), sl.end(), *this);
 }
 
-Algorithms::SelectParticle::SelectParticle (TString name, TString title, TString input, TString property, 
-    double value, TString end) : 
+Algorithms::SelectParticle::SelectParticle (TString name, TString title, TString input, 
+    TString property, TString op, double value) : 
   FilterParticleAlgo(name, title, input), 
   fPt(false), fM(false), fE(false), fEt(false), fP3(false), fEta(false), 
-  fPhi(false), fHigh(false), fLow(false), fWindow(false),
-  fTLVProperty(property), fEnd(end) {
+  fPhi(false), fCharge(false), fID(false), fEqual(false), fNotEqual(false), 
+  fLessThan(false), fGreaterThan(false), fLessThanEqual(false), 
+  fGreaterThanEqual(false), fSingleEnd(true), fWindow(false), fList(false), 
+  fProperty(property) {
 
-  if (end.EqualTo("low", TString::kIgnoreCase)) {
-    fLow = true;
+  if (op.EqualTo("==") || op.EqualTo("=")) {
+    fEqual = true;
     fLowLimit = value;
   }
-  else if (end.EqualTo("high", TString::kIgnoreCase)) {
-    fHigh = true;
+  else if (op.EqualTo("!=")) {
+    fNotEqual = true;
+    fLowLimit = value;
+  }
+  else if (op.EqualTo(">")) {
+    fGreaterThan = true;
+    fLowLimit = value;
+  }
+  else if (op.EqualTo("<")) {
+    fLessThan = true;
     fHighLimit = value;
   }
+  else if (op.EqualTo(">=")) {
+    fGreaterThanEqual = true;
+    fLowLimit = value;
+  }
+  else if (op.EqualTo("<=")) {
+    fLessThanEqual = true;
+    fHighLimit = value;
+  }
+
   Setup();
 }
 
-Algorithms::SelectParticle::SelectParticle (TString name, TString title, TString input, TString property, 
-    double low, double high) : 
+Algorithms::SelectParticle::SelectParticle (TString name, TString title, TString input, 
+    TString property, double low, double high) : 
   FilterParticleAlgo(name, title, input), 
   fHighLimit(high), fLowLimit(low), 
   fPt(false), fM(false), fE(false), fEt(false), fP3(false), fEta(false), 
-  fPhi(false), fHigh(false), fLow(false), fWindow(true),
-  fTLVProperty(property), fEnd("window") {
+  fPhi(false), fCharge(false), fID(false), fEqual(false), fNotEqual(false), 
+  fLessThan(false), fGreaterThan(false), fLessThanEqual(false), 
+  fGreaterThanEqual(false), fSingleEnd(false), fWindow(true), fList(false), 
+  fProperty(property) {
+
+  Setup();
+}
+
+Algorithms::SelectParticle::SelectParticle (TString name, TString title, TString input, 
+    TString property, int length, ...) : 
+  FilterParticleAlgo(name, title, input), 
+  fPt(false), fM(false), fE(false), fEt(false), fP3(false), fEta(false), 
+  fPhi(false), fCharge(false), fID(false), fEqual(false), fNotEqual(false), 
+  fLessThan(false), fGreaterThan(false), fLessThanEqual(false), 
+  fGreaterThanEqual(false), fSingleEnd(false), fWindow(false), fList(true), 
+  fProperty(property) {
+
+  va_list arguments;  // store the variable list of arguments
+  va_start (arguments, length); // initializing arguments to store all values after length
+  for (long long i = 0; i < length; ++i) 
+    fListValues.push_back(va_arg(arguments, double));
+  va_end(arguments); // cleans up the list
+
   Setup();
 }
 
 void Algorithms::SelectParticle::Setup () {
-  if (fTLVProperty.EqualTo("pt", TString::kIgnoreCase))
+  if (fProperty.EqualTo("pt", TString::kIgnoreCase))
     fPt = true;
-  if (fTLVProperty.EqualTo("m", TString::kIgnoreCase))
+  if (fProperty.EqualTo("m", TString::kIgnoreCase))
     fM = true;
-  if (fTLVProperty.EqualTo("e", TString::kIgnoreCase))
+  if (fProperty.EqualTo("e", TString::kIgnoreCase))
     fE = true;
-  if (fTLVProperty.EqualTo("et", TString::kIgnoreCase))
+  if (fProperty.EqualTo("et", TString::kIgnoreCase))
     fEt = true;
-  if (fTLVProperty.EqualTo("p3", TString::kIgnoreCase))
+  if (fProperty.EqualTo("p3", TString::kIgnoreCase))
     fP3 = true;
-  if (fTLVProperty.EqualTo("eta", TString::kIgnoreCase))
+  if (fProperty.EqualTo("eta", TString::kIgnoreCase))
     fEta = true;
-  if (fTLVProperty.EqualTo("phi", TString::kIgnoreCase))
+  if (fProperty.EqualTo("phi", TString::kIgnoreCase))
     fPhi = true;
+  if (fProperty.EqualTo("charge", TString::kIgnoreCase))
+    fCharge = true;
+  if (fProperty.EqualTo("id", TString::kIgnoreCase))
+    fID = true;
 }
 
 bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
   TLorentzVector *vec = particle->GetP();
-  if (!fWindow) {
-    if (fLow) {
+  int charge = particle->GetCharge();
+  int id = particle->GetID();
+
+  if (fSingleEnd) {
+    if (fEqual) {
+      if (fPt)
+        return (vec->Pt() == fLowLimit);
+      else if (fM)
+        return (vec->M() == fLowLimit);
+      else if (fE)
+        return (vec->E() == fLowLimit);
+      else if (fEt)
+        return (vec->Et() == fLowLimit);
+      else if (fP3)
+        return (vec->P() == fLowLimit);
+      else if (fEta)
+        return (vec->Eta() == fLowLimit);
+      else if (fPhi)
+        return (vec->Phi() == fLowLimit);
+      else if (fID)
+        return (id == fLowLimit);
+      else if (fCharge)
+        return (charge == fLowLimit);
+    }
+    else if (fNotEqual) {
+      if (fPt)
+        return (vec->Pt() != fLowLimit);
+      else if (fM)
+        return (vec->M() != fLowLimit);
+      else if (fE)
+        return (vec->E() != fLowLimit);
+      else if (fEt)
+        return (vec->Et() != fLowLimit);
+      else if (fP3)
+        return (vec->P() != fLowLimit);
+      else if (fEta)
+        return (vec->Eta() != fLowLimit);
+      else if (fPhi)
+        return (vec->Phi() != fLowLimit);
+      else if (fID)
+        return (id != fLowLimit);
+      else if (fCharge)
+        return (charge != fLowLimit);
+    }
+    else if (fGreaterThan) {
+      if (fPt)
+        return (vec->Pt() > fLowLimit);
+      else if (fM)
+        return (vec->M() > fLowLimit);
+      else if (fE)
+        return (vec->E() > fLowLimit);
+      else if (fEt)
+        return (vec->Et() > fLowLimit);
+      else if (fP3)
+        return (vec->P() > fLowLimit);
+      else if (fEta)
+        return (vec->Eta() > fLowLimit);
+      else if (fPhi)
+        return (vec->Phi() > fLowLimit);
+      else if (fID)
+        return (id > fLowLimit);
+      else if (fCharge)
+        return (charge > fLowLimit);
+    }
+    else if (fLessThan) {
+      if (fPt)
+        return (vec->Pt() < fHighLimit);
+      else if (fM)
+        return (vec->M() < fHighLimit);
+      else if (fE)
+        return (vec->E() < fHighLimit);
+      else if (fEt)
+        return (vec->Et() < fHighLimit);
+      else if (fP3)
+        return (vec->P() < fHighLimit);
+      else if (fEta)
+        return (vec->Eta() < fHighLimit);
+      else if (fPhi)
+        return (vec->Phi() < fHighLimit);
+      else if (fID)
+        return (id < fHighLimit);
+      else if (fCharge)
+        return (charge < fHighLimit);
+    }
+    else if (fGreaterThanEqual) {
       if (fPt)
         return (vec->Pt() >= fLowLimit);
       else if (fM)
@@ -657,8 +795,12 @@ bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
         return (vec->Eta() >= fLowLimit);
       else if (fPhi)
         return (vec->Phi() >= fLowLimit);
+      else if (fID)
+        return (id >= fLowLimit);
+      else if (fCharge)
+        return (charge >= fLowLimit);
     }
-    else if (fHigh) {
+    else if (fLessThanEqual) {
       if (fPt)
         return (vec->Pt() <= fHighLimit);
       else if (fM)
@@ -673,9 +815,14 @@ bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
         return (vec->Eta() <= fHighLimit);
       else if (fPhi)
         return (vec->Phi() <= fHighLimit);
+      else if (fID)
+        return (id <= fHighLimit);
+      else if (fCharge)
+        return (charge <= fHighLimit);
     }
   }
-  else { // window cut
+
+  else if (fWindow) {
     if (fPt)
       return (vec->Pt() <= fHighLimit && vec->Pt() >= fLowLimit);
     else if (fM)
@@ -690,7 +837,79 @@ bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
       return (vec->Eta() <= fHighLimit && vec->Eta() >= fLowLimit);
     else if (fPhi)
       return (vec->Phi() <= fHighLimit && vec->Phi() >= fLowLimit);
+    else if (fID)
+      return (id <= fHighLimit && id >= fLowLimit);
+    else if (fCharge)
+      return (charge <= fHighLimit && charge >= fLowLimit);
   }
+
+  else if (fList) {
+    if (fPt) {
+      for (std::vector<double>::iterator val = fListValues.begin();
+           val != fListValues.end(); ++val) {
+        if (vec->Pt() == *val)
+          return true;
+      }
+    }
+    else if (fM) {
+      for (std::vector<double>::iterator val = fListValues.begin();
+           val != fListValues.end(); ++val) {
+        if (vec->M() == *val)
+          return true;
+      }
+    }
+    else if (fE) {
+      for (std::vector<double>::iterator val = fListValues.begin();
+           val != fListValues.end(); ++val) {
+        if (vec->E() == *val)
+          return true;
+      }
+    }
+    else if (fEt) {
+      for (std::vector<double>::iterator val = fListValues.begin();
+           val != fListValues.end(); ++val) {
+        if (vec->Et() == *val)
+          return true;
+      }
+    }
+    else if (fP3) {
+      for (std::vector<double>::iterator val = fListValues.begin();
+           val != fListValues.end(); ++val) {
+        if (vec->P() == *val)
+          return true;
+      }
+    }
+    else if (fEta) {
+      for (std::vector<double>::iterator val = fListValues.begin();
+           val != fListValues.end(); ++val) {
+        if (vec->Eta() == *val)
+          return true;
+      }
+    }
+    else if (fPhi) {
+      for (std::vector<double>::iterator val = fListValues.begin();
+           val != fListValues.end(); ++val) {
+        if (vec->Phi() == *val)
+          return true;
+      }
+    }
+    else if (fID) {
+      for (std::vector<double>::iterator val = fListValues.begin();
+           val != fListValues.end(); ++val) {
+        if (id == *val)
+          return true;
+      }
+    }
+    else if (fCharge) {
+      for (std::vector<double>::iterator val = fListValues.begin();
+           val != fListValues.end(); ++val) {
+        if (charge == *val)
+          return true;
+      }
+    }
+    return false;
+  }
+
   throw HAL::HALException(GetName().Prepend("Couldn't determine how to filter: "));
 }
 
@@ -764,60 +983,9 @@ bool Algorithms::SelectDeltaTLV::FilterPredicate (HAL::ParticlePtr p_ref, HAL::P
  * Cutting Algorithms
  * */
 
-//Algorithms::CutNObjects::CutNObjects (TString name, TString title, TString logic, 
-//    long long n, long long length, ...) :
-//  CutAlgorithm(name, title), fAnd(false), fOr(false), fLength(length), fN(n) {
-//  fParticleNames = new const char*[fLength];
-//  va_list arguments;  // store the variable list of arguments
-//
-//  if (logic.EqualTo("and", TString::kIgnoreCase))
-//    fAnd = true;
-//  else if (logic.EqualTo("or", TString::kIgnoreCase))
-//    fOr = true;
-//  va_start (arguments, length); // initializing arguments to store all values after length
-//  for (long long i = 0; i < fLength; ++i)
-//    fParticleNames[i] = va_arg(arguments, const char*);
-//  va_end(arguments); // cleans up the list
-//}
-//
-//void Algorithms::CutNObjects::Exec (Option_t* /*option*/) {
-//  AnalysisData *data = GetUserData();
-//  HAL::GenericData *input_data = NULL;
-//
-//  if (fAnd) {
-//    for (long long i = 0; i < fLength; ++i) {
-//      if (!data->Exists(fParticleNames[i])) {
-//        Abort();
-//        return;
-//      }
-//      input_data = (GenericData*)data->GetTObject(fParticleNames[i]);
-//      if (input_data->GetNParticles() < (size_t)fN) {
-//        Abort();
-//        return;
-//      }
-//    }
-//
-//    Passed();
-//  }
-//  else if (fOr) {
-//    for (long long i = 0; i < fLength; ++i) {
-//      if (data->Exists(fParticleNames[i])) {
-//        input_data = (GenericData*)data->GetTObject(fParticleNames[i]);
-//        if (input_data->GetNParticles() >= (size_t)fN) {
-//          Passed();
-//          return;
-//        }
-//      }
-//    }
-//
-//    Abort();
-//  }
-//}
-
 Algorithms::Cut::Cut (TString name, TString title, TString logic, 
     long long length, ...) :
   CutAlgorithm(name, title), fAnd(false), fOr(false) {
-  length *= 4; // arguements should come as sets of four
   va_list arguments;  // store the variable list of arguments
 
   if (logic.EqualTo("and", TString::kIgnoreCase))
@@ -825,7 +993,7 @@ Algorithms::Cut::Cut (TString name, TString title, TString logic,
   else if (logic.EqualTo("or", TString::kIgnoreCase))
     fOr = true;
   va_start (arguments, length); // initializing arguments to store all values after length
-  for (long long i = 0; i < length; i += 4) {
+  for (long long i = 0; i < length; ++i) {
     const char* algo_name = va_arg(arguments, const char*);
     const char* type = va_arg(arguments, const char*);
     TString Type(type);
@@ -852,7 +1020,7 @@ Algorithms::Cut::Cut (TString name, TString title, TString logic,
     }
     else if (Type.EqualTo("integer")) {
       IntegerAlgoInfo *Algo = new IntegerAlgoInfo();
-      Algo->fValue = va_arg(arguments, long long);
+      Algo->fValue = (long long)va_arg(arguments, int);
       Algo->fName = algo_name;
       if (Op.EqualTo("==") || Op.EqualTo("="))
         Algo->fEqual = true;
@@ -870,7 +1038,7 @@ Algorithms::Cut::Cut (TString name, TString title, TString logic,
     }
     else if (Type.EqualTo("counting")) {
       CountingAlgoInfo *Algo = new CountingAlgoInfo();
-      Algo->fValue = va_arg(arguments, unsigned long long);
+      Algo->fValue = (unsigned long long)va_arg(arguments, unsigned int);
       Algo->fName = algo_name;
       if (Op.EqualTo("==") || Op.EqualTo("="))
         Algo->fEqual = true;
@@ -888,7 +1056,7 @@ Algorithms::Cut::Cut (TString name, TString title, TString logic,
     }
     else if (Type.EqualTo("decimal")) {
       DecimalAlgoInfo *Algo = new DecimalAlgoInfo();
-      Algo->fValue = va_arg(arguments, long double);
+      Algo->fValue = (long double)va_arg(arguments, double);
       Algo->fName = algo_name;
       if (Op.EqualTo("==") || Op.EqualTo("="))
         Algo->fEqual = true;
@@ -906,7 +1074,7 @@ Algorithms::Cut::Cut (TString name, TString title, TString logic,
     }
     else if (Type.EqualTo("particle")) {
       NParticlesAlgoInfo *Algo = new NParticlesAlgoInfo();
-      Algo->fValue = va_arg(arguments, long long);
+      Algo->fValue = (long long)va_arg(arguments, int);
       Algo->fName = algo_name;
       if (Op.EqualTo("==") || Op.EqualTo("="))
         Algo->fEqual = true;
@@ -1055,18 +1223,21 @@ bool  Algorithms::Cut::NParticlesAlgoInfo::Eval (HAL::AnalysisData * /*data*/, H
 
 void Algorithms::MonitorAlgorithm::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
+  HAL::AnalysisTreeReader *tr = GetRawData();
   HAL::GenericData *input_data = NULL;
 
-  (*fOS) << "Summary for algorithm - " << fInput.Data() << std::endl;
+  if ((tr->GetEntryNumber() + 1) % fN == 0) {
+    (*fOS) << "\nSummary for algorithm - " << fInput.Data() << std::endl;
 
-  if (data->Exists(fInput))
-    input_data = (GenericData*)data->GetTObject(fInput);
-  else {
-    (*fOS) << "Algorithm is empty!" << std::endl;
-    return;
+    if (data->Exists(fInput))
+      input_data = (GenericData*)data->GetTObject(fInput);
+    else {
+      (*fOS) << "Algorithm is empty!" << std::endl;
+      return;
+    }
+
+    (*fOS) << *input_data << std::endl;
   }
-
-  (*fOS) << *input_data << std::endl;
 }
 
 void Algorithms::MonitorUserData::Exec (Option_t* /*option*/) {
@@ -1081,7 +1252,8 @@ void Algorithms::MonitorUserData::Exec (Option_t* /*option*/) {
 
 Algorithms::StoreTLV::StoreTLV (TString name, TString title, TString input, 
     TString property, TString bname, TString num) :
-  ParticlesTLVStore(name, title, input, bname, num) {
+  ParticlesTLVStore(name, title, input, bname, num), fAll(false), fPt(false), fM(false), 
+  fE(false), fEt(false), fP3(false), fEta(false), fPhi(false) {
 
   if (property.EqualTo("pt", TString::kIgnoreCase))
     fPt = true;
@@ -1097,25 +1269,85 @@ Algorithms::StoreTLV::StoreTLV (TString name, TString title, TString input,
     fEta = true;
   else if (property.EqualTo("phi", TString::kIgnoreCase))
     fPhi = true;
+  else if (property.EqualTo("all", TString::kIgnoreCase))
+    fAll = true;
+
+  fPtLabel = TString::Format("%s.pt", fBranchName.Data());
+  fEtaLabel = TString::Format("%s.eta", fBranchName.Data());
+  fPhiLabel = TString::Format("%s.phi", fBranchName.Data());
+  fMLabel = TString::Format("%s.m", fBranchName.Data());
+  fELabel = TString::Format("%s.e", fBranchName.Data());
 }
 
-double Algorithms::StoreTLV::StoreValue (HAL::ParticlePtr particle) {
+void Algorithms::StoreTLV::StoreValue (HAL::AnalysisTreeWriter *output, long long i, HAL::ParticlePtr particle) {
   TLorentzVector *vec = particle->GetP();
 
-  if (fPt)
-    return vec->Pt();
-  if (fM)
-    return vec->M();
-  if (fE)
-    return vec->E();
-  if (fEt)
-    return vec->Et();
-  if (fP3)
-    return vec->P();
-  if (fEta)
-    return vec->Eta();
-  if (fPhi)
-    return vec->Phi();
+  if (fPt) {
+    if (fMany)
+      output->SetValue(fBranchName, vec->Pt(), i);
+    else
+      output->SetValue(fBranchName, vec->Pt());
+    return;
+  }
+  if (fM) {
+    if (fMany)
+      output->SetValue(fBranchName, vec->M(), i);
+    else
+      output->SetValue(fBranchName, vec->M());
+    return;
+  }
+  if (fE) {
+    if (fMany)
+      output->SetValue(fBranchName, vec->E(), i);
+    else
+      output->SetValue(fBranchName, vec->E());
+    return;
+  }
+  if (fEt) {
+    if (fMany)
+      output->SetValue(fBranchName, vec->Et(), i);
+    else
+      output->SetValue(fBranchName, vec->Et());
+    return;
+  }
+  if (fP3) {
+    if (fMany)
+      output->SetValue(fBranchName, vec->P(), i);
+    else
+      output->SetValue(fBranchName, vec->P());
+    return;
+  }
+  if (fEta) {
+    if (fMany)
+      output->SetValue(fBranchName, vec->Eta(), i);
+    else
+      output->SetValue(fBranchName, vec->Eta());
+    return;
+  }
+  if (fPhi) {
+    if (fMany)
+      output->SetValue(fBranchName, vec->Phi(), i);
+    else
+      output->SetValue(fBranchName, vec->Phi());
+    return;
+  }
+  if (fAll) {
+    if (fMany) {
+      output->SetValue(fPtLabel, vec->Pt(), i);
+      output->SetValue(fEtaLabel, vec->Eta(), i);
+      output->SetValue(fPhiLabel, vec->Phi(), i);
+      output->SetValue(fMLabel, vec->M(), i);
+      output->SetValue(fELabel, vec->E(), i);
+    }
+    else {
+      output->SetValue(fPtLabel, vec->Pt());
+      output->SetValue(fEtaLabel, vec->Eta());
+      output->SetValue(fPhiLabel, vec->Phi());
+      output->SetValue(fMLabel, vec->M());
+      output->SetValue(fELabel, vec->E());
+    }
+    return;
+  }
   throw HAL::HALException(GetName().Prepend("Couldn't determine what to store: "));
 }
 

@@ -24,8 +24,10 @@ Bool_t AnalysisSelector::Notify () {
   // is started when using PROOF. 
   // The return value is currently not used.
 
-  if (fChain->GetCurrentFile())
+  if (fChain->GetCurrentFile()) {
+    std::cout << "\n\nProcessing file: " << fChain->GetCurrentFile()->GetName() << std::endl;
     fAnalysisFlow->NotifyAlgo(GetOption());
+  }
   if (fMessagePeriod != 0)
     std::cout << std::endl;
   return kTRUE;

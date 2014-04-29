@@ -203,8 +203,9 @@ void Algorithm::cut_report(TString indent, long long &bn, long long &pn) {
       bn = fCounter;
     if (pn == -1 && fCounter != 0)
       pn = fCounter;
-    std::cout /*<< indent*/ << fName << ": " << TMath::Abs((double)(fCounter)/(double)(bn))*100.0 << "%     ";
-    std::cout << TMath::Abs((double)(fCounter)/(double)(pn))*100.0 << "%" << std::endl;
+    std::cout /*<< indent*/ << fName << ": " << TMath::Abs((double)(fCounter)/(double)(bn))*100.0 << "%     "
+              << TMath::Abs((double)(fCounter)/(double)(pn))*100.0 << "%     " << fCounter << "     " 
+              << pn - fCounter << std::endl;
     if (fCounter != 0)
       pn = fCounter;
   }

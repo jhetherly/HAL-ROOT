@@ -14,10 +14,7 @@ void AnalysisData::SetValue (const TString &n, const bool &v) {
   else if (fNameTypeMap[name] != kB)
     throw HALException(name.insert(0, "Cannot reassign bool storage container for "));
 
-  if (fBoolMap.count(name) != 0)
-    fBoolMap[name] = v;
-  else
-    fBoolMap.insert(std::pair<std::string, bool>(name, v));
+  fBoolMap[name] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, const long double &v) {
@@ -33,10 +30,7 @@ void AnalysisData::SetValue (const TString &n, const long double &v) {
   else if (fNameTypeMap[name] != kD)
     throw HALException(name.insert(0, "Cannot reassign decimal storage container for "));
 
-  if (fDecimalMap.count(name) != 0)
-    fDecimalMap[name] = v;
-  else
-    fDecimalMap.insert(std::pair<std::string, long double>(name, v));
+  fDecimalMap[name] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, const long long &v) {
@@ -52,10 +46,7 @@ void AnalysisData::SetValue (const TString &n, const long long &v) {
   else if (fNameTypeMap[name] != kI)
     throw HALException(name.insert(0, "Cannot reassign integer storage container for "));
 
-  if (fIntegerMap.count(name) != 0)
-    fIntegerMap[name] = v;
-  else
-    fIntegerMap.insert(std::pair<std::string, long long>(name, v));
+  fIntegerMap[name] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, const unsigned long long &v) {
@@ -71,10 +62,7 @@ void AnalysisData::SetValue (const TString &n, const unsigned long long &v) {
   else if (fNameTypeMap[name] != kC)
     throw HALException(name.insert(0, "Cannot reassign counting storage container for "));
 
-  if (fCountingMap.count(name) != 0)
-    fCountingMap[name] = v;
-  else 
-    fCountingMap.insert(std::pair<std::string, unsigned long long>(name, v));
+  fCountingMap[name] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, const std::string &v) {
@@ -86,10 +74,7 @@ void AnalysisData::SetValue (const TString &n, const std::string &v) {
   else if (fNameTypeMap[name] != kS)
     throw HALException(name.insert(0, "Cannot reassign string storage container for "));
 
-  if (fStringMap.count(name) != 0)
-    fStringMap[name] = v;
-  else 
-    fStringMap.insert(std::pair<std::string, std::string>(name, v));
+  fStringMap[name] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, TObject *v) { 
@@ -101,10 +86,7 @@ void AnalysisData::SetValue (const TString &n, TObject *v) {
   else if (fNameTypeMap[name] != kO)
     throw HALException(name.insert(0, "Cannot reassign TObject storage container for "));
 
-  if (fTObjectMap.count(name) != 0)
-    fTObjectMap[name] = v;
-  else 
-    fTObjectMap.insert(std::pair<std::string, TObject*>(name, v));
+  fTObjectMap[name] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, const bool &v, const long long &i) {
@@ -116,15 +98,7 @@ void AnalysisData::SetValue (const TString &n, const bool &v, const long long &i
   else if (fNameTypeMap[name] != kIB)
     throw HALException(name.insert(0, "Cannot reassign 1D bool storage container for "));
 
-  if (fBoolIntMap.count(name) != 0 && fBoolIntMap[name].count(i) != 0)
-    fBoolIntMap[name][i] = v;
-  else if (fBoolIntMap.count(name) != 0)
-    fBoolIntMap[name].insert(std::pair<long long, bool>(i, v));
-  else {
-    std::map<long long, bool>   temp;
-    temp.insert(std::pair<long long, bool>(i, v));
-    fBoolIntMap.insert(std::pair<std::string, std::map<long long, bool> >(name, temp));
-  }
+  fBoolIntMap[name][i] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, const long double &v, const long long &i) {
@@ -140,15 +114,7 @@ void AnalysisData::SetValue (const TString &n, const long double &v, const long 
   else if (fNameTypeMap[name] != kID)
     throw HALException(name.insert(0, "Cannot reassign 1D decimal storage container for "));
 
-  if (fDecimalIntMap.count(name) != 0 && fDecimalIntMap[name].count(i) != 0)
-    fDecimalIntMap[name][i] = v;
-  else if (fDecimalIntMap.count(name) != 0)
-    fDecimalIntMap[name].insert(std::pair<long long, long double>(i, v));
-  else {
-    std::map<long long, long double>   temp;
-    temp.insert(std::pair<long long, long double>(i, v));
-    fDecimalIntMap.insert(std::pair<std::string, std::map<long long, long double> >(name, temp));
-  }
+  fDecimalIntMap[name][i] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, const long long &v, const long long &i) {
@@ -164,15 +130,7 @@ void AnalysisData::SetValue (const TString &n, const long long &v, const long lo
   else if (fNameTypeMap[name] != kII)
     throw HALException(name.insert(0, "Cannot reassign 1D integer storage container for "));
 
-  if (fIntegerIntMap.count(name) != 0 && fIntegerIntMap[name].count(i) != 0)
-    fIntegerIntMap[name][i] = v;
-  else if (fIntegerIntMap.count(name) != 0)
-    fIntegerIntMap[name].insert(std::pair<long long, long long>(i, v));
-  else {
-    std::map<long long, long long>   temp;
-    temp.insert(std::pair<long long, long long>(i, v));
-    fIntegerIntMap.insert(std::pair<std::string, std::map<long long, long long> >(name, temp));
-  }
+  fIntegerIntMap[name][i] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, const unsigned long long &v, const long long &i) {
@@ -188,15 +146,7 @@ void AnalysisData::SetValue (const TString &n, const unsigned long long &v, cons
   else if (fNameTypeMap[name] != kIC)
     throw HALException(name.insert(0, "Cannot reassign 1D counting storage container for "));
 
-  if (fCountingIntMap.count(name) != 0 && fCountingIntMap[name].count(i) != 0)
-    fCountingIntMap[name][i] = v;
-  else if (fCountingIntMap.count(name) != 0)
-    fCountingIntMap[name].insert(std::pair<long long, unsigned long long>(i, v));
-  else {
-    std::map<long long, unsigned long long>   temp;
-    temp.insert(std::pair<long long, unsigned long long>(i, v));
-    fCountingIntMap.insert(std::pair<std::string, std::map<long long, unsigned long long> >(name, temp));
-  }
+  fCountingIntMap[name][i] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, const std::string &v, const long long &i) {
@@ -208,15 +158,7 @@ void AnalysisData::SetValue (const TString &n, const std::string &v, const long 
   else if (fNameTypeMap[name] != kIS)
     throw HALException(name.insert(0, "Cannot reassign 1D string storage container for "));
 
-  if (fStringIntMap.count(name) != 0 && fStringIntMap[name].count(i) != 0)
-    fStringIntMap[name][i] = v;
-  else if (fStringIntMap.count(name) != 0)
-    fStringIntMap[name].insert(std::pair<long long, std::string>(i, v));
-  else {
-    std::map<long long, std::string>   temp;
-    temp.insert(std::pair<long long, std::string>(i, v));
-    fStringIntMap.insert(std::pair<std::string, std::map<long long, std::string> >(name, temp));
-  }
+  fStringIntMap[name][i] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, TObject *v, const long long &i) {
@@ -228,15 +170,7 @@ void AnalysisData::SetValue (const TString &n, TObject *v, const long long &i) {
   else if (fNameTypeMap[name] != kIO)
     throw HALException(name.insert(0, "Cannot reassign 1D TObject storage container for "));
 
-  if (fTObjectIntMap.count(name) != 0 && fTObjectIntMap[name].count(i) != 0)
-    fTObjectIntMap[name][i] = v;
-  else if (fTObjectIntMap.count(name) != 0)
-    fTObjectIntMap[name].insert(std::pair<long long, TObject*>(i, v));
-  else {
-    std::map<long long, TObject*>   temp;
-    temp.insert(std::pair<long long, TObject*>(i, v));
-    fTObjectIntMap.insert(std::pair<std::string, std::map<long long, TObject*> >(name, temp));
-  }
+  fTObjectIntMap[name][i] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, const bool &v, const long long &i, const long long &j) {
@@ -248,22 +182,7 @@ void AnalysisData::SetValue (const TString &n, const bool &v, const long long &i
   else if (fNameTypeMap[name] != kIIB)
     throw HALException(name.insert(0, "Cannot reassign 2D bool storage container for "));
 
-  if (fBoolIntIntMap.count(name) != 0 && fBoolIntIntMap[name].count(i) != 0 && fBoolIntIntMap[name][i].count(j) != 0)
-    fBoolIntIntMap[name][i][j] = v;
-  else if (fBoolIntIntMap.count(name) != 0 && fBoolIntIntMap[name].count(i) != 0)
-    fBoolIntIntMap[name][i].insert(std::pair<long long, bool>(i, v));
-  else if (fBoolIntIntMap.count(name) != 0) {
-    std::map<long long, bool>   temp;
-    temp.insert(std::pair<long long, bool>(j, v));
-    fBoolIntIntMap[name].insert(std::pair<long long, std::map<long long, bool> >(i, temp));
-  }
-  else {
-    std::map<long long, bool>                       temp1;
-    std::map<long long, std::map<long long, bool> > temp2;
-    temp1.insert(std::pair<long long, bool>(j, v));
-    temp2.insert(std::pair<long long, std::map<long long, bool> >(i, temp1));
-    fBoolIntIntMap.insert(std::pair<std::string, std::map<long long, std::map<long long, bool> > >(name, temp2));
-  }
+  fBoolIntIntMap[name][i][j] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, const long double &v, const long long &i, const long long &j) {
@@ -279,22 +198,7 @@ void AnalysisData::SetValue (const TString &n, const long double &v, const long 
   else if (fNameTypeMap[name] != kIID)
     throw HALException(name.insert(0, "Cannot reassign 2D decimal storage container for "));
 
-  if (fDecimalIntIntMap.count(name) != 0 && fDecimalIntIntMap[name].count(i) != 0 && fDecimalIntIntMap[name][i].count(j) != 0)
-    fDecimalIntIntMap[name][i][j] = v;
-  else if (fDecimalIntIntMap.count(name) != 0 && fDecimalIntIntMap[name].count(i) != 0)
-    fDecimalIntIntMap[name][i].insert(std::pair<long long, long double>(i, v));
-  else if (fDecimalIntIntMap.count(name) != 0) {
-    std::map<long long, long double>   temp;
-    temp.insert(std::pair<long long, long double>(j, v));
-    fDecimalIntIntMap[name].insert(std::pair<long long, std::map<long long, long double> >(i, temp));
-  }
-  else {
-    std::map<long long, long double>                       temp1;
-    std::map<long long, std::map<long long, long double> > temp2;
-    temp1.insert(std::pair<long long, long double>(j, v));
-    temp2.insert(std::pair<long long, std::map<long long, long double> >(i, temp1));
-    fDecimalIntIntMap.insert(std::pair<std::string, std::map<long long, std::map<long long, long double> > >(name, temp2));
-  }
+  fDecimalIntIntMap[name][i][j] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, const long long &v, const long long &i, const long long &j) {
@@ -310,22 +214,7 @@ void AnalysisData::SetValue (const TString &n, const long long &v, const long lo
   else if (fNameTypeMap[name] != kIII)
     throw HALException(name.insert(0, "Cannot reassign 2D integer storage container for "));
 
-  if (fIntegerIntIntMap.count(name) != 0 && fIntegerIntIntMap[name].count(i) != 0 && fIntegerIntIntMap[name][i].count(j) != 0)
-    fIntegerIntIntMap[name][i][j] = v;
-  else if (fIntegerIntIntMap.count(name) != 0 && fIntegerIntIntMap[name].count(i) != 0)
-    fIntegerIntIntMap[name][i].insert(std::pair<long long, long long>(i, v));
-  else if (fIntegerIntIntMap.count(name) != 0) {
-    std::map<long long, long long>   temp;
-    temp.insert(std::pair<long long, long long>(j, v));
-    fIntegerIntIntMap[name].insert(std::pair<long long, std::map<long long, long long> >(i, temp));
-  }
-  else {
-    std::map<long long, long long>                       temp1;
-    std::map<long long, std::map<long long, long long> > temp2;
-    temp1.insert(std::pair<long long, long long>(j, v));
-    temp2.insert(std::pair<long long, std::map<long long, long long> >(i, temp1));
-    fIntegerIntIntMap.insert(std::pair<std::string, std::map<long long, std::map<long long, long long> > >(name, temp2));
-  }
+  fIntegerIntIntMap[name][i][j] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, const unsigned long long &v, const long long &i, const long long &j) {
@@ -341,22 +230,7 @@ void AnalysisData::SetValue (const TString &n, const unsigned long long &v, cons
   else if (fNameTypeMap[name] != kIIC)
     throw HALException(name.insert(0, "Cannot reassign 2D counting storage container for "));
 
-  if (fCountingIntIntMap.count(name) != 0 && fCountingIntIntMap[name].count(i) != 0 && fCountingIntIntMap[name][i].count(j) != 0)
-    fCountingIntIntMap[name][i][j] = v;
-  else if (fCountingIntIntMap.count(name) != 0 && fCountingIntIntMap[name].count(i) != 0)
-    fCountingIntIntMap[name][i].insert(std::pair<long long, unsigned long long>(i, v));
-  else if (fCountingIntIntMap.count(name) != 0) {
-    std::map<long long, unsigned long long>   temp;
-    temp.insert(std::pair<long long, unsigned long long>(j, v));
-    fCountingIntIntMap[name].insert(std::pair<long long, std::map<long long, unsigned long long> >(i, temp));
-  }
-  else {
-    std::map<long long, unsigned long long>                       temp1;
-    std::map<long long, std::map<long long, unsigned long long> > temp2;
-    temp1.insert(std::pair<long long, unsigned long long>(j, v));
-    temp2.insert(std::pair<long long, std::map<long long, unsigned long long> >(i, temp1));
-    fCountingIntIntMap.insert(std::pair<std::string, std::map<long long, std::map<long long, unsigned long long> > >(name, temp2));
-  }
+  fCountingIntIntMap[name][i][j] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, const std::string &v, const long long &i, const long long &j) {
@@ -368,22 +242,7 @@ void AnalysisData::SetValue (const TString &n, const std::string &v, const long 
   else if (fNameTypeMap[name] != kIIS)
     throw HALException(name.insert(0, "Cannot reassign 2D string storage container for "));
 
-  if (fStringIntIntMap.count(name) != 0 && fStringIntIntMap[name].count(i) != 0 && fStringIntIntMap[name][i].count(j) != 0)
-    fStringIntIntMap[name][i][j] = v;
-  else if (fStringIntIntMap.count(name) != 0 && fStringIntIntMap[name].count(i) != 0)
-    fStringIntIntMap[name][i].insert(std::pair<long long, std::string>(i, v));
-  else if (fStringIntIntMap.count(name) != 0) {
-    std::map<long long, std::string>   temp;
-    temp.insert(std::pair<long long, std::string>(j, v));
-    fStringIntIntMap[name].insert(std::pair<long long, std::map<long long, std::string> >(i, temp));
-  }
-  else {
-    std::map<long long, std::string>                       temp1;
-    std::map<long long, std::map<long long, std::string> > temp2;
-    temp1.insert(std::pair<long long, std::string>(j, v));
-    temp2.insert(std::pair<long long, std::map<long long, std::string> >(i, temp1));
-    fStringIntIntMap.insert(std::pair<std::string, std::map<long long, std::map<long long, std::string> > >(name, temp2));
-  }
+  fStringIntIntMap[name][i][j] = v;
 }
 
 void AnalysisData::SetValue (const TString &n, TObject *v, const long long &i, const long long &j) {
@@ -395,22 +254,7 @@ void AnalysisData::SetValue (const TString &n, TObject *v, const long long &i, c
   else if (fNameTypeMap[name] != kIIO)
     throw HALException(name.insert(0, "Cannot reassign 2D TObject storage container for "));
 
-  if (fTObjectIntIntMap.count(name) != 0 && fTObjectIntIntMap[name].count(i) != 0 && fTObjectIntIntMap[name][i].count(j) != 0)
-    fTObjectIntIntMap[name][i][j] = v;
-  else if (fTObjectIntIntMap.count(name) != 0 && fTObjectIntIntMap[name].count(i) != 0)
-    fTObjectIntIntMap[name][i].insert(std::pair<long long, TObject*>(i, v));
-  else if (fTObjectIntIntMap.count(name) != 0) {
-    std::map<long long, TObject*>   temp;
-    temp.insert(std::pair<long long, TObject*>(j, v));
-    fTObjectIntIntMap[name].insert(std::pair<long long, std::map<long long, TObject*> >(i, temp));
-  }
-  else {
-    std::map<long long, TObject*>                       temp1;
-    std::map<long long, std::map<long long, TObject*> > temp2;
-    temp1.insert(std::pair<long long, TObject*>(j, v));
-    temp2.insert(std::pair<long long, std::map<long long, TObject*> >(i, temp1));
-    fTObjectIntIntMap.insert(std::pair<std::string, std::map<long long, std::map<long long, TObject*> > >(name, temp2));
-  }
+  fTObjectIntIntMap[name][i][j] = v;
 }
 
 

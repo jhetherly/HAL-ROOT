@@ -1,5 +1,4 @@
 #include <HAL/AnalysisTreeWriter.h>
-#include <deque>
 
 ClassImp(HAL::AnalysisTreeWriter);
 
@@ -296,7 +295,7 @@ void AnalysisTreeWriter::WriteData() {
         fill[length] = true;
         std::vector<double> temp;
         for (std::map<long long, long double>::iterator it = outer->second[i].begin();
-             it != outer->second[i].end(); ++it)
+             it != outer->second[i].end(); ++it) 
           temp.push_back(it->second);
         trees[length]->SetBranchStatus(bname.c_str(), 1);
         bDecimalIntValues[bname] = temp;
