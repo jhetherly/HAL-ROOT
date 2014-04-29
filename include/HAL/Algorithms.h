@@ -436,9 +436,11 @@ protected:
  * This property can be:
  * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude, eta, phi
  * pt,                  m,    e,      et,                p3,                   eta, phi
- * The 'end' parameter describes how to filter the property:
- * high (upper limit)
- * low (lower limit)
+ * The 'op' parameter describes how to filter the property: 
+ * == or =, !=, >, <, >=, <=
+ * The 'inclusion' parameter describes how to filter the property: 
+ * inclusive or in, exclusive or out
+ * The varargs constructor needs integers if property is id, doubles otherwise
  *
  * Prerequisites:
  *  Stored particles
@@ -454,7 +456,7 @@ public:
   SelectParticle (TString name, TString title, TString input, TString property, 
       TString op, double value);
   SelectParticle (TString name, TString title, TString input, TString property, 
-      double low, double high);
+      TString inclusion, double low, double high);
   SelectParticle (TString name, TString title, TString input, TString property, 
       int length, ...);
   virtual ~SelectParticle () {}
@@ -467,6 +469,7 @@ private:
   double    fHighLimit, fLowLimit;
   bool      fPt, fM, fE, fEt, fP3, fEta, fPhi, fCharge, fID;
   bool      fEqual, fNotEqual, fLessThan, fGreaterThan, fLessThanEqual, fGreaterThanEqual;
+  bool      fIn, fOut;
   bool      fSingleEnd, fWindow, fList;
   TString   fProperty;
   std::vector<double> fListValues;
@@ -665,8 +668,8 @@ protected:
   virtual void  StoreValue (HAL::AnalysisTreeWriter*, long long, HAL::ParticlePtr);
 
 private:
-  bool            fAll, fPt, fM, fE, fEt, fP3, fEta, fPhi;
-  TString         fPtLabel, fEtaLabel, fPhiLabel, fMLabel, fELabel;
+  bool            fAll, fPt, fM, fE, fEt, fP3, fEta, fPhi, fID, fCharge;
+  TString         fPtLabel, fEtaLabel, fPhiLabel, fMLabel, fELabel, fIDLabel, fChargeLabel;
 };
 
 } /* Algorithms */ 

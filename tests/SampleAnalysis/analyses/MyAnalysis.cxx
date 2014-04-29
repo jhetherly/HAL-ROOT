@@ -24,8 +24,18 @@ int main(int argc, char *argv[]) {
   //      "pyalgo", 
   //      "PythonAlgo"));
   a.AddAlgo(new HAL::Algorithms::ImportParticle("jets", "import basic jet objects"));
+  a.AddAlgo(new HAL::Algorithms::ImportParticle("mc", "import basic Monte Carlo objects"));
 
   a.AddAlgo(new HAL::Algorithms::EmptyCut("number of events", "baseline event number"));
+
+  a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_5GeV", "filter on mc pt >= 5GeV", 
+                                                "mc", // input algorithm
+                                                "pt", ">=", 5000)); // pT value
+
+  a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_neutrinos", "filter on mc id to get neutrinos", 
+                                                "mc_5GeV", // input algorithm
+                                                "id", 6,
+                                                -16, -14, -12, 12, 14, 16)); // id values
 
   a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("leading pt jet", "find highest pt jet", 
                                                        "jets", // input algorithm
@@ -43,16 +53,17 @@ int main(int argc, char *argv[]) {
   //a.AddAlgo(new HAL::Algorithms::MonitorAlgorithm("di-jet monitor", "look at the di-jet object", "double di-jet any", 100));
 
   a.AddAlgo(new HAL::Algorithms::SelectParticle("di-jet50pt", "filter on di-jet pt >= 50GeV", 
-                                           "di-jet", // input algorithm
-                                           "pt", ">=", 50000)); // pT value
+                                                "di-jet", // input algorithm
+                                                "pt", ">=", 50000)); // pT value
   a.AddAlgo(new HAL::Algorithms::SelectParticle("di-jetfinal", "filter on di-jet |eta| <= 1.5", 
-                                           "di-jet50pt", // input algorithm
-                                           "eta", -1.5, 1.5)); // eta low and high values
+                                                "di-jet50pt", // input algorithm
+                                                "eta", "inclusive", -1.5, 1.5)); // eta low and high values
   a.AddAlgo(new HAL::Algorithms::SelectDeltaTLV("jets close", "filter on jets within deltaR of di-jet", 
                                                 "di-jetfinal", "jets", // input, reference algorithms
                                                 0.4)); // Delta R value
 
-  a.AddAlgo(new HAL::Algorithms::Cut("di-jet existence cut", "make sure 1 dijet exists", "and", 1,
+  a.AddAlgo(new HAL::Algorithms::Cut("di-jet existence cut", "make sure 1 dijet exists", "or", 2,
+                                     "mc_neutrinos", "particle", ">=", 1,
                                      "di-jetfinal", "particle", "==", 1));
 
   a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet mass", "store the mass of the di-jet system", 
@@ -68,17 +79,24 @@ int main(int argc, char *argv[]) {
   a.MapBranch("jet_AntiKt4TruthJets_eta", "jets:eta");
   a.MapBranch("jet_AntiKt4TruthJets_phi", "jets:phi");
   a.MapBranch("jet_AntiKt4TruthJets_m", "jets:m");
+  a.MapBranch("mc_n", "mc:nentries");
+  a.MapBranch("mc_pt", "mc:pt");
+  a.MapBranch("mc_eta", "mc:eta");
+  a.MapBranch("mc_phi", "mc:phi");
+  a.MapBranch("mc_m", "mc:m");
+  a.MapBranch("mc_pdgId", "mc:id");
+  a.MapBranch("mc_charge", "mc:charge");
   //a.MapBranch("Jet_size", "jets:nentries");
   //a.MapBranch("Jet.PT", "jets:pT");
   //a.MapBranch("Jet.Eta", "jets:eta");
   //a.MapBranch("Jet.Phi", "jets:phi");
   //a.MapBranch("Jet.Mass", "jets:m");
 
-  a.MapBranch("jet_AntiKt4TruthJets_n", "jet_n");
-  a.MapBranch("jet_AntiKt4TruthJets_pt", "jet_pt");
-  a.MapBranch("jet_AntiKt4TruthJets_eta", "jet_eta");
-  a.MapBranch("jet_AntiKt4TruthJets_phi", "jet_phi");
-  a.MapBranch("jet_AntiKt4TruthJets_m", "jet_m");
+  //a.MapBranch("jet_AntiKt4TruthJets_n", "jet_n");
+  //a.MapBranch("jet_AntiKt4TruthJets_pt", "jet_pt");
+  //a.MapBranch("jet_AntiKt4TruthJets_eta", "jet_eta");
+  //a.MapBranch("jet_AntiKt4TruthJets_phi", "jet_phi");
+  //a.MapBranch("jet_AntiKt4TruthJets_m", "jet_m");
   //a.MapBranch("Jet_size", "jet_n");
   //a.MapBranch("Jet.PT", "jet_pt");
   //a.MapBranch("Jet.Eta", "jet_eta");
