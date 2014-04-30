@@ -183,7 +183,10 @@ protected:
   virtual void    Exec (Option_t* /*option*/);
   virtual void    StoreValue (HAL::AnalysisTreeWriter*, long long, HAL::ParticlePtr) = 0;
 
+  bool            fSearchedForAttributes;
   TString         fBranchName, fInput, fNParticles;
+  std::map<TString, bool>     fAttributeFlags;
+  std::map<TString, TString>  fAttributeLabels;
 };
 
 } /* internal */ 
@@ -464,7 +467,7 @@ private:
   void      Setup ();
 
   double    fHighLimit, fLowLimit;
-  bool      fPt, fM, fE, fEt, fP3, fEta, fPhi, fCharge, fID;
+  bool      fPt, fM, fE, fEt, fP3, fEta, fPhi, fCharge, fID, fAttribute;
   bool      fEqual, fNotEqual, fLessThan, fGreaterThan, fLessThanEqual, fGreaterThanEqual;
   bool      fIn, fOut;
   bool      fSingleEnd, fWindow, fList;
@@ -648,6 +651,7 @@ private:
  * This property can be:
  * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude, eta, phi
  * pt,                  m,    e,      et,                p3,                   eta, phi
+ * Property can also be "all"
  *
  * Prerequisites:
  *  Stored particle
@@ -665,7 +669,7 @@ protected:
   virtual void  StoreValue (HAL::AnalysisTreeWriter*, long long, HAL::ParticlePtr);
 
 private:
-  bool            fAll, fPt, fM, fE, fEt, fP3, fEta, fPhi, fID, fCharge;
+  bool            fAll, fAttributes, fPt, fM, fE, fEt, fP3, fEta, fPhi, fID, fCharge;
   TString         fPtLabel, fEtaLabel, fPhiLabel, fMLabel, fELabel, fIDLabel, fChargeLabel;
 };
 

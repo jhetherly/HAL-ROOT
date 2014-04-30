@@ -242,7 +242,7 @@ void internal::FilterParentAlgo::Clear (Option_t* /*option*/) {
 }
 
 internal::ParticlesTLVStore::ParticlesTLVStore (TString name, TString title, TString input, TString bname) :
-  Algorithm(name, title), fBranchName(bname), fInput(input) {
+  Algorithm(name, title), fSearchedForAttributes(false), fBranchName(bname), fInput(input) {
 
   fNParticles = TString::Format("%s_n", fBranchName.Data());
 }
@@ -258,6 +258,31 @@ void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
   else
     return;
 
+  if (!fSearchedForAttributes) {
+    i = 0;
+    fSearchedForAttributes = true;
+    for (ParticlePtrsIt particle = input_data->GetParticleBegin(); 
+         particle != input_data->GetParticleEnd(); ++ particle) {
+      for (std::map<TString, long double>::iterator attribute = (*particle)->GetAttributes().begin();
+           attribute != (*particle)->GetAttributes().end(); ++attribute) {
+        bool found = false;
+        for (std::map<TString, bool>::iterator stored_attribute = fAttributeFlags.begin();
+             stored_attribute != fAttributeFlags.end(); ++stored_attribute) {
+          if (attribute->first.EqualTo(stored_attribute->first)) found = true;
+        }
+        if (i == 0 || (found && fAttributeFlags[attribute->first])) fAttributeFlags[attribute->first] = true;
+        else fAttributeFlags[attribute->first] = false;
+      }
+      ++i;
+    }
+    for (std::map<TString, bool>::iterator stored_attribute = fAttributeFlags.begin();
+         stored_attribute != fAttributeFlags.end(); ++stored_attribute) {
+      fAttributeLabels[stored_attribute->first] = 
+        TString::Format("%s_%s", fBranchName.Data(), stored_attribute->first.Data());
+    }
+  }
+
+  i = 0;
   output->SetValue(fNParticles, input_data->GetNParticles());
   for (ParticlePtrsIt particle = input_data->GetParticleBegin(); 
       particle != input_data->GetParticleEnd(); ++ particle)
@@ -607,7 +632,7 @@ Algorithms::SelectParticle::SelectParticle (TString name, TString title, TString
     TString property, TString op, double value) : 
   FilterParticleAlgo(name, title, input), 
   fPt(false), fM(false), fE(false), fEt(false), fP3(false), fEta(false), 
-  fPhi(false), fCharge(false), fID(false), fEqual(false), fNotEqual(false), 
+  fPhi(false), fCharge(false), fID(false), fAttribute(false), fEqual(false), fNotEqual(false), 
   fLessThan(false), fGreaterThan(false), fLessThanEqual(false), 
   fGreaterThanEqual(false), fIn(false), fOut(false), fSingleEnd(true), fWindow(false), 
   fList(false), fProperty(property) {
@@ -645,7 +670,7 @@ Algorithms::SelectParticle::SelectParticle (TString name, TString title, TString
   FilterParticleAlgo(name, title, input), 
   fHighLimit(high), fLowLimit(low), 
   fPt(false), fM(false), fE(false), fEt(false), fP3(false), fEta(false), 
-  fPhi(false), fCharge(false), fID(false), fEqual(false), fNotEqual(false), 
+  fPhi(false), fCharge(false), fID(false), fAttribute(false), fEqual(false), fNotEqual(false), 
   fLessThan(false), fGreaterThan(false), fLessThanEqual(false), 
   fGreaterThanEqual(false), fIn(false), fOut(false), fSingleEnd(false), fWindow(true), 
   fList(false), fProperty(property) {
@@ -664,7 +689,7 @@ Algorithms::SelectParticle::SelectParticle (TString name, TString title, TString
     TString property, int length, ...) : 
   FilterParticleAlgo(name, title, input), 
   fPt(false), fM(false), fE(false), fEt(false), fP3(false), fEta(false), 
-  fPhi(false), fCharge(false), fID(false), fEqual(false), fNotEqual(false), 
+  fPhi(false), fCharge(false), fID(false), fAttribute(false), fEqual(false), fNotEqual(false), 
   fLessThan(false), fGreaterThan(false), fLessThanEqual(false), 
   fGreaterThanEqual(false), fIn(false), fOut(false), fSingleEnd(false), fWindow(false), 
   fList(true), fProperty(property) {
@@ -701,12 +726,18 @@ void Algorithms::SelectParticle::Setup () {
     fCharge = true;
   if (fProperty.EqualTo("id", TString::kIgnoreCase))
     fID = true;
+  else
+    fAttribute = true;
 }
 
 bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
   TLorentzVector *vec = particle->GetP();
+  long double attribute;
   float charge = particle->GetCharge();
   int id = particle->GetID();
+
+  if (fAttribute)
+    if (particle->HasAttribute(fProperty)) attribute = particle->GetAttribute(fProperty);
 
   if (fSingleEnd) {
     if (fEqual) {
@@ -728,6 +759,8 @@ bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
         return (id == fLowLimit);
       else if (fCharge)
         return (charge == fLowLimit);
+      else if (fAttribute && particle->HasAttribute(fProperty))
+        return (attribute == fLowLimit);
     }
     else if (fNotEqual) {
       if (fPt)
@@ -748,6 +781,8 @@ bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
         return (id != fLowLimit);
       else if (fCharge)
         return (charge != fLowLimit);
+      else if (fAttribute && particle->HasAttribute(fProperty))
+        return (attribute != fLowLimit);
     }
     else if (fGreaterThan) {
       if (fPt)
@@ -768,6 +803,8 @@ bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
         return (id > fLowLimit);
       else if (fCharge)
         return (charge > fLowLimit);
+      else if (fAttribute && particle->HasAttribute(fProperty))
+        return (attribute > fLowLimit);
     }
     else if (fLessThan) {
       if (fPt)
@@ -788,6 +825,8 @@ bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
         return (id < fHighLimit);
       else if (fCharge)
         return (charge < fHighLimit);
+      else if (fAttribute && particle->HasAttribute(fProperty))
+        return (attribute < fHighLimit);
     }
     else if (fGreaterThanEqual) {
       if (fPt)
@@ -808,6 +847,8 @@ bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
         return (id >= fLowLimit);
       else if (fCharge)
         return (charge >= fLowLimit);
+      else if (fAttribute && particle->HasAttribute(fProperty))
+        return (attribute >= fLowLimit);
     }
     else if (fLessThanEqual) {
       if (fPt)
@@ -828,6 +869,8 @@ bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
         return (id <= fHighLimit);
       else if (fCharge)
         return (charge <= fHighLimit);
+      else if (fAttribute && particle->HasAttribute(fProperty))
+        return (attribute <= fHighLimit);
     }
   }
 
@@ -851,6 +894,8 @@ bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
         return (id <= fHighLimit && id >= fLowLimit);
       else if (fCharge)
         return (charge <= fHighLimit && charge >= fLowLimit);
+      else if (fAttribute && particle->HasAttribute(fProperty))
+        return (attribute <= fHighLimit && attribute >= fLowLimit);
     }
     else if (fOut) {
       if (fPt)
@@ -871,6 +916,8 @@ bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
         return (id >= fHighLimit && id <= fLowLimit);
       else if (fCharge)
         return (charge >= fHighLimit && charge <= fLowLimit);
+      else if (fAttribute && particle->HasAttribute(fProperty))
+        return (attribute >= fHighLimit && attribute <= fLowLimit);
     }
   }
 
@@ -935,6 +982,13 @@ bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
       for (std::vector<double>::iterator val = fListValues.begin();
            val != fListValues.end(); ++val) {
         if (charge == *val)
+          return true;
+      }
+    }
+    else if (fAttribute && particle->HasAttribute(fProperty)) {
+      for (std::vector<double>::iterator val = fListValues.begin();
+           val != fListValues.end(); ++val) {
+        if (attribute == *val)
           return true;
       }
     }
@@ -1286,7 +1340,7 @@ void Algorithms::MonitorUserData::Exec (Option_t* /*option*/) {
 
 Algorithms::StoreParticle::StoreParticle (TString name, TString title, TString input, 
     TString property, TString bname) :
-  ParticlesTLVStore(name, title, input, bname), fAll(false), fPt(false), fM(false), 
+  ParticlesTLVStore(name, title, input, bname), fAll(false), fAttributes(false), fPt(false), fM(false), 
   fE(false), fEt(false), fP3(false), fEta(false), fPhi(false), fID(false), fCharge(false) {
 
   if (property.EqualTo("pt", TString::kIgnoreCase))
@@ -1309,6 +1363,8 @@ Algorithms::StoreParticle::StoreParticle (TString name, TString title, TString i
     fCharge = true;
   else if (property.EqualTo("all", TString::kIgnoreCase))
     fAll = true;
+  else if (property.EqualTo("attributes", TString::kIgnoreCase))
+    fAttributes = true;
 
   fPtLabel = TString::Format("%s_pt", fBranchName.Data());
   fEtaLabel = TString::Format("%s_eta", fBranchName.Data());
@@ -1359,6 +1415,9 @@ void Algorithms::StoreParticle::StoreValue (HAL::AnalysisTreeWriter *output, lon
     return;
   }
   if (fAll) {
+    for (std::map<TString, TString>::iterator it = fAttributeLabels.begin();
+         it != fAttributeLabels.end(); ++it)
+      output->SetValue(it->second, particle->GetAttribute(it->first), i);
     output->SetValue(fPtLabel, vec->Pt(), i);
     output->SetValue(fEtaLabel, vec->Eta(), i);
     output->SetValue(fPhiLabel, vec->Phi(), i);
@@ -1366,6 +1425,12 @@ void Algorithms::StoreParticle::StoreValue (HAL::AnalysisTreeWriter *output, lon
     output->SetValue(fELabel, vec->E(), i);
     output->SetValue(fIDLabel, particle->GetID(), i);
     output->SetValue(fChargeLabel, particle->GetCharge(), i);
+    return;
+  }
+  if (fAttributes) {
+    for (std::map<TString, TString>::iterator it = fAttributeLabels.begin();
+         it != fAttributeLabels.end(); ++it)
+      output->SetValue(it->second, particle->GetAttribute(it->first), i);
     return;
   }
   throw HAL::HALException(GetName().Prepend("Couldn't determine what to store: "));

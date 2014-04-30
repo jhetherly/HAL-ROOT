@@ -47,6 +47,7 @@ public:
   inline TLorentzVector*    GetP () {return fP;}
   inline TLorentzVector*    GetVector () {return fP;}
   inline long double        GetAttribute (const TString &name) {return fScalarAttributes[name];}
+  inline std::map<TString, long double, HAL::internal::string_cmp>&  GetAttributes () {return fScalarAttributes;}
   inline ParticlePtr        GetParticle (const TString &name, const long long &index) {return f1DParticles[name][index];}
   inline ParticlePtrs&      GetParticles (const TString &name) {return f1DParticles[name];}
 
