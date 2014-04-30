@@ -58,20 +58,23 @@ int main(int argc, char *argv[]) {
   a.AddAlgo(new HAL::Algorithms::SelectParticle("di-jetfinal", "filter on di-jet |eta| <= 1.5", 
                                                 "di-jet50pt", // input algorithm
                                                 "eta", "inclusive", -1.5, 1.5)); // eta low and high values
-  a.AddAlgo(new HAL::Algorithms::SelectDeltaTLV("jets close", "filter on jets within deltaR of di-jet", 
-                                                "di-jetfinal", "jets", // input, reference algorithms
-                                                0.4)); // Delta R value
+  a.AddAlgo(new HAL::Algorithms::SelectRefParticle("jets close", "filter on jets within deltaR of di-jet", 
+                                                   "di-jetfinal", "jets", // input, reference algorithms
+                                                   0.4)); // Delta R value
 
-  a.AddAlgo(new HAL::Algorithms::Cut("di-jet existence cut", "make sure 1 dijet exists", "or", 2,
+  a.AddAlgo(new HAL::Algorithms::Cut("di-jet and neutrino existence cut", "make sure 1 dijet exists", 
+                                     "or", 2, // logic, number of cuts
                                      "mc_neutrinos", "particle", ">=", 1,
                                      "di-jetfinal", "particle", "==", 1));
 
-  a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet mass", "store the mass of the di-jet system", 
-                                          "di-jetfinal", "m", "dijet_mass")); // input, type, branch
-  a.AddAlgo(new HAL::Algorithms::StoreTLV("store di-jet", "store the di-jet system", 
-                                          "di-jetfinal", "all", "dijet")); // input, type, branch
-  a.AddAlgo(new HAL::Algorithms::StoreTLV("store jets", "store jets", 
-                                          "jets", "all", "jets", "many")); // input, type, branch, number
+  a.AddAlgo(new HAL::Algorithms::StoreParticle("store di-jet mass", "store the mass of the di-jet system", 
+                                               "di-jetfinal", "m", "dijet_mass")); // input, type, branch
+  a.AddAlgo(new HAL::Algorithms::StoreParticle("store di-jet", "store the di-jet system", 
+                                               "di-jetfinal", "all", "dijet")); // input, type, branch
+  a.AddAlgo(new HAL::Algorithms::StoreParticle("store jets", "store jets", 
+                                               "jets", "all", "jets")); // input, type, branch
+  a.AddAlgo(new HAL::Algorithms::StoreParticle("store neutrinos", "store Monte Carlo neutrinos", 
+                                               "mc_neutrinos", "all", "neutrinos")); // input, type, branch
   
   // Assign any branch maps
   a.MapBranch("jet_AntiKt4TruthJets_n", "jets:nentries");

@@ -68,7 +68,8 @@ void AnalysisTreeWriter::WriteData() {
   TFile f(fOutputFileName.Data(), "RECREATE");
   std::map<unsigned, TTree*> trees;
   std::map<unsigned, bool> fill;
-  unsigned treeCount = 1;
+  unsigned treeCount = 1,
+           max_scalar_nentries = 0;
 
 
   std::map<std::string, bool> bBoolValues;
@@ -84,75 +85,95 @@ void AnalysisTreeWriter::WriteData() {
   for (std::map<std::string, std::map<long long, bool>, internal::string_cmp>::iterator outer = fBoolIntMap.begin();
       outer != fBoolIntMap.end(); ++outer) {
     unsigned length = outer->second.size();
+    if (length > max_scalar_nentries) max_scalar_nentries = length;
     if (trees.count(length) == 0) {
-      trees[length] = new TTree(TString::Format("%s%u", fTreeName.Data(), treeCount++).Data(),
-          fTreeDescription.Data());
+      TString treeName = fTreeName;
+      if (!trees.empty())
+        treeName.Append(TString::Format("%u", ++treeCount));
+      trees[length] = new TTree(treeName, fTreeDescription.Data());
       fill[length] = false;
     }
   }
   for (std::map<std::string, std::map<long long, long double>, internal::string_cmp >::iterator outer = fDecimalIntMap.begin();
       outer != fDecimalIntMap.end(); ++outer) {
     unsigned length = outer->second.size();
+    if (length > max_scalar_nentries) max_scalar_nentries = length;
     if (trees.count(length) == 0) {
-      trees[length] = new TTree(TString::Format("%s%u", fTreeName.Data(), treeCount++).Data(),
-          fTreeDescription.Data());
+      TString treeName = fTreeName;
+      if (!trees.empty())
+        treeName.Append(TString::Format("%u", ++treeCount));
+      trees[length] = new TTree(treeName, fTreeDescription.Data());
       fill[length] = false;
     }
   }
   for (std::map<std::string, std::map<long long, long long>, internal::string_cmp >::iterator outer = fIntegerIntMap.begin();
       outer != fIntegerIntMap.end(); ++outer) {
     unsigned length = outer->second.size();
+    if (length > max_scalar_nentries) max_scalar_nentries = length;
     if (trees.count(length) == 0) {
-      trees[length] = new TTree(TString::Format("%s%u", fTreeName.Data(), treeCount++).Data(),
-          fTreeDescription.Data());
+      TString treeName = fTreeName;
+      if (!trees.empty())
+        treeName.Append(TString::Format("%u", ++treeCount));
+      trees[length] = new TTree(treeName, fTreeDescription.Data());
       fill[length] = false;
     }
   }
   for (std::map<std::string, std::map<long long, unsigned long long>, internal::string_cmp >::iterator outer = fCountingIntMap.begin();
       outer != fCountingIntMap.end(); ++outer) {
     unsigned length = outer->second.size();
+    if (length > max_scalar_nentries) max_scalar_nentries = length;
     if (trees.count(length) == 0) {
-      trees[length] = new TTree(TString::Format("%s%u", fTreeName.Data(), treeCount++).Data(),
-          fTreeDescription.Data());
+      TString treeName = fTreeName;
+      if (!trees.empty())
+        treeName.Append(TString::Format("%u", ++treeCount));
+      trees[length] = new TTree(treeName, fTreeDescription.Data());
       fill[length] = false;
     }
   }
-  for (std::map<std::string, std::map<long long, std::map<long long, bool> >, internal::string_cmp >::iterator outer = fBoolIntIntMap.begin();
-      outer != fBoolIntIntMap.end(); ++outer) {
-    unsigned length = outer->second.size();
-    if (trees.count(length) == 0) {
-      trees[length] = new TTree(TString::Format("%s%u", fTreeName.Data(), treeCount++).Data(),
-          fTreeDescription.Data());
-      fill[length] = false;
-    }
-  }
-  for (std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >::iterator outer = fDecimalIntIntMap.begin();
-      outer != fDecimalIntIntMap.end(); ++outer) {
-    unsigned length = outer->second.size();
-    if (trees.count(length) == 0) {
-      trees[length] = new TTree(TString::Format("%s%u", fTreeName.Data(), treeCount++).Data(),
-          fTreeDescription.Data());
-      fill[length] = false;
-    }
-  }
-  for (std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >::iterator outer = fIntegerIntIntMap.begin();
-      outer != fIntegerIntIntMap.end(); ++outer) {
-    unsigned length = outer->second.size();
-    if (trees.count(length) == 0) {
-      trees[length] = new TTree(TString::Format("%s%u", fTreeName.Data(), treeCount++).Data(),
-          fTreeDescription.Data());
-      fill[length] = false;
-    }
-  }
-  for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> >, internal::string_cmp >::iterator outer = fCountingIntIntMap.begin();
-      outer != fCountingIntIntMap.end(); ++outer) {
-    unsigned length = outer->second.size();
-    if (trees.count(length) == 0) {
-      trees[length] = new TTree(TString::Format("%s%u", fTreeName.Data(), treeCount++).Data(),
-          fTreeDescription.Data());
-      fill[length] = false;
-    }
-  }
+  //for (std::map<std::string, std::map<long long, std::map<long long, bool> >, internal::string_cmp >::iterator outer = fBoolIntIntMap.begin();
+  //    outer != fBoolIntIntMap.end(); ++outer) {
+  //  unsigned length = outer->second.size();
+  //  if (trees.count(length) == 0) {
+  //    TString treeName = fTreeName;
+  //    if (!trees.empty())
+  //      treeName.Prepend(TString::Format("%u", ++treeCount));
+  //    trees[length] = new TTree(treeName, fTreeDescription.Data());
+  //    fill[length] = false;
+  //  }
+  //}
+  //for (std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >::iterator outer = fDecimalIntIntMap.begin();
+  //    outer != fDecimalIntIntMap.end(); ++outer) {
+  //  unsigned length = outer->second.size();
+  //  if (trees.count(length) == 0) {
+  //    TString treeName = fTreeName;
+  //    if (!trees.empty())
+  //      treeName.Prepend(TString::Format("%u", ++treeCount));
+  //    trees[length] = new TTree(treeName, fTreeDescription.Data());
+  //    fill[length] = false;
+  //  }
+  //}
+  //for (std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >::iterator outer = fIntegerIntIntMap.begin();
+  //    outer != fIntegerIntIntMap.end(); ++outer) {
+  //  unsigned length = outer->second.size();
+  //  if (trees.count(length) == 0) {
+  //    TString treeName = fTreeName;
+  //    if (!trees.empty())
+  //      treeName.Prepend(TString::Format("%u", ++treeCount));
+  //    trees[length] = new TTree(treeName, fTreeDescription.Data());
+  //    fill[length] = false;
+  //  }
+  //}
+  //for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> >, internal::string_cmp >::iterator outer = fCountingIntIntMap.begin();
+  //    outer != fCountingIntIntMap.end(); ++outer) {
+  //  unsigned length = outer->second.size();
+  //  if (trees.count(length) == 0) {
+  //    TString treeName = fTreeName;
+  //    if (!trees.empty())
+  //      treeName.Prepend(TString::Format("%u", ++treeCount));
+  //    trees[length] = new TTree(treeName, fTreeDescription.Data());
+  //    fill[length] = false;
+  //  }
+  //}
 
   // Loop over maps - each key is a branch name
   std::cout << std::endl;
@@ -191,34 +212,36 @@ void AnalysisTreeWriter::WriteData() {
   for (std::map<std::string, std::map<long long, std::map<long long, bool> >, internal::string_cmp >::iterator outer = fBoolIntIntMap.begin();
       outer != fBoolIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    unsigned length = outer->second.size();
+    //unsigned length = outer->second.size();
     std::cout << "Creating branch " << bname << " of type vector<bool>" << std::endl;
-    std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
-    trees[length]->Branch(bname.c_str(), &bBoolIntValues[bname]);
+    std::cout << "Located in tree " << trees[max_scalar_nentries]->GetName() << std::endl << std::endl;
+    //std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
+    trees[max_scalar_nentries]->Branch(bname.c_str(), &bBoolIntValues[bname]);
+    //trees[length]->Branch(bname.c_str(), &bBoolIntValues[bname]);
   }
   for (std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >::iterator outer = fDecimalIntIntMap.begin();
       outer != fDecimalIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    unsigned length = outer->second.size();
     std::cout << "Creating branch " << bname << " of type vector<double>" << std::endl;
-    std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
-    trees[length]->Branch(bname.c_str(), &bDecimalIntValues[bname]);
+    std::cout << "Located in tree " << trees[max_scalar_nentries]->GetName() << std::endl << std::endl;
+    trees[max_scalar_nentries]->Branch(bname.c_str(), &bDecimalIntValues[bname]);
+    //trees[length]->Branch(bname.c_str(), &bDecimalIntValues[bname]);
   }
   for (std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >::iterator outer = fIntegerIntIntMap.begin();
       outer != fIntegerIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    unsigned length = outer->second.size();
     std::cout << "Creating branch " << bname << " of type vector<long long>" << std::endl;
-    std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
-    trees[length]->Branch(bname.c_str(), &bIntegerIntValues[bname]);
+    std::cout << "Located in tree " << trees[max_scalar_nentries]->GetName() << std::endl << std::endl;
+    trees[max_scalar_nentries]->Branch(bname.c_str(), &bIntegerIntValues[bname]);
+    //trees[length]->Branch(bname.c_str(), &bIntegerIntValues[bname]);
   }
   for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> >, internal::string_cmp >::iterator outer = fCountingIntIntMap.begin();
       outer != fCountingIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    unsigned length = outer->second.size();
     std::cout << "Creating branch " << bname << " of type vector<unsigned long long>" << std::endl;
-    std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
-    trees[length]->Branch(bname.c_str(), &bCountingIntValues[bname]);
+    std::cout << "Located in tree " << trees[max_scalar_nentries]->GetName() << std::endl << std::endl;
+    trees[max_scalar_nentries]->Branch(bname.c_str(), &bCountingIntValues[bname]);
+    //trees[length]->Branch(bname.c_str(), &bCountingIntValues[bname]);
   }
 
   // actual loop to fill in the TTree
@@ -274,66 +297,65 @@ void AnalysisTreeWriter::WriteData() {
     for (std::map<std::string, std::map<long long, std::map<long long, bool> >, internal::string_cmp >::iterator outer = fBoolIntIntMap.begin();
         outer != fBoolIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
-      unsigned length = outer->second.size();
+      unsigned length = max_scalar_nentries; //new
+      //unsigned length = outer->second.size();
+      fill[length] = true; //new
+      std::vector<bool> temp; //new
+      trees[length]->SetBranchStatus(bname.c_str(), 1); //new
       if (Exists(bname, i)) {
-        fill[length] = true;
-        std::vector<bool> temp;
+        //fill[length] = true;
+        //std::vector<bool> temp;
         for (std::map<long long, bool>::iterator it = outer->second[i].begin();
              it != outer->second[i].end(); ++it)
           temp.push_back(it->second);
-        trees[length]->SetBranchStatus(bname.c_str(), 1);
-        bBoolIntValues[bname] = temp;
+        //trees[length]->SetBranchStatus(bname.c_str(), 1);
+        //bBoolIntValues[bname] = temp;
       }
-      else
-        trees[length]->SetBranchStatus(bname.c_str(), 0);
+      //else
+      //  trees[length]->SetBranchStatus(bname.c_str(), 0);
+      bBoolIntValues[bname] = temp; //new
     }
     for (std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >::iterator outer = fDecimalIntIntMap.begin();
         outer != fDecimalIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
-      unsigned length = outer->second.size();
+      unsigned length = max_scalar_nentries;
+      fill[length] = true;
+      std::vector<double> temp;
+      trees[length]->SetBranchStatus(bname.c_str(), 1);
       if (Exists(bname, i)) {
-        fill[length] = true;
-        std::vector<double> temp;
         for (std::map<long long, long double>::iterator it = outer->second[i].begin();
              it != outer->second[i].end(); ++it) 
           temp.push_back(it->second);
-        trees[length]->SetBranchStatus(bname.c_str(), 1);
-        bDecimalIntValues[bname] = temp;
       }
-      else
-        trees[length]->SetBranchStatus(bname.c_str(), 0);
+      bDecimalIntValues[bname] = temp;
     }
     for (std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >::iterator outer = fIntegerIntIntMap.begin();
         outer != fIntegerIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
-      unsigned length = outer->second.size();
+      unsigned length = max_scalar_nentries;
+      fill[length] = true;
+      std::vector<long long> temp;
+      trees[length]->SetBranchStatus(bname.c_str(), 1);
       if (Exists(bname, i)) {
-        fill[length] = true;
-        std::vector<long long> temp;
         for (std::map<long long, long long>::iterator it = outer->second[i].begin();
              it != outer->second[i].end(); ++it)
           temp.push_back(it->second);
-        trees[length]->SetBranchStatus(bname.c_str(), 1);
-        bIntegerIntValues[bname] = temp;
       }
-      else
-        trees[length]->SetBranchStatus(bname.c_str(), 0);
+      bIntegerIntValues[bname] = temp;
     }
     for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> >, internal::string_cmp >::iterator outer = fCountingIntIntMap.begin();
         outer != fCountingIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
-      unsigned length = outer->second.size();
+      unsigned length = max_scalar_nentries;
+      fill[length] = true;
+      std::vector<unsigned long long> temp;
+      trees[length]->SetBranchStatus(bname.c_str(), 1);
       if (Exists(bname, i)) {
-        fill[length] = true;
-        std::vector<unsigned long long> temp;
         for (std::map<long long, unsigned long long>::iterator it = outer->second[i].begin();
              it != outer->second[i].end(); ++it)
           temp.push_back(it->second);
-        trees[length]->SetBranchStatus(bname.c_str(), 1);
-        bCountingIntValues[bname] = temp;
       }
-      else
-        trees[length]->SetBranchStatus(bname.c_str(), 0);
+      bCountingIntValues[bname] = temp;
     }
 
     // fill trees and reset fill flags

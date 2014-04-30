@@ -131,13 +131,13 @@ protected:
 
 /*
  * Algorithm for filtering particles compared to a reference particle
- * by their TLVs
+ * by their differences
  * */
-class FilterRefTLVAlgo : public Algorithm {
+class FilterRefParticleAlgo : public Algorithm {
 public:
-  FilterRefTLVAlgo (TString name, TString title, TString input, TString others) :
+  FilterRefParticleAlgo (TString name, TString title, TString input, TString others) :
     Algorithm(name, title), fInput(input), fOthers(others) {}
-  virtual ~FilterRefTLVAlgo () {}
+  virtual ~FilterRefParticleAlgo () {}
 
   virtual bool FilterPredicate (HAL::ParticlePtr, HAL::ParticlePtr) = 0;
 
@@ -175,9 +175,7 @@ protected:
  * */
 class ParticlesTLVStore : public Algorithm {
 public:
-  ParticlesTLVStore (TString name, TString title, TString input, TString bname, TString num = "") :
-    Algorithm(name, title), fMany(num.EqualTo("many", TString::kIgnoreCase)), 
-    fBranchName(bname), fInput(input) {}
+  ParticlesTLVStore (TString name, TString title, TString input, TString bname);
   virtual ~ParticlesTLVStore () {}
 
 
@@ -185,8 +183,7 @@ protected:
   virtual void    Exec (Option_t* /*option*/);
   virtual void    StoreValue (HAL::AnalysisTreeWriter*, long long, HAL::ParticlePtr) = 0;
 
-  bool            fMany;
-  TString         fBranchName, fInput;
+  TString         fBranchName, fInput, fNParticles;
 };
 
 } /* internal */ 
@@ -477,8 +474,8 @@ private:
 
 
 /*
- * Select particles with TLV within, without, or windowed between
- * given R/Phi value(s) from reference particle
+ * Select particles within, without, or windowed between
+ * given R/Phi value(s) from the reference particle
  *
  * Prerequisites:
  *  Stored particles
@@ -489,13 +486,13 @@ private:
  *  <name>:ref_name ((scalar): string name of reference particles to use)
  *  <name>:index (1D array: of indices)
  * */
-class SelectDeltaTLV : public internal::FilterRefTLVAlgo {
+class SelectRefParticle : public internal::FilterRefParticleAlgo {
 public:
-  SelectDeltaTLV (TString name, TString title, TString input, TString others, 
-      double value, TString topo = "in", TString type = "r");
-  SelectDeltaTLV (TString name, TString title, TString input, TString others, 
+  SelectRefParticle (TString name, TString title, TString input, TString others, 
+      double value, TString inclusion = "inclusive", TString type = "r");
+  SelectRefParticle (TString name, TString title, TString input, TString others, 
       double low, double high, TString type = "r");
-  virtual ~SelectDeltaTLV () {}
+  virtual ~SelectRefParticle () {}
 
   virtual bool FilterPredicate (HAL::ParticlePtr, HAL::ParticlePtr);
 
@@ -659,10 +656,10 @@ private:
  * UserData Output:
  *  None
  * */
-class StoreTLV : public internal::ParticlesTLVStore {
+class StoreParticle : public internal::ParticlesTLVStore {
 public:
-  StoreTLV (TString name, TString title, TString input, TString property, TString bname, TString num = "");
-  virtual ~StoreTLV () {}
+  StoreParticle (TString name, TString title, TString input, TString property, TString bname);
+  virtual ~StoreParticle () {}
 
 protected:
   virtual void  StoreValue (HAL::AnalysisTreeWriter*, long long, HAL::ParticlePtr);

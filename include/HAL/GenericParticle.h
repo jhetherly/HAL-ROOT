@@ -34,7 +34,7 @@ public:
   void            SetOrigin (const TString &origin) {fOrigin = origin;}
   void            SetOriginIndex (const size_t &oi) {fOriginIndex = oi;}
   void            SetID (const int &id) {fID = id;}
-  void            SetCharge (const int &charge) {fCharge = charge;}
+  void            SetCharge (const float &charge) {fCharge = charge;}
   void            SetP (TLorentzVector *p) {fP = p;}
   void            SetVector (TLorentzVector *vec) {fP = vec;}
   void            SetAttribute (const TString &name, const long double &value);
@@ -43,7 +43,7 @@ public:
   inline TString  GetOrigin () {return fOrigin;}
   inline size_t   GetOriginIndex () {return fOriginIndex;}
   inline int      GetID () {return fID;}
-  inline int      GetCharge () {return fCharge;}
+  inline float    GetCharge () {return fCharge;}
   inline TLorentzVector*    GetP () {return fP;}
   inline TLorentzVector*    GetVector () {return fP;}
   inline long double        GetAttribute (const TString &name) {return fScalarAttributes[name];}
@@ -62,7 +62,8 @@ public:
 private:
   TString                                      fOrigin; // what algorithm made this particle
   size_t                                       fOriginIndex;
-  int                                          fID, fCharge;
+  int                                          fID;
+  float                                        fCharge;
   TLorentzVector                              *fP;
   std::map<TString, long double, internal::string_cmp>    fScalarAttributes;
   // the following is for parent/child lists etc...

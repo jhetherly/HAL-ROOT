@@ -6,7 +6,7 @@ namespace HAL
 {
 
 HAL::GenericParticle::GenericParticle (const TString &origin, const TString &name) : 
-  fOrigin(origin), fOriginIndex(0), fID(0), fCharge(0), fP(NULL) {
+  fOrigin(origin), fOriginIndex(0), fID(0), fCharge(0.0), fP(NULL) {
 
   if(!name.EqualTo("")) 
     SetName(name.Data());
