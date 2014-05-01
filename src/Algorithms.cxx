@@ -285,7 +285,7 @@ void internal::ParticlesTLVStore::Exec (Option_t* /*option*/) {
   i = 0;
   output->SetValue(fNParticles, input_data->GetNParticles());
   for (ParticlePtrsIt particle = input_data->GetParticleBegin(); 
-      particle != input_data->GetParticleEnd(); ++ particle)
+      particle != input_data->GetParticleEnd(); ++ particle) 
     StoreValue(output, i++, (*particle));
 }
 

@@ -299,47 +299,45 @@ void AnalysisTreeWriter::WriteData() {
       std::string bname = outer->first;
       unsigned length = max_scalar_nentries; //new
       //unsigned length = outer->second.size();
-      fill[length] = true; //new
-      std::vector<bool> temp; //new
-      trees[length]->SetBranchStatus(bname.c_str(), 1); //new
+      std::vector<bool> temp; // new
       if (Exists(bname, i)) {
-        //fill[length] = true;
+        fill[length] = true;
         //std::vector<bool> temp;
         for (std::map<long long, bool>::iterator it = outer->second[i].begin();
              it != outer->second[i].end(); ++it)
           temp.push_back(it->second);
-        //trees[length]->SetBranchStatus(bname.c_str(), 1);
+        trees[length]->SetBranchStatus(bname.c_str(), 1);
         //bBoolIntValues[bname] = temp;
       }
+      bBoolIntValues[bname] = temp; // new
       //else
       //  trees[length]->SetBranchStatus(bname.c_str(), 0);
-      bBoolIntValues[bname] = temp; //new
     }
     for (std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >::iterator outer = fDecimalIntIntMap.begin();
         outer != fDecimalIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
       unsigned length = max_scalar_nentries;
-      fill[length] = true;
       std::vector<double> temp;
-      trees[length]->SetBranchStatus(bname.c_str(), 1);
       if (Exists(bname, i)) {
+        fill[length] = true;
         for (std::map<long long, long double>::iterator it = outer->second[i].begin();
              it != outer->second[i].end(); ++it) 
           temp.push_back(it->second);
+        trees[length]->SetBranchStatus(bname.c_str(), 1);
       }
-      bDecimalIntValues[bname] = temp;
+      bDecimalIntValues[bname] = temp; 
     }
     for (std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >::iterator outer = fIntegerIntIntMap.begin();
         outer != fIntegerIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
       unsigned length = max_scalar_nentries;
-      fill[length] = true;
       std::vector<long long> temp;
-      trees[length]->SetBranchStatus(bname.c_str(), 1);
       if (Exists(bname, i)) {
+        fill[length] = true;
         for (std::map<long long, long long>::iterator it = outer->second[i].begin();
              it != outer->second[i].end(); ++it)
           temp.push_back(it->second);
+        trees[length]->SetBranchStatus(bname.c_str(), 1);
       }
       bIntegerIntValues[bname] = temp;
     }
@@ -347,13 +345,13 @@ void AnalysisTreeWriter::WriteData() {
         outer != fCountingIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
       unsigned length = max_scalar_nentries;
-      fill[length] = true;
       std::vector<unsigned long long> temp;
-      trees[length]->SetBranchStatus(bname.c_str(), 1);
       if (Exists(bname, i)) {
+        fill[length] = true;
         for (std::map<long long, unsigned long long>::iterator it = outer->second[i].begin();
              it != outer->second[i].end(); ++it)
           temp.push_back(it->second);
+        trees[length]->SetBranchStatus(bname.c_str(), 1);
       }
       bCountingIntValues[bname] = temp;
     }

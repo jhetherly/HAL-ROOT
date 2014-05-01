@@ -63,7 +63,7 @@ int main(int argc, char *argv[]) {
                                                    0.4)); // Delta R value
 
   a.AddAlgo(new HAL::Algorithms::Cut("di-jet and neutrino existence cut", "make sure 1 dijet exists", 
-                                     "or", 2, // logic, number of cuts
+                                     "and", 2, // logic, number of cuts
                                      "mc_neutrinos", "particle", ">=", 1,
                                      "di-jetfinal", "particle", "==", 1));
 
