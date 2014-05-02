@@ -1339,9 +1339,10 @@ void Algorithms::MonitorUserData::Exec (Option_t* /*option*/) {
  * */
 
 Algorithms::StoreParticle::StoreParticle (TString name, TString title, TString input, 
-    TString property, TString bname) :
+    TString property, TString bname, TString tree) :
   ParticlesTLVStore(name, title, input, bname), fAll(false), fAttributes(false), fPt(false), fM(false), 
-  fE(false), fEt(false), fP3(false), fEta(false), fPhi(false), fID(false), fCharge(false) {
+  fE(false), fEt(false), fP3(false), fEta(false), fPhi(false), fID(false), fCharge(false), 
+  fTreeName(tree) {
 
   if (property.EqualTo("pt", TString::kIgnoreCase))
     fPt = true;
@@ -1367,12 +1368,76 @@ Algorithms::StoreParticle::StoreParticle (TString name, TString title, TString i
     fAttributes = true;
 
   fPtLabel = TString::Format("%s_pt", fBranchName.Data());
+  fEtLabel = TString::Format("%s_et", fBranchName.Data());
+  fP3Label = TString::Format("%s_p", fBranchName.Data());
   fEtaLabel = TString::Format("%s_eta", fBranchName.Data());
   fPhiLabel = TString::Format("%s_phi", fBranchName.Data());
   fMLabel = TString::Format("%s_m", fBranchName.Data());
   fELabel = TString::Format("%s_e", fBranchName.Data());
   fIDLabel = TString::Format("%s_id", fBranchName.Data());
   fChargeLabel = TString::Format("%s_charge", fBranchName.Data());
+}
+
+void  Algorithms::StoreParticle::Init (Option_t* /*option*/) {
+  HAL::AnalysisTreeWriter *output = GetUserOutput();
+
+  output->SetTreeForBranch(fTreeName, fNParticles);
+
+  if (fPt) {
+    output->SetTreeForBranch(fTreeName, fBranchName);
+    return;
+  }
+  if (fM) {
+    output->SetTreeForBranch(fTreeName, fBranchName);
+    return;
+  }
+  if (fE) {
+    output->SetTreeForBranch(fTreeName, fBranchName);
+    return;
+  }
+  if (fEt) {
+    output->SetTreeForBranch(fTreeName, fBranchName);
+    return;
+  }
+  if (fP3) {
+    output->SetTreeForBranch(fTreeName, fBranchName);
+    return;
+  }
+  if (fEta) {
+    output->SetTreeForBranch(fTreeName, fBranchName);
+    return;
+  }
+  if (fPhi) {
+    output->SetTreeForBranch(fTreeName, fBranchName);
+    return;
+  }
+  if (fID) {
+    output->SetTreeForBranch(fTreeName, fBranchName);
+    return;
+  }
+  if (fCharge) {
+    output->SetTreeForBranch(fTreeName, fBranchName);
+    return;
+  }
+  if (fAll) {
+    for (std::map<TString, TString>::iterator it = fAttributeLabels.begin();
+         it != fAttributeLabels.end(); ++it)
+      output->SetTreeForBranch(fTreeName, it->second);
+    output->SetTreeForBranch(fTreeName, fPtLabel);
+    output->SetTreeForBranch(fTreeName, fEtaLabel);
+    output->SetTreeForBranch(fTreeName, fPhiLabel);
+    output->SetTreeForBranch(fTreeName, fMLabel);
+    output->SetTreeForBranch(fTreeName, fELabel);
+    output->SetTreeForBranch(fTreeName, fIDLabel);
+    output->SetTreeForBranch(fTreeName, fChargeLabel);
+    return;
+  }
+  if (fAttributes) {
+    for (std::map<TString, TString>::iterator it = fAttributeLabels.begin();
+         it != fAttributeLabels.end(); ++it)
+      output->SetTreeForBranch(fTreeName, it->second);
+    return;
+  }
 }
 
 void Algorithms::StoreParticle::StoreValue (HAL::AnalysisTreeWriter *output, long long i, HAL::ParticlePtr particle) {

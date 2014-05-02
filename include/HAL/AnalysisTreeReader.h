@@ -22,6 +22,7 @@
 
 #include <TTree.h>
 #include <TBranch.h>
+#include <TFile.h>
 #include <TLeaf.h>
 #include <TLeafF.h>
 #include <TRegexp.h>
@@ -47,13 +48,13 @@ class AnalysisTreeReader : public TNamed {
 public:
   AnalysisTreeReader (TTree *tree = 0);
   virtual ~AnalysisTreeReader ();
-  void    SetTree (TTree *tree) {fChain = tree; fChain->SetMakeClass(1);}
-  void    SetEntry (Long64_t entry);
-  Long64_t GetEntryNumber () {return fEntry;}
-  TTree*  GetTree () {return fChain;}
-  void    Init ();
-  void    SetBranchMap (TMap *m) {fBranchMap = m;}
-  bool    CheckBranchMapNickname (const TString &name);
+  void      SetTree (TTree *tree) {fChain = tree; fChain->SetMakeClass(1);}
+  void      SetEntry (Long64_t entry);
+  Long64_t  GetEntryNumber () {return fEntry;}
+  TTree*    GetTree () {return fChain;}
+  void      Init ();
+  void      SetBranchMap (TMap *m) {fBranchMap = m;}
+  bool      CheckBranchMapNickname (const TString &name);
 
   unsigned int              GetRank (const TString &branchname);
   unsigned int              GetDim (const TString &branchname, const long long &idx_1 = -1);
@@ -269,6 +270,7 @@ private:
   friend class BranchManager;
   std::vector<BranchManager*>                               fBranchManagers;
   std::map<TString, BranchManager*, internal::string_cmp>   fNickNameBranchMap;
+  BranchManager*        GetBranchManager (const TString&);
 
 };
 

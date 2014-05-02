@@ -64,13 +64,13 @@ protected:
   virtual void Clear (Option_t* /*option*/);
   virtual TLorentzVector* MakeTLV (unsigned) = 0;
 
-  bool      fIsCart, fIsE, fIsM;
-  bool      fIsCartMET, fIsPhiEtMET;
-  bool      fHasCharge, fHasID;
-  TString   fCartX0, fCartX1, fCartX2, fCartX3, fPt, fEt;
-  TString   fEta, fPhi, fM, fE;
-  TString   fCharge, fID;
-  TString   fNEntriesName;
+  bool      fIsCart, fIsE, fIsM,
+            fIsCartMET, fIsPhiEtMET,
+            fHasCharge, fHasID;
+  TString   fCartX0, fCartX1, fCartX2, fCartX3, fPt, fEt, 
+            fEta, fPhi, fM, fE, 
+            fCharge, fID,
+            fNEntriesName;
 };
 
 /*
@@ -649,9 +649,10 @@ private:
 /*
  * Store a TLV property of a particle or particles
  * This property can be:
- * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude, eta, phi
- * pt,                  m,    e,      et,                p3,                   eta, phi
- * Property can also be "all"
+ * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude, eta, phi, ID, charge
+ * pt,                  m,    e,      et,                p3,                   eta, phi, id, charge
+ * Property can also be "all", "attributes", or "<specific attributes>"
+ * TODO: print out <specific attributes>
  *
  * Prerequisites:
  *  Stored particle
@@ -662,15 +663,18 @@ private:
  * */
 class StoreParticle : public internal::ParticlesTLVStore {
 public:
-  StoreParticle (TString name, TString title, TString input, TString property, TString bname);
+  StoreParticle (TString name, TString title, TString input, TString property, 
+                 TString bname, TString tree = "");
   virtual ~StoreParticle () {}
 
 protected:
+  virtual void  Init (Option_t* /*option*/);
   virtual void  StoreValue (HAL::AnalysisTreeWriter*, long long, HAL::ParticlePtr);
 
 private:
   bool            fAll, fAttributes, fPt, fM, fE, fEt, fP3, fEta, fPhi, fID, fCharge;
-  TString         fPtLabel, fEtaLabel, fPhiLabel, fMLabel, fELabel, fIDLabel, fChargeLabel;
+  TString         fPtLabel, fP3Label, fEtaLabel, fEtLabel, fPhiLabel, fMLabel, fELabel, fIDLabel, fChargeLabel,
+                  fTreeName;
 };
 
 } /* Algorithms */ 

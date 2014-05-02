@@ -1,6 +1,4 @@
 #include <HAL/AnalysisTreeReader.h>
-#include <TFile.h>
-#include <iostream>
 
 ClassImp(HAL::AnalysisTreeReader);
 
@@ -73,20 +71,27 @@ AnalysisTreeReader::~AnalysisTreeReader () {
 }
 
 void AnalysisTreeReader::SetEntry (Long64_t entry) {
+  std::set<BranchManager*> unique_bms;
+
   fEntry = entry;
 
   // Update all branches
   for (std::map<TString, BranchManager*>::iterator bm = fNickNameBranchMap.begin(); 
        bm != fNickNameBranchMap.end(); ++bm) {
-    bm->second->SetEntry(entry);
+    if (unique_bms.insert(bm->second).second)
+      bm->second->SetEntry(entry);
   }
 }
 
 void AnalysisTreeReader::Init () {
+  std::set<BranchManager*> unique_bms;
+
   // Init all branches
   for (std::map<TString, BranchManager*>::iterator bm = fNickNameBranchMap.begin(); 
-       bm != fNickNameBranchMap.end(); ++bm)
-    bm->second->Init();
+       bm != fNickNameBranchMap.end(); ++bm) {
+    if (unique_bms.insert(bm->second).second)
+      bm->second->Init();
+  }
 }
 
 bool AnalysisTreeReader::CheckBranchMapNickname (const TString &name) {
@@ -135,16 +140,9 @@ TString AnalysisTreeReader::GetFullBranchName (TString name) {
 unsigned int AnalysisTreeReader::GetRank (const TString &branchname) {
   BranchManager *branchmanager = NULL;
 
-  if (fNickNameBranchMap.count(branchname) == 0) {
-    branchmanager = new BranchManager(this);
-    TString bname = GetFullBranchName( branchname );
-    if (branchmanager->Create(bname))
-      fNickNameBranchMap[branchname] = branchmanager;
-    else
-      throw HALException(bname.Prepend("Couldn't configure branch: ").Data());
-  }
-  else
-    branchmanager = fNickNameBranchMap[branchname];
+  branchmanager = GetBranchManager(branchname);
+  if (branchmanager == NULL)
+    throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->IsScalar())
     return 0;
@@ -159,16 +157,9 @@ unsigned int AnalysisTreeReader::GetRank (const TString &branchname) {
 unsigned int AnalysisTreeReader::GetDim (const TString &branchname, const long long &idx_1) {
   BranchManager *branchmanager = NULL;
 
-  if (fNickNameBranchMap.count(branchname) == 0) {
-    branchmanager = new BranchManager(this);
-    TString bname = GetFullBranchName( branchname );
-    if (branchmanager->Create(bname))
-      fNickNameBranchMap[branchname] = branchmanager;
-    else
-      throw HALException(bname.Prepend("Couldn't configure branch: ").Data());
-  }
-  else
-    branchmanager = fNickNameBranchMap[branchname];
+  branchmanager = GetBranchManager(branchname);
+  if (branchmanager == NULL)
+    throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kOA)
     return (unsigned int)fOA[branchmanager->GetStorageIndex()].GetEntries();
@@ -242,16 +233,9 @@ unsigned int AnalysisTreeReader::GetDim (const TString &branchname, const long l
 bool AnalysisTreeReader::GetBool (const TString &branchname, const long long &idx_1, const long long &idx_2) {
   BranchManager *branchmanager = NULL;
 
-  if (fNickNameBranchMap.count(branchname) == 0) {
-    branchmanager = new BranchManager(this);
-    TString bname = GetFullBranchName( branchname );
-    if (branchmanager->Create(bname))
-      fNickNameBranchMap[branchname] = branchmanager;
-    else
-      throw HALException(bname.Prepend("Couldn't configure branch: ").Data());
-  }
-  else
-    branchmanager = fNickNameBranchMap[branchname];
+  branchmanager = GetBranchManager(branchname);
+  if (branchmanager == NULL)
+    throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kB)
     return fB[branchmanager->GetStorageIndex()];
@@ -266,16 +250,9 @@ bool AnalysisTreeReader::GetBool (const TString &branchname, const long long &id
 long long AnalysisTreeReader::GetInteger (const TString &branchname, const long long &idx_1, const long long &idx_2) {
   BranchManager *branchmanager = NULL;
 
-  if (fNickNameBranchMap.count(branchname) == 0) {
-    branchmanager = new BranchManager(this);
-    TString bname = GetFullBranchName( branchname );
-    if (branchmanager->Create(bname))
-      fNickNameBranchMap[branchname] = branchmanager;
-    else
-      throw HALException(bname.Prepend("Couldn't configure branch: ").Data());
-  }
-  else
-    branchmanager = fNickNameBranchMap[branchname];
+  branchmanager = GetBranchManager(branchname);
+  if (branchmanager == NULL)
+    throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kI)
     return fI[branchmanager->GetStorageIndex()];
@@ -305,16 +282,9 @@ long long AnalysisTreeReader::GetInteger (const TString &branchname, const long 
 unsigned long long AnalysisTreeReader::GetCounting (const TString &branchname, const long long &idx_1, const long long &idx_2) {
   BranchManager *branchmanager = NULL;
 
-  if (fNickNameBranchMap.count(branchname) == 0) {
-    branchmanager = new BranchManager(this);
-    TString bname = GetFullBranchName( branchname );
-    if (branchmanager->Create(bname))
-      fNickNameBranchMap[branchname] = branchmanager;
-    else
-      throw HALException(bname.Prepend("Couldn't configure branch: ").Data());
-  }
-  else
-    branchmanager = fNickNameBranchMap[branchname];
+  branchmanager = GetBranchManager(branchname);
+  if (branchmanager == NULL)
+    throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kC)
     return fC[branchmanager->GetStorageIndex()];
@@ -341,16 +311,9 @@ unsigned long long AnalysisTreeReader::GetCounting (const TString &branchname, c
 long double AnalysisTreeReader::GetDecimal (const TString &branchname, const long long &idx_1, const long long &idx_2) {
   BranchManager *branchmanager = NULL;
 
-  if (fNickNameBranchMap.count(branchname) == 0) {
-    branchmanager = new BranchManager(this);
-    TString bname = GetFullBranchName( branchname );
-    if (branchmanager->Create(bname))
-      fNickNameBranchMap[branchname] = branchmanager;
-    else
-      throw HALException(bname.Prepend("Couldn't configure branch: ").Data());
-  }
-  else
-    branchmanager = fNickNameBranchMap[branchname];
+  branchmanager = GetBranchManager(branchname);
+  if (branchmanager == NULL)
+    throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kD)
     return fD[branchmanager->GetStorageIndex()];
@@ -377,16 +340,9 @@ long double AnalysisTreeReader::GetDecimal (const TString &branchname, const lon
 TString AnalysisTreeReader::GetString (const TString &branchname, const long long &idx_1, const long long &idx_2) {
   BranchManager *branchmanager = NULL;
 
-  if (fNickNameBranchMap.count(branchname) == 0) {
-    branchmanager = new BranchManager(this);
-    TString bname = GetFullBranchName( branchname );
-    if (branchmanager->Create(bname))
-      fNickNameBranchMap[branchname] = branchmanager;
-    else
-      throw HALException(bname.Prepend("Couldn't configure branch: ").Data());
-  }
-  else
-    branchmanager = fNickNameBranchMap[branchname];
+  branchmanager = GetBranchManager(branchname);
+  if (branchmanager == NULL)
+    throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kS)
     return fS[branchmanager->GetStorageIndex()];
@@ -419,16 +375,9 @@ TString AnalysisTreeReader::GetString (const TString &branchname, const long lon
 TObjArray& AnalysisTreeReader::GetObjArray (const TString &branchname, const long long &idx_1) {
   BranchManager *branchmanager = NULL;
 
-  if (fNickNameBranchMap.count(branchname) == 0) {
-    branchmanager = new BranchManager(this);
-    TString bname = GetFullBranchName( branchname );
-    if (branchmanager->Create(bname))
-      fNickNameBranchMap[branchname] = branchmanager;
-    else
-      throw HALException(bname.Prepend("Couldn't configure branch: ").Data());
-  }
-  else
-    branchmanager = fNickNameBranchMap[branchname];
+  branchmanager = GetBranchManager(branchname);
+  if (branchmanager == NULL)
+    throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kOA)
     return fOA[branchmanager->GetStorageIndex()];
@@ -441,16 +390,9 @@ TObjArray& AnalysisTreeReader::GetObjArray (const TString &branchname, const lon
 TClonesArray& AnalysisTreeReader::GetClonesArray (const TString &branchname, const long long &idx_1) {
   BranchManager *branchmanager = NULL;
 
-  if (fNickNameBranchMap.count(branchname) == 0) {
-    branchmanager = new BranchManager(this);
-    TString bname = GetFullBranchName( branchname );
-    if (branchmanager->Create(bname))
-      fNickNameBranchMap[branchname] = branchmanager;
-    else
-      throw HALException(bname.Prepend("Couldn't configure branch: ").Data());
-  }
-  else
-    branchmanager = fNickNameBranchMap[branchname];
+  branchmanager = GetBranchManager(branchname);
+  if (branchmanager == NULL)
+    throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kCA)
     return fCA[branchmanager->GetStorageIndex()];
@@ -463,16 +405,9 @@ TClonesArray& AnalysisTreeReader::GetClonesArray (const TString &branchname, con
 TRef& AnalysisTreeReader::GetRef (const TString &branchname, const long long &idx_1, const long long &idx_2) {
   BranchManager *branchmanager = NULL;
 
-  if (fNickNameBranchMap.count(branchname) == 0) {
-    branchmanager = new BranchManager(this);
-    TString bname = GetFullBranchName( branchname );
-    if (branchmanager->Create(bname))
-      fNickNameBranchMap[branchname] = branchmanager;
-    else
-      throw HALException(bname.Prepend("Couldn't configure branch: ").Data());
-  }
-  else
-    branchmanager = fNickNameBranchMap[branchname];
+  branchmanager = GetBranchManager(branchname);
+  if (branchmanager == NULL)
+    throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kR)
     return fR[branchmanager->GetStorageIndex()];
@@ -487,16 +422,9 @@ TRef& AnalysisTreeReader::GetRef (const TString &branchname, const long long &id
 TRefArray& AnalysisTreeReader::GetRefArray (const TString &branchname, const long long &idx_1) {
   BranchManager *branchmanager = NULL;
 
-  if (fNickNameBranchMap.count(branchname) == 0) {
-    branchmanager = new BranchManager(this);
-    TString bname = GetFullBranchName( branchname );
-    if (branchmanager->Create(bname))
-      fNickNameBranchMap[branchname] = branchmanager;
-    else
-      throw HALException(bname.Prepend("Couldn't configure branch: ").Data());
-  }
-  else
-    branchmanager = fNickNameBranchMap[branchname];
+  branchmanager = GetBranchManager(branchname);
+  if (branchmanager == NULL)
+    throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kRA)
     return fRA[branchmanager->GetStorageIndex()];
@@ -505,6 +433,33 @@ TRefArray& AnalysisTreeReader::GetRefArray (const TString &branchname, const lon
 
   throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find TRefArray data in branch: ").Data());
 }
+
+AnalysisTreeReader::BranchManager* AnalysisTreeReader::GetBranchManager (const TString &branchname) {
+  BranchManager *branchmanager = NULL;
+
+  if (fNickNameBranchMap.count(branchname) == 0) {
+    bool already_stored = false;
+    branchmanager = new BranchManager(this);
+    TString bname = GetFullBranchName( branchname );
+    for (std::map<TString, BranchManager*>::iterator bm = fNickNameBranchMap.begin(); 
+         bm != fNickNameBranchMap.end(); ++bm) {
+      if (bm->second->GetName().EqualTo(bname)) {
+        already_stored = true;
+        fNickNameBranchMap[branchname] = bm->second;
+        branchmanager = bm->second;
+        break;
+      }
+    }
+    if (!already_stored && branchmanager->Create(bname))
+      fNickNameBranchMap[branchname] = branchmanager;
+  }
+  else
+    branchmanager = fNickNameBranchMap[branchname];
+
+  return branchmanager;
+}
+
+
 
 
 // ///////////////////////////////////////

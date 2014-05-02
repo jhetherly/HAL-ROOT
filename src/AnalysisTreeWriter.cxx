@@ -9,10 +9,12 @@ AnalysisTreeWriter::AnalysisTreeWriter (const TString &ofile) :
   fCount(0), fOutputFileName(ofile) {}
 
 void  AnalysisTreeWriter::SetValue (const TString &n, const bool &v) {
+  fTreeIndicesMap[fBranchTreeMap[n].EqualTo("") ? fTreeName : fBranchTreeMap[n]].insert(fCount);
   AnalysisData::SetValue(n, v, fCount);
 }
 
 void  AnalysisTreeWriter::SetValue (const TString &n, const bool &v, const long long &i) {
+  fTreeIndicesMap[fBranchTreeMap[n].EqualTo("") ? fTreeName : fBranchTreeMap[n]].insert(fCount);
   AnalysisData::SetValue(n, v, fCount, i);
 }
 
@@ -23,10 +25,12 @@ void  AnalysisTreeWriter::SetValue (const TString &n, const bool &v, const long 
 //}
 
 void  AnalysisTreeWriter::SetValue (const TString &n, const long double &v) {
+  fTreeIndicesMap[fBranchTreeMap[n].EqualTo("") ? fTreeName : fBranchTreeMap[n]].insert(fCount);
   AnalysisData::SetValue(n, v, fCount);
 }
 
 void  AnalysisTreeWriter::SetValue (const TString &n, const long double &v, const long long &i) {
+  fTreeIndicesMap[fBranchTreeMap[n].EqualTo("") ? fTreeName : fBranchTreeMap[n]].insert(fCount);
   AnalysisData::SetValue(n, v, fCount, i);
 }
 
@@ -37,10 +41,12 @@ void  AnalysisTreeWriter::SetValue (const TString &n, const long double &v, cons
 //}
 
 void  AnalysisTreeWriter::SetValue (const TString &n, const long long &v) {
+  fTreeIndicesMap[fBranchTreeMap[n].EqualTo("") ? fTreeName : fBranchTreeMap[n]].insert(fCount);
   AnalysisData::SetValue(n, v, fCount);
 }
 
 void  AnalysisTreeWriter::SetValue (const TString &n, const long long &v, const long long &i) {
+  fTreeIndicesMap[fBranchTreeMap[n].EqualTo("") ? fTreeName : fBranchTreeMap[n]].insert(fCount);
   AnalysisData::SetValue(n, v, fCount, i);
 }
 
@@ -51,10 +57,12 @@ void  AnalysisTreeWriter::SetValue (const TString &n, const long long &v, const 
 //}
 
 void  AnalysisTreeWriter::SetValue (const TString &n, const unsigned long long &v) {
+  fTreeIndicesMap[fBranchTreeMap[n].EqualTo("") ? fTreeName : fBranchTreeMap[n]].insert(fCount);
   AnalysisData::SetValue(n, v, fCount);
 }
 
 void  AnalysisTreeWriter::SetValue (const TString &n, const unsigned long long &v, const long long &i) {
+  fTreeIndicesMap[fBranchTreeMap[n].EqualTo("") ? fTreeName : fBranchTreeMap[n]].insert(fCount);
   AnalysisData::SetValue(n, v, fCount, i);
 }
 
@@ -66,11 +74,8 @@ void  AnalysisTreeWriter::SetValue (const TString &n, const unsigned long long &
 
 void AnalysisTreeWriter::WriteData() {
   TFile f(fOutputFileName.Data(), "RECREATE");
-  std::map<unsigned, TTree*> trees;
-  std::map<unsigned, bool> fill;
-  unsigned treeCount = 1,
-           max_scalar_nentries = 0;
-
+  std::map<TString, TTree*> trees;
+  std::map<TString, bool> fill;
 
   std::map<std::string, bool> bBoolValues;
   std::map<std::string, std::vector<bool> > bBoolIntValues;
@@ -84,164 +89,148 @@ void AnalysisTreeWriter::WriteData() {
   // Loop over maps to record how many trees to create
   for (std::map<std::string, std::map<long long, bool>, internal::string_cmp>::iterator outer = fBoolIntMap.begin();
       outer != fBoolIntMap.end(); ++outer) {
-    unsigned length = outer->second.size();
-    if (length > max_scalar_nentries) max_scalar_nentries = length;
-    if (trees.count(length) == 0) {
-      TString treeName = fTreeName;
-      if (!trees.empty())
-        treeName.Append(TString::Format("%u", ++treeCount));
-      trees[length] = new TTree(treeName, fTreeDescription.Data());
-      fill[length] = false;
+    TString treeName = fBranchTreeMap[outer->first.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[outer->first.c_str()];
+    if (trees.count(treeName) == 0) {
+      trees[treeName] = new TTree(treeName, fTreeDescription.Data());
+      fill[treeName] = false;
     }
   }
   for (std::map<std::string, std::map<long long, long double>, internal::string_cmp >::iterator outer = fDecimalIntMap.begin();
       outer != fDecimalIntMap.end(); ++outer) {
-    unsigned length = outer->second.size();
-    if (length > max_scalar_nentries) max_scalar_nentries = length;
-    if (trees.count(length) == 0) {
-      TString treeName = fTreeName;
-      if (!trees.empty())
-        treeName.Append(TString::Format("%u", ++treeCount));
-      trees[length] = new TTree(treeName, fTreeDescription.Data());
-      fill[length] = false;
+    TString treeName = fBranchTreeMap[outer->first.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[outer->first.c_str()];
+    if (trees.count(treeName) == 0) {
+      trees[treeName] = new TTree(treeName, fTreeDescription.Data());
+      fill[treeName] = false;
     }
   }
   for (std::map<std::string, std::map<long long, long long>, internal::string_cmp >::iterator outer = fIntegerIntMap.begin();
       outer != fIntegerIntMap.end(); ++outer) {
-    unsigned length = outer->second.size();
-    if (length > max_scalar_nentries) max_scalar_nentries = length;
-    if (trees.count(length) == 0) {
-      TString treeName = fTreeName;
-      if (!trees.empty())
-        treeName.Append(TString::Format("%u", ++treeCount));
-      trees[length] = new TTree(treeName, fTreeDescription.Data());
-      fill[length] = false;
+    TString treeName = fBranchTreeMap[outer->first.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[outer->first.c_str()];
+    if (trees.count(treeName) == 0) {
+      trees[treeName] = new TTree(treeName, fTreeDescription.Data());
+      fill[treeName] = false;
     }
   }
   for (std::map<std::string, std::map<long long, unsigned long long>, internal::string_cmp >::iterator outer = fCountingIntMap.begin();
       outer != fCountingIntMap.end(); ++outer) {
-    unsigned length = outer->second.size();
-    if (length > max_scalar_nentries) max_scalar_nentries = length;
-    if (trees.count(length) == 0) {
-      TString treeName = fTreeName;
-      if (!trees.empty())
-        treeName.Append(TString::Format("%u", ++treeCount));
-      trees[length] = new TTree(treeName, fTreeDescription.Data());
-      fill[length] = false;
+    TString treeName = fBranchTreeMap[outer->first.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[outer->first.c_str()];
+    if (trees.count(treeName) == 0) {
+      trees[treeName] = new TTree(treeName, fTreeDescription.Data());
+      fill[treeName] = false;
+    }
+    //unsigned length = outer->second.size();
+    //if (length > max_scalar_nentries) max_scalar_nentries = length;
+    //TString treeName = fBranchTreeMap[outer->first].EqualTo("") ? fTreeName : fBranchTreeMap[outer->first];//fTreeName;
+    //if (trees.count(length) == 0) {
+    //  if (!trees.empty())
+    //    treeName.Append(TString::Format("%u", ++treeCount));
+    //  trees[length] = new TTree(treeName, fTreeDescription.Data());
+    //  fill[length] = false;
+    //}
+  }
+  for (std::map<std::string, std::map<long long, std::map<long long, bool> >, internal::string_cmp >::iterator outer = fBoolIntIntMap.begin();
+      outer != fBoolIntIntMap.end(); ++outer) {
+    TString treeName = fBranchTreeMap[outer->first.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[outer->first.c_str()];
+    if (trees.count(treeName) == 0) {
+      trees[treeName] = new TTree(treeName, fTreeDescription.Data());
+      fill[treeName] = false;
     }
   }
-  //for (std::map<std::string, std::map<long long, std::map<long long, bool> >, internal::string_cmp >::iterator outer = fBoolIntIntMap.begin();
-  //    outer != fBoolIntIntMap.end(); ++outer) {
-  //  unsigned length = outer->second.size();
-  //  if (trees.count(length) == 0) {
-  //    TString treeName = fTreeName;
-  //    if (!trees.empty())
-  //      treeName.Prepend(TString::Format("%u", ++treeCount));
-  //    trees[length] = new TTree(treeName, fTreeDescription.Data());
-  //    fill[length] = false;
-  //  }
-  //}
-  //for (std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >::iterator outer = fDecimalIntIntMap.begin();
-  //    outer != fDecimalIntIntMap.end(); ++outer) {
-  //  unsigned length = outer->second.size();
-  //  if (trees.count(length) == 0) {
-  //    TString treeName = fTreeName;
-  //    if (!trees.empty())
-  //      treeName.Prepend(TString::Format("%u", ++treeCount));
-  //    trees[length] = new TTree(treeName, fTreeDescription.Data());
-  //    fill[length] = false;
-  //  }
-  //}
-  //for (std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >::iterator outer = fIntegerIntIntMap.begin();
-  //    outer != fIntegerIntIntMap.end(); ++outer) {
-  //  unsigned length = outer->second.size();
-  //  if (trees.count(length) == 0) {
-  //    TString treeName = fTreeName;
-  //    if (!trees.empty())
-  //      treeName.Prepend(TString::Format("%u", ++treeCount));
-  //    trees[length] = new TTree(treeName, fTreeDescription.Data());
-  //    fill[length] = false;
-  //  }
-  //}
-  //for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> >, internal::string_cmp >::iterator outer = fCountingIntIntMap.begin();
-  //    outer != fCountingIntIntMap.end(); ++outer) {
-  //  unsigned length = outer->second.size();
-  //  if (trees.count(length) == 0) {
-  //    TString treeName = fTreeName;
-  //    if (!trees.empty())
-  //      treeName.Prepend(TString::Format("%u", ++treeCount));
-  //    trees[length] = new TTree(treeName, fTreeDescription.Data());
-  //    fill[length] = false;
-  //  }
-  //}
+  for (std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >::iterator outer = fDecimalIntIntMap.begin();
+      outer != fDecimalIntIntMap.end(); ++outer) {
+    TString treeName = fBranchTreeMap[outer->first.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[outer->first.c_str()];
+    if (trees.count(treeName) == 0) {
+      trees[treeName] = new TTree(treeName, fTreeDescription.Data());
+      fill[treeName] = false;
+    }
+  }
+  for (std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >::iterator outer = fIntegerIntIntMap.begin();
+      outer != fIntegerIntIntMap.end(); ++outer) {
+    TString treeName = fBranchTreeMap[outer->first.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[outer->first.c_str()];
+    if (trees.count(treeName) == 0) {
+      trees[treeName] = new TTree(treeName, fTreeDescription.Data());
+      fill[treeName] = false;
+    }
+  }
+  for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> >, internal::string_cmp >::iterator outer = fCountingIntIntMap.begin();
+      outer != fCountingIntIntMap.end(); ++outer) {
+    TString treeName = fBranchTreeMap[outer->first.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[outer->first.c_str()];
+    if (trees.count(treeName) == 0) {
+      trees[treeName] = new TTree(treeName, fTreeDescription.Data());
+      fill[treeName] = false;
+    }
+  }
 
   // Loop over maps - each key is a branch name
   std::cout << std::endl;
   for (std::map<std::string, std::map<long long, bool>, internal::string_cmp >::iterator outer = fBoolIntMap.begin();
       outer != fBoolIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    unsigned length = outer->second.size();
+    TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
     std::cout << "Creating branch " << bname << " of type bool" << std::endl;
-    std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
-    trees[length]->Branch(bname.c_str(), &bBoolValues[bname]);
+    std::cout << "Located in tree " << trees[tname]->GetName() << std::endl << std::endl;
+    trees[tname]->Branch(bname.c_str(), &bBoolValues[bname]);
   }
   for (std::map<std::string, std::map<long long, long double>, internal::string_cmp >::iterator outer = fDecimalIntMap.begin();
       outer != fDecimalIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    unsigned length = outer->second.size();
+    TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
     std::cout << "Creating branch " << bname << " of type double" << std::endl;
-    std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
-    trees[length]->Branch(bname.c_str(), &bDecimalValues[bname]);
+    std::cout << "Located in tree " << trees[tname]->GetName() << std::endl << std::endl;
+    trees[tname]->Branch(bname.c_str(), &bDecimalValues[bname]);
   }
   for (std::map<std::string, std::map<long long, long long>, internal::string_cmp >::iterator outer = fIntegerIntMap.begin();
       outer != fIntegerIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    unsigned length = outer->second.size();
+    TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
     std::cout << "Creating branch " << bname << " of type long long" << std::endl;
-    std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
-    trees[length]->Branch(bname.c_str(), &bIntegerValues[bname]);
+    std::cout << "Located in tree " << trees[tname]->GetName() << std::endl << std::endl;
+    trees[tname]->Branch(bname.c_str(), &bIntegerValues[bname]);
   }
   for (std::map<std::string, std::map<long long, unsigned long long>, internal::string_cmp >::iterator outer = fCountingIntMap.begin();
       outer != fCountingIntMap.end(); ++outer) {
     std::string bname = outer->first;
-    unsigned length = outer->second.size();
+    TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
     std::cout << "Creating branch " << bname << " of type unsigned long long" << std::endl;
-    std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
-    trees[length]->Branch(bname.c_str(), &bCountingValues[bname]);
+    std::cout << "Located in tree " << trees[tname]->GetName() << std::endl << std::endl;
+    trees[tname]->Branch(bname.c_str(), &bCountingValues[bname]);
   }
   for (std::map<std::string, std::map<long long, std::map<long long, bool> >, internal::string_cmp >::iterator outer = fBoolIntIntMap.begin();
       outer != fBoolIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
+    TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
     //unsigned length = outer->second.size();
     std::cout << "Creating branch " << bname << " of type vector<bool>" << std::endl;
-    std::cout << "Located in tree " << trees[max_scalar_nentries]->GetName() << std::endl << std::endl;
+    //std::cout << "Located in tree " << trees[max_scalar_nentries]->GetName() << std::endl << std::endl;
+    std::cout << "Located in tree " << trees[tname]->GetName() << std::endl << std::endl;
     //std::cout << "Located in tree " << trees[length]->GetName() << std::endl << std::endl;
-    trees[max_scalar_nentries]->Branch(bname.c_str(), &bBoolIntValues[bname]);
+    trees[tname]->Branch(bname.c_str(), &bBoolIntValues[bname]);
+    //trees[max_scalar_nentries]->Branch(bname.c_str(), &bBoolIntValues[bname]);
     //trees[length]->Branch(bname.c_str(), &bBoolIntValues[bname]);
   }
   for (std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >::iterator outer = fDecimalIntIntMap.begin();
       outer != fDecimalIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
+    TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
     std::cout << "Creating branch " << bname << " of type vector<double>" << std::endl;
-    std::cout << "Located in tree " << trees[max_scalar_nentries]->GetName() << std::endl << std::endl;
-    trees[max_scalar_nentries]->Branch(bname.c_str(), &bDecimalIntValues[bname]);
-    //trees[length]->Branch(bname.c_str(), &bDecimalIntValues[bname]);
+    std::cout << "Located in tree " << trees[tname]->GetName() << std::endl << std::endl;
+    trees[tname]->Branch(bname.c_str(), &bDecimalIntValues[bname]);
   }
   for (std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >::iterator outer = fIntegerIntIntMap.begin();
       outer != fIntegerIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
+    TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
     std::cout << "Creating branch " << bname << " of type vector<long long>" << std::endl;
-    std::cout << "Located in tree " << trees[max_scalar_nentries]->GetName() << std::endl << std::endl;
-    trees[max_scalar_nentries]->Branch(bname.c_str(), &bIntegerIntValues[bname]);
-    //trees[length]->Branch(bname.c_str(), &bIntegerIntValues[bname]);
+    std::cout << "Located in tree " << trees[tname]->GetName() << std::endl << std::endl;
+    trees[tname]->Branch(bname.c_str(), &bIntegerIntValues[bname]);
   }
   for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> >, internal::string_cmp >::iterator outer = fCountingIntIntMap.begin();
       outer != fCountingIntIntMap.end(); ++outer) {
     std::string bname = outer->first;
+    TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
     std::cout << "Creating branch " << bname << " of type vector<unsigned long long>" << std::endl;
-    std::cout << "Located in tree " << trees[max_scalar_nentries]->GetName() << std::endl << std::endl;
-    trees[max_scalar_nentries]->Branch(bname.c_str(), &bCountingIntValues[bname]);
-    //trees[length]->Branch(bname.c_str(), &bCountingIntValues[bname]);
+    std::cout << "Located in tree " << trees[tname]->GetName() << std::endl << std::endl;
+    trees[tname]->Branch(bname.c_str(), &bCountingIntValues[bname]);
   }
 
   // actual loop to fill in the TTree
@@ -249,122 +238,145 @@ void AnalysisTreeWriter::WriteData() {
     for (std::map<std::string, std::map<long long, bool>, internal::string_cmp >::iterator outer = fBoolIntMap.begin();
         outer != fBoolIntMap.end(); ++outer) {
       std::string bname = outer->first;
-      unsigned length = outer->second.size();
-      if (Exists(bname, i)) {
-        fill[length] = true;
-        trees[length]->SetBranchStatus(bname.c_str(), 1);
-        bBoolValues[bname] = GetBool(bname, i);
+      TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
+      if (fTreeIndicesMap[tname].count(i) != 0) {
+        fill[tname] = true;
+        trees[tname]->SetBranchStatus(bname.c_str(), 1);
+        if (Exists(bname, i))
+          bBoolValues[bname] = GetBool(bname, i);
+        else // DEFAULT
+          bBoolValues[bname] = false;
       }
       else
-        trees[length]->SetBranchStatus(bname.c_str(), 0);
+        trees[tname]->SetBranchStatus(bname.c_str(), 0);
     }
     for (std::map<std::string, std::map<long long, long double>, internal::string_cmp >::iterator outer = fDecimalIntMap.begin();
         outer != fDecimalIntMap.end(); ++outer) {
       std::string bname = outer->first;
-      unsigned length = outer->second.size();
-      if (Exists(bname, i)) {
-        fill[length] = true;
-        trees[length]->SetBranchStatus(bname.c_str(), 1);
-        bDecimalValues[bname] = GetDecimal(bname, i);
+      TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
+      if (fTreeIndicesMap[tname].count(i) != 0) {
+        fill[tname] = true;
+        trees[tname]->SetBranchStatus(bname.c_str(), 1);
+        if (Exists(bname, i))
+          bDecimalValues[bname] = GetDecimal(bname, i);
+        else // DEFAULT
+          bDecimalValues[bname] = -536870912.0;
       }
       else
-        trees[length]->SetBranchStatus(bname.c_str(), 0);
+        trees[tname]->SetBranchStatus(bname.c_str(), 0);
     }
     for (std::map<std::string, std::map<long long, long long>, internal::string_cmp >::iterator outer = fIntegerIntMap.begin();
         outer != fIntegerIntMap.end(); ++outer) {
       std::string bname = outer->first;
-      unsigned length = outer->second.size();
-      if (Exists(bname, i)) {
-        fill[length] = true;
-        trees[length]->SetBranchStatus(bname.c_str(), 1);
-        bIntegerValues[bname] = GetInteger(bname, i);
+      TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
+      if (fTreeIndicesMap[tname].count(i) != 0) {
+        fill[tname] = true;
+        trees[tname]->SetBranchStatus(bname.c_str(), 1);
+        if (Exists(bname, i))
+          bIntegerValues[bname] = GetInteger(bname, i);
+        else // DEFAULT
+          bIntegerValues[bname] = -536870912;
       }
       else
-        trees[length]->SetBranchStatus(bname.c_str(), 0);
+        trees[tname]->SetBranchStatus(bname.c_str(), 0);
     }
     for (std::map<std::string, std::map<long long, unsigned long long>, internal::string_cmp >::iterator outer = fCountingIntMap.begin();
         outer != fCountingIntMap.end(); ++outer) {
       std::string bname = outer->first;
-      unsigned length = outer->second.size();
-      if (Exists(bname, i)) {
-        fill[length] = true;
-        trees[length]->SetBranchStatus(bname.c_str(), 1);
-        bCountingValues[bname] = GetCounting(bname, i);
+      TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
+      if (fTreeIndicesMap[tname].count(i) != 0) {
+        fill[tname] = true;
+        trees[tname]->SetBranchStatus(bname.c_str(), 1);
+        if (Exists(bname, i))
+          bCountingValues[bname] = GetCounting(bname, i);
+        else // DEFAULT
+          bCountingValues[bname] = 536870912;
       }
       else
-        trees[length]->SetBranchStatus(bname.c_str(), 0);
+        trees[tname]->SetBranchStatus(bname.c_str(), 0);
     }
     for (std::map<std::string, std::map<long long, std::map<long long, bool> >, internal::string_cmp >::iterator outer = fBoolIntIntMap.begin();
         outer != fBoolIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
-      unsigned length = max_scalar_nentries; //new
-      //unsigned length = outer->second.size();
-      std::vector<bool> temp; // new
-      if (Exists(bname, i)) {
-        fill[length] = true;
-        //std::vector<bool> temp;
-        for (std::map<long long, bool>::iterator it = outer->second[i].begin();
-             it != outer->second[i].end(); ++it)
-          temp.push_back(it->second);
-        trees[length]->SetBranchStatus(bname.c_str(), 1);
-        //bBoolIntValues[bname] = temp;
+      TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
+      if (fTreeIndicesMap[tname].count(i) != 0) {
+        std::vector<bool> temp;
+        fill[tname] = true;
+        trees[tname]->SetBranchStatus(bname.c_str(), 1);
+        if (Exists(bname, i)) {
+          for (std::map<long long, bool>::iterator it = outer->second[i].begin();
+               it != outer->second[i].end(); ++it)
+            temp.push_back(it->second);
+        }
+        bBoolIntValues[bname] = temp;
       }
-      bBoolIntValues[bname] = temp; // new
-      //else
-      //  trees[length]->SetBranchStatus(bname.c_str(), 0);
+      else
+        trees[tname]->SetBranchStatus(bname.c_str(), 0);
     }
     for (std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >::iterator outer = fDecimalIntIntMap.begin();
         outer != fDecimalIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
-      unsigned length = max_scalar_nentries;
-      std::vector<double> temp;
-      if (Exists(bname, i)) {
-        fill[length] = true;
-        for (std::map<long long, long double>::iterator it = outer->second[i].begin();
-             it != outer->second[i].end(); ++it) 
-          temp.push_back(it->second);
-        trees[length]->SetBranchStatus(bname.c_str(), 1);
+      TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
+      if (fTreeIndicesMap[tname].count(i) != 0) {
+        std::vector<double> temp;
+        fill[tname] = true;
+        trees[tname]->SetBranchStatus(bname.c_str(), 1);
+        if (Exists(bname, i)) {
+          for (std::map<long long, long double>::iterator it = outer->second[i].begin();
+               it != outer->second[i].end(); ++it)
+            temp.push_back(it->second);
+        }
+        bDecimalIntValues[bname] = temp; 
       }
-      bDecimalIntValues[bname] = temp; 
+      else
+        trees[tname]->SetBranchStatus(bname.c_str(), 0);
     }
     for (std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >::iterator outer = fIntegerIntIntMap.begin();
         outer != fIntegerIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
-      unsigned length = max_scalar_nentries;
-      std::vector<long long> temp;
-      if (Exists(bname, i)) {
-        fill[length] = true;
-        for (std::map<long long, long long>::iterator it = outer->second[i].begin();
-             it != outer->second[i].end(); ++it)
-          temp.push_back(it->second);
-        trees[length]->SetBranchStatus(bname.c_str(), 1);
+      TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
+      if (fTreeIndicesMap[tname].count(i) != 0) {
+        std::vector<long long> temp;
+        fill[tname] = true;
+        trees[tname]->SetBranchStatus(bname.c_str(), 1);
+        if (Exists(bname, i)) {
+          for (std::map<long long, long long>::iterator it = outer->second[i].begin();
+               it != outer->second[i].end(); ++it)
+            temp.push_back(it->second);
+        }
+        bIntegerIntValues[bname] = temp;
       }
-      bIntegerIntValues[bname] = temp;
+      else
+        trees[tname]->SetBranchStatus(bname.c_str(), 0);
     }
     for (std::map<std::string, std::map<long long, std::map<long long, unsigned long long> >, internal::string_cmp >::iterator outer = fCountingIntIntMap.begin();
         outer != fCountingIntIntMap.end(); ++outer) {
       std::string bname = outer->first;
-      unsigned length = max_scalar_nentries;
-      std::vector<unsigned long long> temp;
-      if (Exists(bname, i)) {
-        fill[length] = true;
-        for (std::map<long long, unsigned long long>::iterator it = outer->second[i].begin();
-             it != outer->second[i].end(); ++it)
-          temp.push_back(it->second);
-        trees[length]->SetBranchStatus(bname.c_str(), 1);
+      TString tname = fBranchTreeMap[bname.c_str()].EqualTo("") ? fTreeName : fBranchTreeMap[bname.c_str()];
+      if (fTreeIndicesMap[tname].count(i) != 0) {
+        std::vector<unsigned long long> temp;
+        fill[tname] = true;
+        trees[tname]->SetBranchStatus(bname.c_str(), 1);
+        if (Exists(bname, i)) {
+          for (std::map<long long, unsigned long long>::iterator it = outer->second[i].begin();
+               it != outer->second[i].end(); ++it)
+            temp.push_back(it->second);
+        }
+        bCountingIntValues[bname] = temp;
       }
-      bCountingIntValues[bname] = temp;
+      else
+        trees[tname]->SetBranchStatus(bname.c_str(), 0);
     }
 
     // fill trees and reset fill flags
-    for (std::map<unsigned, bool>::iterator it = fill.begin(); it != fill.end(); ++it) {
+    for (std::map<TString, bool>::iterator it = fill.begin(); it != fill.end(); ++it) {
       if (it->second)
         trees[it->first]->Fill();
       it->second = false;
     }
   }
 
-  for (std::map<unsigned, TTree*>::iterator it = trees.begin(); it != trees.end(); ++it)
+  for (std::map<TString, TTree*>::iterator it = trees.begin(); it != trees.end(); ++it)
     it->second->SetBranchStatus("*", kTRUE);
   f.Write();
   f.Close();
