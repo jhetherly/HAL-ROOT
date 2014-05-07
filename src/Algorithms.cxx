@@ -215,6 +215,8 @@ void internal::FilterRefParticleAlgo::Exec (Option_t* /*option*/) {
     if (FilterPredicate(reference, *particle))
       gen_data->AddParticle(*particle);
   }
+
+  IncreaseCounter(gen_data->GetNParticles());
 }
 
 void internal::FilterRefParticleAlgo::Clear (Option_t* /*option*/) {
@@ -325,6 +327,26 @@ void Algorithms::ImportParticle::Exec (Option_t* /*option*/) {
     }
     else if (fIsE || fIsM || fIsPhiEtMET) {
       if (tr->GetRank(fPhi) == 1)
+        n = tr->GetDim(fPhi);
+      else if (tr->GetRank(fPhi) == 0)
+        n = 1;
+    }
+  }
+  else {
+    if (tr->CheckBranchMapNickname(fNEntriesName) && 
+        tr->GetInteger(fNEntriesName) < n) {
+      n = tr->GetInteger(fNEntriesName);
+    }
+    else if (fIsCart || fIsCartMET) {
+      if (tr->GetRank(fCartX1) == 1 && 
+          tr->GetDim(fCartX1) < n)
+        n = tr->GetDim(fCartX1);
+      else if (tr->GetRank(fCartX1) == 0)
+        n = 1;
+    }
+    else if (fIsE || fIsM || fIsPhiEtMET) {
+      if (tr->GetRank(fPhi) == 1 && 
+          tr->GetDim(fPhi) < n)
         n = tr->GetDim(fPhi);
       else if (tr->GetRank(fPhi) == 0)
         n = 1;
@@ -732,265 +754,58 @@ void Algorithms::SelectParticle::Setup () {
 
 bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
   TLorentzVector *vec = particle->GetP();
-  long double attribute;
-  float charge = particle->GetCharge();
-  int id = particle->GetID();
+  double property = 0.0;
 
-  if (fAttribute)
-    if (particle->HasAttribute(fProperty)) attribute = particle->GetAttribute(fProperty);
+  if (fPt)
+    property = vec->Pt();
+  else if (fM)
+    property = vec->M();
+  else if (fE)
+    property = vec->E();
+  else if (fEt)
+    property = vec->Et();
+  else if (fP3)
+    property = vec->P();
+  else if (fEta)
+    property = vec->Eta();
+  else if (fPhi)
+    property = vec->Phi();
+  else if (fID)
+    property = (double)particle->GetID();
+  else if (fCharge)
+    property = (double)particle->GetCharge();
+  else if (fAttribute && particle->HasAttribute(fProperty))
+    property = particle->GetAttribute(fProperty);
+  else 
+    throw HAL::HALException(GetName().Prepend("Couldn't determine property to filter: "));
 
   if (fSingleEnd) {
-    if (fEqual) {
-      if (fPt)
-        return (vec->Pt() == fLowLimit);
-      else if (fM)
-        return (vec->M() == fLowLimit);
-      else if (fE)
-        return (vec->E() == fLowLimit);
-      else if (fEt)
-        return (vec->Et() == fLowLimit);
-      else if (fP3)
-        return (vec->P() == fLowLimit);
-      else if (fEta)
-        return (vec->Eta() == fLowLimit);
-      else if (fPhi)
-        return (vec->Phi() == fLowLimit);
-      else if (fID)
-        return (id == fLowLimit);
-      else if (fCharge)
-        return (charge == fLowLimit);
-      else if (fAttribute && particle->HasAttribute(fProperty))
-        return (attribute == fLowLimit);
-    }
-    else if (fNotEqual) {
-      if (fPt)
-        return (vec->Pt() != fLowLimit);
-      else if (fM)
-        return (vec->M() != fLowLimit);
-      else if (fE)
-        return (vec->E() != fLowLimit);
-      else if (fEt)
-        return (vec->Et() != fLowLimit);
-      else if (fP3)
-        return (vec->P() != fLowLimit);
-      else if (fEta)
-        return (vec->Eta() != fLowLimit);
-      else if (fPhi)
-        return (vec->Phi() != fLowLimit);
-      else if (fID)
-        return (id != fLowLimit);
-      else if (fCharge)
-        return (charge != fLowLimit);
-      else if (fAttribute && particle->HasAttribute(fProperty))
-        return (attribute != fLowLimit);
-    }
-    else if (fGreaterThan) {
-      if (fPt)
-        return (vec->Pt() > fLowLimit);
-      else if (fM)
-        return (vec->M() > fLowLimit);
-      else if (fE)
-        return (vec->E() > fLowLimit);
-      else if (fEt)
-        return (vec->Et() > fLowLimit);
-      else if (fP3)
-        return (vec->P() > fLowLimit);
-      else if (fEta)
-        return (vec->Eta() > fLowLimit);
-      else if (fPhi)
-        return (vec->Phi() > fLowLimit);
-      else if (fID)
-        return (id > fLowLimit);
-      else if (fCharge)
-        return (charge > fLowLimit);
-      else if (fAttribute && particle->HasAttribute(fProperty))
-        return (attribute > fLowLimit);
-    }
-    else if (fLessThan) {
-      if (fPt)
-        return (vec->Pt() < fHighLimit);
-      else if (fM)
-        return (vec->M() < fHighLimit);
-      else if (fE)
-        return (vec->E() < fHighLimit);
-      else if (fEt)
-        return (vec->Et() < fHighLimit);
-      else if (fP3)
-        return (vec->P() < fHighLimit);
-      else if (fEta)
-        return (vec->Eta() < fHighLimit);
-      else if (fPhi)
-        return (vec->Phi() < fHighLimit);
-      else if (fID)
-        return (id < fHighLimit);
-      else if (fCharge)
-        return (charge < fHighLimit);
-      else if (fAttribute && particle->HasAttribute(fProperty))
-        return (attribute < fHighLimit);
-    }
-    else if (fGreaterThanEqual) {
-      if (fPt)
-        return (vec->Pt() >= fLowLimit);
-      else if (fM)
-        return (vec->M() >= fLowLimit);
-      else if (fE)
-        return (vec->E() >= fLowLimit);
-      else if (fEt)
-        return (vec->Et() >= fLowLimit);
-      else if (fP3)
-        return (vec->P() >= fLowLimit);
-      else if (fEta)
-        return (vec->Eta() >= fLowLimit);
-      else if (fPhi)
-        return (vec->Phi() >= fLowLimit);
-      else if (fID)
-        return (id >= fLowLimit);
-      else if (fCharge)
-        return (charge >= fLowLimit);
-      else if (fAttribute && particle->HasAttribute(fProperty))
-        return (attribute >= fLowLimit);
-    }
-    else if (fLessThanEqual) {
-      if (fPt)
-        return (vec->Pt() <= fHighLimit);
-      else if (fM)
-        return (vec->M() <= fHighLimit);
-      else if (fE)
-        return (vec->E() <= fHighLimit);
-      else if (fEt)
-        return (vec->Et() <= fHighLimit);
-      else if (fP3)
-        return (vec->P() <= fHighLimit);
-      else if (fEta)
-        return (vec->Eta() <= fHighLimit);
-      else if (fPhi)
-        return (vec->Phi() <= fHighLimit);
-      else if (fID)
-        return (id <= fHighLimit);
-      else if (fCharge)
-        return (charge <= fHighLimit);
-      else if (fAttribute && particle->HasAttribute(fProperty))
-        return (attribute <= fHighLimit);
-    }
+    if (fEqual) 
+      return (property == fLowLimit);
+    else if (fNotEqual) 
+      return (property != fLowLimit);
+    else if (fGreaterThan)
+      return (property > fLowLimit);
+    else if (fLessThan)
+      return (property < fHighLimit);
+    else if (fGreaterThanEqual)
+      return (property >= fLowLimit);
+    else if (fLessThanEqual)
+      return (property <= fHighLimit);
   }
 
   else if (fWindow) {
-    if (fIn) {
-      if (fPt)
-        return (vec->Pt() <= fHighLimit && vec->Pt() >= fLowLimit);
-      else if (fM)
-        return (vec->M() <= fHighLimit && vec->M() >= fLowLimit);
-      else if (fE)
-        return (vec->E() <= fHighLimit && vec->E() >= fLowLimit);
-      else if (fEt)
-        return (vec->Et() <= fHighLimit && vec->Et() >= fLowLimit);
-      else if (fP3)
-        return (vec->P() <= fHighLimit && vec->P() >= fLowLimit);
-      else if (fEta)
-        return (vec->Eta() <= fHighLimit && vec->Eta() >= fLowLimit);
-      else if (fPhi)
-        return (vec->Phi() <= fHighLimit && vec->Phi() >= fLowLimit);
-      else if (fID)
-        return (id <= fHighLimit && id >= fLowLimit);
-      else if (fCharge)
-        return (charge <= fHighLimit && charge >= fLowLimit);
-      else if (fAttribute && particle->HasAttribute(fProperty))
-        return (attribute <= fHighLimit && attribute >= fLowLimit);
-    }
-    else if (fOut) {
-      if (fPt)
-        return (vec->Pt() >= fHighLimit && vec->Pt() <= fLowLimit);
-      else if (fM)
-        return (vec->M() >= fHighLimit && vec->M() <= fLowLimit);
-      else if (fE)
-        return (vec->E() >= fHighLimit && vec->E() <= fLowLimit);
-      else if (fEt)
-        return (vec->Et() >= fHighLimit && vec->Et() <= fLowLimit);
-      else if (fP3)
-        return (vec->P() >= fHighLimit && vec->P() <= fLowLimit);
-      else if (fEta)
-        return (vec->Eta() >= fHighLimit && vec->Eta() <= fLowLimit);
-      else if (fPhi)
-        return (vec->Phi() >= fHighLimit && vec->Phi() <= fLowLimit);
-      else if (fID)
-        return (id >= fHighLimit && id <= fLowLimit);
-      else if (fCharge)
-        return (charge >= fHighLimit && charge <= fLowLimit);
-      else if (fAttribute && particle->HasAttribute(fProperty))
-        return (attribute >= fHighLimit && attribute <= fLowLimit);
-    }
+    if (fIn)
+      return (property <= fHighLimit && property >= fLowLimit);
+    else if (fOut)
+      return (property >= fHighLimit && property <= fLowLimit);
   }
 
   else if (fList) {
-    if (fPt) {
-      for (std::vector<double>::iterator val = fListValues.begin();
-           val != fListValues.end(); ++val) {
-        if (vec->Pt() == *val)
-          return true;
-      }
-    }
-    else if (fM) {
-      for (std::vector<double>::iterator val = fListValues.begin();
-           val != fListValues.end(); ++val) {
-        if (vec->M() == *val)
-          return true;
-      }
-    }
-    else if (fE) {
-      for (std::vector<double>::iterator val = fListValues.begin();
-           val != fListValues.end(); ++val) {
-        if (vec->E() == *val)
-          return true;
-      }
-    }
-    else if (fEt) {
-      for (std::vector<double>::iterator val = fListValues.begin();
-           val != fListValues.end(); ++val) {
-        if (vec->Et() == *val)
-          return true;
-      }
-    }
-    else if (fP3) {
-      for (std::vector<double>::iterator val = fListValues.begin();
-           val != fListValues.end(); ++val) {
-        if (vec->P() == *val)
-          return true;
-      }
-    }
-    else if (fEta) {
-      for (std::vector<double>::iterator val = fListValues.begin();
-           val != fListValues.end(); ++val) {
-        if (vec->Eta() == *val)
-          return true;
-      }
-    }
-    else if (fPhi) {
-      for (std::vector<double>::iterator val = fListValues.begin();
-           val != fListValues.end(); ++val) {
-        if (vec->Phi() == *val)
-          return true;
-      }
-    }
-    else if (fID) {
-      for (std::vector<double>::iterator val = fListValues.begin();
-           val != fListValues.end(); ++val) {
-        if (id == (int)*val)
-          return true;
-      }
-    }
-    else if (fCharge) {
-      for (std::vector<double>::iterator val = fListValues.begin();
-           val != fListValues.end(); ++val) {
-        if (charge == *val)
-          return true;
-      }
-    }
-    else if (fAttribute && particle->HasAttribute(fProperty)) {
-      for (std::vector<double>::iterator val = fListValues.begin();
-           val != fListValues.end(); ++val) {
-        if (attribute == *val)
-          return true;
-      }
+    for (std::vector<double>::iterator val = fListValues.begin();
+        val != fListValues.end(); ++val) {
+      if (property == *val)
+        return true;
     }
     return false;
   }
@@ -999,72 +814,66 @@ bool Algorithms::SelectParticle::FilterPredicate(ParticlePtr particle) {
 }
 
 Algorithms::SelectRefParticle::SelectRefParticle (TString name, TString title, TString input, TString others, 
-    double value, TString inclusion, TString type) : 
+    double value, TString type, TString inclusion) : 
   FilterRefParticleAlgo(name, title, input, others), fIn(false), fOut(false), 
   fWindow(false), fDeltaR(false), fDeltaPhi(false) {
 
   if (inclusion.EqualTo("in", TString::kIgnoreCase) || 
-      inclusion.EqualTo("inclusion", TString::kIgnoreCase)) {
+      inclusion.EqualTo("inclusive", TString::kIgnoreCase)) {
     fIn = true;
     fHighLimit = value;
   }
   else if (inclusion.EqualTo("out", TString::kIgnoreCase) || 
-           inclusion.EqualTo("exclusion", TString::kIgnoreCase)) {
+           inclusion.EqualTo("exclusive", TString::kIgnoreCase)) {
     fOut = true;
     fLowLimit = value;
   }
 
-  if (type.EqualTo("r", TString::kIgnoreCase)) 
+  if (type.EqualTo("dr", TString::kIgnoreCase)) 
     fDeltaR = true;
-  else if (type.EqualTo("phi", TString::kIgnoreCase)) 
+  else if (type.EqualTo("dphi", TString::kIgnoreCase)) 
     fDeltaPhi = true;
 }
 
 Algorithms::SelectRefParticle::SelectRefParticle (TString name, TString title, TString input, TString others, 
-    double low, double high, TString type) :
+    double low, double high, TString type, TString inclusion) :
   FilterRefParticleAlgo(name, title, input, others), fHighLimit(high), fLowLimit(low), fIn(false), fOut(false), 
   fWindow(true), fDeltaR(false), fDeltaPhi(false) {
 
-  if (type.EqualTo("r", TString::kIgnoreCase)) 
+  if (inclusion.EqualTo("in", TString::kIgnoreCase) || 
+      inclusion.EqualTo("inclusive", TString::kIgnoreCase))
+    fIn = true;
+  else if (inclusion.EqualTo("out", TString::kIgnoreCase) || 
+           inclusion.EqualTo("exclusive", TString::kIgnoreCase))
+    fOut = true;
+
+  if (type.EqualTo("dr", TString::kIgnoreCase)) 
     fDeltaR = true;
-  else if (type.EqualTo("phi", TString::kIgnoreCase)) 
+  else if (type.EqualTo("dphi", TString::kIgnoreCase)) 
     fDeltaPhi = true;
 }
 
 bool Algorithms::SelectRefParticle::FilterPredicate (HAL::ParticlePtr p_ref, HAL::ParticlePtr particle) {
   TLorentzVector *ref = p_ref->GetP();
   TLorentzVector *vec = particle->GetP();
-  if (fDeltaR) {
-    double dR = ref->DeltaR(*vec);
-    if (fIn) {
-      if (dR <= fHighLimit)
-        return true;
-    }
-    else if (fOut) {
-      if (dR >= fLowLimit)
-        return true;
-    }
-    else if (fWindow) {
-      if (dR >= fLowLimit && dR <= fHighLimit)
-        return true;
-    }
+  double val = 0.0;
+
+  if (fDeltaR)
+    val = ref->DeltaR(*vec);
+  else if (fDeltaPhi)
+    val = ref->DeltaPhi(*vec);
+
+  if (fWindow) {
+    if (fIn)
+      return (val >= fLowLimit && val <= fHighLimit);
+    else if (fOut)
+      return (val <= fLowLimit && val >= fHighLimit);
   }
-  else if (fDeltaPhi) {
-    double dPhi = ref->DeltaPhi(*vec);
-    if (fIn) {
-      if (dPhi <= fHighLimit)
-        return true;
-    }
-    else if (fOut) {
-      if (dPhi >= fLowLimit)
-        return true;
-    }
-    else if (fWindow) {
-      if (dPhi >= fLowLimit && dPhi <= fHighLimit)
-        return true;
-    }
-  }
-  return false;
+  else if (fIn)
+    return (val <= fHighLimit);
+  else if (fOut)
+    return (val >= fLowLimit);
+  throw HAL::HALException(GetName().Prepend("Couldn't determine how to filter: "));
 }
 
 /*

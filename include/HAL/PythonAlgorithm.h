@@ -1,3 +1,18 @@
+/*!
+ * \file
+ * \author  Jeff Hetherly <jhetherly@smu.edu>
+ * \version 0.0.26
+ *
+ * \section LICENSE
+ * 
+ * \section Description
+ *
+ * This class is designed to interface between algorithms written
+ * in python to be called and shared data with C++.
+ */
+
+/// \todo Python: Fix sharing of the fInput object across the python-c++ boundary
+
 #ifndef HAL_PYTHON_RECONSRTUCTION_ALGORITHM
 #define HAL_PYTHON_RECONSRTUCTION_ALGORITHM
 

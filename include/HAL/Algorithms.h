@@ -1,13 +1,26 @@
-/*
- * Generic algorithms for fast analysis development
+/*!
+ * \file
+ * \author  Jeff Hetherly <jhetherly@smu.edu>
+ * \version 0.0.26
  *
- * DEV NOTE:
- * Importing and Reconstruction Algorithms create and destroy objects in 'data'
- *  - creates <name>:4-vec 1D array
- * All other Algorithms should never create or destroy objects in 'data'
- *  - creates <name>:ref_name scalar that points to the actual data (index refers to ref_name indices)
- * ref_names should always reference direct access data, never reference a reference
- * */
+ * \section LICENSE
+ * 
+ * \section Description
+ *
+ * These classes are part of the generic algorithm framework. They do
+ * common tasks in H.E.P. analysis and aid in fast development of
+ * an analysis. Only importing and reconstruction algorithms will
+ * create particles; the others algorithms just suffle pointers to
+ * particles around.
+ */
+
+/// \todo Generic Algorithms: Add chi-squared minimization algorithm
+/// \todo Generic Algorithms: Add parent selection algorithm
+/// \todo Generic Algorithms: Add merging algorithm
+/// \todo Generic Algorithms: Add monitor for UserData algorithm
+/// \todo Generic Algorithms: Add augmenting algorithms
+/// \todo Generic Algorithms: Add parent/child traversal algorithms
+/// \todo Generic Algorithms: Make error messages more informative
 
 #ifndef HAL_ALGORITHMS
 #define HAL_ALGORITHMS
@@ -201,52 +214,74 @@ namespace Algorithms
  * Importing algorithms
  * */
 
-/*
- * Import algorithm to build particles from cartesian,
- * (pt,eta,phi,energy), or (pt,eta,phi,mass) components of a
- * 4-vector. It can also determine how many elements to read
- * in based on whether you give a number to read, branchmap
- * to scan, or implicitly gather it from the length of the
- * other required branches. It will also determine the type
- * of 4-vector to create based on the branchmaps that are 
- * defined.
+//! Generic algorithm class that builds particles from information in a TTree.
+/*!
+ * This algorithm imports the information to build particles from specified branches in a TTree.
+ * It may use the branches to build particles with either full 4-vector momentum or transverse 
+ * momentum. It can optionally read in the charge, particle ID, and number of particles to 
+ * import. It determines how to read in the particles through the specified branch maps given 
+ * to the Analysis object. It can also determine how many particles to read in based on whether 
+ * you give a number to read, branchmap to scan, or implicitly gather it from the length of the
+ * other required branches. The necessary branch maps are given below. The particles from this 
+ * algorithm are stored in a GenericData object in the UserData under the algorithm's 
+ * name.\n\n
+ * __Explaination of the branch maps:__\n
+ * The required maps are those needed to construct the TLorentzVectors, either complete vectors
+ * or just transverse vectors. Any set of the branch maps given below will do. <name> refers to 
+ * the name given to this algorithm's constructor.\n
+ * _Required Branch Maps:_
+ * | Cartesian components | \f$ p_T,\eta,\phi,E\f$ | \f$ p_T,\eta,\phi,m\f$ | Transverse Cartesian | \f$ p_T,\phi\f$ | \f$ E_T,\phi\f$ |
+ * | :------------------: | :-------: | :-------: | :------------------: | :--------------: | :--------------: |
+ * |  <name>:x0           | <name>:pt | <name>:pt |   <name>:x1          |    <name>:pt     |    <name>:et     |
+ * |  <name>:x1           |<name>:eta |<name>:eta |   <name>:x2          |    <name>:phi    |    <name>:phi    |
+ * |  <name>:x2           |<name>:phi |<name>:phi |                      |                  |                  |
+ * |  <name>:x3           | <name>:e  | <name>:m  |                      |                  |                  |
+ * _Optional Branch Maps:_
+ * | Number of particle | Charge | ID |
+ * | :----------------: | :----: | :--:|
+ * |  <name>:nentries   |<name>:charge | <name>:id |
+ * __Examples:__\n
+ * In your analysis file, do the following to import Monte Carlo particles with complete 4-vectors:
  *
- * Prerequisites:
- *  None
- * Required Branch Maps:
- *  <name>:x0
- *  <name>:x1
- *  <name>:x2
- *  <name>:x3
- *  OR
- *  <name>:pt
- *  <name>:eta
- *  <name>:phi
- *  <name>:e
- *  OR
- *  <name>:pt
- *  <name>:eta
- *  <name>:phi
- *  <name>:m
- *  OR
- *  <name>:x1
- *  <name>:x2
- *  OR
- *  <name>:pt
- *  <name>:phi
- *  OR
- *  <name>:et
- *  <name>:phi
- * Optional Branch Maps:
- *  <name>:nentries
- *  <name>:charge
- *  <name>:id
- * UserData Output:
- *  <name>
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportParticle("mc", "import basic Monte Carlo particles"));
+ *
+ * //...
+ * 
+ * a.MapBranch("mc_pt",     "mc:pt");
+ * a.MapBranch("mc_eta",    "mc:eta");
+ * a.MapBranch("mc_phi",    "mc:phi");
+ * a.MapBranch("mc_m",      "mc:m");
+ * a.MapBranch("mc_pdgId",  "mc:id");
+ * a.MapBranch("mc_charge", "mc:charge");
+ * ~~~~~~~~~~~~~~~~~~~~~~
+ * Likewise, you can import the MET vector like so:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportParticle("met", "import the MET tranverse vector"));
+ *
+ * //...
+ *
+ * a.MapBranch("MET_Truth_Int_etx", "met:x1");
+ * a.MapBranch("MET_Truth_Int_ety", "met:x2");
+ * ~~~~~~~~~~~~~~~~~~~~~~
  */
 class ImportParticle : public HAL::internal::ImportParticleAlgo {
 public:
-  ImportParticle (TString name, TString title, unsigned n = 0);
+  //! Constructor
+  /*!
+   * Initializes the algorithm
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] n_max Maximum number of particles to import. If n=0 then all the particles are imported.
+   * \sa ImportBool, ImportInteger, ImportCounting, ImportDecimal
+   */
+  ImportParticle (TString name, TString title, unsigned n_max = 0);
   virtual ~ImportParticle () {}
 
 protected:
@@ -259,19 +294,41 @@ private:
 };
 
 
-/*
- * Import algorithm to store a bool value from a TTree
+//! Generic algorithm class that stores a boolean value from information in a TTree.
+/*!
+ * This algorithm imports the information to store a boolean value from a specified branch in 
+ * a TTree. The value from this algorithm is stored in a GenericData object in the 
+ * UserData under the algorithm's name and <name>:value.\n\n
+ * __Explaination of the branch map:__\n
+ * The required map is just one that points to the relavent boolean value. <name> refers to 
+ * the name given to this algorithm's constructor.\n
+ * _Required Branch Map:_
+ * || Boolean value |
+ * || :-----------: |
+ * ||  <name>:bool  |
+ * __Example:__\n
+ * In your analysis file, do the following to import a trigger flag:
  *
- * Prerequisites:
- *  None
- * Required Branch Maps:
- *  <name>:bool
- * UserData Output:
- *  <name>
- *  <name>:value
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportBool("lepton trigger", "import the lepton trigger"));
+ *
+ * //...
+ * 
+ * a.MapBranch("some_trigger_branch", "lepton trigger:bool");
+ * ~~~~~~~~~~~~~~~~~~~~~~
  */
 class ImportBool : public HAL::internal::ImportValueAlgo {
 public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \sa ImportParticle, ImportInteger, ImportCounting, ImportDecimal
+   */
   ImportBool (TString name, TString title);
   virtual ~ImportBool () {}
 
@@ -282,19 +339,41 @@ private:
 };
 
 
-/*
- * Import algorithm to store a integer value from a TTree
+//! Generic algorithm class that stores an integer value from information in a TTree.
+/*!
+ * This algorithm imports the information to store an integer value from a specified branch in 
+ * a TTree. The value from this algorithm is stored in a GenericData object in the 
+ * UserData under the algorithm's name and <name>:value.\n\n
+ * __Explaination of the branch map:__\n
+ * The required map is just one that points to the relavent integer value. <name> refers to 
+ * the name given to this algorithm's constructor.\n
+ * _Required Branch Map:_
+ * || Integer value |
+ * || :-----------: |
+ * ||  <name>:integer  |
+ * __Example:__\n
+ * In your analysis file, do the following for an integer value:
  *
- * Prerequisites:
- *  None
- * Required Branch Maps:
- *  <name>:integer
- * UserData Output:
- *  <name>
- *  <name>:value
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportInteger("integer value", "import an integer value"));
+ *
+ * //...
+ * 
+ * a.MapBranch("some_integer_branch", "integer value:integer");
+ * ~~~~~~~~~~~~~~~~~~~~~~
  */
 class ImportInteger : public HAL::internal::ImportValueAlgo {
 public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \sa ImportBool, ImportParticle, ImportCounting, ImportDecimal
+   */
   ImportInteger (TString name, TString title);
   virtual ~ImportInteger () {}
 
@@ -305,19 +384,41 @@ private:
 };
 
 
-/*
- * Import algorithm to store a counting value from a TTree
+//! Generic algorithm class that stores a counting value from information in a TTree.
+/*!
+ * This algorithm imports the information to store a counting value from a specified branch in 
+ * a TTree. The value from this algorithm is stored in a GenericData object in the 
+ * UserData under the algorithm's name and <name>:value.\n\n
+ * __Explaination of the branch map:__\n
+ * The required map is just one that points to the relavent counting value. <name> refers to 
+ * the name given to this algorithm's constructor.\n
+ * _Required Branch Map:_
+ * || Counting value |
+ * || :-----------: |
+ * ||  <name>:counting  |
+ * __Example:__\n
+ * In your analysis file, do the following for a counting value:
  *
- * Prerequisites:
- *  None
- * Required Branch Maps:
- *  <name>:counting
- * UserData Output:
- *  <name>
- *  <name>:value
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportCounting("counting value", "import a counting value"));
+ *
+ * //...
+ * 
+ * a.MapBranch("some_counting_branch", "counting value:counting");
+ * ~~~~~~~~~~~~~~~~~~~~~~
  */
 class ImportCounting : public HAL::internal::ImportValueAlgo {
 public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \sa ImportBool, ImportInteger, ImportParticle, ImportDecimal
+   */
   ImportCounting (TString name, TString title);
   virtual ~ImportCounting () {}
 
@@ -328,19 +429,41 @@ private:
 };
 
 
-/*
- * Import algorithm to store a decimal value from a TTree
+//! Generic algorithm class that stores a decimal value from information in a TTree.
+/*!
+ * This algorithm imports the information to store a decimal value from a specified branch in 
+ * a TTree. The value from this algorithm is stored in a GenericData object in the 
+ * UserData under the algorithm's name and <name>:value.\n\n
+ * __Explaination of the branch map:__\n
+ * The required map is just one that points to the relavent decimal value. <name> refers to 
+ * the name given to this algorithm's constructor.\n
+ * _Required Branch Map:_
+ * || Decimal value |
+ * || :-----------: |
+ * ||  <name>:decimal  |
+ * __Example:__\n
+ * In your analysis file, do the following for a decimal value:
  *
- * Prerequisites:
- *  None
- * Required Branch Maps:
- *  <name>:decimal
- * UserData Output:
- *  <name>
- *  <name>:value
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportDecimal("decimal value", "import a decimal value"));
+ *
+ * //...
+ * 
+ * a.MapBranch("some_decimal_branch", "decimal value:decimal");
+ * ~~~~~~~~~~~~~~~~~~~~~~
  */
 class ImportDecimal : public HAL::internal::ImportValueAlgo {
 public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \sa ImportBool, ImportInteger, ImportCounting, ImportParticle
+   */
   ImportDecimal (TString name, TString title);
   virtual ~ImportDecimal () {}
 
@@ -357,26 +480,41 @@ private:
  * Reconstruction Algorithms
  * */
 
-/*
- * Reconstruction algorithm to build particles from the
- * vector addition of other particles.
- * The unknown parameters should be a series of string literals
- * representing the algorithms to combine
+//! Generic algorithm class that combines tuples of particles from any number of alogrithms.
+/*!
+ * This algorithm builds particles from the vector addition of other particles from an arbitrary
+ * number of other algorithms. Special care is taken to only add unique vectors (parents are 
+ * also checked). Also, the tuples will be made up of as many particles as there are input 
+ * algorithms (i.e. "length"). This algorithm may return no particles if no unique combination 
+ * can be found. The particles from this algorithm are stored in a GenericData object in the 
+ * UserData under the algorithm's name.\n\n
+ * __Example:__\n
+ * In your analysis file, do the following for the vector addition of two muons:
  *
- * Prerequisites:
- *  Stored Particles
- * Required Branch Maps:
- *  None
- * UserData Output:
- *  <name>:nobjects (scalar: number of particles)
- *  <name>:nparents (scalar: number of parent particles)
- *  <name>:4-vec (1D array: of TLorentzVectors)
- *  <name>:index (1D array: of indices)
- *  <name>:parent_ref_name (1D array: ref_names of parents)
- *  <name>:parent_index (1D array: indices of parents)
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportParticle("muons", "import basic muons"));
+ *
+ * //...
+ * 
+ * a.AddAlgo(new HAL::Algorithms::VecAddReco("di-muons", "combine muons pairwise", 
+ *                                           2,
+ *                                           "muons", "muons"));
+ * ~~~~~~~~~~~~~~~~~~~~~~
  */
 class VecAddReco : public Algorithm {
 public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] length Number of algorithms to combine.
+   * \param[in] ... Comma separated list of string literals representing the algorithms to combine.
+   * \sa ImportBool, ImportInteger, ImportCounting, ImportParticle
+   */
   VecAddReco (TString name, TString title, long long length, ...);
   virtual ~VecAddReco();
 
@@ -396,26 +534,44 @@ private:
  * Filtering Algorithms
  * */
 
-/*
- * Select the particle with nth highest/lowest TLV property.
- * This property can be:
- * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude
- * pt,                  m,    e,      et,                p3
- * The 'end' parameter describes how to rank the property:
- * high (rank = nth highest property)
- * low (rank = nth lowest property)
+//! Generic algorithm class that selects the particle with the highest or lowest property.
+/*!
+ * This algorithm selects the particle with highest or lowest property. The list of
+ * available properties is given below. A property is input as a string to the 
+ * constructor of this algorithm. The particle from this algorithm is stored in a 
+ * GenericData object in the UserData under the algorithm's name.\n\n
+ * _Available Properties:_
+ * | \f$ p_T \f$ | \f$ E_T \f$ | Mass | Energy | \f$ \left|\overrightarrow{p}\right| \f$ |
+ * | :-----------------: | :---------------: | :--: | :----: | :------------------: |
+ * |  pT   | eT | m | e | p3 |
+ * __Example:__\n
+ * In your analysis file, do the following to select the highest \f$ p_T \f$ muon:
  *
- * Prerequisites:
- *  Stored particles
- * Required Branch Maps:
- *  None
- * UserData Output:
- *  <name>:nobjects (scalar: number of particles)
- *  <name>:ref_name ((scalar): string name of reference particles to use)
- *  <name>:index (1D array: of indices (points to the nth highest pT of ref_name))
- * */
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportParticle("muons", "import basic muons"));
+ *
+ * //...
+ * 
+ * a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("highest pT muon", "find highest pT muon", 
+ *                                                      "muons", 1, "pT", "high"));
+ * ~~~~~~~~~~~~~~~~~~~~~~
+ */
 class ParticleRankSelection : public internal::NthElementAlgo {
 public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] input Name of algorithm to select from.
+   * \param[in] rank Rank of particle.
+   * \param[in] property Property to rank particle by.
+   * \param[in] end Either "high" for highest rank property or "low" for lowest rank property.
+   * \sa ImportParticle, SelectParticle
+   */
   ParticleRankSelection (TString name, TString title, TString input, unsigned rank, 
                          TString property, TString end = "high");
   virtual ~ParticleRankSelection () {}
@@ -430,37 +586,118 @@ protected:
 };
 
 
-/*
- * Select particles with TLV property less than, greater than,
- * or within a window of given values.
- * This property can be:
- * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude, eta, phi
- * pt,                  m,    e,      et,                p3,                   eta, phi
- * The 'op' parameter describes how to filter the property: 
- * == or =, !=, >, <, >=, <=
- * The 'inclusion' parameter describes how to filter the property: 
- * inclusive or in, exclusive or out
- * The varargs constructor needs integers if property is id, doubles otherwise
+//! Generic algorithm class that selects particles with specified properties.
+/*!
+ * This algorithm selects particles relative to a specified property. This algorithm can
+ * select particles by a simple relationship, windowed between two values, or a list of 
+ * values of a specified property. How the selection occurs is determined by the 
+ * constructor used to initialize the algorithm. The list of available properties and
+ * relationships are given below. Properties and relationships are input as strings to 
+ * the constructor of this algorithm. The particle from this algorithm is stored in a 
+ * GenericData object in the UserData under the algorithm's name.\n\n
+ * _Available Properties:_
+ * | \f$ p_T \f$ | \f$ E_T \f$ | Mass | Energy | \f$ \left|\overrightarrow{p}\right| \f$ | \f$ \eta \f$ | \f$ \phi \f$ | ID | Charge | Custom Attribute |
+ * | :-----------------: | :---------------: | :--: | :----: | :------------------: | :-: | :-: | :-: | :-: | :-: |
+ * |  pT   | eT | m | e | p3 | eta | phi | id | charge | <attribute> |
+ * _Available Logical Relationships:_
+ * | Equal | Not Equal | Greater Than | Greater Than or Equal To | Less Than | Less Than or Equal To |
+ * | :-----------------: | :---------------: | :--: | :----: | :------------------: | :-: |
+ * |  ==   | != | > | >= | < | <= |
+ * _Note:_ = may also be used in place of ==.\n\n
+ * __Examples:__\n
+ * In your analysis file, do the following to select the muons with \f$ p_T \f$ greater than or equal to 50GeV:
  *
- * Prerequisites:
- *  Stored particles
- * Required Branch Maps:
- *  None
- * UserData Output:
- *  <name>:nobjects (scalar: number of particles)
- *  <name>:ref_name ((scalar): string name of reference particles to use)
- *  <name>:index (1D array: of indices)
- * */
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportParticle("muons", "import basic muons"));
+ *
+ * //...
+ * 
+ * a.AddAlgo(new HAL::Algorithms::SelectParticle("muons pT", "select muons with pt >= 50GeV", 
+ *                                               "muons",
+ *                                               "pt", ">=", 50000));
+ * ~~~~~~~~~~~~~~~~~~~~~~
+ * To select the muons within an \f$ \eta \f$ value between -2.0 and 2.0 but not between -0.5 and 0.5:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportParticle("muons", "import basic muons"));
+ *
+ * //...
+ * 
+ * a.AddAlgo(new HAL::Algorithms::SelectParticle("muons |eta| <= 2.0", "select muons with |eta| <= 2.0", 
+ *                                               "muons",
+ *                                               "eta", "inclusive", -2.0, 2.0));
+ * a.AddAlgo(new HAL::Algorithms::SelectParticle("muons eta", "select muons with |eta| >= 0.5", 
+ *                                               "muons |eta| <= 2.0",
+ *                                               "eta", "exclusive", -0.5, 0.5));
+ * ~~~~~~~~~~~~~~~~~~~~~~
+ * To select the Monte Carlo particles with PDG ID's of neutrinos:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportParticle("mc", "import basic Monte Carlo particles"));
+ *
+ * //...
+ * 
+ * a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_neutrinos", "filter on mc id to get neutrinos", 
+ *                                               "mc",
+ *                                               "id", 6,
+ *                                               -16, -14, -12, 12, 14, 16));
+ * ~~~~~~~~~~~~~~~~~~~~~~
+ */
 class SelectParticle : public internal::FilterParticleAlgo {
 public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm for simple relational selection
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] input Name of algorithm to select from.
+   * \param[in] property Property by which to select particles.
+   * \param[in] logic How to select the particles.
+   * \param[in] value Value of property.
+   * \sa ImportParticle, ParticleRankSelection
+   */
   SelectParticle (TString name, TString title, TString input, TString property, 
-      TString op, double value);
+      TString logic, double value);
+  //! Constructor
+  /*!
+   * Initializes the algorithm for a window selection
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] input Name of algorithm to select from.
+   * \param[in] property Property by which to select particles.
+   * \param[in] inclusion How to select the particles. Either inclusive (or in) or exclusive (or out).
+   * \param[in] low Lower value of property.
+   * \param[in] high Higher value of property.
+   * \sa ImportParticle, ParticleRankSelection
+   */
   SelectParticle (TString name, TString title, TString input, TString property, 
       TString inclusion, double low, double high);
+  //! Constructor
+  /*!
+   * Initializes the algorithm for specific values selection
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] input Name of algorithm to select from.
+   * \param[in] property Property by which to select particles.
+   * \param[in] length Number of values to compare against.
+   * \param[in] ... Comma separated list of values. If property is id use integer values, otherwise 
+   * use decimal values.
+   * \sa ImportParticle, ParticleRankSelection
+   */
   SelectParticle (TString name, TString title, TString input, TString property, 
       int length, ...);
   virtual ~SelectParticle () {}
 
+protected:
   virtual bool FilterPredicate(HAL::ParticlePtr);
 
 private:
@@ -476,27 +713,73 @@ private:
 };
 
 
-/*
- * Select particles within, without, or windowed between
- * given R/Phi value(s) from the reference particle
+//! Generic algorithm class that selects particles with respect to a reference particle
+/*!
+ * This algorithm selects particles relative to a reference particle. This algorithm makes
+ * sure to not compare the same particle to itself. An inclusive, exclusive, or windowed
+ * selection is determined by the constructor used to initialize the algorithm. The
+ * properties are listed below. The particle from this algorithm is stored in a 
+ * GenericData object in the UserData under the algorithm's name.\n\n
+ * _Available Properties:_
+ * | \f$ \Delta R \f$ | \f$ \Delta\phi \f$ |
+ * | :-------------: | :----------------: |
+ * |  dr   | dphi |
+ * __Example:__\n
+ * In your analysis file, do the following to select the jets within a \f$ \Delta R \f$ of 0.4 from the highest
+ * \f$ p_T \f$ jet:
  *
- * Prerequisites:
- *  Stored particles
- * Required Branch Maps:
- *  None
- * UserData Output:
- *  <name>:nobjects (scalar: number of particles)
- *  <name>:ref_name ((scalar): string name of reference particles to use)
- *  <name>:index (1D array: of indices)
- * */
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportParticle("jets", "import basic jets"));
+ *
+ * //...
+ * 
+ * a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("leading pt jet", "find highest pt jet", 
+ *                                                      "jets",
+ *                                                      1, "pt"));
+ *
+ * a.AddAlgo(new HAL::Algorithms::SelectRefParticle("jets close", "filter on jets within deltaR of di-jet", 
+ *                                                  "leading pt jet", "jets",
+ *                                                  0.4, "dr"));
+ * ~~~~~~~~~~~~~~~~~~~~~~
+ */
 class SelectRefParticle : public internal::FilterRefParticleAlgo {
 public:
-  SelectRefParticle (TString name, TString title, TString input, TString others, 
-      double value, TString inclusion = "inclusive", TString type = "r");
-  SelectRefParticle (TString name, TString title, TString input, TString others, 
-      double low, double high, TString type = "r");
+  //! Constructor
+  /*!
+   * Initializes the algorithm for a simple selection
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] reference Name of algorithm the reference particle.
+   * \param[in] input Name of algorithm to select from.
+   * \param[in] value Value of property
+   * \param[in] property Property by which to select particles.
+   * \param[in] inclusion How to select the particles. Either inclusive (or in) or exclusive (or out).
+   * \sa ImportParticle, ParticleRankSelection
+   */
+  SelectRefParticle (TString name, TString title, TString reference, TString input, 
+      double value, TString property = "dr", TString inclusion = "inclusive");
+  //! Constructor
+  /*!
+   * Initializes the algorithm for a window selection
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] reference Name of algorithm the reference particle.
+   * \param[in] input Name of algorithm to select from.
+   * \param[in] low Lower value of property.
+   * \param[in] high Higher value of property.
+   * \param[in] property Property by which to select particles.
+   * \param[in] inclusion How to select the particles. Either inclusive (or in) or exclusive (or out).
+   * \sa ImportParticle, ParticleRankSelection
+   */
+  SelectRefParticle (TString name, TString title, TString reference, TString input, 
+      double low, double high, TString property = "dr", TString inclusion = "inclusive");
   virtual ~SelectRefParticle () {}
 
+protected:
   virtual bool FilterPredicate (HAL::ParticlePtr, HAL::ParticlePtr);
 
 private:
@@ -511,19 +794,28 @@ private:
  * Cutting Algorithms
  * */
 
-/*
- * Empty cut. This is useful for giving the total number of 
- * events processed.
+//! Generic algorithm class that serves as a baseline algorithm for any subsequent Cut algorithms
+/*!
+ * This algorithm passes all events. It can serve as a baseline cut in an analysis.
+ * __Example:__\n
+ * In your analysis file, do the following to create a baseline cut:
  *
- * Prerequisites:
- *  None
- * Required Branch Maps:
- *  None
- * UserData Output:
- *  None
- * */
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ * 
+ * a.AddAlgo(new HAL::Algorithms::EmptyCut("number of events", "baseline event number"));
+ * ~~~~~~~~~~~~~~~~~~~~~~
+ */
 class EmptyCut : public HAL::CutAlgorithm {
 public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \sa Cut
+   */
   EmptyCut (TString name, TString title) : CutAlgorithm(name, title) {}
   virtual ~EmptyCut () {}
 
@@ -532,25 +824,76 @@ protected:
 };
 
 
-/*
- * Cut on value and/or number of particles in the given algorithms
- * (logical 'and' or 'or')
- * Requires: algorithms - literal string name of algorithm
- *           type - literal string type: bool, integer, counting, decimal, particle
- *           relational operator - literal string of: ==, !=, <, >, <=, >=
- *           value - literal value of the above types
- *           
+//! Generic algorithm class that cuts on particle multiplicity, bool, integer, counting, and decimal values
+/*!
+ * This algorithm provides a general mechanism to cut on several different algorithms. An important
+ * aspect of this algorithm is its ability to either "and" or "or" different predicates together.
+ * Combined with the proper selection algorithms, a cut on particle multiplicity is sufficient for
+ * most situations. The relational operators and types needed to specify a cut are listed below.\n
+ * _Available Types of Cuts:_
+ * | Boolean | Integer | Counting | Decimal | Particle Multiplicity |
+ * | :-----: | :-----: | :------: | :-----: | :-------------------: |
+ * |  bool   | integer | counting | decimal | particle |
+ * _Available Logical Relationships:_
+ * | Equal | Not Equal | Greater Than | Greater Than or Equal To | Less Than | Less Than or Equal To |
+ * | :-----------------: | :---------------: | :--: | :----: | :------------------: | :-: |
+ * |  ==   | != | > | >= | < | <= |
+ * _Note:_ = may also be used in place of ==.\n\n
+ * __Example:__\n
+ * In your analysis file, do the following to create a cut:
  *
- * Prerequisites:
- *  Stored data
- * Required Branch Maps:
- *  None
- * UserData Output:
- *  None
- * */
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ * 
+ * //...
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportParticle("jets", "import basic jet objects"));
+ * a.AddAlgo(new HAL::Algorithms::ImportParticle("mc", "import basic Monte Carlo objects"));
+ *
+ * a.AddAlgo(new HAL::Algorithms::EmptyCut("number of events", "baseline event number"));
+ *
+ * a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_neutrinos", "filter on mc id to get neutrinos", 
+ *                                               "mc",
+ *                                               "id", 6,
+ *                                               -16, -14, -12, 12, 14, 16));
+ * 
+ * a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("leading pt jet", "find highest pt jet", 
+ *                                                      "jets",
+ *                                                      1, "pt"));
+ * a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("subleading pt jet", "find 2nd highest pt jet", 
+ *                                                      "jets",
+ *                                                      2, "pt"));
+ * 
+ * a.AddAlgo(new HAL::Algorithms::VecAddReco("di-jet", "reconstruct a di-jet object from highest pt", 
+ *                                           2, "leading pt jet", "subleading pt jet"));
+ * 
+ * a.AddAlgo(new HAL::Algorithms::Cut("di-jet and neutrino cut", "make sure dijet and neutrino(s) exist", 
+ *                                    "and", 2,
+ *                                    "mc_neutrinos", "particle", ">=", 1,
+ *                                    "di-jet", "particle", "==", 1));
+ * ~~~~~~~~~~~~~~~~~~~~~~
+ */
 class Cut : public CutAlgorithm {
 public:
-  Cut (TString name, TString title, TString logic, long long length, ...);
+  //! Constructor
+  /*!
+   * Initializes the algorithm. The variable length argument at the end should conform 
+   * to the following rules:\n
+   * - It should be given in sets of four.
+   * - The first should be the name of the algorithm to cut
+   * - The second should be the type of cut
+   * - The third should be the relational operator
+   * - The fourth should be the value of the algorithm
+   *
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] logic Determines how to logically string together the cuts. Can be "and" or "or."
+   * \param[in] ncuts Number of cuts to make.
+   * \param[in] ... Set of four values per cut as explained above.
+   * \sa EmptyCut
+   */
+  Cut (TString name, TString title, TString logic, long long ncuts, ...);
   virtual ~Cut ();
 
 protected:
@@ -604,12 +947,39 @@ private:
  * Monitoring Algorithms
  * */
 
-/*
- * Prints the output of an algorithm to the given ostream
- * */
+//! Generic algorithm class that prints the content of an algorithm to a given ostream.
+/*!
+ * This algorithm is helpful in monitoring the particles produced or value stored by another
+ * generic algorithm.
+ * __Example:__\n
+ * In your analysis file, do the following to monitor the output of an algorithm:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ * 
+ * a.AddAlgo(new HAL::Algorithms::ImportParticle("jets", "import basic jet objects"));
+ *
+ * a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("leading pt jet", "find highest pt jet", 
+ *                                                      "jets",
+ *                                                      1, "pt"));
+ * 
+ * a.AddAlgo(new HAL::Algorithms::MonitorAlgorithm("leading jet monitor", "look at the leading jet", 
+ *                                                 "leading pt jet", 100));
+ * ~~~~~~~~~~~~~~~~~~~~~~
+ */
 class MonitorAlgorithm : public HAL::Algorithm {
 public:
-  MonitorAlgorithm (TString name, TString title, TString input, long long n = 1, std::ostream &os = std::cout) :
+  //! Constructor
+  /*!
+   * Initializes the algorithm.
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] input Name of algorithm to select from.
+   * \param[in] period Sets the period of output.
+   * \param[in] os Stream to pipe all output to.
+   */
+  MonitorAlgorithm (TString name, TString title, TString input, long long period = 1, std::ostream &os = std::cout) :
     Algorithm(name, title), fN(n), fInput(input), fOS(&os) {}
   virtual ~MonitorAlgorithm () {}
 
@@ -646,25 +1016,44 @@ private:
  * Exporting Algorithms
  * */
 
-/*
- * Store a TLV property of a particle or particles
- * This property can be:
- * transverse momentum, mass, energy, transverse energy, 3-momentum magnitude, eta, phi, ID, charge
- * pt,                  m,    e,      et,                p3,                   eta, phi, id, charge
- * Property can also be "all", "attributes", or "<specific attributes>"
- * TODO: print out <specific attributes>
+//! Generic algorithm class that stores the properties of particles to a TTree
+/*!
+ * This algorithm stores particles or specific parts of particles in a specified TTree. 
+ * The user needs only supply a branch name, property, and a tree name (optional). If the 
+ * "all" property is given, the branch name given will act as the base for all other 
+ * properties, i.e. if branch name is "jets", the branches written will be "jets_pt", 
+ * "jets_eta", etc.
+ * _Available Properties:_
+ * | \f$ p_T \f$ | \f$ E_T \f$ | Mass | Energy | \f$ \left|\overrightarrow{p}\right| \f$ | \f$ \eta \f$ | \f$ \phi \f$ | ID | Charge | Full Particle | All Attributes |
+ * | :-----------------: | :---------------: | :--: | :----: | :------------------: | :-: | :-: | :-: | :-: | :-: | :-: |
+ * |  pT   | eT | m | e | p3 | eta | phi | id | charge | all | attributes |
+ * __Example:__\n
+ * In your analysis file, do the following to store jet particles:
  *
- * Prerequisites:
- *  Stored particle
- * Required Branch Maps:
- *  None
- * UserData Output:
- *  None
- * */
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ * 
+ * a.AddAlgo(new HAL::Algorithms::ImportParticle("basic jets", "import basic jet objects"));
+ *
+ * a.AddAlgo(new HAL::Algorithms::StoreParticle("store jets", "store jets", 
+ *                                              "basic jets", "all", "jets"));
+ * ~~~~~~~~~~~~~~~~~~~~~~
+ */
 class StoreParticle : public internal::ParticlesTLVStore {
 public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm.
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] input Name of algorithm to store.
+   * \param[in] property Property to store.
+   * \param[in] bname Branch to store as.
+   * \param[in] tname Tree to store in.
+   */
   StoreParticle (TString name, TString title, TString input, TString property, 
-                 TString bname, TString tree = "");
+                 TString bname, TString tname = "");
   virtual ~StoreParticle () {}
 
 protected:

@@ -1,0 +1,139 @@
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_cut}{\section{H\-A\-L\-:\-:Algorithms\-:\-:Cut Class Reference}
+\label{class_h_a_l_1_1_algorithms_1_1_cut}\index{H\-A\-L\-::\-Algorithms\-::\-Cut@{H\-A\-L\-::\-Algorithms\-::\-Cut}}
+}
+
+
+Generic algorithm class that cuts on particle multiplicity, bool, integer, counting, and decimal values.  
+
+
+
+
+{\ttfamily \#include $<$Algorithms.\-h$>$}
+
+Inheritance diagram for H\-A\-L\-:\-:Algorithms\-:\-:Cut\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_h_a_l_1_1_algorithms_1_1_cut}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_h_a_l_1_1_algorithms_1_1_cut_a91f1ee2770d1a90d503cd1b6300dbce2}{Cut} (T\-String name, T\-String title, T\-String logic, long long ncuts,...)
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_cut_aa1257616a4912852aa4ce2eb849e2ead}{virtual void {\bfseries Exec} (Option\-\_\-t $\ast$)}\label{class_h_a_l_1_1_algorithms_1_1_cut_aa1257616a4912852aa4ce2eb849e2ead}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Generic algorithm class that cuts on particle multiplicity, bool, integer, counting, and decimal values. 
+
+This algorithm provides a general mechanism to cut on several different algorithms. An important aspect of this algorithm is its ability to either \char`\"{}and\char`\"{} or \char`\"{}or\char`\"{} different predicates together. Combined with the proper selection algorithms, a cut on particle multiplicity is sufficient for most situations. The relational operators and types needed to specify a cut are listed below.\par
+ {\itshape Available Types of Cuts\-:} \begin{TabularC}{5}
+\hline
+\rowcolor{lightgray}\PBS\centering {\bf Boolean }&\PBS\centering {\bf Integer }&\PBS\centering {\bf Counting }&\PBS\centering {\bf Decimal }&\PBS\centering {\bf Particle Multiplicity }\\\cline{1-5}
+\PBS\centering bool &\PBS\centering integer &\PBS\centering counting &\PBS\centering decimal &\PBS\centering particle \\\cline{1-5}
+\end{TabularC}
+{\itshape Available Logical Relationships\-:} \begin{TabularC}{6}
+\hline
+\rowcolor{lightgray}\PBS\centering {\bf Equal }&\PBS\centering {\bf Not Equal }&\PBS\centering {\bf Greater Than }&\PBS\centering {\bf Greater Than or Equal To }&\PBS\centering {\bf Less Than }&\PBS\centering {\bf Less Than or Equal To }\\\cline{1-6}
+\PBS\centering == &\PBS\centering != &\PBS\centering $>$ &\PBS\centering $>$= &\PBS\centering $<$ &\PBS\centering $<$= \\\cline{1-6}
+\end{TabularC}
+{\itshape Note\-:} = may also be used in place of ==.\par
+\par
+ {\bfseries Example\-:}\par
+ In your analysis file, do the following to create a cut\-:
+
+
+\begin{DoxyCode}
+\hyperlink{class_h_a_l_1_1_analysis}{HAL::Analysis} a(\textcolor{stringliteral}{"sample analysis"}, \textcolor{stringliteral}{""}, \textcolor{stringliteral}{"truth"});
+
+\textcolor{comment}{//...}
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_particle}{HAL::Algorithms::ImportParticle}(\textcolor{stringliteral}{"jets"}, \textcolor{stringliteral}{"import basic jet
+       objects"}));
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_particle}{HAL::Algorithms::ImportParticle}(\textcolor{stringliteral}{"mc"}, \textcolor{stringliteral}{"import basic Monte
+       Carlo objects"}));
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_empty_cut}{HAL::Algorithms::EmptyCut}(\textcolor{stringliteral}{"number of events"}, \textcolor{stringliteral}{"baseline event number
+      "}));
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_select_particle}{HAL::Algorithms::SelectParticle}(\textcolor{stringliteral}{"mc\_neutrinos"}, \textcolor{stringliteral}{"filter on mc
+       id to get neutrinos"}, 
+                                              \textcolor{stringliteral}{"mc"},
+                                              \textcolor{stringliteral}{"id"}, 6,
+                                              -16, -14, -12, 12, 14, 16));
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection}{HAL::Algorithms::ParticleRankSelection}(\textcolor{stringliteral}{"leading pt jet"}
+      , \textcolor{stringliteral}{"find highest pt jet"}, 
+                                                     \textcolor{stringliteral}{"jets"},
+                                                     1, \textcolor{stringliteral}{"pt"}));
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection}{HAL::Algorithms::ParticleRankSelection}(\textcolor{stringliteral}{"subleading pt
+       jet"}, \textcolor{stringliteral}{"find 2nd highest pt jet"}, 
+                                                     \textcolor{stringliteral}{"jets"},
+                                                     2, \textcolor{stringliteral}{"pt"}));
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_vec_add_reco}{HAL::Algorithms::VecAddReco}(\textcolor{stringliteral}{"di-jet"}, \textcolor{stringliteral}{"reconstruct a di-jet object
+       from highest pt"}, 
+                                          2, \textcolor{stringliteral}{"leading pt jet"}, \textcolor{stringliteral}{"subleading pt jet"}));
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_cut}{HAL::Algorithms::Cut}(\textcolor{stringliteral}{"di-jet and neutrino cut"}, \textcolor{stringliteral}{"make sure dijet and
+       neutrino(s) exist"}, 
+                                   \textcolor{stringliteral}{"and"}, 2,
+                                   \textcolor{stringliteral}{"mc\_neutrinos"}, \textcolor{stringliteral}{"particle"}, \textcolor{stringliteral}{">="}, 1,
+                                   \textcolor{stringliteral}{"di-jet"}, \textcolor{stringliteral}{"particle"}, \textcolor{stringliteral}{"=="}, 1));
+\end{DoxyCode}
+ 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_cut_a91f1ee2770d1a90d503cd1b6300dbce2}{\index{H\-A\-L\-::\-Algorithms\-::\-Cut@{H\-A\-L\-::\-Algorithms\-::\-Cut}!Cut@{Cut}}
+\index{Cut@{Cut}!HAL::Algorithms::Cut@{H\-A\-L\-::\-Algorithms\-::\-Cut}}
+\subsubsection[{Cut}]{\setlength{\rightskip}{0pt plus 5cm}H\-A\-L\-::\-Algorithms\-::\-Cut\-::\-Cut (
+\begin{DoxyParamCaption}
+\item[{T\-String}]{name, }
+\item[{T\-String}]{title, }
+\item[{T\-String}]{logic, }
+\item[{long long}]{ncuts, }
+\item[{}]{...}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithms_1_1_cut_a91f1ee2770d1a90d503cd1b6300dbce2}
+
+
+Constructor. 
+
+Initializes the algorithm. The variable length argument at the end should conform to the following rules\-:\par
+
+\begin{DoxyItemize}
+\item It should be given in sets of four.
+\item The first should be the name of the algorithm to cut
+\item The second should be the type of cut
+\item The third should be the relational operator
+\item The fourth should be the value of the algorithm
+\end{DoxyItemize}
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the algorithm. This can be used as the input to other algorithms. \\
+\hline
+\mbox{\tt in}  & {\em title} & Description of the algorithm. Can be an empty string. \\
+\hline
+\mbox{\tt in}  & {\em logic} & Determines how to logically string together the cuts. Can be \char`\"{}and\char`\"{} or \char`\"{}or.\char`\"{} \\
+\hline
+\mbox{\tt in}  & {\em ncuts} & Number of cuts to make. \\
+\hline
+\mbox{\tt in}  & {\em ...} & Set of four values per cut as explained above. \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See Also}
+\hyperlink{class_h_a_l_1_1_algorithms_1_1_empty_cut}{Empty\-Cut} 
+\end{DoxySeeAlso}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+/\-Users/jhetherly/src/root\-\_\-\-H\-A\-L/include/\-H\-A\-L/\hyperlink{_algorithms_8h}{Algorithms.\-h}\end{DoxyCompactItemize}

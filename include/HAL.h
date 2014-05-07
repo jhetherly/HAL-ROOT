@@ -17,7 +17,7 @@
 #include <HAL/PythonAlgorithm.h>
 
 /*!
- * \mainpage The H.E.P. %Analysis Library
+ * \mainpage Welcome, to the HAL code reference.
  *
  * \section intro_sec Introduction
  * This a custom ROOT library that provides a framework for physics analysis. It contains several functions and
@@ -27,7 +27,21 @@
  * H - H.E.P.\n
  * A - Analysis\n
  * L - Library\n
- * Of course, this is also a thinly veiled reference to the villian in the classic "2001: A Space Odyssey." But, I
- * personally think this bit of software is far less pernicious.
+ * Of course, this is also a thinly veiled reference to the villian in the classic "2001: A Space Odyssey." However, 
+ * this bit of software is far less pernicious.
+ *
+ * \section overview_sec Overview
+ * HAL's design goals are:\n
+ * Flexiblity - Users have choice in how they use HAL. A user can take full advantage of the builtin
+ * framework and wide selection of generic algorithms or just add a few helpful HAL classes or functions to an
+ * existing analysis.\n
+ * Usability - HAL strives to make the user experience as physics-focused as possible. This means providing classes
+ * that do a lot of the heavy lifting, including: reading a TTree and assigning branches, looping 
+ * over events, making unique tuples from lists of particles, and more. The interfaces for these classes are designed
+ * for a smooth user experience.\n
+ * Extensibility - The framework in HAL is trivially extended with custom user code. This means that analysis-specific
+ * code can couple with generic algorithms with minimal effort.\n
+ * Performance - HAL leverages the performance advanages of C++. The framework is competitive with hand-coded analyses
+ * but with advanage of ample code reuse.\n
  * */
 

@@ -1,0 +1,35 @@
+var namespace_h_a_l =
+[
+    [ "Algorithms", null, [
+      [ "ImportParticle", "class_h_a_l_1_1_algorithms_1_1_import_particle.html", "class_h_a_l_1_1_algorithms_1_1_import_particle" ],
+      [ "ImportBool", "class_h_a_l_1_1_algorithms_1_1_import_bool.html", "class_h_a_l_1_1_algorithms_1_1_import_bool" ],
+      [ "ImportInteger", "class_h_a_l_1_1_algorithms_1_1_import_integer.html", "class_h_a_l_1_1_algorithms_1_1_import_integer" ],
+      [ "ImportCounting", "class_h_a_l_1_1_algorithms_1_1_import_counting.html", "class_h_a_l_1_1_algorithms_1_1_import_counting" ],
+      [ "ImportDecimal", "class_h_a_l_1_1_algorithms_1_1_import_decimal.html", "class_h_a_l_1_1_algorithms_1_1_import_decimal" ],
+      [ "VecAddReco", "class_h_a_l_1_1_algorithms_1_1_vec_add_reco.html", "class_h_a_l_1_1_algorithms_1_1_vec_add_reco" ],
+      [ "ParticleRankSelection", "class_h_a_l_1_1_algorithms_1_1_particle_rank_selection.html", "class_h_a_l_1_1_algorithms_1_1_particle_rank_selection" ],
+      [ "SelectParticle", "class_h_a_l_1_1_algorithms_1_1_select_particle.html", "class_h_a_l_1_1_algorithms_1_1_select_particle" ],
+      [ "SelectRefParticle", "class_h_a_l_1_1_algorithms_1_1_select_ref_particle.html", "class_h_a_l_1_1_algorithms_1_1_select_ref_particle" ],
+      [ "EmptyCut", "class_h_a_l_1_1_algorithms_1_1_empty_cut.html", "class_h_a_l_1_1_algorithms_1_1_empty_cut" ],
+      [ "Cut", "class_h_a_l_1_1_algorithms_1_1_cut.html", "class_h_a_l_1_1_algorithms_1_1_cut" ],
+      [ "MonitorAlgorithm", "class_h_a_l_1_1_algorithms_1_1_monitor_algorithm.html", "class_h_a_l_1_1_algorithms_1_1_monitor_algorithm" ],
+      [ "MonitorUserData", "class_h_a_l_1_1_algorithms_1_1_monitor_user_data.html", "class_h_a_l_1_1_algorithms_1_1_monitor_user_data" ],
+      [ "StoreParticle", "class_h_a_l_1_1_algorithms_1_1_store_particle.html", "class_h_a_l_1_1_algorithms_1_1_store_particle" ]
+    ] ],
+    [ "Algorithm", "class_h_a_l_1_1_algorithm.html", "class_h_a_l_1_1_algorithm" ],
+    [ "Analysis", "class_h_a_l_1_1_analysis.html", "class_h_a_l_1_1_analysis" ],
+    [ "AnalysisData", "class_h_a_l_1_1_analysis_data.html", "class_h_a_l_1_1_analysis_data" ],
+    [ "AnalysisSelector", "class_h_a_l_1_1_analysis_selector.html", "class_h_a_l_1_1_analysis_selector" ],
+    [ "AnalysisTreeReader", "class_h_a_l_1_1_analysis_tree_reader.html", "class_h_a_l_1_1_analysis_tree_reader" ],
+    [ "AnalysisTreeWriter", "class_h_a_l_1_1_analysis_tree_writer.html", "class_h_a_l_1_1_analysis_tree_writer" ],
+    [ "CutAlgorithm", "class_h_a_l_1_1_cut_algorithm.html", "class_h_a_l_1_1_cut_algorithm" ],
+    [ "CutOptimizer", "class_h_a_l_1_1_cut_optimizer.html", "class_h_a_l_1_1_cut_optimizer" ],
+    [ "HALException", "class_h_a_l_1_1_h_a_l_exception.html", "class_h_a_l_1_1_h_a_l_exception" ],
+    [ "GenericData", "class_h_a_l_1_1_generic_data.html", "class_h_a_l_1_1_generic_data" ],
+    [ "GenericParticle", "class_h_a_l_1_1_generic_particle.html", "class_h_a_l_1_1_generic_particle" ],
+    [ "Integrator", "class_h_a_l_1_1_integrator.html", "class_h_a_l_1_1_integrator" ],
+    [ "InterpBase", "class_h_a_l_1_1_interp_base.html", "class_h_a_l_1_1_interp_base" ],
+    [ "PolyInterp", "class_h_a_l_1_1_poly_interp.html", "class_h_a_l_1_1_poly_interp" ],
+    [ "Poly2DInterp", "class_h_a_l_1_1_poly2_d_interp.html", "class_h_a_l_1_1_poly2_d_interp" ],
+    [ "PythonAlgorithm", "class_h_a_l_1_1_python_algorithm.html", "class_h_a_l_1_1_python_algorithm" ]
+];

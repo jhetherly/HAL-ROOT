@@ -1,0 +1,133 @@
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection}{\section{H\-A\-L\-:\-:Algorithms\-:\-:Particle\-Rank\-Selection Class Reference}
+\label{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection}\index{H\-A\-L\-::\-Algorithms\-::\-Particle\-Rank\-Selection@{H\-A\-L\-::\-Algorithms\-::\-Particle\-Rank\-Selection}}
+}
+
+
+Generic algorithm class that selects the particle with the highest or lowest property.  
+
+
+
+
+{\ttfamily \#include $<$Algorithms.\-h$>$}
+
+Inheritance diagram for H\-A\-L\-:\-:Algorithms\-:\-:Particle\-Rank\-Selection\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_acbba84c85f7090200eda0d2a0bd9c677}{Particle\-Rank\-Selection} (T\-String name, T\-String title, T\-String input, unsigned rank, T\-String property, T\-String end=\char`\"{}high\char`\"{})
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_acce9ba5e039ebd2040b5f7172586e5b1}{virtual T\-String {\bfseries Sort\-Tag} ()}\label{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_acce9ba5e039ebd2040b5f7172586e5b1}
+
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_ac1e2275f72f43fd1e80fdbdefbfe9aaf}{virtual bool {\bfseries operator()} (\hyperlink{class_h_a_l_1_1_generic_particle}{Particle\-Ptr}, \hyperlink{class_h_a_l_1_1_generic_particle}{Particle\-Ptr})}\label{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_ac1e2275f72f43fd1e80fdbdefbfe9aaf}
+
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a0519f017f9142ce0d484b3e99f70aa19}{virtual void {\bfseries Sort} (Particle\-Ptrs \&)}\label{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a0519f017f9142ce0d484b3e99f70aa19}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a57e25ecd8df075abefc0513d3fd4f35d}{bool {\bfseries f\-Pt}}\label{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a57e25ecd8df075abefc0513d3fd4f35d}
+
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a9a058d0591d0af0117902b3afbe1f3a1}{bool {\bfseries f\-M}}\label{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a9a058d0591d0af0117902b3afbe1f3a1}
+
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a47f5390942d104168c66f2db36de5be7}{bool {\bfseries f\-E}}\label{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a47f5390942d104168c66f2db36de5be7}
+
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a61ee40fd1634b4c781d28c2cdd0cd794}{bool {\bfseries f\-Et}}\label{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a61ee40fd1634b4c781d28c2cdd0cd794}
+
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_aca51ef5461c379d4e0ac859c9206f574}{bool {\bfseries f\-P3}}\label{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_aca51ef5461c379d4e0ac859c9206f574}
+
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a14c9adc724ebf5f7b3fc22f123ea3298}{bool {\bfseries f\-High}}\label{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a14c9adc724ebf5f7b3fc22f123ea3298}
+
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a701d83445ff240dae44927141eb4c7be}{bool {\bfseries f\-Low}}\label{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a701d83445ff240dae44927141eb4c7be}
+
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_aea4217b70b01d2f4b3d0f0566ea48c89}{T\-String {\bfseries f\-T\-L\-V\-Property}}\label{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_aea4217b70b01d2f4b3d0f0566ea48c89}
+
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a9bdf92cec167ae6f9a42cf951117efe3}{T\-String {\bfseries f\-End}}\label{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_a9bdf92cec167ae6f9a42cf951117efe3}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Generic algorithm class that selects the particle with the highest or lowest property. 
+
+This algorithm selects the particle with highest or lowest property. The list of available properties is given below. A property is input as a string to the constructor of this algorithm. The particle from this algorithm is stored in a \hyperlink{class_h_a_l_1_1_generic_data}{Generic\-Data} object in the User\-Data under the algorithm's name.\par
+\par
+ {\itshape Available Properties\-:} \begin{TabularC}{5}
+\hline
+\rowcolor{lightgray}\PBS\centering {\bf $ p_T $ }&\PBS\centering {\bf $ E_T $ }&\PBS\centering {\bf Mass }&\PBS\centering {\bf Energy }&\PBS\centering {\bf $ \left|\overrightarrow{p}\right| $ }\\\cline{1-5}
+\PBS\centering p\-T &\PBS\centering e\-T &\PBS\centering m &\PBS\centering e &\PBS\centering p3 \\\cline{1-5}
+\end{TabularC}
+{\bfseries Example\-:}\par
+ In your analysis file, do the following to select the highest $ p_T $ muon\-:
+
+
+\begin{DoxyCode}
+\hyperlink{class_h_a_l_1_1_analysis}{HAL::Analysis} a(\textcolor{stringliteral}{"sample analysis"}, \textcolor{stringliteral}{""}, \textcolor{stringliteral}{"truth"});
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_particle}{HAL::Algorithms::ImportParticle}(\textcolor{stringliteral}{"muons"}, \textcolor{stringliteral}{"import basic muons"})
+      );
+
+\textcolor{comment}{//...}
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection}{HAL::Algorithms::ParticleRankSelection}(\textcolor{stringliteral}{"highest pT muon
+      "}, \textcolor{stringliteral}{"find highest pT muon"}, 
+                                                     \textcolor{stringliteral}{"muons"}, 1, \textcolor{stringliteral}{"pT"}, \textcolor{stringliteral}{"high"}));
+\end{DoxyCode}
+ 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_acbba84c85f7090200eda0d2a0bd9c677}{\index{H\-A\-L\-::\-Algorithms\-::\-Particle\-Rank\-Selection@{H\-A\-L\-::\-Algorithms\-::\-Particle\-Rank\-Selection}!Particle\-Rank\-Selection@{Particle\-Rank\-Selection}}
+\index{Particle\-Rank\-Selection@{Particle\-Rank\-Selection}!HAL::Algorithms::ParticleRankSelection@{H\-A\-L\-::\-Algorithms\-::\-Particle\-Rank\-Selection}}
+\subsubsection[{Particle\-Rank\-Selection}]{\setlength{\rightskip}{0pt plus 5cm}H\-A\-L\-::\-Algorithms\-::\-Particle\-Rank\-Selection\-::\-Particle\-Rank\-Selection (
+\begin{DoxyParamCaption}
+\item[{T\-String}]{name, }
+\item[{T\-String}]{title, }
+\item[{T\-String}]{input, }
+\item[{unsigned}]{rank, }
+\item[{T\-String}]{property, }
+\item[{T\-String}]{end = {\ttfamily \char`\"{}high\char`\"{}}}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection_acbba84c85f7090200eda0d2a0bd9c677}
+
+
+Constructor. 
+
+Initializes the algorithm 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the algorithm. This can be used as the input to other algorithms. \\
+\hline
+\mbox{\tt in}  & {\em title} & Description of the algorithm. Can be an empty string. \\
+\hline
+\mbox{\tt in}  & {\em input} & Name of algorithm to select from. \\
+\hline
+\mbox{\tt in}  & {\em rank} & Rank of particle. \\
+\hline
+\mbox{\tt in}  & {\em property} & Property to rank particle by. \\
+\hline
+\mbox{\tt in}  & {\em end} & Either \char`\"{}high\char`\"{} for highest rank property or \char`\"{}low\char`\"{} for lowest rank property. \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See Also}
+\hyperlink{class_h_a_l_1_1_algorithms_1_1_import_particle}{Import\-Particle}, \hyperlink{class_h_a_l_1_1_algorithms_1_1_select_particle}{Select\-Particle} 
+\end{DoxySeeAlso}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+/\-Users/jhetherly/src/root\-\_\-\-H\-A\-L/include/\-H\-A\-L/\hyperlink{_algorithms_8h}{Algorithms.\-h}\end{DoxyCompactItemize}

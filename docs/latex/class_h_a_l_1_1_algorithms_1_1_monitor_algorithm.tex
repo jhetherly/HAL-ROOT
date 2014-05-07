@@ -1,0 +1,90 @@
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_monitor_algorithm}{\section{H\-A\-L\-:\-:Algorithms\-:\-:Monitor\-Algorithm Class Reference}
+\label{class_h_a_l_1_1_algorithms_1_1_monitor_algorithm}\index{H\-A\-L\-::\-Algorithms\-::\-Monitor\-Algorithm@{H\-A\-L\-::\-Algorithms\-::\-Monitor\-Algorithm}}
+}
+
+
+Generic algorithm class that prints the content of an algorithm to a given ostream.  
+
+
+
+
+{\ttfamily \#include $<$Algorithms.\-h$>$}
+
+Inheritance diagram for H\-A\-L\-:\-:Algorithms\-:\-:Monitor\-Algorithm\-:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=2.000000cm]{class_h_a_l_1_1_algorithms_1_1_monitor_algorithm}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_h_a_l_1_1_algorithms_1_1_monitor_algorithm_ac37ea6c50b23dbb49b63d9fe551554a7}{Monitor\-Algorithm} (T\-String name, T\-String title, T\-String input, long long period=1, std\-::ostream \&os=std\-::cout)
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_monitor_algorithm_ae1efc679e7dcbc8692a6b37dca0517c3}{virtual void {\bfseries Exec} (Option\-\_\-t $\ast$)}\label{class_h_a_l_1_1_algorithms_1_1_monitor_algorithm_ae1efc679e7dcbc8692a6b37dca0517c3}
+
+\end{DoxyCompactItemize}
+\subsection*{Additional Inherited Members}
+
+
+\subsection{Detailed Description}
+Generic algorithm class that prints the content of an algorithm to a given ostream. 
+
+This algorithm is helpful in monitoring the particles produced or value stored by another generic algorithm. {\bfseries Example\-:}\par
+ In your analysis file, do the following to monitor the output of an algorithm\-:
+
+
+\begin{DoxyCode}
+\hyperlink{class_h_a_l_1_1_analysis}{HAL::Analysis} a(\textcolor{stringliteral}{"sample analysis"}, \textcolor{stringliteral}{""}, \textcolor{stringliteral}{"truth"});
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_particle}{HAL::Algorithms::ImportParticle}(\textcolor{stringliteral}{"jets"}, \textcolor{stringliteral}{"import basic jet
+       objects"}));
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection}{HAL::Algorithms::ParticleRankSelection}(\textcolor{stringliteral}{"leading pt jet"}
+      , \textcolor{stringliteral}{"find highest pt jet"}, 
+                                                     \textcolor{stringliteral}{"jets"},
+                                                     1, \textcolor{stringliteral}{"pt"}));
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_monitor_algorithm}{HAL::Algorithms::MonitorAlgorithm}(\textcolor{stringliteral}{"leading jet monitor"}, \textcolor{stringliteral}{"
+      look at the leading jet"}, 
+                                                \textcolor{stringliteral}{"leading pt jet"}, 100));
+\end{DoxyCode}
+ 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_monitor_algorithm_ac37ea6c50b23dbb49b63d9fe551554a7}{\index{H\-A\-L\-::\-Algorithms\-::\-Monitor\-Algorithm@{H\-A\-L\-::\-Algorithms\-::\-Monitor\-Algorithm}!Monitor\-Algorithm@{Monitor\-Algorithm}}
+\index{Monitor\-Algorithm@{Monitor\-Algorithm}!HAL::Algorithms::MonitorAlgorithm@{H\-A\-L\-::\-Algorithms\-::\-Monitor\-Algorithm}}
+\subsubsection[{Monitor\-Algorithm}]{\setlength{\rightskip}{0pt plus 5cm}H\-A\-L\-::\-Algorithms\-::\-Monitor\-Algorithm\-::\-Monitor\-Algorithm (
+\begin{DoxyParamCaption}
+\item[{T\-String}]{name, }
+\item[{T\-String}]{title, }
+\item[{T\-String}]{input, }
+\item[{long long}]{period = {\ttfamily 1}, }
+\item[{std\-::ostream \&}]{os = {\ttfamily std\-:\-:cout}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{class_h_a_l_1_1_algorithms_1_1_monitor_algorithm_ac37ea6c50b23dbb49b63d9fe551554a7}
+
+
+Constructor. 
+
+Initializes the algorithm. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the algorithm. This can be used as the input to other algorithms. \\
+\hline
+\mbox{\tt in}  & {\em title} & Description of the algorithm. Can be an empty string. \\
+\hline
+\mbox{\tt in}  & {\em input} & Name of algorithm to select from. \\
+\hline
+\mbox{\tt in}  & {\em period} & Sets the period of output. \\
+\hline
+\mbox{\tt in}  & {\em os} & Stream to pipe all output to. \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+\item 
+/\-Users/jhetherly/src/root\-\_\-\-H\-A\-L/include/\-H\-A\-L/\hyperlink{_algorithms_8h}{Algorithms.\-h}\end{DoxyCompactItemize}
