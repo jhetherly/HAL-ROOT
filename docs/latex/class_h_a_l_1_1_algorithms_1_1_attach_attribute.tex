@@ -1,0 +1,98 @@
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_attach_attribute}{\section{H\+A\+L\+:\+:Algorithms\+:\+:Attach\+Attribute Class Reference}
+\label{class_h_a_l_1_1_algorithms_1_1_attach_attribute}\index{H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute@{H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute}}
+}
+
+
+Generic algorithm class that attaches a decimal value from a T\+Tree to an existing particle.  
+
+
+
+
+{\ttfamily \#include $<$Algorithms.\+h$>$}
+
+Inheritance diagram for H\+A\+L\+:\+:Algorithms\+:\+:Attach\+Attribute\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_h_a_l_1_1_algorithms_1_1_attach_attribute}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_h_a_l_1_1_algorithms_1_1_attach_attribute_a0c161228d7ba4e6b987d4d9d37375dde}{Attach\+Attribute} (T\+String name, T\+String title, T\+String input, T\+String attribute\+\_\+name)
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_attach_attribute_afc87e37a8075b9486c1ec8b46c38b401}{virtual void {\bfseries Store\+Value} (\hyperlink{class_h_a_l_1_1_analysis_tree_reader}{H\+A\+L\+::\+Analysis\+Tree\+Reader} $\ast$, \hyperlink{class_h_a_l_1_1_generic_particle}{H\+A\+L\+::\+Particle\+Ptr}, long long)}\label{class_h_a_l_1_1_algorithms_1_1_attach_attribute_afc87e37a8075b9486c1ec8b46c38b401}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Generic algorithm class that attaches a decimal value from a T\+Tree to an existing particle. 
+
+This algorithm imports the information to store a decimal value from a specified branch in a set of pre-\/existing particles. The input particles are irreversibly, non-\/destructively modified. This algorithm needs one branch map to locate the value to attach. The output from this algorithm may be accessed by either this algorithm's name or the name of the input algorithm.~\newline
+~\newline
+{\bfseries Explaination of the branch map\+:}~\newline
+The required map is just one that points to the relavent value. $<$name$>$ refers to the name given to this algorithm's constructor.~\newline
+{\itshape Required Branch Map\+:} \begin{TabularC}{2}
+\hline
+\rowcolor{lightgray}{\bf }&\PBS\centering {\bf Value  }\\\cline{1-2}
+&\PBS\centering $<$name$>$\+:value \\\cline{1-2}
+\end{TabularC}
+{\bfseries Example\+:}~\newline
+In your analysis file, do the following to attach charge to each muon (the easier way would be through \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_particle}{Import\+Particle})\+:
+
+
+\begin{DoxyCode}
+\hyperlink{class_h_a_l_1_1_analysis}{HAL::Analysis} a(\textcolor{stringliteral}{"sample analysis"}, \textcolor{stringliteral}{""}, \textcolor{stringliteral}{"truth"});
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_particle}{HAL::Algorithms::ImportParticle}(\textcolor{stringliteral}{"muons"}, \textcolor{stringliteral}{"import basic muons"})
+      );
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_attach_attribute}{HAL::Algorithms::AttachAttribute}(\textcolor{stringliteral}{"muon charge att"}, \textcolor{stringliteral}{"attach
+       charge to muons"}, 
+                                               \textcolor{stringliteral}{"muons"}, 
+                                               \textcolor{stringliteral}{"muon charge"}));
+
+\textcolor{comment}{//...}
+
+a.MapBranch(\textcolor{stringliteral}{"mu\_charge"}, \textcolor{stringliteral}{"muon charge att:value"});
+\end{DoxyCode}
+ 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_attach_attribute_a0c161228d7ba4e6b987d4d9d37375dde}{\index{H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute@{H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute}!Attach\+Attribute@{Attach\+Attribute}}
+\index{Attach\+Attribute@{Attach\+Attribute}!H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute@{H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute}}
+\subsubsection[{Attach\+Attribute}]{\setlength{\rightskip}{0pt plus 5cm}H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute\+::\+Attach\+Attribute (
+\begin{DoxyParamCaption}
+\item[{T\+String}]{name, }
+\item[{T\+String}]{title, }
+\item[{T\+String}]{input, }
+\item[{T\+String}]{attribute\+\_\+name}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{class_h_a_l_1_1_algorithms_1_1_attach_attribute_a0c161228d7ba4e6b987d4d9d37375dde}
+
+
+Constructor. 
+
+Initializes the algorithm 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the algorithm. This can be used as the input to other algorithms. \\
+\hline
+\mbox{\tt in}  & {\em title} & Description of the algorithm. Can be an empty string. \\
+\hline
+\mbox{\tt in}  & {\em input} & Name of algorithm to attach values to. \\
+\hline
+\mbox{\tt in}  & {\em attribute\+\_\+name} & Name to give the attribute. \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\hyperlink{class_h_a_l_1_1_algorithms_1_1_import_particle}{Import\+Particle}, \hyperlink{class_h_a_l_1_1_algorithms_1_1_select_particle}{Select\+Particle} 
+\end{DoxySeeAlso}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/jhetherly/src/root\+\_\+\+H\+A\+L/include/\+H\+A\+L/\hyperlink{_algorithms_8h}{Algorithms.\+h}\end{DoxyCompactItemize}

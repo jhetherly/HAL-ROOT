@@ -243,6 +243,24 @@ bool AnalysisTreeReader::GetBool (const TString &branchname, const long long &id
     return fvB[branchmanager->GetStorageIndex()][idx_1];
   if (branchmanager->GetStorageType() == kvvB)
     return fvvB[branchmanager->GetStorageIndex()][idx_1][idx_2];
+  if (branchmanager->GetStorageType() == kI)
+    return (bool)fI[branchmanager->GetStorageIndex()];
+  if (branchmanager->GetStorageType() == kvI)
+    return (bool)fvI[branchmanager->GetStorageIndex()][idx_1];
+  if (branchmanager->GetStorageType() == kvvI)
+    return (bool)fvvI[branchmanager->GetStorageIndex()][idx_1][idx_2];
+  if (branchmanager->GetStorageType() == kC)
+    return (bool)fC[branchmanager->GetStorageIndex()];
+  if (branchmanager->GetStorageType() == kvC)
+    return (bool)fvC[branchmanager->GetStorageIndex()][idx_1];
+  if (branchmanager->GetStorageType() == kvvC)
+    return (bool)fvvC[branchmanager->GetStorageIndex()][idx_1][idx_2];
+  if (branchmanager->GetStorageType() == kD)
+    return (bool)fD[branchmanager->GetStorageIndex()];
+  if (branchmanager->GetStorageType() == kvD)
+    return (bool)fvD[branchmanager->GetStorageIndex()][idx_1];
+  if (branchmanager->GetStorageType() == kvvD)
+    return (bool)fvvD[branchmanager->GetStorageIndex()][idx_1][idx_2];
 
   throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find bool data in branch: ").Data());
 }
@@ -272,6 +290,12 @@ long long AnalysisTreeReader::GetInteger (const TString &branchname, const long 
     return fvD[branchmanager->GetStorageIndex()][idx_1];
   if (branchmanager->GetStorageType() == kvvD)
     return fvvD[branchmanager->GetStorageIndex()][idx_1][idx_2];
+  if (branchmanager->GetStorageType() == kB)
+    return (long long)fB[branchmanager->GetStorageIndex()];
+  if (branchmanager->GetStorageType() == kvB)
+    return (long long)fvB[branchmanager->GetStorageIndex()][idx_1];
+  if (branchmanager->GetStorageType() == kvvB)
+    return (long long)fvvB[branchmanager->GetStorageIndex()][idx_1][idx_2];
   // special case of char as 8-bit data holder
   if (branchmanager->GetStorageType() == kvS && fChar.count(branchmanager->GetScalarType()) != 0)
     return (signed char)fvS[branchmanager->GetStorageIndex()][idx_1].Data()[0];
@@ -304,6 +328,12 @@ unsigned long long AnalysisTreeReader::GetCounting (const TString &branchname, c
     return fvD[branchmanager->GetStorageIndex()][idx_1];
   if (branchmanager->GetStorageType() == kvvD)
     return fvvD[branchmanager->GetStorageIndex()][idx_1][idx_2];
+  if (branchmanager->GetStorageType() == kB)
+    return (unsigned long long)fB[branchmanager->GetStorageIndex()];
+  if (branchmanager->GetStorageType() == kvB)
+    return (unsigned long long)fvB[branchmanager->GetStorageIndex()][idx_1];
+  if (branchmanager->GetStorageType() == kvvB)
+    return (unsigned long long)fvvB[branchmanager->GetStorageIndex()][idx_1][idx_2];
 
   throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find counting number data in branch: ").Data());
 }
@@ -333,6 +363,12 @@ long double AnalysisTreeReader::GetDecimal (const TString &branchname, const lon
     return fvC[branchmanager->GetStorageIndex()][idx_1];
   if (branchmanager->GetStorageType() == kvvC)
     return fvvC[branchmanager->GetStorageIndex()][idx_1][idx_2];
+  if (branchmanager->GetStorageType() == kB)
+    return (long double)fB[branchmanager->GetStorageIndex()];
+  if (branchmanager->GetStorageType() == kvB)
+    return (long double)fvB[branchmanager->GetStorageIndex()][idx_1];
+  if (branchmanager->GetStorageType() == kvvB)
+    return (long double)fvvB[branchmanager->GetStorageIndex()][idx_1][idx_2];
 
   throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find decimal number data in branch: ").Data());
 }

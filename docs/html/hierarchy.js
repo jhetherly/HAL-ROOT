@@ -8,6 +8,9 @@ var hierarchy =
         [ "HAL::Algorithms::Cut", "class_h_a_l_1_1_algorithms_1_1_cut.html", null ],
         [ "HAL::Algorithms::EmptyCut", "class_h_a_l_1_1_algorithms_1_1_empty_cut.html", null ]
       ] ],
+      [ "HAL::internal::AugmentValueAlgo", null, [
+        [ "HAL::Algorithms::AttachAttribute", "class_h_a_l_1_1_algorithms_1_1_attach_attribute.html", null ]
+      ] ],
       [ "HAL::internal::FilterParticleAlgo", null, [
         [ "HAL::Algorithms::SelectParticle", "class_h_a_l_1_1_algorithms_1_1_select_particle.html", null ]
       ] ],

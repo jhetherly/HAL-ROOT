@@ -26,9 +26,16 @@ int main(int argc, char *argv[]) {
   //      "PythonAlgo"));
   a.AddAlgo(new HAL::Algorithms::ImportParticle("jets", "import basic jet objects"));
   a.AddAlgo(new HAL::Algorithms::ImportParticle("mc", "import basic Monte Carlo objects"));
+  a.AddAlgo(new HAL::Algorithms::AttachAttribute("mc charge att", "attach charge to mc particles", 
+                                                 "mc", 
+                                                 "mc_test_charge"));
 
   a.AddAlgo(new HAL::Algorithms::EmptyCut("number of events", "baseline event number"));
 
+  a.AddAlgo(new HAL::Algorithms::SelectParticle("mc with charge", "filter on mc with charge", 
+                                                //"mc", // this works too
+                                                "mc charge att", // input algorithm
+                                                "mc_test_charge", "!=", 0));
   a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_5GeV", "filter on mc pt >= 5GeV", 
                                                 "mc", // input algorithm
                                                 "pt", ">=", 5000)); // pT value
@@ -90,6 +97,7 @@ int main(int argc, char *argv[]) {
   a.MapBranch("mc_m", "mc:m");
   a.MapBranch("mc_pdgId", "mc:id");
   a.MapBranch("mc_charge", "mc:charge");
+  a.MapBranch("mc_charge", "mc charge att:value");
   //a.MapBranch("Jet_size", "jets:nentries");
   //a.MapBranch("Jet.PT", "jets:pT");
   //a.MapBranch("Jet.Eta", "jets:eta");

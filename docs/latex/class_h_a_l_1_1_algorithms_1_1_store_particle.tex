@@ -1,16 +1,16 @@
-\hypertarget{class_h_a_l_1_1_algorithms_1_1_store_particle}{\section{H\-A\-L\-:\-:Algorithms\-:\-:Store\-Particle Class Reference}
-\label{class_h_a_l_1_1_algorithms_1_1_store_particle}\index{H\-A\-L\-::\-Algorithms\-::\-Store\-Particle@{H\-A\-L\-::\-Algorithms\-::\-Store\-Particle}}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_store_particle}{\section{H\+A\+L\+:\+:Algorithms\+:\+:Store\+Particle Class Reference}
+\label{class_h_a_l_1_1_algorithms_1_1_store_particle}\index{H\+A\+L\+::\+Algorithms\+::\+Store\+Particle@{H\+A\+L\+::\+Algorithms\+::\+Store\+Particle}}
 }
 
 
-Generic algorithm class that stores the properties of particles to a T\-Tree.  
+Generic algorithm class that stores the properties of particles to a T\+Tree.  
 
 
 
 
-{\ttfamily \#include $<$Algorithms.\-h$>$}
+{\ttfamily \#include $<$Algorithms.\+h$>$}
 
-Inheritance diagram for H\-A\-L\-:\-:Algorithms\-:\-:Store\-Particle\-:\begin{figure}[H]
+Inheritance diagram for H\+A\+L\+:\+:Algorithms\+:\+:Store\+Particle\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
 \includegraphics[height=3.000000cm]{class_h_a_l_1_1_algorithms_1_1_store_particle}
@@ -19,30 +19,29 @@ Inheritance diagram for H\-A\-L\-:\-:Algorithms\-:\-:Store\-Particle\-:\begin{fi
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hyperlink{class_h_a_l_1_1_algorithms_1_1_store_particle_a160a46b43875d8968e865fc2335380f3}{Store\-Particle} (T\-String name, T\-String title, T\-String input, T\-String property, T\-String bname, T\-String tname=\char`\"{}\char`\"{})
+\hyperlink{class_h_a_l_1_1_algorithms_1_1_store_particle_a160a46b43875d8968e865fc2335380f3}{Store\+Particle} (T\+String name, T\+String title, T\+String input, T\+String property, T\+String bname, T\+String tname=\char`\"{}\char`\"{})
 \begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{class_h_a_l_1_1_algorithms_1_1_store_particle_af2e287e256a0d7803c68a62bbb254302}{virtual void {\bfseries Init} (Option\-\_\-t $\ast$)}\label{class_h_a_l_1_1_algorithms_1_1_store_particle_af2e287e256a0d7803c68a62bbb254302}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_store_particle_af2e287e256a0d7803c68a62bbb254302}{virtual void {\bfseries Init} (Option\+\_\+t $\ast$)}\label{class_h_a_l_1_1_algorithms_1_1_store_particle_af2e287e256a0d7803c68a62bbb254302}
 
 \item 
-\hypertarget{class_h_a_l_1_1_algorithms_1_1_store_particle_acf9039e1285e48324c378295cf4cea3b}{virtual void {\bfseries Store\-Value} (\hyperlink{class_h_a_l_1_1_analysis_tree_writer}{H\-A\-L\-::\-Analysis\-Tree\-Writer} $\ast$, long long, \hyperlink{class_h_a_l_1_1_generic_particle}{H\-A\-L\-::\-Particle\-Ptr})}\label{class_h_a_l_1_1_algorithms_1_1_store_particle_acf9039e1285e48324c378295cf4cea3b}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_store_particle_acf9039e1285e48324c378295cf4cea3b}{virtual void {\bfseries Store\+Value} (\hyperlink{class_h_a_l_1_1_analysis_tree_writer}{H\+A\+L\+::\+Analysis\+Tree\+Writer} $\ast$, long long, \hyperlink{class_h_a_l_1_1_generic_particle}{H\+A\+L\+::\+Particle\+Ptr})}\label{class_h_a_l_1_1_algorithms_1_1_store_particle_acf9039e1285e48324c378295cf4cea3b}
 
 \end{DoxyCompactItemize}
-\subsection*{Additional Inherited Members}
 
 
 \subsection{Detailed Description}
-Generic algorithm class that stores the properties of particles to a T\-Tree. 
+Generic algorithm class that stores the properties of particles to a T\+Tree. 
 
-This algorithm stores particles or specific parts of particles in a specified T\-Tree. The user needs only supply a branch name, property, and a tree name (optional). If the \char`\"{}all\char`\"{} property is given, the branch name given will act as the base for all other properties, i.\-e. if branch name is \char`\"{}jets\char`\"{}, the branches written will be \char`\"{}jets\-\_\-pt\char`\"{}, \char`\"{}jets\-\_\-eta\char`\"{}, etc. {\itshape Available Properties\-:} \begin{TabularC}{11}
+This algorithm stores particles or specific parts of particles in a specified T\+Tree. The user needs only supply a branch name, property, and a tree name (optional). If the \char`\"{}all\char`\"{} property is given, the branch name given will act as the base for all other properties, i.\+e. if branch name is \char`\"{}jets\char`\"{}, the branches written will be \char`\"{}jets\+\_\+pt\char`\"{}, \char`\"{}jets\+\_\+eta\char`\"{}, etc. {\itshape Available Properties\+:} \begin{TabularC}{11}
 \hline
-\rowcolor{lightgray}\PBS\centering {\bf $ p_T $ }&\PBS\centering {\bf $ E_T $ }&\PBS\centering {\bf Mass }&\PBS\centering {\bf Energy }&\PBS\centering {\bf $ \left|\overrightarrow{p}\right| $ }&\PBS\centering {\bf $ \eta $ }&\PBS\centering {\bf $ \phi $ }&\PBS\centering {\bf I\-D }&\PBS\centering {\bf Charge }&\PBS\centering {\bf Full Particle }&\PBS\centering {\bf All Attributes }\\\cline{1-11}
-\PBS\centering p\-T &\PBS\centering e\-T &\PBS\centering m &\PBS\centering e &\PBS\centering p3 &\PBS\centering eta &\PBS\centering phi &\PBS\centering id &\PBS\centering charge &\PBS\centering all &\PBS\centering attributes \\\cline{1-11}
+\rowcolor{lightgray}\PBS\centering {\bf $ p_T $ }&\PBS\centering {\bf $ E_T $ }&\PBS\centering {\bf Mass }&\PBS\centering {\bf Energy }&\PBS\centering {\bf $ \left|\overrightarrow{p}\right| $ }&\PBS\centering {\bf $ \eta $ }&\PBS\centering {\bf $ \phi $ }&\PBS\centering {\bf I\+D }&\PBS\centering {\bf Charge }&\PBS\centering {\bf Full Particle }&\PBS\centering {\bf All Attributes  }\\\cline{1-11}
+\PBS\centering p\+T &\PBS\centering e\+T &\PBS\centering m &\PBS\centering e &\PBS\centering p3 &\PBS\centering eta &\PBS\centering phi &\PBS\centering id &\PBS\centering charge &\PBS\centering all &\PBS\centering attributes \\\cline{1-11}
 \end{TabularC}
-{\bfseries Example\-:}\par
- In your analysis file, do the following to store jet particles\-:
+{\bfseries Example\+:}~\newline
+In your analysis file, do the following to store jet particles\+:
 
 
 \begin{DoxyCode}
@@ -57,16 +56,16 @@ a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_sto
  
 
 \subsection{Constructor \& Destructor Documentation}
-\hypertarget{class_h_a_l_1_1_algorithms_1_1_store_particle_a160a46b43875d8968e865fc2335380f3}{\index{H\-A\-L\-::\-Algorithms\-::\-Store\-Particle@{H\-A\-L\-::\-Algorithms\-::\-Store\-Particle}!Store\-Particle@{Store\-Particle}}
-\index{Store\-Particle@{Store\-Particle}!HAL::Algorithms::StoreParticle@{H\-A\-L\-::\-Algorithms\-::\-Store\-Particle}}
-\subsubsection[{Store\-Particle}]{\setlength{\rightskip}{0pt plus 5cm}H\-A\-L\-::\-Algorithms\-::\-Store\-Particle\-::\-Store\-Particle (
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_store_particle_a160a46b43875d8968e865fc2335380f3}{\index{H\+A\+L\+::\+Algorithms\+::\+Store\+Particle@{H\+A\+L\+::\+Algorithms\+::\+Store\+Particle}!Store\+Particle@{Store\+Particle}}
+\index{Store\+Particle@{Store\+Particle}!H\+A\+L\+::\+Algorithms\+::\+Store\+Particle@{H\+A\+L\+::\+Algorithms\+::\+Store\+Particle}}
+\subsubsection[{Store\+Particle}]{\setlength{\rightskip}{0pt plus 5cm}H\+A\+L\+::\+Algorithms\+::\+Store\+Particle\+::\+Store\+Particle (
 \begin{DoxyParamCaption}
-\item[{T\-String}]{name, }
-\item[{T\-String}]{title, }
-\item[{T\-String}]{input, }
-\item[{T\-String}]{property, }
-\item[{T\-String}]{bname, }
-\item[{T\-String}]{tname = {\ttfamily \char`\"{}\char`\"{}}}
+\item[{T\+String}]{name, }
+\item[{T\+String}]{title, }
+\item[{T\+String}]{input, }
+\item[{T\+String}]{property, }
+\item[{T\+String}]{bname, }
+\item[{T\+String}]{tname = {\ttfamily \char`\"{}\char`\"{}}}
 \end{DoxyParamCaption}
 )}}\label{class_h_a_l_1_1_algorithms_1_1_store_particle_a160a46b43875d8968e865fc2335380f3}
 
@@ -90,6 +89,6 @@ Initializes the algorithm.
 \end{DoxyParams}
 
 
-The documentation for this class was generated from the following file\-:\begin{DoxyCompactItemize}
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/\-Users/jhetherly/src/root\-\_\-\-H\-A\-L/include/\-H\-A\-L/\hyperlink{_algorithms_8h}{Algorithms.\-h}\end{DoxyCompactItemize}
+/\+Users/jhetherly/src/root\+\_\+\+H\+A\+L/include/\+H\+A\+L/\hyperlink{_algorithms_8h}{Algorithms.\+h}\end{DoxyCompactItemize}

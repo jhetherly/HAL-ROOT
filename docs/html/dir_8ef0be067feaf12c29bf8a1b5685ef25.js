@@ -7,6 +7,7 @@ var dir_8ef0be067feaf12c29bf8a1b5685ef25 =
       [ "ImportInteger", "class_h_a_l_1_1_algorithms_1_1_import_integer.html", "class_h_a_l_1_1_algorithms_1_1_import_integer" ],
       [ "ImportCounting", "class_h_a_l_1_1_algorithms_1_1_import_counting.html", "class_h_a_l_1_1_algorithms_1_1_import_counting" ],
       [ "ImportDecimal", "class_h_a_l_1_1_algorithms_1_1_import_decimal.html", "class_h_a_l_1_1_algorithms_1_1_import_decimal" ],
+      [ "AttachAttribute", "class_h_a_l_1_1_algorithms_1_1_attach_attribute.html", "class_h_a_l_1_1_algorithms_1_1_attach_attribute" ],
       [ "VecAddReco", "class_h_a_l_1_1_algorithms_1_1_vec_add_reco.html", "class_h_a_l_1_1_algorithms_1_1_vec_add_reco" ],
       [ "ParticleRankSelection", "class_h_a_l_1_1_algorithms_1_1_particle_rank_selection.html", "class_h_a_l_1_1_algorithms_1_1_particle_rank_selection" ],
       [ "SelectParticle", "class_h_a_l_1_1_algorithms_1_1_select_particle.html", "class_h_a_l_1_1_algorithms_1_1_select_particle" ],

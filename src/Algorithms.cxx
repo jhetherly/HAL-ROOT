@@ -82,7 +82,7 @@ void internal::ImportParticleAlgo::Clear (Option_t* /*option*/) {
   delete GetUserData()->GetTObject(GetName());
 }
 
-internal::ImportValueAlgo::ImportValueAlgo (TString name, TString title) : 
+internal::ImportValueAlgo::ImportValueAlgo (TString name, TString title) :
   HAL::Algorithm(name, title) {
 
   fUserDataLabel = TString::Format("%s:value", name.Data());
@@ -99,6 +99,29 @@ void  internal::ImportValueAlgo::Exec (Option_t* /*option*/) {
 
 void  internal::ImportValueAlgo::Clear (Option_t* /*option*/) {
   delete GetUserData()->GetTObject(GetName());
+}
+
+internal::AugmentValueAlgo::AugmentValueAlgo (TString name, TString title, 
+    TString input, TString attribute_name) : 
+  HAL::Algorithm(name, title), fInput(input), fAttributeLabel(attribute_name) {
+}
+
+void  internal::AugmentValueAlgo::Exec (Option_t* /*option*/) {
+  HAL::AnalysisTreeReader *tr = GetRawData();
+  HAL::AnalysisData *data = GetUserData();
+  HAL::GenericData *input_data = NULL;
+
+  if (data->Exists(fInput)) {
+    input_data = (GenericData*)data->GetTObject(fInput);
+    data->SetValue(GetName(), input_data);
+  }
+  else
+    throw HAL::HALException(GetName().Prepend("Cannot find the input algorithm for "));
+
+  for (ParticlePtrsIt particle = input_data->GetParticleBegin(); 
+       particle != input_data->GetParticleEnd(); ++ particle) {
+    StoreValue(tr, *particle, (*particle)->GetOriginIndex());
+  }
 }
 
 void internal::NthElementAlgo::Exec (Option_t* /*option*/) {
@@ -204,15 +227,20 @@ void internal::FilterRefParticleAlgo::Exec (Option_t* /*option*/) {
   else
     return;
 
-  if (input_data->GetNParticles() != 1)
-    return;
-
-  reference = input_data->GetParticle(0);
   for (ParticlePtrsIt particle = others_data->GetParticleBegin(); 
        particle != others_data->GetParticleEnd(); ++ particle) {
-    if (reference == *particle || reference->HasSameParticles("parents", *particle))
-      continue;
-    if (FilterPredicate(reference, *particle))
+    bool add_particle = true;
+    for (ParticlePtrsIt ref_particle = input_data->GetParticleBegin(); 
+         ref_particle != input_data->GetParticleEnd(); ++ ref_particle) {
+      reference = *ref_particle;
+      if (reference == *particle || reference->HasSameParticles("parents", *particle))
+        continue;
+      if (!FilterPredicate(reference, *particle)) {
+        add_particle = false;
+        break;
+      }
+    }
+    if (add_particle)
       gen_data->AddParticle(*particle);
   }
 
@@ -451,6 +479,11 @@ void Algorithms::ImportDecimal::StoreValue (HAL::GenericData *gen_data) {
   data->SetValue(fUserDataLabel, tr->GetDecimal(fValue));
   gen_data->SetRefName(fUserDataLabel);
   gen_data->SetRefType("decimal");
+}
+
+void  Algorithms::AttachAttribute::StoreValue (AnalysisTreeReader *tr, 
+                                               ParticlePtr particle, long long i) {
+  particle->SetAttribute(fAttributeLabel, tr->GetDecimal(fBranchLabel, i));
 }
 
 /*
@@ -732,21 +765,21 @@ Algorithms::SelectParticle::SelectParticle (TString name, TString title, TString
 void Algorithms::SelectParticle::Setup () {
   if (fProperty.EqualTo("pt", TString::kIgnoreCase))
     fPt = true;
-  if (fProperty.EqualTo("m", TString::kIgnoreCase))
+  else if (fProperty.EqualTo("m", TString::kIgnoreCase))
     fM = true;
-  if (fProperty.EqualTo("e", TString::kIgnoreCase))
+  else if (fProperty.EqualTo("e", TString::kIgnoreCase))
     fE = true;
-  if (fProperty.EqualTo("et", TString::kIgnoreCase))
+  else if (fProperty.EqualTo("et", TString::kIgnoreCase))
     fEt = true;
-  if (fProperty.EqualTo("p3", TString::kIgnoreCase))
+  else if (fProperty.EqualTo("p3", TString::kIgnoreCase))
     fP3 = true;
-  if (fProperty.EqualTo("eta", TString::kIgnoreCase))
+  else if (fProperty.EqualTo("eta", TString::kIgnoreCase))
     fEta = true;
-  if (fProperty.EqualTo("phi", TString::kIgnoreCase))
+  else if (fProperty.EqualTo("phi", TString::kIgnoreCase))
     fPhi = true;
-  if (fProperty.EqualTo("charge", TString::kIgnoreCase))
+  else if (fProperty.EqualTo("charge", TString::kIgnoreCase))
     fCharge = true;
-  if (fProperty.EqualTo("id", TString::kIgnoreCase))
+  else if (fProperty.EqualTo("id", TString::kIgnoreCase))
     fID = true;
   else
     fAttribute = true;

@@ -104,6 +104,22 @@ protected:
 };
 
 /*
+ * Algorithm for importing a scalar value and attaching it to an 
+ * existing particle.
+ * */
+class AugmentValueAlgo : public HAL::Algorithm {
+public:
+  AugmentValueAlgo (TString name, TString title, TString input, TString attribute_name);
+  virtual ~AugmentValueAlgo () {}
+
+protected:
+  virtual void  Exec (Option_t* /*option*/);
+  virtual void  StoreValue (HAL::AnalysisTreeReader*, HAL::ParticlePtr, long long) = 0;
+
+  TString   fInput, fAttributeLabel;
+};
+
+/*
  * Algorithm for finding the nth highest/lowest element in an AnalysisData object
  * */
 class NthElementAlgo : public HAL::Algorithm {
@@ -476,6 +492,65 @@ private:
 
 
 
+//! Generic algorithm class that attaches a decimal value from a TTree to an existing particle.
+/*!
+ * This algorithm imports the information to store a decimal value from a specified branch in 
+ * a set of pre-existing particles. The input particles are irreversibly, non-destructively 
+ * modified. This algorithm needs one branch map to locate the value to attach. The output 
+ * from this algorithm may be accessed by either this algorithm's name or the name of the 
+ * input algorithm.\n\n
+ * __Explaination of the branch map:__\n
+ * The required map is just one that points to the relavent value. <name> refers to 
+ * the name given to this algorithm's constructor.\n
+ * _Required Branch Map:_
+ * || Value |
+ * || :-----------: |
+ * ||  <name>:value  |
+ * __Example:__\n
+ * In your analysis file, do the following to attach charge to each muon (the easier 
+ * way would be through ImportParticle):
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportParticle("muons", "import basic muons"));
+ *
+ * a.AddAlgo(new HAL::Algorithms::AttachAttribute("muon charge att", "attach charge to muons", 
+ *                                                "muons", 
+ *                                                "muon charge"));
+ *
+ * //...
+ * 
+ * a.MapBranch("mu_charge", "muon charge att:value");
+ * ~~~~~~~~~~~~~~~~~~~~~~
+ */
+class AttachAttribute : public HAL::internal::AugmentValueAlgo {
+public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] input Name of algorithm to attach values to.
+   * \param[in] attribute_name Name to give the attribute.
+   * \sa ImportParticle, SelectParticle
+   */
+  AttachAttribute (TString name, TString title, TString input, TString attribute_name) :
+    AugmentValueAlgo(name, title, input, attribute_name), 
+    fBranchLabel(TString::Format("%s:value", name.Data())) {}
+  virtual ~AttachAttribute () {}
+
+protected:
+  virtual void  StoreValue (HAL::AnalysisTreeReader*, HAL::ParticlePtr, long long);
+
+private:
+  TString   fBranchLabel;
+};
+
+
+
+
 /*
  * Reconstruction Algorithms
  * */
@@ -713,10 +788,10 @@ private:
 };
 
 
-//! Generic algorithm class that selects particles with respect to a reference particle
+//! Generic algorithm class that selects particles with respect to a set of reference particles
 /*!
- * This algorithm selects particles relative to a reference particle. This algorithm makes
- * sure to not compare the same particle to itself. An inclusive, exclusive, or windowed
+ * This algorithm selects particles relative to a set of reference particles. This algorithm 
+ * makes sure to not compare the same particle to itself. An inclusive, exclusive, or windowed
  * selection is determined by the constructor used to initialize the algorithm. The
  * properties are listed below. The particle from this algorithm is stored in a 
  * GenericData object in the UserData under the algorithm's name.\n\n
@@ -752,7 +827,7 @@ public:
    * \param[in] name Name of the algorithm. This can be used as the input to other 
    * algorithms.
    * \param[in] title Description of the algorithm. Can be an empty string.
-   * \param[in] reference Name of algorithm the reference particle.
+   * \param[in] reference Name of algorithm the reference particles.
    * \param[in] input Name of algorithm to select from.
    * \param[in] value Value of property
    * \param[in] property Property by which to select particles.
@@ -767,7 +842,7 @@ public:
    * \param[in] name Name of the algorithm. This can be used as the input to other 
    * algorithms.
    * \param[in] title Description of the algorithm. Can be an empty string.
-   * \param[in] reference Name of algorithm the reference particle.
+   * \param[in] reference Name of algorithm the reference particles.
    * \param[in] input Name of algorithm to select from.
    * \param[in] low Lower value of property.
    * \param[in] high Higher value of property.
@@ -980,7 +1055,7 @@ public:
    * \param[in] os Stream to pipe all output to.
    */
   MonitorAlgorithm (TString name, TString title, TString input, long long period = 1, std::ostream &os = std::cout) :
-    Algorithm(name, title), fN(n), fInput(input), fOS(&os) {}
+    Algorithm(name, title), fN(period), fInput(input), fOS(&os) {}
   virtual ~MonitorAlgorithm () {}
 
 protected:
