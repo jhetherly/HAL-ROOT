@@ -35,7 +35,8 @@ public:
   inline ParticlePtrs&  GetParticles (const TString &name) {return f1DParticles[name];}
 
   inline bool       IsOwner () {return fIsOwner;}
-  inline TString    GetOwner () {return (fParticles.size() >= 1) ? fParticles[0]->GetOrigin() : "";}
+  inline TString    GetOwner () {return (fParticles.size() >= 1) ? fParticles[0]->GetOwner() : "";}
+  inline TString    GetOrigin () {return (fParticles.size() >= 1) ? fParticles[0]->GetOrigin() : "";}
   inline bool       HasParticles (const TString &name) {return (f1DParticles.count(name) != 0) ? true : false;}
   inline size_t     GetNParticles () {return fParticles.size();}
   inline size_t     GetNParticles (const TString &name) {return HasParticles(name) ? f1DParticles[name].size() : 0;}

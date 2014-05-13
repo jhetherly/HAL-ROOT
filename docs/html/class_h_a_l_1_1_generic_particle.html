@@ -115,15 +115,21 @@ $(document).ready(function(){initNavTree('class_h_a_l_1_1_generic_particle.html'
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3efe0e487f7fe9e779321363eb9dde35"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3efe0e487f7fe9e779321363eb9dde35"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>GenericParticle</b> (const TString &amp;origin, const TString &amp;name=&quot;&quot;)</td></tr>
-<tr class="separator:a3efe0e487f7fe9e779321363eb9dde35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add9ff51f2413528b2b00df1a4b7d67a5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add9ff51f2413528b2b00df1a4b7d67a5"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>GenericParticle</b> (const TString &amp;owner, const TString &amp;origin=&quot;&quot;, const TString &amp;name=&quot;&quot;)</td></tr>
+<tr class="separator:add9ff51f2413528b2b00df1a4b7d67a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e9e01f96e31e980b2c31af42bb1c514"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1e9e01f96e31e980b2c31af42bb1c514"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>GenericParticle</b> (const <a class="el" href="class_h_a_l_1_1_generic_particle.html">GenericParticle</a> &amp;particle)</td></tr>
 <tr class="separator:a1e9e01f96e31e980b2c31af42bb1c514"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca5a97bce5a002bd84259a417965f96e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aca5a97bce5a002bd84259a417965f96e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetOwner</b> (const TString &amp;owner)</td></tr>
+<tr class="separator:aca5a97bce5a002bd84259a417965f96e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a91b82bc5204850ab0d40163ed103ee12"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a91b82bc5204850ab0d40163ed103ee12"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>SetOrigin</b> (const TString &amp;origin)</td></tr>
 <tr class="separator:a91b82bc5204850ab0d40163ed103ee12"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae752a3a3a41281887a2ee988957cc6d9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae752a3a3a41281887a2ee988957cc6d9"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetOwnerIndex</b> (const size_t &amp;oi)</td></tr>
+<tr class="separator:ae752a3a3a41281887a2ee988957cc6d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a81d7aa1fd86d8f1d7e78286f32840e90"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a81d7aa1fd86d8f1d7e78286f32840e90"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>SetOriginIndex</b> (const size_t &amp;oi)</td></tr>
 <tr class="separator:a81d7aa1fd86d8f1d7e78286f32840e90"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -145,12 +151,18 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SetAttribute</b> (con
 <tr class="memitem:a779773d398f0555bfe65295e16494156"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a779773d398f0555bfe65295e16494156"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>SetParticle</b> (const TString &amp;name, <a class="el" href="class_h_a_l_1_1_generic_particle.html">GenericParticle</a> *particle, const long long &amp;index=-1)</td></tr>
 <tr class="separator:a779773d398f0555bfe65295e16494156"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f6c3bcf5eb3fafc2687a0622404c5b1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3f6c3bcf5eb3fafc2687a0622404c5b1"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>Set1DParticle</b> (const TString &amp;name, std::vector&lt; <a class="el" href="class_h_a_l_1_1_generic_particle.html">GenericParticle</a> * &gt; &amp;particles)</td></tr>
-<tr class="separator:a3f6c3bcf5eb3fafc2687a0622404c5b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa30c8bf16ffb744999e05e062b647c45"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa30c8bf16ffb744999e05e062b647c45"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>SetParticles</b> (const TString &amp;name, std::vector&lt; <a class="el" href="class_h_a_l_1_1_generic_particle.html">GenericParticle</a> * &gt; &amp;particles)</td></tr>
+<tr class="separator:aa30c8bf16ffb744999e05e062b647c45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1eb591edadc5dff045b70d4a4aedba2e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1eb591edadc5dff045b70d4a4aedba2e"></a>
+TString&#160;</td><td class="memItemRight" valign="bottom"><b>GetOwner</b> ()</td></tr>
+<tr class="separator:a1eb591edadc5dff045b70d4a4aedba2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a712c5e92caba83c8c1f0566d860d6a1e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a712c5e92caba83c8c1f0566d860d6a1e"></a>
 TString&#160;</td><td class="memItemRight" valign="bottom"><b>GetOrigin</b> ()</td></tr>
 <tr class="separator:a712c5e92caba83c8c1f0566d860d6a1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a971d9c0b255cb94b70ea29907842af71"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a971d9c0b255cb94b70ea29907842af71"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetOwnerIndex</b> ()</td></tr>
+<tr class="separator:a971d9c0b255cb94b70ea29907842af71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6b38ac523f31d45da86d153913a25643"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b38ac523f31d45da86d153913a25643"></a>
 size_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetOriginIndex</b> ()</td></tr>
 <tr class="separator:a6b38ac523f31d45da86d153913a25643"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -210,7 +222,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespace_h_a_l.html">HAL</a></li><li class="navelem"><a class="el" href="class_h_a_l_1_1_generic_particle.html">GenericParticle</a></li>
-    <li class="footer">Generated on Thu May 8 2014 23:09:04 for HAL by
+    <li class="footer">Generated on Tue May 13 2014 07:37:42 for HAL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

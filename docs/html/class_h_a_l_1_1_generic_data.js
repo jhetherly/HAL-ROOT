@@ -7,6 +7,7 @@ var class_h_a_l_1_1_generic_data =
     [ "ClassDef", "class_h_a_l_1_1_generic_data.html#a737f93b6a0d228a7a7b8146cf6e151ea", null ],
     [ "GetNParticles", "class_h_a_l_1_1_generic_data.html#a521637ed1d84af87cf0ef5432893576f", null ],
     [ "GetNParticles", "class_h_a_l_1_1_generic_data.html#a0d2533aa45faf37a56b820f2b3a0d7d5", null ],
+    [ "GetOrigin", "class_h_a_l_1_1_generic_data.html#a39aa41111f658bd66567068174a3c3be", null ],
     [ "GetOwner", "class_h_a_l_1_1_generic_data.html#a444b2f7bd6c6e8ba6d585088f194928f", null ],
     [ "GetParticle", "class_h_a_l_1_1_generic_data.html#a4956f4b4014bc1a7d32ad7399d622cba", null ],
     [ "GetParticleBegin", "class_h_a_l_1_1_generic_data.html#a601843b8bfda4d43a99cd46069b19d6c", null ],

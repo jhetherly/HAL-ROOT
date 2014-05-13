@@ -3,7 +3,7 @@
 }
 
 
-Generic algorithm class that attaches a decimal value from a T\+Tree to an existing particle.  
+Generic algorithm class that attaches a decimal value to an existing set of particles.  
 
 
 
@@ -19,27 +19,42 @@ Inheritance diagram for H\+A\+L\+:\+:Algorithms\+:\+:Attach\+Attribute\+:\begin{
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
+\hyperlink{class_h_a_l_1_1_algorithms_1_1_attach_attribute_a37e2bb1cec951e7d268c3d8fe7eef66d}{Attach\+Attribute} (T\+String name, T\+String title, T\+String input, T\+String attribute\+\_\+name, double value)
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
 \hyperlink{class_h_a_l_1_1_algorithms_1_1_attach_attribute_a0c161228d7ba4e6b987d4d9d37375dde}{Attach\+Attribute} (T\+String name, T\+String title, T\+String input, T\+String attribute\+\_\+name)
-\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\hyperlink{class_h_a_l_1_1_algorithms_1_1_attach_attribute_aaf92d33de944aaacdf536c6fe8f3a332}{Attach\+Attribute} (T\+String name, T\+String title, T\+String input, T\+String attribute\+\_\+name, T\+String property, T\+String ref\+\_\+particles=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_attach_attribute_a3f490dfe32ddba9caeec144c4ec7253b}{bool {\bfseries operator()} (\hyperlink{class_h_a_l_1_1_generic_particle}{Particle\+Ptr} lhs, \hyperlink{class_h_a_l_1_1_generic_particle}{Particle\+Ptr} rhs)}\label{class_h_a_l_1_1_algorithms_1_1_attach_attribute_a3f490dfe32ddba9caeec144c4ec7253b}
+
+\end{DoxyCompactItemize}
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
 \hypertarget{class_h_a_l_1_1_algorithms_1_1_attach_attribute_afc87e37a8075b9486c1ec8b46c38b401}{virtual void {\bfseries Store\+Value} (\hyperlink{class_h_a_l_1_1_analysis_tree_reader}{H\+A\+L\+::\+Analysis\+Tree\+Reader} $\ast$, \hyperlink{class_h_a_l_1_1_generic_particle}{H\+A\+L\+::\+Particle\+Ptr}, long long)}\label{class_h_a_l_1_1_algorithms_1_1_attach_attribute_afc87e37a8075b9486c1ec8b46c38b401}
 
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_attach_attribute_ac1a523aff6683e97875a0ac3247092ad}{void {\bfseries Sort} (Particle\+Ptrs \&sl)}\label{class_h_a_l_1_1_algorithms_1_1_attach_attribute_ac1a523aff6683e97875a0ac3247092ad}
+
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Generic algorithm class that attaches a decimal value from a T\+Tree to an existing particle. 
+Generic algorithm class that attaches a decimal value to an existing set of particles. 
 
-This algorithm imports the information to store a decimal value from a specified branch in a set of pre-\/existing particles. The input particles are irreversibly, non-\/destructively modified. This algorithm needs one branch map to locate the value to attach. The output from this algorithm may be accessed by either this algorithm's name or the name of the input algorithm.~\newline
+This algorithm attaches information to a set of particles from either a branch in a T\+Tree, a specified property, or a value the user gives. The input particles are copied and the value is attached to the new particles. This algorithm needs one branch map to locate the value to attach if attaching from a branch. The output from this algorithm may be accessed by this algorithm's name.~\newline
 ~\newline
 {\bfseries Explaination of the branch map\+:}~\newline
-The required map is just one that points to the relavent value. $<$name$>$ refers to the name given to this algorithm's constructor.~\newline
-{\itshape Required Branch Map\+:} \begin{TabularC}{2}
+The branch map is just one that points to the relavent value. $<$name$>$ refers to the name given to this algorithm's constructor.~\newline
+{\itshape Optional Branch Map\+:} \begin{TabularC}{2}
 \hline
 \rowcolor{lightgray}{\bf }&\PBS\centering {\bf Value  }\\\cline{1-2}
 &\PBS\centering $<$name$>$\+:value \\\cline{1-2}
+\end{TabularC}
+{\itshape Available Properties\+:} \begin{TabularC}{5}
+\hline
+\rowcolor{lightgray}\PBS\centering {\bf Rank in $ p_T $ }&\PBS\centering {\bf Rank in $ E_T $ }&\PBS\centering {\bf Rank in Mass }&\PBS\centering {\bf Rank in Energy }&\PBS\centering {\bf Rank in $ \left|\overrightarrow{p}\right| $  }\\\cline{1-5}
+\PBS\centering rank\+\_\+p\+T &\PBS\centering rank\+\_\+e\+T &\PBS\centering rank\+\_\+m &\PBS\centering rank\+\_\+e &\PBS\centering rank\+\_\+p3 \\\cline{1-5}
 \end{TabularC}
 {\bfseries Example\+:}~\newline
 In your analysis file, do the following to attach charge to each muon (the easier way would be through \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_particle}{Import\+Particle})\+:
@@ -63,6 +78,37 @@ a.MapBranch(\textcolor{stringliteral}{"mu\_charge"}, \textcolor{stringliteral}{"
  
 
 \subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_attach_attribute_a37e2bb1cec951e7d268c3d8fe7eef66d}{\index{H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute@{H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute}!Attach\+Attribute@{Attach\+Attribute}}
+\index{Attach\+Attribute@{Attach\+Attribute}!H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute@{H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute}}
+\subsubsection[{Attach\+Attribute}]{\setlength{\rightskip}{0pt plus 5cm}H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute\+::\+Attach\+Attribute (
+\begin{DoxyParamCaption}
+\item[{T\+String}]{name, }
+\item[{T\+String}]{title, }
+\item[{T\+String}]{input, }
+\item[{T\+String}]{attribute\+\_\+name, }
+\item[{double}]{value}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{class_h_a_l_1_1_algorithms_1_1_attach_attribute_a37e2bb1cec951e7d268c3d8fe7eef66d}
+
+
+Constructor. 
+
+Initializes the algorithm for a given user value 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the algorithm. This can be used as the input to other algorithms. \\
+\hline
+\mbox{\tt in}  & {\em title} & Description of the algorithm. Can be an empty string. \\
+\hline
+\mbox{\tt in}  & {\em input} & Name of algorithm to attach values to. \\
+\hline
+\mbox{\tt in}  & {\em attribute\+\_\+name} & Name to give the attribute. \\
+\hline
+\mbox{\tt in}  & {\em value} & Value to store in the particles' attributes lists \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\hyperlink{class_h_a_l_1_1_algorithms_1_1_import_particle}{Import\+Particle}, \hyperlink{class_h_a_l_1_1_algorithms_1_1_select_particle}{Select\+Particle} 
+\end{DoxySeeAlso}
 \hypertarget{class_h_a_l_1_1_algorithms_1_1_attach_attribute_a0c161228d7ba4e6b987d4d9d37375dde}{\index{H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute@{H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute}!Attach\+Attribute@{Attach\+Attribute}}
 \index{Attach\+Attribute@{Attach\+Attribute}!H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute@{H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute}}
 \subsubsection[{Attach\+Attribute}]{\setlength{\rightskip}{0pt plus 5cm}H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute\+::\+Attach\+Attribute (
@@ -77,7 +123,7 @@ a.MapBranch(\textcolor{stringliteral}{"mu\_charge"}, \textcolor{stringliteral}{"
 
 Constructor. 
 
-Initializes the algorithm 
+Initializes the algorithm to read from a T\+Tree branch 
 \begin{DoxyParams}[1]{Parameters}
 \mbox{\tt in}  & {\em name} & Name of the algorithm. This can be used as the input to other algorithms. \\
 \hline
@@ -86,6 +132,40 @@ Initializes the algorithm
 \mbox{\tt in}  & {\em input} & Name of algorithm to attach values to. \\
 \hline
 \mbox{\tt in}  & {\em attribute\+\_\+name} & Name to give the attribute. \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\hyperlink{class_h_a_l_1_1_algorithms_1_1_import_particle}{Import\+Particle}, \hyperlink{class_h_a_l_1_1_algorithms_1_1_select_particle}{Select\+Particle} 
+\end{DoxySeeAlso}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_attach_attribute_aaf92d33de944aaacdf536c6fe8f3a332}{\index{H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute@{H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute}!Attach\+Attribute@{Attach\+Attribute}}
+\index{Attach\+Attribute@{Attach\+Attribute}!H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute@{H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute}}
+\subsubsection[{Attach\+Attribute}]{\setlength{\rightskip}{0pt plus 5cm}H\+A\+L\+::\+Algorithms\+::\+Attach\+Attribute\+::\+Attach\+Attribute (
+\begin{DoxyParamCaption}
+\item[{T\+String}]{name, }
+\item[{T\+String}]{title, }
+\item[{T\+String}]{input, }
+\item[{T\+String}]{attribute\+\_\+name, }
+\item[{T\+String}]{property, }
+\item[{T\+String}]{ref\+\_\+particles = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{class_h_a_l_1_1_algorithms_1_1_attach_attribute_aaf92d33de944aaacdf536c6fe8f3a332}
+
+
+Constructor. 
+
+Initializes the algorithm for a specified property 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the algorithm. This can be used as the input to other algorithms. \\
+\hline
+\mbox{\tt in}  & {\em title} & Description of the algorithm. Can be an empty string. \\
+\hline
+\mbox{\tt in}  & {\em input} & Name of algorithm to attach values to. \\
+\hline
+\mbox{\tt in}  & {\em attribute\+\_\+name} & Name to give the attribute. \\
+\hline
+\mbox{\tt in}  & {\em property} & Property to store in the particles' attribute lists. \\
+\hline
+\mbox{\tt in}  & {\em ref\+\_\+particles} & Name of particles to compare to. \\
 \hline
 \end{DoxyParams}
 \begin{DoxySeeAlso}{See also}

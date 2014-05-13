@@ -27,11 +27,13 @@ typedef ParticlePtrs::const_iterator  ParticlePtrsConstIt;
 
 class GenericParticle : public TNamed {
 public:
-  GenericParticle (const TString &origin, const TString &name = "");
+  GenericParticle (const TString &owner, const TString &origin = "", const TString &name = "");
   GenericParticle (const GenericParticle &particle);
   ~GenericParticle ();
 
+  void            SetOwner (const TString &owner) {fOwner = owner;}
   void            SetOrigin (const TString &origin) {fOrigin = origin;}
+  void            SetOwnerIndex (const size_t &oi) {fOwnerIndex = oi;}
   void            SetOriginIndex (const size_t &oi) {fOriginIndex = oi;}
   void            SetID (const int &id) {fID = id;}
   void            SetCharge (const float &charge) {fCharge = charge;}
@@ -39,8 +41,10 @@ public:
   void            SetVector (TLorentzVector *vec) {fP = vec;}
   void            SetAttribute (const TString &name, const long double &value);
   void            SetParticle (const TString &name, GenericParticle *particle, const long long &index = -1);
-  void            Set1DParticle (const TString &name, std::vector<GenericParticle*> &particles);
+  void            SetParticles (const TString &name, std::vector<GenericParticle*> &particles);
+  inline TString  GetOwner () {return fOwner;}
   inline TString  GetOrigin () {return fOrigin;}
+  inline size_t   GetOwnerIndex () {return fOriginIndex;}
   inline size_t   GetOriginIndex () {return fOriginIndex;}
   inline int      GetID () {return fID;}
   inline float    GetCharge () {return fCharge;}
@@ -61,8 +65,9 @@ public:
   ClassDef(GenericParticle, 0);
 
 private:
-  TString                                      fOrigin; // what algorithm made this particle
-  size_t                                       fOriginIndex;
+  TString                                      fOwner; // what algorithm made this particle
+  TString                                      fOrigin; // what algorithm first made this particle
+  size_t                                       fOwnerIndex, fOriginIndex;
   int                                          fID;
   float                                        fCharge;
   TLorentzVector                              *fP;

@@ -32,12 +32,11 @@ int main(int argc, char *argv[]) {
 
   a.AddAlgo(new HAL::Algorithms::EmptyCut("number of events", "baseline event number"));
 
-  a.AddAlgo(new HAL::Algorithms::SelectParticle("mc with charge", "filter on mc with charge", 
-                                                //"mc", // this works too
+  a.AddAlgo(new HAL::Algorithms::SelectParticle("mc without charge", "filter on mc without charge", 
                                                 "mc charge att", // input algorithm
-                                                "mc_test_charge", "!=", 0));
+                                                "mc_test_charge", "==", 0));
   a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_5GeV", "filter on mc pt >= 5GeV", 
-                                                "mc", // input algorithm
+                                                "mc without charge", // input algorithm
                                                 "pt", ">=", 5000)); // pT value
 
   a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_neutrinos", "filter on mc id to get neutrinos", 
@@ -45,12 +44,19 @@ int main(int argc, char *argv[]) {
                                                 "id", 6,
                                                 -16, -14, -12, 12, 14, 16)); // id values
 
+  a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("leading pt neutrino", "find highest pt neutrino", 
+                                                       "mc_neutrinos", // input algorithm
+                                                       1, "pt")); // rank in pt
+
   a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("leading pt jet", "find highest pt jet", 
                                                        "jets", // input algorithm
                                                        1, "pt")); // rank in pt
   a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("subleading pt jet", "find 2nd highest pt jet", 
                                                        "jets", // input algorithm
                                                        2, "pt")); // rank in pt
+  a.AddAlgo(new HAL::Algorithms::AttachAttribute("jet pT rank att", "attach pt rank to jets", 
+                                                 "jets", 
+                                                 "jets_pT_rank", "rank_pt"));
 
   a.AddAlgo(new HAL::Algorithms::VecAddReco("di-jet", "reconstruct a di-jet object from highest pt", 
                                             2, "leading pt jet", "subleading pt jet"));
@@ -80,7 +86,7 @@ int main(int argc, char *argv[]) {
   a.AddAlgo(new HAL::Algorithms::StoreParticle("store di-jet", "store the di-jet system", 
                                                "di-jetfinal", "all", "dijet")); // input, type, branch
   a.AddAlgo(new HAL::Algorithms::StoreParticle("store jets", "store jets", 
-                                               "jets", "all", "jets")); // input, type, branch
+                                               "jet pT rank att", "all", "jets", "exam")); // input, type, branch, tree
   a.AddAlgo(new HAL::Algorithms::StoreParticle("store neutrinos", "store Monte Carlo neutrinos", 
                                                "mc_neutrinos", "all", "neutrinos", "test")); // input, type, branch, tree
   

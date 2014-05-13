@@ -1,6 +1,7 @@
 var hierarchy =
 [
     [ "HAL::Algorithm", "class_h_a_l_1_1_algorithm.html", [
+      [ "HAL::Algorithms::MinChiSquaredSelection", "class_h_a_l_1_1_algorithms_1_1_min_chi_squared_selection.html", null ],
       [ "HAL::Algorithms::MonitorAlgorithm", "class_h_a_l_1_1_algorithms_1_1_monitor_algorithm.html", null ],
       [ "HAL::Algorithms::MonitorUserData", "class_h_a_l_1_1_algorithms_1_1_monitor_user_data.html", null ],
       [ "HAL::Algorithms::VecAddReco", "class_h_a_l_1_1_algorithms_1_1_vec_add_reco.html", null ],

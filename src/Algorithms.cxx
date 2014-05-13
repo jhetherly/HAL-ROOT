@@ -72,6 +72,7 @@ void internal::ImportParticleAlgo::Exec (unsigned n) {
     if (fHasID) particle->SetID(tr->GetInteger(fID, i));
     gen_data->AddParticle(particle);
     particle->SetOriginIndex(gen_data->GetNParticles() - 1);
+    particle->SetOwnerIndex(gen_data->GetNParticles() - 1);
   }
 
   gen_data->SetRefType("none");
@@ -109,19 +110,29 @@ internal::AugmentValueAlgo::AugmentValueAlgo (TString name, TString title,
 void  internal::AugmentValueAlgo::Exec (Option_t* /*option*/) {
   HAL::AnalysisTreeReader *tr = GetRawData();
   HAL::AnalysisData *data = GetUserData();
+  HAL::GenericData *gen_data = new GenericData(GetName(), true);
   HAL::GenericData *input_data = NULL;
 
-  if (data->Exists(fInput)) {
+  data->SetValue(GetName(), gen_data);
+
+  if (data->Exists(fInput)) 
     input_data = (GenericData*)data->GetTObject(fInput);
-    data->SetValue(GetName(), input_data);
-  }
   else
-    throw HAL::HALException(GetName().Prepend("Cannot find the input algorithm for "));
+    return;
 
   for (ParticlePtrsIt particle = input_data->GetParticleBegin(); 
        particle != input_data->GetParticleEnd(); ++ particle) {
-    StoreValue(tr, *particle, (*particle)->GetOriginIndex());
+    ParticlePtr p = new Particle(**particle);
+    StoreValue(tr, p, p->GetOriginIndex()); // must be origin index as this is branch index
+    gen_data->AddParticle(p);
+    p->SetOwner(GetName());
+    p->SetOwnerIndex(gen_data->GetNParticles() - 1);
   }
+  IncreaseCounter(gen_data->GetNParticles());
+}
+
+void internal::AugmentValueAlgo::Clear (Option_t* /*option*/) {
+  delete GetUserData()->GetTObject(GetName());
 }
 
 void internal::NthElementAlgo::Exec (Option_t* /*option*/) {
@@ -141,21 +152,21 @@ void internal::NthElementAlgo::Exec (Option_t* /*option*/) {
   // Need to look for actual owner for sorting purposes
   if (input_data->IsOwner())
     original_data = input_data;
-  else
+  else if (input_data->GetNParticles() > 0)
     original_data = (GenericData*)data->GetTObject(input_data->GetOwner());
+  else return;
 
   n = input_data->GetNParticles();
   norigin = original_data->GetNParticles();
   if (n < fN)
     return;
 
-  // create sorted list for original data
+  // Create sorted list for original data
   if (!original_data->HasParticles(SortTag())) {
     HAL::ParticlePtrs sorted_particles;
 
-    for (unsigned i = 0; i < norigin; ++i) {
+    for (unsigned i = 0; i < norigin; ++i) 
       sorted_particles.push_back(original_data->GetParticle(i));
-    }
     Sort(sorted_particles);
     original_data->SetParticles(SortTag(), sorted_particles);
   }
@@ -481,9 +492,87 @@ void Algorithms::ImportDecimal::StoreValue (HAL::GenericData *gen_data) {
   gen_data->SetRefType("decimal");
 }
 
-void  Algorithms::AttachAttribute::StoreValue (AnalysisTreeReader *tr, 
+void Algorithms::AttachAttribute::StoreValue (AnalysisTreeReader *tr, 
                                                ParticlePtr particle, long long i) {
-  particle->SetAttribute(fAttributeLabel, tr->GetDecimal(fBranchLabel, i));
+  if (fUserValue)
+    particle->SetAttribute(fAttributeLabel, fValue);
+  if (fBranchValue)
+    particle->SetAttribute(fAttributeLabel, tr->GetDecimal(fBranchLabel, i));
+  if (fPropertyValue) {
+    if (fPtRank || fMRank || fERank || fEtRank || fP3Rank) {
+      HAL::AnalysisData *data = GetUserData();
+      HAL::GenericData *owner_data = NULL;
+      HAL::GenericData *input_data = NULL;
+      TString   sort_tag;
+      long long norigin;
+
+      if (fPtRank) sort_tag = "4v_pt";
+      if (fMRank) sort_tag = "4v_m";
+      if (fERank) sort_tag = "4v_e";
+      if (fEtRank) sort_tag = "4v_et";
+      if (fP3Rank) sort_tag = "4v_p3";
+
+      // Need to look for actual owner for sorting purposes
+      owner_data = (GenericData*)data->GetTObject(particle->GetOwner());
+
+      norigin = owner_data->GetNParticles();
+
+      // Create sorted list for owner data
+      if (!owner_data->HasParticles(sort_tag)) {
+        HAL::ParticlePtrs sorted_particles;
+
+        for (unsigned j = 0; j < norigin; ++j) 
+          sorted_particles.push_back(owner_data->GetParticle(j));
+        Sort(sorted_particles);
+        owner_data->SetParticles(sort_tag, sorted_particles);
+      }
+
+      // loop over the sorted list
+      bool found = false;
+      ParticlePtrs sorted_list = owner_data->GetParticles(sort_tag);
+      long long origin_count = 0, input_count = 0;
+      long long owner_index = particle->GetOwnerIndex();
+      if (fRefCompare) input_data = (GenericData*)data->GetTObject(fRefParticles);
+      else input_data = (GenericData*)data->GetTObject(fInput);
+      for (ParticlePtrsIt sorted_particle = sorted_list.begin(); 
+           sorted_particle != sorted_list.end(); ++ sorted_particle) {
+        ++origin_count;
+        for (ParticlePtrsIt my_particle = input_data->GetParticleBegin(); 
+             my_particle != input_data->GetParticleEnd(); ++ my_particle) {
+          if (*sorted_particle == *my_particle) {
+            ++input_count;
+            if (*sorted_particle == owner_data->GetParticle(owner_index)) {
+              particle->SetAttribute(fAttributeLabel, input_count);
+              found = true;
+            }
+            break;
+          }
+        }
+        if (found) break;
+      }
+    }
+  }
+}
+
+bool Algorithms::AttachAttribute::operator() (ParticlePtr lhs, ParticlePtr rhs) {
+  TLorentzVector *lhs_vec = lhs->GetP();
+  TLorentzVector *rhs_vec = rhs->GetP();
+
+  if (fPtRank)
+    return (lhs_vec->Pt() > rhs_vec->Pt());
+  if (fMRank)
+    return (lhs_vec->M() > rhs_vec->M());
+  if (fERank)
+    return (lhs_vec->E() > rhs_vec->E());
+  if (fEtRank)
+    return (lhs_vec->Et() > rhs_vec->Et());
+  if (fP3Rank)
+    return (lhs_vec->P() > rhs_vec->P());
+  throw HALException(GetName().Prepend("Couldn't determine sorting information: "));
+}
+
+void Algorithms::AttachAttribute::Sort (ParticlePtrs &sl) {
+  std::stable_sort(sl.begin(), sl.end(), *this);
 }
 
 /*
@@ -601,8 +690,9 @@ void Algorithms::VecAddReco::Exec (Option_t* /*option*/) {
     }
     new_particle->SetCharge(new_charge);
     new_particle->SetP(vec);
-    new_particle->Set1DParticle("parents", new_parents);
+    new_particle->SetParticles("parents", new_parents);
     gen_data->AddParticle(new_particle);
+    new_particle->SetOwnerIndex(gen_data->GetNParticles() - 1);
     new_particle->SetOriginIndex(gen_data->GetNParticles() - 1);
   }
   gen_data->SetRefType("none");
@@ -909,6 +999,26 @@ bool Algorithms::SelectRefParticle::FilterPredicate (HAL::ParticlePtr p_ref, HAL
   throw HAL::HALException(GetName().Prepend("Couldn't determine how to filter: "));
 }
 
+Algorithms::MinChiSquaredSelection::MinChiSquaredSelection (TString name, TString title, 
+    long long length, ...) :
+  Algorithm(name, title) {
+  va_list arguments;  // store the variable list of arguments
+
+  va_start (arguments, length); // initializing arguments to store all values after length
+  for (long long i = 0; i < length; ++i) {
+    // input_algo, property, ref_algo, mean_value, sigma_value, group_num, output_name
+    TString InputAlgo(va_arg(arguments, const char*));
+    TString Property(va_arg(arguments, const char*));
+    TString RefAlgo(va_arg(arguments, const char*));
+    double MeanValue = va_arg(arguments, double);
+    double SigmaValue = va_arg(arguments, double);
+    int GroupNumber = va_arg(arguments, int);
+    TString OutputName(va_arg(arguments, const char*));
+
+  }
+  va_end(arguments); // cleans up the list
+}
+
 /*
  * Cutting Algorithms
  * */
@@ -925,10 +1035,8 @@ Algorithms::Cut::Cut (TString name, TString title, TString logic,
   va_start (arguments, length); // initializing arguments to store all values after length
   for (long long i = 0; i < length; ++i) {
     const char* algo_name = va_arg(arguments, const char*);
-    const char* type = va_arg(arguments, const char*);
-    TString Type(type);
-    const char* op = va_arg(arguments, const char*);
-    TString Op(op);
+    TString Type(va_arg(arguments, const char*));
+    TString Op(va_arg(arguments, const char*));
 
     if (Type.EqualTo("bool", TString::kIgnoreCase)) {
       BoolAlgoInfo *Algo = new BoolAlgoInfo();
@@ -1262,9 +1370,6 @@ void  Algorithms::StoreParticle::Init (Option_t* /*option*/) {
     return;
   }
   if (fAll) {
-    for (std::map<TString, TString>::iterator it = fAttributeLabels.begin();
-         it != fAttributeLabels.end(); ++it)
-      output->SetTreeForBranch(fTreeName, it->second);
     output->SetTreeForBranch(fTreeName, fPtLabel);
     output->SetTreeForBranch(fTreeName, fEtaLabel);
     output->SetTreeForBranch(fTreeName, fPhiLabel);
@@ -1274,10 +1379,7 @@ void  Algorithms::StoreParticle::Init (Option_t* /*option*/) {
     output->SetTreeForBranch(fTreeName, fChargeLabel);
     return;
   }
-  if (fAttributes) {
-    for (std::map<TString, TString>::iterator it = fAttributeLabels.begin();
-         it != fAttributeLabels.end(); ++it)
-      output->SetTreeForBranch(fTreeName, it->second);
+  if (fAttributes) { // Can't assign tree hear b/c attributes don't exist yet
     return;
   }
 }
@@ -1323,8 +1425,10 @@ void Algorithms::StoreParticle::StoreValue (HAL::AnalysisTreeWriter *output, lon
   }
   if (fAll) {
     for (std::map<TString, TString>::iterator it = fAttributeLabels.begin();
-         it != fAttributeLabels.end(); ++it)
+         it != fAttributeLabels.end(); ++it) {
+      output->SetTreeForBranch(fTreeName, it->second);
       output->SetValue(it->second, particle->GetAttribute(it->first), i);
+    }
     output->SetValue(fPtLabel, vec->Pt(), i);
     output->SetValue(fEtaLabel, vec->Eta(), i);
     output->SetValue(fPhiLabel, vec->Phi(), i);
@@ -1336,8 +1440,10 @@ void Algorithms::StoreParticle::StoreValue (HAL::AnalysisTreeWriter *output, lon
   }
   if (fAttributes) {
     for (std::map<TString, TString>::iterator it = fAttributeLabels.begin();
-         it != fAttributeLabels.end(); ++it)
+         it != fAttributeLabels.end(); ++it) {
+      output->SetTreeForBranch(fTreeName, it->second);
       output->SetValue(it->second, particle->GetAttribute(it->first), i);
+    }
     return;
   }
   throw HAL::HALException(GetName().Prepend("Couldn't determine what to store: "));

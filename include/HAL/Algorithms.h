@@ -114,6 +114,7 @@ public:
 
 protected:
   virtual void  Exec (Option_t* /*option*/);
+  virtual void  Clear (Option_t* /*option*/);
   virtual void  StoreValue (HAL::AnalysisTreeReader*, HAL::ParticlePtr, long long) = 0;
 
   TString   fInput, fAttributeLabel;
@@ -200,7 +201,7 @@ protected:
 
 /*
  * Algorithm for the exporting of simple quantities from
- * several particles' TLVs
+ * several particles' TLVs and attributes
  * */
 class ParticlesTLVStore : public Algorithm {
 public:
@@ -492,20 +493,24 @@ private:
 
 
 
-//! Generic algorithm class that attaches a decimal value from a TTree to an existing particle.
+//! Generic algorithm class that attaches a decimal value to an existing set of particles
 /*!
- * This algorithm imports the information to store a decimal value from a specified branch in 
- * a set of pre-existing particles. The input particles are irreversibly, non-destructively 
- * modified. This algorithm needs one branch map to locate the value to attach. The output 
- * from this algorithm may be accessed by either this algorithm's name or the name of the 
- * input algorithm.\n\n
+ * This algorithm attaches information to a set of particles from either a branch in a TTree, a
+ * specified property, or a value the user gives. The input particles are copied and the value is 
+ * attached to the new particles. This algorithm needs one branch map to locate the value to 
+ * attach if attaching from a branch. The output from this algorithm may be accessed by this 
+ * algorithm's name.\n\n
  * __Explaination of the branch map:__\n
- * The required map is just one that points to the relavent value. <name> refers to 
+ * The branch map is just one that points to the relavent value. <name> refers to 
  * the name given to this algorithm's constructor.\n
- * _Required Branch Map:_
+ * _Optional Branch Map:_
  * || Value |
  * || :-----------: |
  * ||  <name>:value  |
+ * _Available Properties:_
+ * | Rank in \f$ p_T \f$ | Rank in \f$ E_T \f$ | Rank in Mass | Rank in Energy | Rank in \f$ \left|\overrightarrow{p}\right| \f$ |
+ * | :-----------------: | :---------------: | :--: | :----: | :------------------: |
+ * |  rank_pT   | rank_eT | rank_m | rank_e | rank_p3 |
  * __Example:__\n
  * In your analysis file, do the following to attach charge to each muon (the easier 
  * way would be through ImportParticle):
@@ -528,7 +533,22 @@ class AttachAttribute : public HAL::internal::AugmentValueAlgo {
 public:
   //! Constructor
   /*!
-   * Initializes the algorithm
+   * Initializes the algorithm for a given user value
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] input Name of algorithm to attach values to.
+   * \param[in] attribute_name Name to give the attribute.
+   * \param[in] value Value to store in the particles' attributes lists
+   * \sa ImportParticle, SelectParticle
+   */
+  AttachAttribute (TString name, TString title, TString input, TString attribute_name, double value) :
+    AugmentValueAlgo(name, title, input, attribute_name), 
+    fUserValue(true), fBranchValue(false), fPropertyValue(false), 
+    fValue(value) {}
+  //! Constructor
+  /*!
+   * Initializes the algorithm to read from a TTree branch
    * \param[in] name Name of the algorithm. This can be used as the input to other 
    * algorithms.
    * \param[in] title Description of the algorithm. Can be an empty string.
@@ -538,14 +558,44 @@ public:
    */
   AttachAttribute (TString name, TString title, TString input, TString attribute_name) :
     AugmentValueAlgo(name, title, input, attribute_name), 
+    fUserValue(false), fBranchValue(true), fPropertyValue(false), 
     fBranchLabel(TString::Format("%s:value", name.Data())) {}
+  //! Constructor
+  /*!
+   * Initializes the algorithm for a specified property
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] input Name of algorithm to attach values to.
+   * \param[in] attribute_name Name to give the attribute.
+   * \param[in] property Property to store in the particles' attribute lists.
+   * \param[in] ref_particles Name of particles to compare to.
+   * \sa ImportParticle, SelectParticle
+   */
+  AttachAttribute (TString name, TString title, TString input, TString attribute_name, 
+      TString property, TString ref_particles = "") :
+    AugmentValueAlgo(name, title, input, attribute_name), 
+    fUserValue(false), fBranchValue(false), fPropertyValue(true), 
+    fPtRank(property.EqualTo("rank_pt", TString::kIgnoreCase)), 
+    fMRank(property.EqualTo("rank_m", TString::kIgnoreCase)), 
+    fERank(property.EqualTo("rank_e", TString::kIgnoreCase)), 
+    fEtRank(property.EqualTo("rank_et", TString::kIgnoreCase)), 
+    fP3Rank(property.EqualTo("rank_p3", TString::kIgnoreCase)),
+    fRefCompare(!ref_particles.EqualTo("", TString::kIgnoreCase)) {}
   virtual ~AttachAttribute () {}
+
+  bool          operator() (ParticlePtr lhs, ParticlePtr rhs);
 
 protected:
   virtual void  StoreValue (HAL::AnalysisTreeReader*, HAL::ParticlePtr, long long);
+  void          Sort (ParticlePtrs &sl);
 
 private:
-  TString   fBranchLabel;
+  bool      fUserValue, fBranchValue, fPropertyValue;
+  bool      fPtRank, fMRank, fERank, fEtRank, fP3Rank;
+  bool      fRefCompare;
+  double    fValue;
+  TString   fBranchLabel, fRefParticles;
 };
 
 
@@ -588,7 +638,7 @@ public:
    * \param[in] title Description of the algorithm. Can be an empty string.
    * \param[in] length Number of algorithms to combine.
    * \param[in] ... Comma separated list of string literals representing the algorithms to combine.
-   * \sa ImportBool, ImportInteger, ImportCounting, ImportParticle
+   * \sa ImportParticle
    */
   VecAddReco (TString name, TString title, long long length, ...);
   virtual ~VecAddReco();
@@ -860,6 +910,63 @@ protected:
 private:
   double    fHighLimit, fLowLimit;
   bool      fIn, fOut, fWindow, fDeltaR, fDeltaPhi;
+};
+
+
+//! Generic algorithm class that performs a chi-squared minimization
+/*!
+ * This algorithm selects particles based on a chi-squared minimization. This algorithm 
+ * properties are listed below. The particles from this algorithm are stored in many
+ * GenericData object in the UserData under output names given to this algorithm's 
+ * constructor.\n\n
+ * _Available Properties:_
+ * | \f$ \Delta R \f$ | \f$ \Delta\phi \f$ |
+ * | :-------------: | :----------------: |
+ * |  dr   | dphi |
+ * __Example:__\n
+ * In your analysis file, do the following to select the jets within a \f$ \Delta R \f$ of 0.4 from the highest
+ * \f$ p_T \f$ jet:
+ *
+ * ~~~~~~~~~~~~~~~~~~~~~~{.cpp}
+ * HAL::Analysis a("sample analysis", "", "truth");
+ *
+ * a.AddAlgo(new HAL::Algorithms::ImportParticle("jets", "import basic jets"));
+ *
+ * //...
+ * 
+ * a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("leading pt jet", "find highest pt jet", 
+ *                                                      "jets",
+ *                                                      1, "pt"));
+ *
+ * a.AddAlgo(new HAL::Algorithms::SelectRefParticle("jets close", "filter on jets within deltaR of di-jet", 
+ *                                                  "leading pt jet", "jets",
+ *                                                  0.4, "dr"));
+ * ~~~~~~~~~~~~~~~~~~~~~~
+ */
+class MinChiSquaredSelection : public HAL::Algorithm {
+public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm. The variable length argument at the end should conform 
+   * to the following rules:\n
+   * - It should be given in sets of seven.
+   * - The first 
+   * - The second 
+   * - The third 
+   * - The fourth 
+   * - The fifth 
+   * - The sixth 
+   * - The seventh 
+   *
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \param[in] nterms Number of cuts to make.
+   * \param[in] ... Set of seven values per term as explained above.
+   * \sa 
+   */
+  MinChiSquaredSelection (TString name, TString title, long long nterms, ...);
+  virtual ~MinChiSquaredSelection () {}
 };
 
 

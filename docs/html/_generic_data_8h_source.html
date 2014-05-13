@@ -135,30 +135,31 @@ $(document).ready(function(){initNavTree('_generic_data_8h_source.html','');});
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;  <span class="keyword">inline</span> ParticlePtrs&amp;  GetParticles (<span class="keyword">const</span> TString &amp;name) {<span class="keywordflow">return</span> f1DParticles[name];}</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">bool</span>       IsOwner () {<span class="keywordflow">return</span> fIsOwner;}</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">inline</span> TString    GetOwner () {<span class="keywordflow">return</span> (fParticles.size() &gt;= 1) ? fParticles[0]-&gt;GetOrigin() : <span class="stringliteral">&quot;&quot;</span>;}</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">bool</span>       HasParticles (<span class="keyword">const</span> TString &amp;name) {<span class="keywordflow">return</span> (f1DParticles.count(name) != 0) ? <span class="keyword">true</span> : <span class="keyword">false</span>;}</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">size_t</span>     GetNParticles () {<span class="keywordflow">return</span> fParticles.size();}</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">size_t</span>     GetNParticles (<span class="keyword">const</span> TString &amp;name) {<span class="keywordflow">return</span> HasParticles(name) ? f1DParticles[name].size() : 0;}</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;  <span class="keyword">friend</span> std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <a class="code" href="class_h_a_l_1_1_generic_data.html">GenericData</a> &amp;data);</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;  ClassDef(<a class="code" href="class_h_a_l_1_1_generic_data.html">GenericData</a>, 0);</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;  <span class="keywordtype">bool</span>                                                  fIsOwner;</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="comment">// used if value is stored in &#39;UserData&#39; (i.e. a trigger boolean)</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  TString                                               fUserDataRefName, fUserDataRefType; </div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  <span class="comment">// list of actual particles (and actual owner of memory)</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  ParticlePtrs                                          fParticles;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  <span class="comment">// the following is for sorted lists, etc...</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  std::map&lt;TString, ParticlePtrs, internal::string_cmp&gt; f1DParticles;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;};</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <a class="code" href="class_h_a_l_1_1_generic_data.html">HAL::GenericData</a> &amp;data);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;} <span class="comment">/* HAL */</span> </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;  <span class="keyword">inline</span> TString    GetOwner () {<span class="keywordflow">return</span> (fParticles.size() &gt;= 1) ? fParticles[0]-&gt;GetOwner() : <span class="stringliteral">&quot;&quot;</span>;}</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;  <span class="keyword">inline</span> TString    GetOrigin () {<span class="keywordflow">return</span> (fParticles.size() &gt;= 1) ? fParticles[0]-&gt;GetOrigin() : <span class="stringliteral">&quot;&quot;</span>;}</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">bool</span>       HasParticles (<span class="keyword">const</span> TString &amp;name) {<span class="keywordflow">return</span> (f1DParticles.count(name) != 0) ? <span class="keyword">true</span> : <span class="keyword">false</span>;}</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">size_t</span>     GetNParticles () {<span class="keywordflow">return</span> fParticles.size();}</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;  <span class="keyword">inline</span> <span class="keywordtype">size_t</span>     GetNParticles (<span class="keyword">const</span> TString &amp;name) {<span class="keywordflow">return</span> HasParticles(name) ? f1DParticles[name].size() : 0;}</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;  <span class="keyword">friend</span> std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <a class="code" href="class_h_a_l_1_1_generic_data.html">GenericData</a> &amp;data);</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;  ClassDef(<a class="code" href="class_h_a_l_1_1_generic_data.html">GenericData</a>, 0);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;  <span class="keywordtype">bool</span>                                                  fIsOwner;</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;  <span class="comment">// used if value is stored in &#39;UserData&#39; (i.e. a trigger boolean)</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;  TString                                               fUserDataRefName, fUserDataRefType; </div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;  <span class="comment">// list of actual particles (and actual owner of memory)</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;  ParticlePtrs                                          fParticles;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="comment">// the following is for sorted lists, etc...</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;  std::map&lt;TString, ParticlePtrs, internal::string_cmp&gt; f1DParticles;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;};</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;std::ostream&amp; operator&lt;&lt;(std::ostream&amp; os, <a class="code" href="class_h_a_l_1_1_generic_data.html">HAL::GenericData</a> &amp;data);</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;} <span class="comment">/* HAL */</span> </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="class_h_a_l_1_1_generic_data_html"><div class="ttname"><a href="class_h_a_l_1_1_generic_data.html">HAL::GenericData</a></div><div class="ttdef"><b>Definition:</b> GenericData.h:20</div></div>
 <div class="ttc" id="class_h_a_l_1_1_generic_particle_html"><div class="ttname"><a href="class_h_a_l_1_1_generic_particle.html">HAL::GenericParticle</a></div><div class="ttdef"><b>Definition:</b> GenericParticle.h:28</div></div>
 </div><!-- fragment --></div><!-- contents -->
@@ -167,7 +168,7 @@ $(document).ready(function(){initNavTree('_generic_data_8h_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_8ef0be067feaf12c29bf8a1b5685ef25.html">HAL</a></li><li class="navelem"><b>GenericData.h</b></li>
-    <li class="footer">Generated on Thu May 8 2014 23:09:04 for HAL by
+    <li class="footer">Generated on Tue May 13 2014 07:37:42 for HAL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

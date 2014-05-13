@@ -103,7 +103,7 @@ $(document).ready(function(){initNavTree('class_h_a_l_1_1_algorithms_1_1_attach_
 </div><!--header-->
 <div class="contents">
 
-<p>Generic algorithm class that attaches a decimal value from a TTree to an existing particle.  
+<p>Generic algorithm class that attaches a decimal value to an existing set of particles.  
  <a href="class_h_a_l_1_1_algorithms_1_1_attach_attribute.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_algorithms_8h_source.html">Algorithms.h</a>&gt;</code></p>
@@ -121,27 +121,45 @@ $(document).ready(function(){initNavTree('class_h_a_l_1_1_algorithms_1_1_attach_
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a37e2bb1cec951e7d268c3d8fe7eef66d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_a_l_1_1_algorithms_1_1_attach_attribute.html#a37e2bb1cec951e7d268c3d8fe7eef66d">AttachAttribute</a> (TString name, TString title, TString input, TString attribute_name, double value)</td></tr>
+<tr class="memdesc:a37e2bb1cec951e7d268c3d8fe7eef66d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a37e2bb1cec951e7d268c3d8fe7eef66d">More...</a><br /></td></tr>
+<tr class="separator:a37e2bb1cec951e7d268c3d8fe7eef66d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0c161228d7ba4e6b987d4d9d37375dde"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_a_l_1_1_algorithms_1_1_attach_attribute.html#a0c161228d7ba4e6b987d4d9d37375dde">AttachAttribute</a> (TString name, TString title, TString input, TString attribute_name)</td></tr>
 <tr class="memdesc:a0c161228d7ba4e6b987d4d9d37375dde"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a0c161228d7ba4e6b987d4d9d37375dde">More...</a><br /></td></tr>
 <tr class="separator:a0c161228d7ba4e6b987d4d9d37375dde"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf92d33de944aaacdf536c6fe8f3a332"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_a_l_1_1_algorithms_1_1_attach_attribute.html#aaf92d33de944aaacdf536c6fe8f3a332">AttachAttribute</a> (TString name, TString title, TString input, TString attribute_name, TString property, TString ref_particles=&quot;&quot;)</td></tr>
+<tr class="memdesc:aaf92d33de944aaacdf536c6fe8f3a332"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#aaf92d33de944aaacdf536c6fe8f3a332">More...</a><br /></td></tr>
+<tr class="separator:aaf92d33de944aaacdf536c6fe8f3a332"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f490dfe32ddba9caeec144c4ec7253b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3f490dfe32ddba9caeec144c4ec7253b"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator()</b> (<a class="el" href="class_h_a_l_1_1_generic_particle.html">ParticlePtr</a> lhs, <a class="el" href="class_h_a_l_1_1_generic_particle.html">ParticlePtr</a> rhs)</td></tr>
+<tr class="separator:a3f490dfe32ddba9caeec144c4ec7253b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:afc87e37a8075b9486c1ec8b46c38b401"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afc87e37a8075b9486c1ec8b46c38b401"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>StoreValue</b> (<a class="el" href="class_h_a_l_1_1_analysis_tree_reader.html">HAL::AnalysisTreeReader</a> *, <a class="el" href="class_h_a_l_1_1_generic_particle.html">HAL::ParticlePtr</a>, long long)</td></tr>
 <tr class="separator:afc87e37a8075b9486c1ec8b46c38b401"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1a523aff6683e97875a0ac3247092ad"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1a523aff6683e97875a0ac3247092ad"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>Sort</b> (ParticlePtrs &amp;sl)</td></tr>
+<tr class="separator:ac1a523aff6683e97875a0ac3247092ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Generic algorithm class that attaches a decimal value from a TTree to an existing particle. </p>
-<p>This algorithm imports the information to store a decimal value from a specified branch in a set of pre-existing particles. The input particles are irreversibly, non-destructively modified. This algorithm needs one branch map to locate the value to attach. The output from this algorithm may be accessed by either this algorithm's name or the name of the input algorithm.<br />
+<div class="textblock"><p>Generic algorithm class that attaches a decimal value to an existing set of particles. </p>
+<p>This algorithm attaches information to a set of particles from either a branch in a TTree, a specified property, or a value the user gives. The input particles are copied and the value is attached to the new particles. This algorithm needs one branch map to locate the value to attach if attaching from a branch. The output from this algorithm may be accessed by this algorithm's name.<br />
 <br />
 <b>Explaination of the branch map:</b><br />
-The required map is just one that points to the relavent value. &lt;name&gt; refers to the name given to this algorithm's constructor.<br />
-<em>Required Branch Map:</em> </p><table class="doxtable">
+The branch map is just one that points to the relavent value. &lt;name&gt; refers to the name given to this algorithm's constructor.<br />
+<em>Optional Branch Map:</em> </p><table class="doxtable">
 <tr>
 <th></th><th align="center">Value  </th></tr>
 <tr>
 <td></td><td align="center">&lt;name&gt;:value </td></tr>
+</table>
+<p><em>Available Properties:</em> </p><table class="doxtable">
+<tr>
+<th align="center">Rank in \( p_T \) </th><th align="center">Rank in \( E_T \) </th><th align="center">Rank in Mass </th><th align="center">Rank in Energy </th><th align="center">Rank in \( \left|\overrightarrow{p}\right| \)  </th></tr>
+<tr>
+<td align="center">rank_pT </td><td align="center">rank_eT </td><td align="center">rank_m </td><td align="center">rank_e </td><td align="center">rank_p3 </td></tr>
 </table>
 <p><b>Example:</b><br />
 In your analysis file, do the following to attach charge to each muon (the easier way would be through <a class="el" href="class_h_a_l_1_1_algorithms_1_1_import_particle.html" title="Generic algorithm class that builds particles from information in a TTree. ">ImportParticle</a>):</p>
@@ -157,6 +175,71 @@ In your analysis file, do the following to attach charge to each muon (the easie
 <div class="line"></div>
 <div class="line">a.MapBranch(<span class="stringliteral">&quot;mu_charge&quot;</span>, <span class="stringliteral">&quot;muon charge att:value&quot;</span>);</div>
 </div><!-- fragment --> </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a class="anchor" id="a37e2bb1cec951e7d268c3d8fe7eef66d"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">HAL::Algorithms::AttachAttribute::AttachAttribute </td>
+          <td>(</td>
+          <td class="paramtype">TString&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">TString&#160;</td>
+          <td class="paramname"><em>title</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">TString&#160;</td>
+          <td class="paramname"><em>input</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">TString&#160;</td>
+          <td class="paramname"><em>attribute_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">double&#160;</td>
+          <td class="paramname"><em>value</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructor. </p>
+<p>Initializes the algorithm for a given user value </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">name</td><td>Name of the algorithm. This can be used as the input to other algorithms. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">title</td><td>Description of the algorithm. Can be an empty string. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">input</td><td>Name of algorithm to attach values to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">attribute_name</td><td>Name to give the attribute. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">value</td><td>Value to store in the particles' attributes lists </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_h_a_l_1_1_algorithms_1_1_import_particle.html" title="Generic algorithm class that builds particles from information in a TTree. ">ImportParticle</a>, <a class="el" href="class_h_a_l_1_1_algorithms_1_1_select_particle.html" title="Generic algorithm class that selects particles with specified properties. ">SelectParticle</a> </dd></dl>
+
+</div>
+</div>
 <a class="anchor" id="a0c161228d7ba4e6b987d4d9d37375dde"></a>
 <div class="memitem">
 <div class="memproto">
@@ -202,12 +285,84 @@ In your analysis file, do the following to attach charge to each muon (the easie
 </div><div class="memdoc">
 
 <p>Constructor. </p>
-<p>Initializes the algorithm </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Initializes the algorithm to read from a TTree branch </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">name</td><td>Name of the algorithm. This can be used as the input to other algorithms. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">title</td><td>Description of the algorithm. Can be an empty string. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">input</td><td>Name of algorithm to attach values to. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">attribute_name</td><td>Name to give the attribute. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="class_h_a_l_1_1_algorithms_1_1_import_particle.html" title="Generic algorithm class that builds particles from information in a TTree. ">ImportParticle</a>, <a class="el" href="class_h_a_l_1_1_algorithms_1_1_select_particle.html" title="Generic algorithm class that selects particles with specified properties. ">SelectParticle</a> </dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="aaf92d33de944aaacdf536c6fe8f3a332"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">HAL::Algorithms::AttachAttribute::AttachAttribute </td>
+          <td>(</td>
+          <td class="paramtype">TString&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">TString&#160;</td>
+          <td class="paramname"><em>title</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">TString&#160;</td>
+          <td class="paramname"><em>input</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">TString&#160;</td>
+          <td class="paramname"><em>attribute_name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">TString&#160;</td>
+          <td class="paramname"><em>property</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">TString&#160;</td>
+          <td class="paramname"><em>ref_particles</em> = <code>&quot;&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructor. </p>
+<p>Initializes the algorithm for a specified property </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">name</td><td>Name of the algorithm. This can be used as the input to other algorithms. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">title</td><td>Description of the algorithm. Can be an empty string. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">input</td><td>Name of algorithm to attach values to. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">attribute_name</td><td>Name to give the attribute. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">property</td><td>Property to store in the particles' attribute lists. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ref_particles</td><td>Name of particles to compare to. </td></tr>
   </table>
   </dd>
 </dl>
@@ -224,7 +379,7 @@ In your analysis file, do the following to attach charge to each muon (the easie
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespace_h_a_l.html">HAL</a></li><li class="navelem"><b>Algorithms</b></li><li class="navelem"><a class="el" href="class_h_a_l_1_1_algorithms_1_1_attach_attribute.html">AttachAttribute</a></li>
-    <li class="footer">Generated on Thu May 8 2014 23:09:04 for HAL by
+    <li class="footer">Generated on Tue May 13 2014 07:37:42 for HAL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

@@ -5,15 +5,23 @@ ClassImp(HAL::GenericParticle);
 namespace HAL
 {
 
-HAL::GenericParticle::GenericParticle (const TString &origin, const TString &name) : 
-  fOrigin(origin), fOriginIndex(0), fID(0), fCharge(0.0), fP(NULL) {
+HAL::GenericParticle::GenericParticle (const TString &owner, const TString &origin, const TString &name) : 
+  fOwner(owner), fOwnerIndex(0), fOriginIndex(0), fID(0), fCharge(0.0), fP(NULL) {
 
+  if(origin.EqualTo("")) 
+    fOrigin = fOwner;
+  else
+    fOrigin = origin;
   if(!name.EqualTo("")) 
     SetName(name.Data());
 }
 
 HAL::GenericParticle::GenericParticle (const GenericParticle &particle) : 
   TNamed() {
+  fOwner = particle.fOwner;
+  fOrigin = particle.fOrigin;
+  fOwnerIndex = particle.fOwnerIndex;
+  fOriginIndex = particle.fOriginIndex;
   fID = particle.fID;
   fCharge = particle.fCharge;
   fP = new TLorentzVector(*particle.fP);
@@ -39,7 +47,7 @@ void HAL::GenericParticle::SetParticle (const TString &name,
   std::stable_sort(f1DParticles[name].begin(), f1DParticles[name].end());
 }
 
-void HAL::GenericParticle::Set1DParticle (const TString &name, std::vector<GenericParticle*> &particles) {
+void HAL::GenericParticle::SetParticles (const TString &name, std::vector<GenericParticle*> &particles) {
   f1DParticles[name] = particles;
   std::stable_sort(f1DParticles[name].begin(), f1DParticles[name].end());
 }
@@ -59,6 +67,7 @@ bool HAL::GenericParticle::HasSameParticles (const TString &name, ParticlePtr pa
 
 std::ostream& operator<<(std::ostream& os, const HAL::GenericParticle &particle) {
   os << "Origin: " << particle.fOrigin << "\t\tIndex: " << particle.fOriginIndex << std::endl;
+  os << "Owner: " << particle.fOwner << "\t\tIndex: " << particle.fOwnerIndex << std::endl;
   os << "ID: " << particle.fID << "\t\tCharge: " << particle.fCharge << std::endl;
   os.precision(4);
   os << std::scientific;

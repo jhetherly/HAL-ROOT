@@ -9,6 +9,7 @@ var namespace_h_a_l =
       [ "ImportDecimal", "class_h_a_l_1_1_algorithms_1_1_import_decimal.html", "class_h_a_l_1_1_algorithms_1_1_import_decimal" ],
       [ "ImportInteger", "class_h_a_l_1_1_algorithms_1_1_import_integer.html", "class_h_a_l_1_1_algorithms_1_1_import_integer" ],
       [ "ImportParticle", "class_h_a_l_1_1_algorithms_1_1_import_particle.html", "class_h_a_l_1_1_algorithms_1_1_import_particle" ],
+      [ "MinChiSquaredSelection", "class_h_a_l_1_1_algorithms_1_1_min_chi_squared_selection.html", "class_h_a_l_1_1_algorithms_1_1_min_chi_squared_selection" ],
       [ "MonitorAlgorithm", "class_h_a_l_1_1_algorithms_1_1_monitor_algorithm.html", "class_h_a_l_1_1_algorithms_1_1_monitor_algorithm" ],
       [ "MonitorUserData", "class_h_a_l_1_1_algorithms_1_1_monitor_user_data.html", "class_h_a_l_1_1_algorithms_1_1_monitor_user_data" ],
       [ "ParticleRankSelection", "class_h_a_l_1_1_algorithms_1_1_particle_rank_selection.html", "class_h_a_l_1_1_algorithms_1_1_particle_rank_selection" ],

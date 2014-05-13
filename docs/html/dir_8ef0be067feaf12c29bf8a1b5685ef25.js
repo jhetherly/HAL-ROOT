@@ -12,6 +12,7 @@ var dir_8ef0be067feaf12c29bf8a1b5685ef25 =
       [ "ParticleRankSelection", "class_h_a_l_1_1_algorithms_1_1_particle_rank_selection.html", "class_h_a_l_1_1_algorithms_1_1_particle_rank_selection" ],
       [ "SelectParticle", "class_h_a_l_1_1_algorithms_1_1_select_particle.html", "class_h_a_l_1_1_algorithms_1_1_select_particle" ],
       [ "SelectRefParticle", "class_h_a_l_1_1_algorithms_1_1_select_ref_particle.html", "class_h_a_l_1_1_algorithms_1_1_select_ref_particle" ],
+      [ "MinChiSquaredSelection", "class_h_a_l_1_1_algorithms_1_1_min_chi_squared_selection.html", "class_h_a_l_1_1_algorithms_1_1_min_chi_squared_selection" ],
       [ "EmptyCut", "class_h_a_l_1_1_algorithms_1_1_empty_cut.html", "class_h_a_l_1_1_algorithms_1_1_empty_cut" ],
       [ "Cut", "class_h_a_l_1_1_algorithms_1_1_cut.html", "class_h_a_l_1_1_algorithms_1_1_cut" ],
       [ "MonitorAlgorithm", "class_h_a_l_1_1_algorithms_1_1_monitor_algorithm.html", "class_h_a_l_1_1_algorithms_1_1_monitor_algorithm" ],
