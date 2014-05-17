@@ -4,15 +4,21 @@
 int main(int argc, char *argv[]) {
   // Make analysis object
   //HAL::Analysis     a("Base Algorithm", "Test of the Analysis framework.", "truth");
-  HAL::Analysis     a("Base Algorithm", "Test of the Analysis framework.", "Delphes");
+  //HAL::Analysis     a("Base Algorithm", "Test of the Analysis framework.", "Delphes");
   //HAL::Analysis     a("Base Algorithm", "Test of the Analysis framework.", "physics");
+  HAL::Analysis     a("Base Algorithm", "Test of the Analysis framework.", "h42");
+  //double  GeV = 1e3;
   double  GeV = 1e0;
 
   // Load files to the analysis object
   //a.AddFiles("/Users/jhetherly/Documents/Graduate_Work/ATLAS/ECFA/ECFA_Validation_Signal_Samples/Version_July25/AZh/ggA500mm/validation.ggA500Zh.mumu.truth*");
-  a.AddFiles("/Users/jhetherly/Documents/Graduate_Work/ATLAS/Charged_Higgs_MC/output/h_plus_1000GeV_2HDM_mod_plus_root-s_14000GeV_25000_Events_140PU.root");
-  a.AddFiles("/Users/jhetherly/Documents/Graduate_Work/ATLAS/Charged_Higgs_MC/output/h_plus_1000GeV_2HDM_mod_plus_root-s_14000GeV_25000_Events_0PU.root");
+  //a.AddFiles("/Users/jhetherly/Documents/Graduate_Work/ATLAS/Charged_Higgs_MC/output/h_plus_1000GeV_2HDM_mod_plus_root-s_14000GeV_25000_Events_140PU.root");
+  //a.AddFiles("/Users/jhetherly/Documents/Graduate_Work/ATLAS/Charged_Higgs_MC/output/h_plus_1000GeV_2HDM_mod_plus_root-s_14000GeV_25000_Events_0PU.root");
   //a.AddFiles("/data/localdata/HH/data_2012/data12_8TeV.00200804.physics_Muons.merge.NTUP_COMMON.r4644_p1517_p1575_tid01403444_00/NTUP_COMMON.01403444._000001.root.1");
+  a.AddFiles("/Users/jhetherly/Desktop/Proxy_test/dstarmb.root");
+  a.AddFiles("/Users/jhetherly/Desktop/Proxy_test/dstarp2.root");
+  a.AddFiles("/Users/jhetherly/Desktop/Proxy_test/dstarp1a.root");
+  a.AddFiles("/Users/jhetherly/Desktop/Proxy_test/dstarp1b.root");
 
   // Output settings
   a.SetOutputFileName("test.root");
@@ -27,28 +33,28 @@ int main(int argc, char *argv[]) {
   //      "pyalgo", 
   //      "PythonAlgo"));
   a.AddAlgo(new HAL::Algorithms::ImportParticle("jets", "import basic jet objects"));
-  a.AddAlgo(new HAL::Algorithms::ImportParticle("mc", "import basic Monte Carlo objects"));
-  a.AddAlgo(new HAL::Algorithms::AttachAttribute("mc charge att", "attach charge to mc particles", 
-                                                 "mc", 
-                                                 "mc_test_charge"));
+  //a.AddAlgo(new HAL::Algorithms::ImportParticle("mc", "import basic Monte Carlo objects"));
+  //a.AddAlgo(new HAL::Algorithms::AttachAttribute("mc charge att", "attach charge to mc particles", 
+  //                                               "mc", 
+  //                                               "mc_test_charge"));
 
   a.AddAlgo(new HAL::Algorithms::EmptyCut("number of events", "baseline event number"));
 
-  a.AddAlgo(new HAL::Algorithms::SelectParticle("mc without charge", "filter on mc without charge", 
-                                                "mc charge att", // input algorithm
-                                                "mc_test_charge", "==", 0));
-  a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_5GeV", "filter on mc pt >= 5GeV", 
-                                                "mc without charge", // input algorithm
-                                                "pt", ">=", 5*GeV)); // pT value
+  //a.AddAlgo(new HAL::Algorithms::SelectParticle("mc without charge", "filter on mc without charge", 
+  //                                              "mc charge att", // input algorithm
+  //                                              "mc_test_charge", "==", 0));
+  //a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_5GeV", "filter on mc pt >= 5GeV", 
+  //                                              "mc without charge", // input algorithm
+  //                                              "pt", ">=", 5*GeV)); // pT value
 
-  a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_neutrinos", "filter on mc id to get neutrinos", 
-                                                "mc_5GeV", // input algorithm
-                                                "id", 6,
-                                                -16, -14, -12, 12, 14, 16)); // id values
+  //a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_neutrinos", "filter on mc id to get neutrinos", 
+  //                                              "mc_5GeV", // input algorithm
+  //                                              "id", 6,
+  //                                              -16, -14, -12, 12, 14, 16)); // id values
 
-  a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("leading pt neutrino", "find highest pt neutrino", 
-                                                       "mc_neutrinos", // input algorithm
-                                                       1, "pt")); // rank in pt
+  //a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("leading pt neutrino", "find highest pt neutrino", 
+  //                                                     "mc_neutrinos", // input algorithm
+  //                                                     1, "pt")); // rank in pt
 
   a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("leading pt jet", "find highest pt jet", 
                                                        "jets", // input algorithm
@@ -89,8 +95,8 @@ int main(int argc, char *argv[]) {
                                                "di-jetfinal", "all", "dijet")); // input, type, branch
   a.AddAlgo(new HAL::Algorithms::StoreParticle("store jets", "store jets", 
                                                "jet pT rank att", "all", "jets", "exam")); // input, type, branch, tree
-  a.AddAlgo(new HAL::Algorithms::StoreParticle("store neutrinos", "store Monte Carlo neutrinos", 
-                                               "mc_neutrinos", "all", "neutrinos", "test")); // input, type, branch, tree
+  //a.AddAlgo(new HAL::Algorithms::StoreParticle("store neutrinos", "store Monte Carlo neutrinos", 
+  //                                             "mc_neutrinos", "all", "neutrinos", "test")); // input, type, branch, tree
   
   // Assign any branch maps
   //a.MapBranch("jet_AntiKt4TruthJets_n", "jets:nentries");
@@ -106,20 +112,24 @@ int main(int argc, char *argv[]) {
   //a.MapBranch("mc_pdgId", "mc:id");
   //a.MapBranch("mc_charge", "mc:charge");
   //a.MapBranch("mc_charge", "mc charge att:value");
-  a.MapBranch("Jet_size", "jets:nentries");
-  a.MapBranch("Jet.PT", "jets:pT");
-  a.MapBranch("Jet.Eta", "jets:eta");
-  a.MapBranch("Jet.Phi", "jets:phi");
-  a.MapBranch("Jet.Mass", "jets:m");
-  a.MapBranch("Particle_size", "mc:nentries");
-  a.MapBranch("Particle.PT", "mc:pt");
-  a.MapBranch("Particle.Eta", "mc:eta");
-  a.MapBranch("Particle.Phi", "mc:phi");
-  a.MapBranch("Particle.Mass", "mc:m");
-  a.MapBranch("Particle.PID", "mc:id");
-  a.MapBranch("Particle.Charge", "mc:charge");
-  a.MapBranch("Particle.Charge", "mc charge att:value");
+  //a.MapBranch("Jet_size", "jets:nentries");
+  //a.MapBranch("Jet.PT", "jets:pT");
+  //a.MapBranch("Jet.Eta", "jets:eta");
+  //a.MapBranch("Jet.Phi", "jets:phi");
+  //a.MapBranch("Jet.Mass", "jets:m");
+  //a.MapBranch("Particle_size", "mc:nentries");
+  //a.MapBranch("Particle.PT", "mc:pt");
+  //a.MapBranch("Particle.Eta", "mc:eta");
+  //a.MapBranch("Particle.Phi", "mc:phi");
+  //a.MapBranch("Particle.Mass", "mc:m");
+  //a.MapBranch("Particle.PID", "mc:id");
+  //a.MapBranch("Particle.Charge", "mc:charge");
+  //a.MapBranch("Particle.Charge", "mc charge att:value");
 
+  a.MapBranch("pt_j", "jets:pT");
+  a.MapBranch("eta_j", "jets:eta");
+  a.MapBranch("phi_j", "jets:phi");
+  a.MapBranch("m_j", "jets:m");
   //a.SetMessagePeriod();
   a.SetMessagePeriod(1000);
   // Run the analysis
