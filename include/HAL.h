@@ -14,7 +14,7 @@
 #include <HAL/Integrator.h>
 #include <HAL/Interpolator.h>
 #include <HAL/PlotUtils.h>
-#include <HAL/PythonAlgorithm.h>
+//#include <HAL/PythonAlgorithm.h>
 
 /*!
  * \mainpage Welcome, to the HAL code reference.

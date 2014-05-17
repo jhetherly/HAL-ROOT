@@ -9,7 +9,8 @@ AnalysisTreeReader::AnalysisTreeReader (TTree *t) : fChain(t),
   fVector("^vector[ ]*<[ ]*[a-zA-Z][a-zA-Z0-9_]+[ ]*>$"), // vector<scalar>
   fVector2D("^vector[ ]*<[ ]*vector[ ]*<[ ]*[a-zA-Z][a-zA-Z0-9_]+[ ]*>[ ]*>$"), // vector<vector<scalar> >
   fArray("^[a-zA-Z_][a-zA-Z0-9_]*[[a-zA-Z0-9_]+]$"), // name[i]
-  fArray2D("^[a-zA-Z_][a-zA-Z0-9_]*[[a-zA-Z0-9_]+][[a-zA-Z0-9_]+]$") /* name[i][j] */ { 
+  fArray2D("^[a-zA-Z_][a-zA-Z0-9_]*[[a-zA-Z0-9_]+][[a-zA-Z0-9_]+]$")//, /* name[i][j] */ 
+  /*fDirector(t, -1)*/ { 
 
   // bool types
   fBool.insert("Bool_t");
@@ -75,6 +76,9 @@ void AnalysisTreeReader::SetEntry (Long64_t entry) {
 
   fEntry = entry;
 
+  // Update all branch proxies first
+  //fDirector.SetReadEntry(entry);
+
   // Update all branches
   for (std::map<TString, BranchManager*>::iterator bm = fNickNameBranchMap.begin(); 
        bm != fNickNameBranchMap.end(); ++bm) {
@@ -86,12 +90,18 @@ void AnalysisTreeReader::SetEntry (Long64_t entry) {
 void AnalysisTreeReader::Init () {
   std::set<BranchManager*> unique_bms;
 
-  // Init all branches
+  // Init all branches and proxies
   for (std::map<TString, BranchManager*>::iterator bm = fNickNameBranchMap.begin(); 
        bm != fNickNameBranchMap.end(); ++bm) {
     if (unique_bms.insert(bm->second).second)
       bm->second->Init();
   }
+  //fDirector.SetTree(fChain);
+}
+
+Bool_t AnalysisTreeReader::Notify () {
+  //fDirector.SetTree(fChain);
+  return true;
 }
 
 bool AnalysisTreeReader::CheckBranchMapNickname (const TString &name) {
@@ -347,7 +357,7 @@ long double AnalysisTreeReader::GetDecimal (const TString &branchname, const lon
 
   if (branchmanager->GetStorageType() == kD)
     return fD[branchmanager->GetStorageIndex()];
-  if (branchmanager->GetStorageType() == kvD)
+  if (branchmanager->GetStorageType() == kvD) 
     return fvD[branchmanager->GetStorageIndex()][idx_1];
   if (branchmanager->GetStorageType() == kvvD)
     return fvvD[branchmanager->GetStorageIndex()][idx_1][idx_2];
@@ -475,7 +485,6 @@ AnalysisTreeReader::BranchManager* AnalysisTreeReader::GetBranchManager (const T
 
   if (fNickNameBranchMap.count(branchname) == 0) {
     bool already_stored = false;
-    branchmanager = new BranchManager(this);
     TString bname = GetFullBranchName( branchname );
     for (std::map<TString, BranchManager*>::iterator bm = fNickNameBranchMap.begin(); 
          bm != fNickNameBranchMap.end(); ++bm) {
@@ -486,8 +495,11 @@ AnalysisTreeReader::BranchManager* AnalysisTreeReader::GetBranchManager (const T
         break;
       }
     }
-    if (!already_stored && branchmanager->Create(bname))
-      fNickNameBranchMap[branchname] = branchmanager;
+    if (!already_stored) {
+      branchmanager = new BranchManager(this);
+      if (branchmanager->Create(bname))
+        fNickNameBranchMap[branchname] = branchmanager;
+    }
   }
   else
     branchmanager = fNickNameBranchMap[branchname];
@@ -505,14 +517,6 @@ AnalysisTreeReader::BranchManager* AnalysisTreeReader::GetBranchManager (const T
 AnalysisTreeReader::BranchManager::BranchManager (AnalysisTreeReader *tr) : 
   fScalar(kFALSE), fCArray1D(kFALSE), fCArray2D(kFALSE), 
   fVec1D(kFALSE), fVec2D(kFALSE), fBranch(NULL), fTreeReader(tr),
-  fcB(NULL), fcSC(NULL), fcI(NULL), fcSI(NULL), fcL(NULL), fcLL(NULL),
-  fcUC(NULL), fcUI(NULL), fcUSI(NULL), fcUL(NULL), fcULL(NULL), fcF(NULL),
-  fcD(NULL), fcLD(NULL), fcC(NULL), fcTS(NULL), fcTOS(NULL), fcstdS(NULL),
-  fcTOA(NULL), fcTCA(NULL), fcTR(NULL), fcTRA(NULL),
-  fccB(NULL), fccSC(NULL), fccI(NULL), fccSI(NULL), fccL(NULL), fccLL(NULL),
-  fccUC(NULL), fccUI(NULL), fccUSI(NULL), fccUL(NULL), fccULL(NULL), fccF(NULL),
-  fccD(NULL), fccLD(NULL), fccC(NULL), fccTS(NULL), fccTOS(NULL), fccstdS(NULL),
-  fccTR(NULL),
   fvB(NULL), fvSC(NULL), fvI(NULL), fvSI(NULL), fvL(NULL), fvLL(NULL),
   fvUC(NULL), fvUI(NULL), fvUSI(NULL), fvUL(NULL), fvULL(NULL), fvF(NULL),
   fvD(NULL), fvLD(NULL), fvC(NULL), fvTS(NULL), fvTOS(NULL), fvstdS(NULL),
@@ -521,7 +525,7 @@ AnalysisTreeReader::BranchManager::BranchManager (AnalysisTreeReader *tr) :
   fvvUC(NULL), fvvUI(NULL), fvvUSI(NULL), fvvUL(NULL), fvvULL(NULL), fvvF(NULL),
   fvvD(NULL), fvvLD(NULL), fvvC(NULL), fvvTS(NULL), fvvTOS(NULL), fvvstdS(NULL),
   fvvTR(NULL), 
-  fRows(0), fColumns(0),
+  //fbpF(NULL),
   fIsB (false), fIsSC(false), fIsI(false), fIsSI(false), 
   fIsL(false), fIsLL(false), fIsUC(false), fIsUI(false), fIsUSI(false), 
   fIsUL(false), fIsULL(false), fIsF(false), fIsD(false), fIsLD(false), 
@@ -927,6 +931,108 @@ void AnalysisTreeReader::BranchManager::Init () {
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
+  else if (fCArray1D) {
+    if (fIsB) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcB, &fBranch);
+    else if (fIsI) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcI, &fBranch);
+    else if (fIsSI) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcSI, &fBranch);
+    else if (fIsL) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcL, &fBranch);
+    else if (fIsLL) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcLL, &fBranch);
+    else if (fIsSC) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcSC, &fBranch);
+    else if (fIsUI) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcUI, &fBranch);
+    else if (fIsUSI) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcUSI, &fBranch);
+    else if (fIsUL) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcUL, &fBranch);
+    else if (fIsULL) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcULL, &fBranch);
+    else if (fIsUC) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcUC, &fBranch);
+    else if (fIsF) {
+      //if (fbpF == NULL) {
+      //  //fbpF = new ROOT::TClaFloatProxy(&(fTreeReader->fDirector), fBranchName.Data());
+      //  fbpF = new ROOT::TArrayFloatProxy(&(fTreeReader->fDirector), fBranchName.Data());
+      //  fTreeReader->fDirector.SetTree(fTreeReader->GetTree());
+      //  fTreeReader->fDirector.SetReadEntry(fTreeReader->GetEntryNumber());
+      //  //fbpF->Setup();
+      //  std::cout << fbpF->IsInitialized() << std::endl;
+      //  //std::cout << fbpF->Read() << std::endl;
+      //}
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcF, &fBranch);
+    }
+    else if (fIsD) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcD, &fBranch);
+    else if (fIsLD) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcLD, &fBranch);
+    else if (fIsC) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcC, &fBranch);
+    else if (fIsstdS) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcstdS, &fBranch);
+    else if (fIsTS) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTS, &fBranch);
+    else if (fIsTOS) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTOS, &fBranch);
+    else if (fIsTOA) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTOA, &fBranch);
+    else if (fIsTCA) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTCA, &fBranch);
+    else if (fIsTR) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTR, &fBranch);
+    else if (fIsTRA) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTRA, &fBranch);
+  } // end if 1D c-array
+  // //////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////
+  else if (fCArray2D) {
+    if (fIsB) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccB, &fBranch);
+    else if (fIsI) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccI, &fBranch);
+    else if (fIsSI) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccSI, &fBranch);
+    else if (fIsL) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccL, &fBranch);
+    else if (fIsLL) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccLL, &fBranch);
+    else if (fIsSC) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccSC, &fBranch);
+    else if (fIsUI) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccUI, &fBranch);
+    else if (fIsUSI) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccUSI, &fBranch);
+    else if (fIsUL) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccUL, &fBranch);
+    else if (fIsULL) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccULL, &fBranch);
+    else if (fIsUC) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccUC, &fBranch);
+    else if (fIsF) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccF, &fBranch);
+    else if (fIsD) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccD, &fBranch);
+    else if (fIsLD) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccLD, &fBranch);
+    else if (fIsC) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccC, &fBranch);
+    else if (fIsstdS) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccstdS, &fBranch);
+    else if (fIsTS) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccTS, &fBranch);
+    else if (fIsTOS)
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccTOS, &fBranch);
+    else if (fIsTR) 
+      fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccTR, &fBranch);
+  } // end if 2D c-array
+  // //////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////
+  // //////////////////////////////////////////////////////////////
   else if (fVec1D) {
     if (fIsB) {
       fvB = NULL;
@@ -1156,312 +1262,164 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
   else if (fCArray1D) {
-    // NOTE: ROOT will delete old array; no need to call delete manually
     Int_t n = GetArrayLength(1);
+    fBranch->GetEntry(entry);
     if (fIsB) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcB) delete[] fcB;
-        fcB = new bool[n];
-        fBranch->SetAddress(fcB);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvB[fStorageIndex].clear();
       fTreeReader->fvB[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvB[fStorageIndex].push_back(fcB[i]);
     }
     else if (fIsI) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcI) delete[] fcI;
-        fcI = new int[n];
-        fBranch->SetAddress(fcI);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvI[fStorageIndex].clear();
       fTreeReader->fvI[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvI[fStorageIndex].push_back(fcI[i]);
     }
     else if (fIsSI) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcSI) delete[] fcSI;
-        fcSI = new short int[n];
-        fBranch->SetAddress(fcSI);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvI[fStorageIndex].clear();
       fTreeReader->fvI[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvI[fStorageIndex].push_back(fcSI[i]);
     }
     else if (fIsL) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcL) delete[] fcL;
-        fcL = new long int[n];
-        fBranch->SetAddress(fcL);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvI[fStorageIndex].clear();
       fTreeReader->fvI[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvI[fStorageIndex].push_back(fcL[i]);
     }
     else if (fIsLL) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcLL) delete[] fcLL;
-        fcLL = new long long int[n];
-        fBranch->SetAddress(fcLL);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvI[fStorageIndex].clear();
       fTreeReader->fvI[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvI[fStorageIndex].push_back(fcLL[i]);
     }
     else if (fIsSC) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcSC) delete[] fcSC;
-        fcSC = new signed char[n];
-        fBranch->SetAddress(fcSC);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvI[fStorageIndex].clear();
       fTreeReader->fvI[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvI[fStorageIndex].push_back(fcSC[i]);
     }
     else if (fIsUI) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcUI) delete[] fcUI;
-        fcUI = new unsigned int[n];
-        fBranch->SetAddress(fcUI);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvC[fStorageIndex].clear();
       fTreeReader->fvC[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvC[fStorageIndex].push_back(fcUI[i]);
     }
     else if (fIsUSI) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcUSI) delete[] fcUSI;
-        fcUSI = new unsigned short int[n];
-        fBranch->SetAddress(fcUSI);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvC[fStorageIndex].clear();
       fTreeReader->fvC[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvC[fStorageIndex].push_back(fcUSI[i]);
     }
     else if (fIsUL) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcUL) delete[] fcUL;
-        fcUL = new unsigned long int[n];
-        fBranch->SetAddress(fcUL);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvC[fStorageIndex].clear();
       fTreeReader->fvC[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvC[fStorageIndex].push_back(fcUL[i]);
     }
     else if (fIsULL) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcULL) delete[] fcULL;
-        fcULL = new unsigned long long int[n];
-        fBranch->SetAddress(fcULL);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvC[fStorageIndex].clear();
       fTreeReader->fvC[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvC[fStorageIndex].push_back(fcULL[i]);
     }
     else if (fIsUC) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcUC) delete[] fcUC;
-        fcUC = new unsigned char[n];
-        fBranch->SetAddress(fcUC);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvC[fStorageIndex].clear();
       fTreeReader->fvC[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvC[fStorageIndex].push_back(fcUC[i]);
     }
     else if (fIsF) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcF) delete[] fcF;
-        fcF = new float[n];
-        fBranch->SetAddress(fcF);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
+      // NEW !!!!!!!
+      //leaf->SetAddress(new float[n]);
+      //std::cout << "starting float: " << fBranchName << "    " << fBranch->GetListOfLeaves()->At(0)->GetName() << std::endl;
+      //std::cout << fBranch->GetNleaves() << "    " << ((TLeaf*)fBranch->GetListOfLeaves()->At(0))->GetLen() << std::endl;
+      //std::cout << fBranch->GetNleaves() << "    " << fBranch->GetListOfBaskets()->GetEntries() << std::endl;
+      ////fBranch->SetAddress(new float[n]);
+      //fBranch->GetEntry(entry);
+      //TLeaf *leaf = (TLeaf*) fBranch->GetListOfLeaves()->At(0);
+      //leaf->SetRange();
+      //std::cout << "max: " << leaf->GetMaximum() << std::endl;
+      //TBufferFile array_buffer(TBuffer::kRead);
+      //fBranch->ReadBasket(array_buffer);
+      ////leaf->FillBasket(array_buffer);
+      ////float *temp = new float[n];
+      //float *temp = NULL;
+      //std::cout << "From Buffer: " << array_buffer.ReadArray(temp) << std::endl;
+      ////leaf->ResetAddress(0);
+
+      //fTreeReader->fvD[fStorageIndex].clear();
+      //fTreeReader->fvD[fStorageIndex].reserve(n);
+      //for (Int_t i = 0; i < n; ++i) {
+      //  //fTreeReader->fvD[fStorageIndex].push_back(temp[i]);
+      //  //fTreeReader->fvD[fStorageIndex].push_back(leaf->GetValue(i));
+      //  //fTreeReader->fvD[fStorageIndex].push_back(fbpF->At(i));
+      //  //std::cout << fTreeReader->fvD[fStorageIndex].back() << " ";
+      //}
+      //std::cout << " got float values" << std::endl;
+      // NEW !!!!!!!
+      
       fTreeReader->fvD[fStorageIndex].clear();
       fTreeReader->fvD[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvD[fStorageIndex].push_back(fcF[i]);
     }
     else if (fIsD) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcD) delete[] fcD;
-        fcD = new double[n];
-        fBranch->SetAddress(fcD);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvD[fStorageIndex].clear();
       fTreeReader->fvD[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvD[fStorageIndex].push_back(fcD[i]);
     }
     else if (fIsLD) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcLD) delete[] fcLD;
-        fcLD = new long double[n];
-        fBranch->SetAddress(fcLD);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvD[fStorageIndex].clear();
       fTreeReader->fvD[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvD[fStorageIndex].push_back(fcLD[i]);
     }
     else if (fIsC) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcC) delete[] fcC;
-        fcC = new char[n];
-        fBranch->SetAddress(fcC);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvS[fStorageIndex].clear();
       fTreeReader->fvS[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvS[fStorageIndex].push_back(fcC[i]);
     }
     else if (fIsstdS) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcstdS) delete[] fcstdS;
-        fcstdS = new std::string[n];
-        fBranch->SetAddress(fcstdS);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
-      fTreeReader->fvS[fStorageIndex].clear();
       fTreeReader->fvS[fStorageIndex].clear();
       fTreeReader->fvS[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvS[fStorageIndex].push_back(fcstdS[i].c_str());
     }
     else if (fIsTS) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcTS) delete[] fcTS;
-        fcTS = new TString[n];
-        fBranch->SetAddress(fcTS);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvS[fStorageIndex].clear();
       fTreeReader->fvS[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvS[fStorageIndex].push_back(fcTS[i]);
     }
     else if (fIsTOS) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcTOS) delete[] fcTOS;
-        fcTOS = new TObjString[n];
-        fBranch->SetAddress(fcTOS);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvS[fStorageIndex].clear();
       fTreeReader->fvS[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvS[fStorageIndex].push_back(fcTOS[i].String());
     }
     else if (fIsTOA) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcTOA) delete[] fcTOA;
-        fcTOA = new TObjArray[n];
-        fBranch->SetAddress(fcTOA);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvOA[fStorageIndex].clear();
       fTreeReader->fvOA[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvOA[fStorageIndex].push_back(fcTOA[i]);
     }
     else if (fIsTCA) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcTCA) delete[] fcTCA;
-        fcTCA = new TClonesArray[n];
-        fBranch->SetAddress(fcTCA);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvCA[fStorageIndex].clear();
       fTreeReader->fvCA[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvCA[fStorageIndex].push_back(fcTCA[i]);
     }
     else if (fIsTR) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcTR) delete[] fcTR;
-        fcTR = new TRef[n];
-        fBranch->SetAddress(fcTR);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvR[fStorageIndex].clear();
       fTreeReader->fvR[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
         fTreeReader->fvR[fStorageIndex].push_back(fcTR[i]);
     }
     else if (fIsTRA) {
-      if (fRows < n){
-        fBranch->Reset();
-        if (fcTRA) delete[] fcTRA;
-        fcTRA = new TRefArray[n];
-        fBranch->SetAddress(fcTRA);
-        fRows = n;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvRA[fStorageIndex].clear();
       fTreeReader->fvRA[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i)
@@ -1474,19 +1432,8 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
   else if (fCArray2D) {
     Int_t n = GetArrayLength(1);
     Int_t m = GetArrayLength(2);
+    fBranch->GetEntry(entry);
     if (fIsB) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccB[i];
-        delete[] fccB;
-        fccB = new bool*[n];
-        for (Int_t i = 0; i < n; ++i) fccB[i] = new bool[m];
-        fBranch->SetAddress(fccB);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvB[fStorageIndex].clear();
       fTreeReader->fvvB[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1498,18 +1445,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsI) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccI[i];
-        delete[] fccI;
-        fccI = new int*[n];
-        for (Int_t i = 0; i < n; ++i) fccI[i] = new int[m];
-        fBranch->SetAddress(fccI);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       fTreeReader->fvvI[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1521,18 +1456,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsSI) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccSI[i];
-        delete[] fccSI;
-        fccSI = new short int*[n];
-        for (Int_t i = 0; i < n; ++i) fccSI[i] = new short int[m];
-        fBranch->SetAddress(fccSI);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       fTreeReader->fvvI[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1544,18 +1467,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsL) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccL[i];
-        delete[] fccL;
-        fccL = new long int*[n];
-        for (Int_t i = 0; i < n; ++i) fccL[i] = new long int[m];
-        fBranch->SetAddress(fccL);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       fTreeReader->fvvI[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1567,18 +1478,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsLL) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccLL[i];
-        delete[] fccLL;
-        fccLL = new long long int*[n];
-        for (Int_t i = 0; i < n; ++i) fccLL[i] = new long long int[m];
-        fBranch->SetAddress(fccLL);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       fTreeReader->fvvI[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1590,18 +1489,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsSC) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccSC[i];
-        delete[] fccSC;
-        fccSC = new signed char*[n];
-        for (Int_t i = 0; i < n; ++i) fccSC[i] = new signed char[m];
-        fBranch->SetAddress(fccSC);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvI[fStorageIndex].clear();
       fTreeReader->fvvI[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1613,18 +1500,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsUI) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccUI[i];
-        delete[] fccUI;
-        fccUI = new unsigned int*[n];
-        for (Int_t i = 0; i < n; ++i) fccUI[i] = new unsigned int[m];
-        fBranch->SetAddress(fccUI);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       fTreeReader->fvvC[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1636,18 +1511,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsUSI) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccUSI[i];
-        delete[] fccUSI;
-        fccUSI = new unsigned short int*[n];
-        for (Int_t i = 0; i < n; ++i) fccUSI[i] = new unsigned short int[m];
-        fBranch->SetAddress(fccUSI);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       fTreeReader->fvvC[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1659,18 +1522,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsUL) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccUL[i];
-        delete[] fccUL;
-        fccUL = new unsigned long int*[n];
-        for (Int_t i = 0; i < n; ++i) fccUL[i] = new unsigned long int[m];
-        fBranch->SetAddress(fccUL);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       fTreeReader->fvvC[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1682,18 +1533,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsULL) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccULL[i];
-        delete[] fccULL;
-        fccULL = new unsigned long long int*[n];
-        for (Int_t i = 0; i < n; ++i) fccULL[i] = new unsigned long long int[m];
-        fBranch->SetAddress(fccULL);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       fTreeReader->fvvC[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1705,18 +1544,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsUC) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccUC[i];
-        delete[] fccUC;
-        fccUC = new unsigned char*[n];
-        for (Int_t i = 0; i < n; ++i) fccUC[i] = new unsigned char[m];
-        fBranch->SetAddress(fccUC);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvC[fStorageIndex].clear();
       fTreeReader->fvvC[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1728,18 +1555,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsF) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccF[i];
-        delete[] fccF;
-        fccF = new float*[n];
-        for (Int_t i = 0; i < n; ++i) fccF[i] = new float[m];
-        fBranch->SetAddress(fccF);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
       fTreeReader->fvvD[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1751,18 +1566,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsD) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccD[i];
-        delete[] fccD;
-        fccD = new double*[n];
-        for (Int_t i = 0; i < n; ++i) fccD[i] = new double[m];
-        fBranch->SetAddress(fccD);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
       fTreeReader->fvvD[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1774,18 +1577,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsLD) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccLD[i];
-        delete[] fccLD;
-        fccLD = new long double*[n];
-        for (Int_t i = 0; i < n; ++i) fccLD[i] = new long double[m];
-        fBranch->SetAddress(fccLD);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvD[fStorageIndex].clear();
       fTreeReader->fvvD[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1797,18 +1588,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsC) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccC[i];
-        delete[] fccC;
-        fccC = new char*[n];
-        for (Int_t i = 0; i < n; ++i) fccC[i] = new char[m];
-        fBranch->SetAddress(fccC);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvS[fStorageIndex].clear();
       fTreeReader->fvvS[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1820,18 +1599,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsstdS) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccstdS[i];
-        delete[] fccstdS;
-        fccstdS = new std::string*[n];
-        for (Int_t i = 0; i < n; ++i) fccstdS[i] = new std::string[m];
-        fBranch->SetAddress(fccstdS);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvS[fStorageIndex].clear();
       fTreeReader->fvvS[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1843,18 +1610,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsTS) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccTS[i];
-        delete[] fccTS;
-        fccTS = new TString*[n];
-        for (Int_t i = 0; i < n; ++i) fccTS[i] = new TString[m];
-        fBranch->SetAddress(fccTS);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvS[fStorageIndex].clear();
       fTreeReader->fvvS[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1866,18 +1621,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsTOS) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccTOS[i];
-        delete[] fccTOS;
-        fccTOS = new TObjString*[n];
-        for (Int_t i = 0; i < n; ++i) fccTOS[i] = new TObjString[m];
-        fBranch->SetAddress(fccTOS);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvS[fStorageIndex].clear();
       fTreeReader->fvvS[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1889,18 +1632,6 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
     else if (fIsTR) {
-      if (fRows < n || fColumns < m){
-        fBranch->Reset();
-        for (Int_t i = 0; i < fRows; ++i)
-          delete[] fccTR[i];
-        delete[] fccTR;
-        fccTR = new TRef*[n];
-        for (Int_t i = 0; i < n; ++i) fccTR[i] = new TRef[m];
-        fBranch->SetAddress(fccTR);
-        fRows = n;
-        fColumns = m;
-      }
-      fBranch->GetEntry(entry);
       fTreeReader->fvvR[fStorageIndex].clear();
       fTreeReader->fvvR[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
@@ -1912,6 +1643,359 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       }
     }
   }  //end if 2D c-array
+  //else if (fCArray1D) {
+  //  Int_t n = GetArrayLength(1);
+  //  fBranch->GetEntry(entry);
+  //  if (fIsB) {
+  //    fTreeReader->fvB[fStorageIndex].clear();
+  //    fTreeReader->fvB[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvB[fStorageIndex].push_back(fcB[i]);
+  //  }
+  //  else if (fIsI) {
+  //    fTreeReader->fvI[fStorageIndex].clear();
+  //    fTreeReader->fvI[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvI[fStorageIndex].push_back(fcI[i]);
+  //  }
+  //  else if (fIsSI) {
+  //    fTreeReader->fvI[fStorageIndex].clear();
+  //    fTreeReader->fvI[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvI[fStorageIndex].push_back(fcSI[i]);
+  //  }
+  //  else if (fIsL) {
+  //    fTreeReader->fvI[fStorageIndex].clear();
+  //    fTreeReader->fvI[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvI[fStorageIndex].push_back(fcL[i]);
+  //  }
+  //  else if (fIsLL) {
+  //    fTreeReader->fvI[fStorageIndex].clear();
+  //    fTreeReader->fvI[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvI[fStorageIndex].push_back(fcLL[i]);
+  //  }
+  //  else if (fIsSC) {
+  //    fTreeReader->fvI[fStorageIndex].clear();
+  //    fTreeReader->fvI[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvI[fStorageIndex].push_back(fcSC[i]);
+  //  }
+  //  else if (fIsUI) {
+  //    fTreeReader->fvC[fStorageIndex].clear();
+  //    fTreeReader->fvC[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvC[fStorageIndex].push_back(fcUI[i]);
+  //  }
+  //  else if (fIsUSI) {
+  //    fTreeReader->fvC[fStorageIndex].clear();
+  //    fTreeReader->fvC[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvC[fStorageIndex].push_back(fcUSI[i]);
+  //  }
+  //  else if (fIsUL) {
+  //    fTreeReader->fvC[fStorageIndex].clear();
+  //    fTreeReader->fvC[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvC[fStorageIndex].push_back(fcUL[i]);
+  //  }
+  //  else if (fIsULL) {
+  //    fTreeReader->fvC[fStorageIndex].clear();
+  //    fTreeReader->fvC[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvC[fStorageIndex].push_back(fcULL[i]);
+  //  }
+  //  else if (fIsUC) {
+  //    fTreeReader->fvC[fStorageIndex].clear();
+  //    fTreeReader->fvC[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvC[fStorageIndex].push_back(fcUC[i]);
+  //  }
+  //  else if (fIsF) {
+  //    fTreeReader->fvD[fStorageIndex].clear();
+  //    fTreeReader->fvD[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) 
+  //      fTreeReader->fvD[fStorageIndex].push_back(fcF[i]);
+  //  }
+  //  else if (fIsD) {
+  //    fTreeReader->fvD[fStorageIndex].clear();
+  //    fTreeReader->fvD[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvD[fStorageIndex].push_back(fcD[i]);
+  //  }
+  //  else if (fIsLD) {
+  //    fTreeReader->fvD[fStorageIndex].clear();
+  //    fTreeReader->fvD[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvD[fStorageIndex].push_back(fcLD[i]);
+  //  }
+  //  else if (fIsC) {
+  //    fTreeReader->fvS[fStorageIndex].clear();
+  //    fTreeReader->fvS[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvS[fStorageIndex].push_back(fcC[i]);
+  //  }
+  //  else if (fIsstdS) {
+  //    fTreeReader->fvS[fStorageIndex].clear();
+  //    fTreeReader->fvS[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvS[fStorageIndex].push_back(fcstdS[i].c_str());
+  //  }
+  //  else if (fIsTS) {
+  //    fTreeReader->fvS[fStorageIndex].clear();
+  //    fTreeReader->fvS[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvS[fStorageIndex].push_back(fcTS[i]);
+  //  }
+  //  else if (fIsTOS) {
+  //    fTreeReader->fvS[fStorageIndex].clear();
+  //    fTreeReader->fvS[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvS[fStorageIndex].push_back(fcTOS[i].String());
+  //  }
+  //  else if (fIsTOA) {
+  //    fTreeReader->fvOA[fStorageIndex].clear();
+  //    fTreeReader->fvOA[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvOA[fStorageIndex].push_back(fcTOA[i]);
+  //  }
+  //  else if (fIsTCA) {
+  //    fTreeReader->fvCA[fStorageIndex].clear();
+  //    fTreeReader->fvCA[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvCA[fStorageIndex].push_back(fcTCA[i]);
+  //  }
+  //  else if (fIsTR) {
+  //    fTreeReader->fvR[fStorageIndex].clear();
+  //    fTreeReader->fvR[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvR[fStorageIndex].push_back(fcTR[i]);
+  //  }
+  //  else if (fIsTRA) {
+  //    fTreeReader->fvRA[fStorageIndex].clear();
+  //    fTreeReader->fvRA[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i)
+  //      fTreeReader->fvRA[fStorageIndex].push_back(fcTRA[i]);
+  //  }
+  //} // end if 1D c-array
+  //// //////////////////////////////////////////////////////////////
+  //// //////////////////////////////////////////////////////////////
+  //// //////////////////////////////////////////////////////////////
+  //else if (fCArray2D) {
+  //  Int_t n = GetArrayLength(1);
+  //  Int_t m = GetArrayLength(2);
+  //  fBranch->GetEntry(entry);
+  //  if (fIsB) {
+  //    fTreeReader->fvvB[fStorageIndex].clear();
+  //    fTreeReader->fvvB[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<bool> row;
+  //      fTreeReader->fvvB[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvB[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvB[fStorageIndex].back().push_back(fccB[i][j]);
+  //    }
+  //  }
+  //  else if (fIsI) {
+  //    fTreeReader->fvvI[fStorageIndex].clear();
+  //    fTreeReader->fvvI[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<long long> row;
+  //      fTreeReader->fvvI[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvI[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvI[fStorageIndex].back().push_back(fccI[i][j]);
+  //    }
+  //  }
+  //  else if (fIsSI) {
+  //    fTreeReader->fvvI[fStorageIndex].clear();
+  //    fTreeReader->fvvI[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<long long> row;
+  //      fTreeReader->fvvI[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvI[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvI[fStorageIndex].back().push_back(fccSI[i][j]);
+  //    }
+  //  }
+  //  else if (fIsL) {
+  //    fTreeReader->fvvI[fStorageIndex].clear();
+  //    fTreeReader->fvvI[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<long long> row;
+  //      fTreeReader->fvvI[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvI[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvI[fStorageIndex].back().push_back(fccL[i][j]);
+  //    }
+  //  }
+  //  else if (fIsLL) {
+  //    fTreeReader->fvvI[fStorageIndex].clear();
+  //    fTreeReader->fvvI[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<long long> row;
+  //      fTreeReader->fvvI[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvI[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvI[fStorageIndex].back().push_back(fccLL[i][j]);
+  //    }
+  //  }
+  //  else if (fIsSC) {
+  //    fTreeReader->fvvI[fStorageIndex].clear();
+  //    fTreeReader->fvvI[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<long long> row;
+  //      fTreeReader->fvvI[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvI[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvI[fStorageIndex].back().push_back(fccSC[i][j]);
+  //    }
+  //  }
+  //  else if (fIsUI) {
+  //    fTreeReader->fvvC[fStorageIndex].clear();
+  //    fTreeReader->fvvC[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<unsigned long long> row;
+  //      fTreeReader->fvvC[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvC[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvC[fStorageIndex].back().push_back(fccUI[i][j]);
+  //    }
+  //  }
+  //  else if (fIsUSI) {
+  //    fTreeReader->fvvC[fStorageIndex].clear();
+  //    fTreeReader->fvvC[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<unsigned long long> row;
+  //      fTreeReader->fvvC[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvC[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvC[fStorageIndex].back().push_back(fccUSI[i][j]);
+  //    }
+  //  }
+  //  else if (fIsUL) {
+  //    fTreeReader->fvvC[fStorageIndex].clear();
+  //    fTreeReader->fvvC[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<unsigned long long> row;
+  //      fTreeReader->fvvC[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvC[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvC[fStorageIndex].back().push_back(fccUL[i][j]);
+  //    }
+  //  }
+  //  else if (fIsULL) {
+  //    fTreeReader->fvvC[fStorageIndex].clear();
+  //    fTreeReader->fvvC[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<unsigned long long> row;
+  //      fTreeReader->fvvC[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvC[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvC[fStorageIndex].back().push_back(fccULL[i][j]);
+  //    }
+  //  }
+  //  else if (fIsUC) {
+  //    fTreeReader->fvvC[fStorageIndex].clear();
+  //    fTreeReader->fvvC[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<unsigned long long> row;
+  //      fTreeReader->fvvC[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvC[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvC[fStorageIndex].back().push_back(fccUC[i][j]);
+  //    }
+  //  }
+  //  else if (fIsF) {
+  //    fTreeReader->fvvD[fStorageIndex].clear();
+  //    fTreeReader->fvvD[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<long double> row;
+  //      fTreeReader->fvvD[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvD[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvD[fStorageIndex].back().push_back(fccF[i][j]);
+  //    }
+  //  }
+  //  else if (fIsD) {
+  //    fTreeReader->fvvD[fStorageIndex].clear();
+  //    fTreeReader->fvvD[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<long double> row;
+  //      fTreeReader->fvvD[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvD[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvD[fStorageIndex].back().push_back(fccD[i][j]);
+  //    }
+  //  }
+  //  else if (fIsLD) {
+  //    fTreeReader->fvvD[fStorageIndex].clear();
+  //    fTreeReader->fvvD[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<long double> row;
+  //      fTreeReader->fvvD[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvD[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvD[fStorageIndex].back().push_back(fccLD[i][j]);
+  //    }
+  //  }
+  //  else if (fIsC) {
+  //    fTreeReader->fvvS[fStorageIndex].clear();
+  //    fTreeReader->fvvS[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<TString> row;
+  //      fTreeReader->fvvS[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvS[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvS[fStorageIndex].back().push_back(fccC[i][j]);
+  //    }
+  //  }
+  //  else if (fIsstdS) {
+  //    fTreeReader->fvvS[fStorageIndex].clear();
+  //    fTreeReader->fvvS[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<TString> row;
+  //      fTreeReader->fvvS[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvS[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvS[fStorageIndex].back().push_back(fccstdS[i][j].c_str());
+  //    }
+  //  }
+  //  else if (fIsTS) {
+  //    fTreeReader->fvvS[fStorageIndex].clear();
+  //    fTreeReader->fvvS[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<TString> row;
+  //      fTreeReader->fvvS[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvS[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvS[fStorageIndex].back().push_back(fccTS[i][j]);
+  //    }
+  //  }
+  //  else if (fIsTOS) {
+  //    fTreeReader->fvvS[fStorageIndex].clear();
+  //    fTreeReader->fvvS[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<TString> row;
+  //      fTreeReader->fvvS[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvS[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvS[fStorageIndex].back().push_back(fccTOS[i][j].String());
+  //    }
+  //  }
+  //  else if (fIsTR) {
+  //    fTreeReader->fvvR[fStorageIndex].clear();
+  //    fTreeReader->fvvR[fStorageIndex].reserve(n);
+  //    for (Int_t i = 0; i < n; ++i) {
+  //      std::vector<TRef> row;
+  //      fTreeReader->fvvR[fStorageIndex].push_back(row);
+  //      fTreeReader->fvvR[fStorageIndex].back().reserve(m);
+  //      for (Int_t j = 0; j < m; ++j)
+  //        fTreeReader->fvvR[fStorageIndex].back().push_back(fccTR[i][j]);
+  //    }
+  //  }
+  //}  //end if 2D c-array
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////

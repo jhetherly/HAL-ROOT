@@ -18,7 +18,6 @@
 /// \todo Generic Algorithms: Add parent selection algorithm
 /// \todo Generic Algorithms: Add merging algorithm
 /// \todo Generic Algorithms: Add monitor for UserData algorithm
-/// \todo Generic Algorithms: Add augmenting algorithms
 /// \todo Generic Algorithms: Add parent/child traversal algorithms
 /// \todo Generic Algorithms: Make error messages more informative
 

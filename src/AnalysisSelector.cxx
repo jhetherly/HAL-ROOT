@@ -27,6 +27,7 @@ Bool_t AnalysisSelector::Notify () {
   if (fChain->GetCurrentFile()) {
     std::cout << "\n\nProcessing file: " << fChain->GetCurrentFile()->GetName() << std::endl;
     fAnalysisFlow->NotifyAlgo(GetOption());
+    ((AnalysisTreeReader*)fInput->FindObject("RawData"))->Notify();
   }
   if (fMessagePeriod != 0)
     std::cout << std::endl;

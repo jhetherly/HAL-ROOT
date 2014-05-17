@@ -34,6 +34,9 @@
 #include <TRefArray.h>
 #include <TNamed.h>
 #include <TMap.h>
+//#include <TBranchProxy.h>
+//#include <TBranchProxyDirector.h>
+//#include <TBranchProxyTemplate.h>
 #include <string>
 #include <deque>
 #include <vector>
@@ -53,6 +56,7 @@ public:
   Long64_t  GetEntryNumber () {return fEntry;}
   TTree*    GetTree () {return fChain;}
   void      Init ();
+  Bool_t    Notify ();
   void      SetBranchMap (TMap *m) {fBranchMap = m;}
   bool      CheckBranchMapNickname (const TString &name);
 
@@ -152,6 +156,8 @@ private:
     TBranch               *fBranch;
     AnalysisTreeReader    *fTreeReader;
 
+    static const int       MaxBufferLength = 5000;
+    static const int       MaxBufferLength2 = 50;
     Int_t                  GetArrayLength (Int_t rank);
     Int_t                  GetMaxArrayLength (Int_t rank);
     void                   FindTypeInformation ();
@@ -178,47 +184,47 @@ private:
     TClonesArray                        fTCA;
     TRef                                fTR;
     TRefArray                           fTRA;
-    bool                                *fcB;
-    signed char                         *fcSC;
-    int                                 *fcI;
-    short                               *fcSI;
-    long                                *fcL;
-    long long                           *fcLL;
-    unsigned char                       *fcUC;
-    unsigned int                        *fcUI;
-    unsigned short                      *fcUSI;
-    unsigned long                       *fcUL;
-    unsigned long long                  *fcULL;
-    float                               *fcF;
-    double                              *fcD;
-    long double                         *fcLD;
-    char                                *fcC;
-    TString                             *fcTS;
-    TObjString                          *fcTOS;
-    std::string                         *fcstdS;
-    TObjArray                           *fcTOA;
-    TClonesArray                        *fcTCA;
-    TRef                                *fcTR;
-    TRefArray                           *fcTRA;
-    bool                                **fccB;
-    signed char                         **fccSC;
-    int                                 **fccI;
-    short                               **fccSI;
-    long                                **fccL;
-    long long                           **fccLL;
-    unsigned char                       **fccUC;
-    unsigned int                        **fccUI;
-    unsigned short                      **fccUSI;
-    unsigned long                       **fccUL;
-    unsigned long long                  **fccULL;
-    float                               **fccF;
-    double                              **fccD;
-    long double                         **fccLD;
-    char                                **fccC;
-    TString                             **fccTS;
-    TObjString                          **fccTOS;
-    std::string                         **fccstdS;
-    TRef                                **fccTR;
+    bool                                fcB[MaxBufferLength];
+    signed char                         fcSC[MaxBufferLength];
+    int                                 fcI[MaxBufferLength];
+    short                               fcSI[MaxBufferLength];
+    long                                fcL[MaxBufferLength];
+    long long                           fcLL[MaxBufferLength];
+    unsigned char                       fcUC[MaxBufferLength];
+    unsigned int                        fcUI[MaxBufferLength];
+    unsigned short                      fcUSI[MaxBufferLength];
+    unsigned long                       fcUL[MaxBufferLength];
+    unsigned long long                  fcULL[MaxBufferLength];
+    float                               fcF[MaxBufferLength];
+    double                              fcD[MaxBufferLength];
+    long double                         fcLD[MaxBufferLength];
+    char                                fcC[MaxBufferLength];
+    TString                             fcTS[MaxBufferLength];
+    TObjString                          fcTOS[MaxBufferLength];
+    std::string                         fcstdS[MaxBufferLength];
+    TObjArray                           fcTOA[MaxBufferLength];
+    TClonesArray                        fcTCA[MaxBufferLength];
+    TRef                                fcTR[MaxBufferLength];
+    TRefArray                           fcTRA[MaxBufferLength];
+    bool                                fccB[MaxBufferLength][MaxBufferLength2];
+    signed char                         fccSC[MaxBufferLength][MaxBufferLength2];
+    int                                 fccI[MaxBufferLength][MaxBufferLength2];
+    short                               fccSI[MaxBufferLength][MaxBufferLength2];
+    long                                fccL[MaxBufferLength][MaxBufferLength2];
+    long long                           fccLL[MaxBufferLength][MaxBufferLength2];
+    unsigned char                       fccUC[MaxBufferLength][MaxBufferLength2];
+    unsigned int                        fccUI[MaxBufferLength][MaxBufferLength2];
+    unsigned short                      fccUSI[MaxBufferLength][MaxBufferLength2];
+    unsigned long                       fccUL[MaxBufferLength][MaxBufferLength2];
+    unsigned long long                  fccULL[MaxBufferLength][MaxBufferLength2];
+    float                               fccF[MaxBufferLength][MaxBufferLength2];
+    double                              fccD[MaxBufferLength][MaxBufferLength2];
+    long double                         fccLD[MaxBufferLength][MaxBufferLength2];
+    char                                fccC[MaxBufferLength][MaxBufferLength2];
+    TString                             fccTS[MaxBufferLength][MaxBufferLength2];
+    TObjString                          fccTOS[MaxBufferLength][MaxBufferLength2];
+    std::string                         fccstdS[MaxBufferLength][MaxBufferLength2];
+    TRef                                fccTR[MaxBufferLength][MaxBufferLength2];
     std::vector<bool>                   *fvB;
     std::vector<signed char>            *fvSC;
     std::vector<int>                    *fvI;
@@ -260,8 +266,8 @@ private:
     std::vector<std::vector<TObjString> >           *fvvTOS;
     std::vector<std::vector<std::string> >          *fvvstdS;
     std::vector<std::vector<TRef> >                 *fvvTR;
+    //ROOT::TArrayFloatProxy                          *fbpF;
 
-    Int_t       fRows, fColumns;
     bool        fIsB, fIsSC, fIsI, fIsSI, fIsL, fIsLL, fIsUC, fIsUI;
     bool        fIsUSI, fIsUL, fIsULL, fIsF, fIsD, fIsLD, fIsC, fIsTS;
     bool        fIsTOS, fIsstdS, fIsTOA, fIsTCA, fIsTR, fIsTRA;
@@ -272,6 +278,7 @@ private:
   std::map<TString, BranchManager*, internal::string_cmp>   fNickNameBranchMap;
   BranchManager*        GetBranchManager (const TString&);
 
+  //ROOT::TBranchProxyDirector fDirector; //!Manages the proxys
 };
 
 } /* HAL */ 

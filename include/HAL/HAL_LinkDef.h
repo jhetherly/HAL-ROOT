@@ -23,7 +23,7 @@
 #pragma link C++ defined_in "HAL/Integrator.h";
 #pragma link C++ defined_in "HAL/Interpolator.h";
 #pragma link C++ defined_in "HAL/PlotUtils.h";
-#pragma link C++ defined_in "HAL/PythonAlgorithm.h";
+//#pragma link C++ defined_in "HAL/PythonAlgorithm.h";
 
 // These are needed for the AnalysisTreeWriter class
 #pragma link C++ class vector<bool>+;

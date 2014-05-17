@@ -25,7 +25,8 @@ CompileSource ()
   TString makeLibResult;
   TList *files;
   Int_t versionNumber = gROOT->GetVersionInt();
-  Bool_t hasPython = (gSystem->GetFromPipe("root-config --has-python") == "yes") ? kTRUE: kFALSE;
+  //Bool_t hasPython = (gSystem->GetFromPipe("root-config --has-python") == "yes") ? kTRUE: kFALSE;
+  Bool_t hasPython = kFALSE;
 
   // Create full paths
   srcPathString = srcDir;
@@ -37,14 +38,15 @@ CompileSource ()
   if (versionNumber >= 53417)
     includePathFlag.Prepend("-DLONGDOUBLE ");
   linkedLibFlag = gSystem->GetFromPipe("root-config --glibs");
-  if (hasPython) {
-    TString pyLinker(gSystem->GetFromPipe("python-config --prefix"));
-    pyLinker = gSystem->PrependPathName(pyLinker.Data(), "lib");
-    linkedLibFlag.Append(" -L");
-    linkedLibFlag.Append(pyLinker.Data());
-    linkedLibFlag.Append(" ");
-    linkedLibFlag.Append(gSystem->GetFromPipe("python-config --ldflags"));
-  }
+  linkedLibFlag.Append(" -lTreePlayer "); // This is required for the ROOT branch proxies
+  //if (hasPython) {
+  //  TString pyLinker(gSystem->GetFromPipe("python-config --prefix"));
+  //  pyLinker = gSystem->PrependPathName(pyLinker.Data(), "lib");
+  //  linkedLibFlag.Append(" -L");
+  //  linkedLibFlag.Append(pyLinker.Data());
+  //  linkedLibFlag.Append(" ");
+  //  linkedLibFlag.Append(gSystem->GetFromPipe("python-config --ldflags"));
+  //}
   buildPathString = buildDir;
   buildPathString = gSystem->PrependPathName(currentDir.Data(), buildPathString);
 
@@ -55,10 +57,10 @@ CompileSource ()
   }
 
   // Set up environment for compiling and linking libraries
-  if (hasPython) {
-    includePathFlag.Append(" ");
-    includePathFlag.Append(gSystem->GetFromPipe("python-config --includes"));
-  }
+  //if (hasPython) {
+  //  includePathFlag.Append(" ");
+  //  includePathFlag.Append(gSystem->GetFromPipe("python-config --includes"));
+  //}
   gSystem->AddIncludePath(includePathFlag.Data());
   gSystem->Setenv("IncludePath", gSystem->ExpandPathName(gSystem->GetIncludePath()));
   gSystem->Setenv("BuildDir", srcPathString.Data());
