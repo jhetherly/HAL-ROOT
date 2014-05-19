@@ -34,9 +34,13 @@
 #include <TRefArray.h>
 #include <TNamed.h>
 #include <TMap.h>
-#include <TBranchProxy.h>
-#include <TBranchProxyDirector.h>
-#include <TBranchProxyTemplate.h>
+
+#if ROOT_VERSION_CODE >= ROOT_VERSION(5,16,0)
+  #include <TBranchProxy.h>
+  #include <TBranchProxyDirector.h>
+  #include <TBranchProxyTemplate.h>
+#endif
+
 #include <string>
 #include <deque>
 #include <vector>
@@ -266,7 +270,7 @@ private:
     std::vector<std::vector<TObjString> >           *fvvTOS;
     std::vector<std::vector<std::string> >          *fvvstdS;
     std::vector<std::vector<TRef> >                 *fvvTR;
-    ROOT::TArrayFloatProxy                          *fbpF;
+    //ROOT::TArrayFloatProxy                          *fbpF;
 
     bool        fIsB, fIsSC, fIsI, fIsSI, fIsL, fIsLL, fIsUC, fIsUI;
     bool        fIsUSI, fIsUL, fIsULL, fIsF, fIsD, fIsLD, fIsC, fIsTS;
@@ -278,7 +282,7 @@ private:
   std::map<TString, BranchManager*, internal::string_cmp>   fNickNameBranchMap;
   BranchManager*        GetBranchManager (const TString&);
 
-  ROOT::TBranchProxyDirector fDirector; //!Manages the proxys
+  //ROOT::TBranchProxyDirector fDirector; //!Manages the proxys
 };
 
 } /* HAL */ 

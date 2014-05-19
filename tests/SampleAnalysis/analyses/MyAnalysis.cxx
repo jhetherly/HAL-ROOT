@@ -4,21 +4,21 @@
 int main(int argc, char *argv[]) {
   // Make analysis object
   //HAL::Analysis     a("Base Algorithm", "Test of the Analysis framework.", "truth");
-  //HAL::Analysis     a("Base Algorithm", "Test of the Analysis framework.", "Delphes");
+  HAL::Analysis     a("Base Algorithm", "Test of the Analysis framework.", "Delphes");
   //HAL::Analysis     a("Base Algorithm", "Test of the Analysis framework.", "physics");
-  HAL::Analysis     a("Base Algorithm", "Test of the Analysis framework.", "h42");
+  //HAL::Analysis     a("Base Algorithm", "Test of the Analysis framework.", "h42");
   //double  GeV = 1e3;
   double  GeV = 1e0;
 
   // Load files to the analysis object
   //a.AddFiles("/Users/jhetherly/Documents/Graduate_Work/ATLAS/ECFA/ECFA_Validation_Signal_Samples/Version_July25/AZh/ggA500mm/validation.ggA500Zh.mumu.truth*");
-  //a.AddFiles("/Users/jhetherly/Documents/Graduate_Work/ATLAS/Charged_Higgs_MC/output/h_plus_1000GeV_2HDM_mod_plus_root-s_14000GeV_25000_Events_140PU.root");
-  //a.AddFiles("/Users/jhetherly/Documents/Graduate_Work/ATLAS/Charged_Higgs_MC/output/h_plus_1000GeV_2HDM_mod_plus_root-s_14000GeV_25000_Events_0PU.root");
+  a.AddFiles("/Users/jhetherly/Documents/Graduate_Work/ATLAS/Charged_Higgs_MC/output/h_plus_1000GeV_2HDM_mod_plus_root-s_14000GeV_25000_Events_140PU.root");
+  a.AddFiles("/Users/jhetherly/Documents/Graduate_Work/ATLAS/Charged_Higgs_MC/output/h_plus_1000GeV_2HDM_mod_plus_root-s_14000GeV_25000_Events_0PU.root");
   //a.AddFiles("/data/localdata/HH/data_2012/data12_8TeV.00200804.physics_Muons.merge.NTUP_COMMON.r4644_p1517_p1575_tid01403444_00/NTUP_COMMON.01403444._000001.root.1");
-  a.AddFiles("/Users/jhetherly/Desktop/Proxy_test/dstarmb.root");
-  a.AddFiles("/Users/jhetherly/Desktop/Proxy_test/dstarp2.root");
-  a.AddFiles("/Users/jhetherly/Desktop/Proxy_test/dstarp1a.root");
-  a.AddFiles("/Users/jhetherly/Desktop/Proxy_test/dstarp1b.root");
+  //a.AddFiles("/Users/jhetherly/Desktop/Proxy_test/dstarmb.root");
+  //a.AddFiles("/Users/jhetherly/Desktop/Proxy_test/dstarp2.root");
+  //a.AddFiles("/Users/jhetherly/Desktop/Proxy_test/dstarp1a.root");
+  //a.AddFiles("/Users/jhetherly/Desktop/Proxy_test/dstarp1b.root");
 
   // Output settings
   a.SetOutputFileName("test.root");
@@ -112,11 +112,11 @@ int main(int argc, char *argv[]) {
   //a.MapBranch("mc_pdgId", "mc:id");
   //a.MapBranch("mc_charge", "mc:charge");
   //a.MapBranch("mc_charge", "mc charge att:value");
-  //a.MapBranch("Jet_size", "jets:nentries");
-  //a.MapBranch("Jet.PT", "jets:pT");
-  //a.MapBranch("Jet.Eta", "jets:eta");
-  //a.MapBranch("Jet.Phi", "jets:phi");
-  //a.MapBranch("Jet.Mass", "jets:m");
+  a.MapBranch("Jet_size", "jets:nentries");
+  a.MapBranch("Jet.PT", "jets:pT");
+  a.MapBranch("Jet.Eta", "jets:eta");
+  a.MapBranch("Jet.Phi", "jets:phi");
+  a.MapBranch("Jet.Mass", "jets:m");
   //a.MapBranch("Particle_size", "mc:nentries");
   //a.MapBranch("Particle.PT", "mc:pt");
   //a.MapBranch("Particle.Eta", "mc:eta");
@@ -126,14 +126,15 @@ int main(int argc, char *argv[]) {
   //a.MapBranch("Particle.Charge", "mc:charge");
   //a.MapBranch("Particle.Charge", "mc charge att:value");
 
-  a.MapBranch("pt_j", "jets:pT");
-  a.MapBranch("eta_j", "jets:eta");
-  a.MapBranch("phi_j", "jets:phi");
-  a.MapBranch("m_j", "jets:m");
+  //a.MapBranch("pt_j", "jets:pT");
+  //a.MapBranch("eta_j", "jets:eta");
+  //a.MapBranch("phi_j", "jets:phi");
+  //a.MapBranch("m_j", "jets:m");
+
   //a.SetMessagePeriod();
   a.SetMessagePeriod(1000);
   // Run the analysis
-  //a.Process("", 1);
+  //a.Process("", 100);
   a.Process();
 
   a.PrintCutReport();

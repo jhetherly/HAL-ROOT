@@ -35,8 +35,6 @@ CompileSource ()
   includePathString = gSystem->PrependPathName(currentDir.Data(), includePathString);
   includePathFlag = includePathString;
   includePathFlag.Prepend("-I");
-  if (versionNumber >= 53417)
-    includePathFlag.Prepend("-DLONGDOUBLE ");
   linkedLibFlag = gSystem->GetFromPipe("root-config --glibs");
   linkedLibFlag.Append(" -lTreePlayer "); // This is required for the ROOT branch proxies
   //if (hasPython) {

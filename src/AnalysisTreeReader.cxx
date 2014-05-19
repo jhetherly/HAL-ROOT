@@ -1,4 +1,5 @@
 #include <HAL/AnalysisTreeReader.h>
+#include <iostream>
 
 ClassImp(HAL::AnalysisTreeReader);
 
@@ -9,8 +10,8 @@ AnalysisTreeReader::AnalysisTreeReader (TTree *t) : fChain(t),
   fVector("^vector[ ]*<[ ]*[a-zA-Z][a-zA-Z0-9_]+[ ]*>$"), // vector<scalar>
   fVector2D("^vector[ ]*<[ ]*vector[ ]*<[ ]*[a-zA-Z][a-zA-Z0-9_]+[ ]*>[ ]*>$"), // vector<vector<scalar> >
   fArray("^[a-zA-Z_][a-zA-Z0-9_]*[[a-zA-Z0-9_]+]$"), // name[i]
-  fArray2D("^[a-zA-Z_][a-zA-Z0-9_]*[[a-zA-Z0-9_]+][[a-zA-Z0-9_]+]$"), /* name[i][j] */ 
-  fDirector(t, -1) { 
+  fArray2D("^[a-zA-Z_][a-zA-Z0-9_]*[[a-zA-Z0-9_]+][[a-zA-Z0-9_]+]$")//, /* name[i][j] */ 
+  /*fDirector(t, -1)*/ { 
 
   // bool types
   fBool.insert("Bool_t");
@@ -77,7 +78,7 @@ void AnalysisTreeReader::SetEntry (Long64_t entry) {
   fEntry = entry;
 
   // Update all branch proxies first
-  fDirector.SetReadEntry(entry);
+  //fDirector.SetReadEntry(entry);
 
   // Update all branches
   for (std::map<TString, BranchManager*>::iterator bm = fNickNameBranchMap.begin(); 
@@ -90,18 +91,18 @@ void AnalysisTreeReader::SetEntry (Long64_t entry) {
 void AnalysisTreeReader::Init () {
   std::set<BranchManager*> unique_bms;
 
+  //fDirector.SetTree(fChain);
   // Init all branches and proxies
   for (std::map<TString, BranchManager*>::iterator bm = fNickNameBranchMap.begin(); 
        bm != fNickNameBranchMap.end(); ++bm) {
     if (unique_bms.insert(bm->second).second)
       bm->second->Init();
   }
-  fDirector.SetTree(fChain);
 }
 
 Bool_t AnalysisTreeReader::Notify () {
-  fDirector.SetTree(fChain);
-  return true;
+  //fDirector.SetTree(fChain);
+  return kTRUE;
 }
 
 bool AnalysisTreeReader::CheckBranchMapNickname (const TString &name) {
@@ -517,6 +518,7 @@ AnalysisTreeReader::BranchManager* AnalysisTreeReader::GetBranchManager (const T
 AnalysisTreeReader::BranchManager::BranchManager (AnalysisTreeReader *tr) : 
   fScalar(kFALSE), fCArray1D(kFALSE), fCArray2D(kFALSE), 
   fVec1D(kFALSE), fVec2D(kFALSE), fBranch(NULL), fTreeReader(tr),
+  //fcF(NULL),
   fvB(NULL), fvSC(NULL), fvI(NULL), fvSI(NULL), fvL(NULL), fvLL(NULL),
   fvUC(NULL), fvUI(NULL), fvUSI(NULL), fvUL(NULL), fvULL(NULL), fvF(NULL),
   fvD(NULL), fvLD(NULL), fvC(NULL), fvTS(NULL), fvTOS(NULL), fvstdS(NULL),
@@ -525,7 +527,7 @@ AnalysisTreeReader::BranchManager::BranchManager (AnalysisTreeReader *tr) :
   fvvUC(NULL), fvvUI(NULL), fvvUSI(NULL), fvvUL(NULL), fvvULL(NULL), fvvF(NULL),
   fvvD(NULL), fvvLD(NULL), fvvC(NULL), fvvTS(NULL), fvvTOS(NULL), fvvstdS(NULL),
   fvvTR(NULL), 
-  fbpF(NULL),
+  //fbpF(NULL),
   fIsB (false), fIsSC(false), fIsI(false), fIsSI(false), 
   fIsL(false), fIsLL(false), fIsUC(false), fIsUI(false), fIsUSI(false), 
   fIsUL(false), fIsULL(false), fIsF(false), fIsD(false), fIsLD(false), 
@@ -961,9 +963,11 @@ void AnalysisTreeReader::BranchManager::Init () {
       //  fTreeReader->fDirector.SetTree(fTreeReader->GetTree());
       //  fTreeReader->fDirector.SetReadEntry(fTreeReader->GetEntryNumber());
       //  //fbpF->Setup();
-      //  std::cout << fbpF->IsInitialized() << std::endl;
+      //  //std::cout << fbpF->IsInitialized() << std::endl;
       //  //std::cout << fbpF->Read() << std::endl;
       //}
+      //fTreeReader->fDirector.SetTree(fTreeReader->GetTree());
+      //fTreeReader->fDirector.SetReadEntry(fTreeReader->GetEntryNumber());
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcF, &fBranch);
     }
     else if (fIsD) 
@@ -1360,10 +1364,23 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       //std::cout << " got float values" << std::endl;
       // NEW !!!!!!!
       
+      //fBranch->Reset();
+      //fcF = new float[n];
+      //fBranch->SetAddress(fcF);
+      //fBranch->GetEntry(entry);
+      //fTreeReader->fvD[fStorageIndex].clear();
+      //fTreeReader->fvD[fStorageIndex].reserve(n);
+      //for (Int_t i = 0; i < n; ++i) {
+      //  fTreeReader->fvD[fStorageIndex].push_back(fcF[i]);
+      //}
+
       fTreeReader->fvD[fStorageIndex].clear();
       fTreeReader->fvD[fStorageIndex].reserve(n);
-      for (Int_t i = 0; i < n; ++i)
+      for (Int_t i = 0; i < n; ++i) {
+        //fTreeReader->fvD[fStorageIndex].push_back(temp[i]);
         fTreeReader->fvD[fStorageIndex].push_back(fcF[i]);
+        //fTreeReader->fvD[fStorageIndex].push_back(fbpF->At(i));
+      }
     }
     else if (fIsD) {
       fTreeReader->fvD[fStorageIndex].clear();

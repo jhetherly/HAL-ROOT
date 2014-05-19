@@ -97,8 +97,6 @@ CompileAnalysis (TString HAL_dir,             // Directory of HAL framework
   includePathFlag.Append(HAL_IncDir.Data());
   if (user_inc_flag.CompareTo(""))
     includePathFlag.Prepend(" ").Prepend(user_inc_flag);
-  if (versionNumber >= 53417) // versions before 5.34.17 don't typedef LongDouble_t
-    includePathFlag.Prepend("-DLONGDOUBLE ");
   buildPathString = buildDir;
   buildPathString = gSystem->PrependPathName(currentDir.Data(), buildPathString);
   linkPathFlag = " -L";
