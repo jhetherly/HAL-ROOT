@@ -5,3 +5,6 @@ lib/*.so
 lib/python/*.pyc
 tests/*.pyc
 src/HAL_dict.*
+*/test.root
+bin/*
+*/bin/*

@@ -1,10 +1,10 @@
 #ifndef HAL_COMMON
 #define HAL_COMMON
 
-#include <cstring>
-#include <string>
 #include <RVersion.h>
 #include <TString.h>
+#include <cstring>
+#include <string>
 
 #if ROOT_VERSION_CODE < ROOT_VERSION(5,34,17)
 typedef double     LongDouble_t;

@@ -1,5 +1,5 @@
 #include <HAL/AnalysisTreeReader.h>
-#include <iostream>
+//#include <iostream>
 
 ClassImp(HAL::AnalysisTreeReader);
 
@@ -518,7 +518,14 @@ AnalysisTreeReader::BranchManager* AnalysisTreeReader::GetBranchManager (const T
 AnalysisTreeReader::BranchManager::BranchManager (AnalysisTreeReader *tr) : 
   fScalar(kFALSE), fCArray1D(kFALSE), fCArray2D(kFALSE), 
   fVec1D(kFALSE), fVec2D(kFALSE), fBranch(NULL), fTreeReader(tr),
-  //fcF(NULL),
+  fcB(NULL), fcSC(NULL), fcI(NULL), fcSI(NULL), fcL(NULL), fcLL(NULL),
+  fcUC(NULL), fcUI(NULL), fcUSI(NULL), fcUL(NULL), fcULL(NULL), fcF(NULL),
+  fcD(NULL), fcLD(NULL), fcC(NULL), fcTS(NULL), fcTOS(NULL), fcstdS(NULL),
+  fcTOA(NULL), fcTCA(NULL), fcTR(NULL), fcTRA(NULL),
+  fccB(NULL), fccSC(NULL), fccI(NULL), fccSI(NULL), fccL(NULL), fccLL(NULL),
+  fccUC(NULL), fccUI(NULL), fccUSI(NULL), fccUL(NULL), fccULL(NULL), fccF(NULL),
+  fccD(NULL), fccLD(NULL), fccC(NULL), fccTS(NULL), fccTOS(NULL), fccstdS(NULL),
+  fccTR(NULL),
   fvB(NULL), fvSC(NULL), fvI(NULL), fvSI(NULL), fvL(NULL), fvLL(NULL),
   fvUC(NULL), fvUI(NULL), fvUSI(NULL), fvUL(NULL), fvULL(NULL), fvF(NULL),
   fvD(NULL), fvLD(NULL), fvC(NULL), fvTS(NULL), fvTOS(NULL), fvstdS(NULL),
@@ -934,28 +941,50 @@ void AnalysisTreeReader::BranchManager::Init () {
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
   else if (fCArray1D) {
-    if (fIsB) 
+    if (fIsB) {
+      fcB = new bool[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcB, &fBranch);
-    else if (fIsI) 
+    }
+    else if (fIsI) {
+      fcI = new int[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcI, &fBranch);
-    else if (fIsSI) 
+    }
+    else if (fIsSI) {
+      fcSI = new short int[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcSI, &fBranch);
-    else if (fIsL) 
+    }
+    else if (fIsL) {
+      fcL = new long int[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcL, &fBranch);
-    else if (fIsLL) 
+    }
+    else if (fIsLL) {
+      fcLL = new long long[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcLL, &fBranch);
-    else if (fIsSC) 
+    }
+    else if (fIsSC) {
+      fcSC = new signed char[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcSC, &fBranch);
-    else if (fIsUI) 
+    }
+    else if (fIsUI) {
+      fcUI = new unsigned int[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcUI, &fBranch);
-    else if (fIsUSI) 
+    }
+    else if (fIsUSI) {
+      fcUSI = new unsigned short int[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcUSI, &fBranch);
-    else if (fIsUL) 
+    }
+    else if (fIsUL) {
+      fcUL = new unsigned long[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcUL, &fBranch);
-    else if (fIsULL) 
+    }
+    else if (fIsULL) {
+      fcULL = new unsigned long long[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcULL, &fBranch);
-    else if (fIsUC) 
+    }
+    else if (fIsUC) {
+      fcUC = new unsigned char[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcUC, &fBranch);
+    }
     else if (fIsF) {
       //if (fbpF == NULL) {
       //  //fbpF = new ROOT::TClaFloatProxy(&(fTreeReader->fDirector), fBranchName.Data());
@@ -968,71 +997,150 @@ void AnalysisTreeReader::BranchManager::Init () {
       //}
       //fTreeReader->fDirector.SetTree(fTreeReader->GetTree());
       //fTreeReader->fDirector.SetReadEntry(fTreeReader->GetEntryNumber());
+
+      fcF = new float[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcF, &fBranch);
     }
-    else if (fIsD) 
+    else if (fIsD) {
+      fcD = new double[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcD, &fBranch);
-    else if (fIsLD) 
+    }
+    else if (fIsLD) {
+      fcLD = new long double[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcLD, &fBranch);
-    else if (fIsC) 
+    }
+    else if (fIsC) {
+      fcC = new char[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcC, &fBranch);
-    else if (fIsstdS) 
+    }
+    else if (fIsstdS) {
+      fcstdS = new std::string[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcstdS, &fBranch);
-    else if (fIsTS) 
+    }
+    else if (fIsTS) {
+      fcTS = new TString[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTS, &fBranch);
-    else if (fIsTOS) 
+    }
+    else if (fIsTOS) {
+      fcTOS = new TObjString[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTOS, &fBranch);
-    else if (fIsTOA) 
+    }
+    else if (fIsTOA) {
+      fcTOA = new TObjArray[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTOA, &fBranch);
-    else if (fIsTCA) 
+    }
+    else if (fIsTCA) {
+      fcTCA = new TClonesArray[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTCA, &fBranch);
-    else if (fIsTR) 
+    }
+    else if (fIsTR) {
+      fcTR = new TRef[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTR, &fBranch);
-    else if (fIsTRA) 
+    }
+    else if (fIsTRA) {
+      fcTRA = new TRefArray[MaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcTRA, &fBranch);
+    }
   } // end if 1D c-array
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
   else if (fCArray2D) {
-    if (fIsB) 
+    if (fIsB) {
+      fccB = new bool*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccB[i] = new bool[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccB, &fBranch);
-    else if (fIsI) 
+    }
+    else if (fIsI) {
+      fccI = new int*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccI[i] = new int[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccI, &fBranch);
-    else if (fIsSI) 
+    }
+    else if (fIsSI) {
+      fccSI = new short int*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccSI[i] = new short int[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccSI, &fBranch);
-    else if (fIsL) 
+    }
+    else if (fIsL) {
+      fccL = new long int*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccL[i] = new long int[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccL, &fBranch);
-    else if (fIsLL) 
+    }
+    else if (fIsLL) {
+      fccLL = new long long*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccLL[i] = new long long int[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccLL, &fBranch);
-    else if (fIsSC) 
+    }
+    else if (fIsSC) {
+      fccSC = new signed char*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccSC[i] = new signed char[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccSC, &fBranch);
-    else if (fIsUI) 
+    }
+    else if (fIsUI) {
+      fccUI = new unsigned int*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccUI[i] = new unsigned int[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccUI, &fBranch);
-    else if (fIsUSI) 
+    }
+    else if (fIsUSI) {
+      fccUSI = new unsigned short int*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccUSI[i] = new unsigned short int[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccUSI, &fBranch);
-    else if (fIsUL) 
+    }
+    else if (fIsUL) {
+      fccUL = new unsigned long*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccUL[i] = new unsigned long[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccUL, &fBranch);
-    else if (fIsULL) 
+    }
+    else if (fIsULL) {
+      fccULL = new unsigned long long*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccULL[i] = new unsigned long long[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccULL, &fBranch);
-    else if (fIsUC) 
+    }
+    else if (fIsUC) {
+      fccUC = new unsigned char*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccUC[i] = new unsigned char[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccUC, &fBranch);
-    else if (fIsF) 
+    }
+    else if (fIsF) {
+      fccF = new float*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccF[i] = new float[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccF, &fBranch);
-    else if (fIsD) 
+    }
+    else if (fIsD) {
+      fccD = new double*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccD[i] = new double[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccD, &fBranch);
-    else if (fIsLD) 
+    }
+    else if (fIsLD) {
+      fccLD = new long double*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccLD[i] = new long double[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccLD, &fBranch);
-    else if (fIsC) 
+    }
+    else if (fIsC) {
+      fccC = new char*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccC[i] = new char[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccC, &fBranch);
-    else if (fIsstdS) 
+    }
+    else if (fIsstdS) {
+      fccstdS = new std::string*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccstdS[i] = new std::string[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccstdS, &fBranch);
-    else if (fIsTS) 
+    }
+    else if (fIsTS) {
+      fccTS = new TString*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccTS[i] = new TString[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccTS, &fBranch);
-    else if (fIsTOS)
+    }
+    else if (fIsTOS) {
+      fccTOS = new TObjString*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccTOS[i] = new TObjString[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccTOS, &fBranch);
-    else if (fIsTR) 
+    }
+    else if (fIsTR) {
+      fccTR = new TRef*[MaxBufferLength];
+      for (int i = 0; i < MaxBufferLength; ++i) fccTR[i] = new TRef[MaxBufferLength2];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fccTR, &fBranch);
+    }
   } // end if 2D c-array
   // //////////////////////////////////////////////////////////////
   // //////////////////////////////////////////////////////////////
@@ -1267,6 +1375,7 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
   // //////////////////////////////////////////////////////////////
   else if (fCArray1D) {
     Int_t n = GetArrayLength(1);
+    //if (!fIsF) fBranch->GetEntry(entry);
     fBranch->GetEntry(entry);
     if (fIsB) {
       fTreeReader->fvB[fStorageIndex].clear();
@@ -1374,13 +1483,26 @@ void AnalysisTreeReader::BranchManager::SetEntry (Long64_t entry) {
       //  fTreeReader->fvD[fStorageIndex].push_back(fcF[i]);
       //}
 
+      //TBufferFile buf(TBuffer::kRead);
+      //TBuffer *buf = fTreeReader->GetTree()->GetTransientBuffer(1024);
+      //float *temp = new float[n];
+      //buf.SetBuffer(temp, n);
+      //fBranch->GetEntry(entry);
+      //TLeaf *leaf = (TLeaf*) fBranch->GetListOfLeaves()->At(0);
+      //leaf->FillBasket(buf);
+      //leaf->SetRange();
+      //leaf->SetAddress(temp);
+      //std::cout << n << "    " << leaf->GetLen() << "    " << leaf->GetNdata() << "    " << leaf->IsRange() << std::endl;
       fTreeReader->fvD[fStorageIndex].clear();
       fTreeReader->fvD[fStorageIndex].reserve(n);
       for (Int_t i = 0; i < n; ++i) {
+        //std::cout << leaf->GetValue(i) << "  ";
         //fTreeReader->fvD[fStorageIndex].push_back(temp[i]);
         fTreeReader->fvD[fStorageIndex].push_back(fcF[i]);
         //fTreeReader->fvD[fStorageIndex].push_back(fbpF->At(i));
       }
+      //std::cout << std::endl;
+      //delete[] temp;
     }
     else if (fIsD) {
       fTreeReader->fvD[fStorageIndex].clear();

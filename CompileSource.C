@@ -1,4 +1,4 @@
-CompileSource ()
+CompileSource (Bool_t debug = kFALSE)
 {
   TString currentDir(gSystem->pwd());
   TString incDir("include");
@@ -35,16 +35,18 @@ CompileSource ()
   includePathString = gSystem->PrependPathName(currentDir.Data(), includePathString);
   includePathFlag = includePathString;
   includePathFlag.Prepend("-I");
+  if (debug)
+    includePathFlag.Append(" -g");
   linkedLibFlag = gSystem->GetFromPipe("root-config --glibs");
-  linkedLibFlag.Append(" -lTreePlayer "); // This is required for the ROOT branch proxies
-  //if (hasPython) {
-  //  TString pyLinker(gSystem->GetFromPipe("python-config --prefix"));
-  //  pyLinker = gSystem->PrependPathName(pyLinker.Data(), "lib");
-  //  linkedLibFlag.Append(" -L");
-  //  linkedLibFlag.Append(pyLinker.Data());
-  //  linkedLibFlag.Append(" ");
-  //  linkedLibFlag.Append(gSystem->GetFromPipe("python-config --ldflags"));
-  //}
+  //linkedLibFlag.Append(" -lTreePlayer "); // This is required for the ROOT branch proxies
+  if (hasPython) {
+    TString pyLinker(gSystem->GetFromPipe("python-config --prefix"));
+    pyLinker = gSystem->PrependPathName(pyLinker.Data(), "lib");
+    linkedLibFlag.Append(" -L");
+    linkedLibFlag.Append(pyLinker.Data());
+    linkedLibFlag.Append(" ");
+    linkedLibFlag.Append(gSystem->GetFromPipe("python-config --ldflags"));
+  }
   buildPathString = buildDir;
   buildPathString = gSystem->PrependPathName(currentDir.Data(), buildPathString);
 
@@ -55,10 +57,10 @@ CompileSource ()
   }
 
   // Set up environment for compiling and linking libraries
-  //if (hasPython) {
-  //  includePathFlag.Append(" ");
-  //  includePathFlag.Append(gSystem->GetFromPipe("python-config --includes"));
-  //}
+  if (hasPython) {
+    includePathFlag.Append(" ");
+    includePathFlag.Append(gSystem->GetFromPipe("python-config --includes"));
+  }
   gSystem->AddIncludePath(includePathFlag.Data());
   gSystem->Setenv("IncludePath", gSystem->ExpandPathName(gSystem->GetIncludePath()));
   gSystem->Setenv("BuildDir", srcPathString.Data());
@@ -68,7 +70,6 @@ CompileSource ()
   gSystem->Setenv("Opt", "");
 
   // Create list of include files for cint
-  //includePathString = gSystem->PrependPathName(includePathString.Data(), "HAL");
   TSystemDirectory dir(includePathString.Data(), includePathString.Data());
   files = dir.GetListOfFiles();
   if (files) {

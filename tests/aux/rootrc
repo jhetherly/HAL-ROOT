@@ -1,0 +1,10 @@
+#This is an example .rootrc to help with the loading of the HAL framework
+
+Unix.*.Root.DynamicPath:	.:$(ROOTSYS)/lib:$(HOME)/src/HAL-ROOT/lib:
+Unix.*.Root.MacroPath:		.:$(HOME)/src/HAL-ROOT/lib:
+
+Root.ShowPath:			false
+Root.MemStat:                   1
+Root.ObjectStat:                1
+
+ACLiC.IncludePaths:             -I$(HOME)/src/HAL-ROOT/include
