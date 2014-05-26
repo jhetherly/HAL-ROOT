@@ -35,8 +35,6 @@ CompileSource (Bool_t debug = kFALSE)
   includePathString = gSystem->PrependPathName(currentDir.Data(), includePathString);
   includePathFlag = includePathString;
   includePathFlag.Prepend("-I");
-  if (debug)
-    includePathFlag.Append(" -g");
   linkedLibFlag = gSystem->GetFromPipe("root-config --glibs");
   //linkedLibFlag.Append(" -lTreePlayer "); // This is required for the ROOT branch proxies
   if (hasPython) {
@@ -65,9 +63,19 @@ CompileSource (Bool_t debug = kFALSE)
   gSystem->Setenv("IncludePath", gSystem->ExpandPathName(gSystem->GetIncludePath()));
   gSystem->Setenv("BuildDir", srcPathString.Data());
   gSystem->Setenv("LinkedLibs", linkedLibFlag.Data());
+  gSystem->Setenv("DepLibs", "");
   gSystem->Setenv("SharedLib", libraryName.Data());
   gSystem->Setenv("LibName", libraryName.Remove(libraryName.First('.'), libraryName.Length()).Data());
-  gSystem->Setenv("Opt", "");
+  if (debug) {
+    TRegexp optFlag("-O[0-9] ");
+    long optPosition = makeLibCommands.Index(optFlag);
+
+    if (optPosition >= 0) 
+      makeLibCommands.Remove(optPosition, 4);
+    gSystem->Setenv("Opt", "-g");
+  }
+  else
+    gSystem->Setenv("Opt", "");
 
   // Create list of include files for cint
   TSystemDirectory dir(includePathString.Data(), includePathString.Data());

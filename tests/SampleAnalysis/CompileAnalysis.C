@@ -50,7 +50,8 @@ CompileAnalysis (TString HAL_dir,             // Directory of HAL framework
                  TString include_dir = "",    // Header files directory
                  TString source_dir = "",     // Source files directory
                  TString analyses_dir = "",   // Directory of analyses sources
-                 TString output_dir = "")     // Directory to build executable
+                 TString output_dir = "",     // Directory to build executable
+                 Bool_t debug = kFALSE)       // Add debug flags
 {
   // HAL framework information
   TString HAL_Dir(HAL_dir);
@@ -107,7 +108,16 @@ CompileAnalysis (TString HAL_dir,             // Directory of HAL framework
 
   // Set up environment for compiling and linking libraries
   gSystem->AddIncludePath(includePathFlag.Data());
-  gSystem->Setenv("IncludePath", gSystem->ExpandPathName(gSystem->GetIncludePath()));
+  includePathFlag = gSystem->ExpandPathName(gSystem->GetIncludePath());
+  if (debug) {
+    TRegexp optFlag("-O[0-9] ");
+    long optPosition = makeExeCommands.Index(optFlag);
+
+    if (optPosition >= 0) 
+      makeExeCommands.Remove(optPosition, 4);
+    includePathFlag.Prepend("-g ");
+  }
+  gSystem->Setenv("IncludePath", includePathFlag);
   gSystem->Setenv("BuildDir", buildPathString.Data());
   gSystem->Setenv("LinkedLibs", linkedLibs.Append(linkPathFlag.Data()));
   gSystem->Setenv("ExeName", exeName.Data());
