@@ -1,6 +1,6 @@
 #include <vector>
 
-#ifdef __CINT__
+#ifdef __MAKECINT__
 
 #pragma link off all globals;
 #pragma link off all classes;
@@ -8,7 +8,18 @@
 #pragma link C++ nestedclasses;
 
 #pragma link C++ defined_in "HAL/Algorithm.h";
-#pragma link C++ defined_in "HAL/Algorithms.h";
+#pragma link C++ defined_in "HAL/Algorithms/AttachAttribute.h";
+#pragma link C++ defined_in "HAL/Algorithms/Cut.h";
+#pragma link C++ defined_in "HAL/Algorithms/ImportParticle.h";
+#pragma link C++ defined_in "HAL/Algorithms/ImportValue.h";
+#pragma link C++ defined_in "HAL/Algorithms/MinChiSquaredSelection.h";
+#pragma link C++ defined_in "HAL/Algorithms/Monitor.h";
+#pragma link C++ defined_in "HAL/Algorithms/SelectLineage.h";
+#pragma link C++ defined_in "HAL/Algorithms/SelectParticle.h";
+#pragma link C++ defined_in "HAL/Algorithms/SelectRank.h";
+#pragma link C++ defined_in "HAL/Algorithms/SelectRefParticle.h";
+#pragma link C++ defined_in "HAL/Algorithms/StoreParticle.h";
+#pragma link C++ defined_in "HAL/Algorithms/VecAddReco.h";
 #pragma link C++ defined_in "HAL/Analysis.h";
 #pragma link C++ defined_in "HAL/AnalysisData.h";
 #pragma link C++ defined_in "HAL/AnalysisTreeReader.h";

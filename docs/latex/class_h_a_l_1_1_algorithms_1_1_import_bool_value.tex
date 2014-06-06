@@ -1,0 +1,123 @@
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_import_bool_value}{\section{H\+A\+L\+:\+:Algorithms\+:\+:Import\+Bool\+Value$<$ Value\+Getter $>$ Class Template Reference}
+\label{class_h_a_l_1_1_algorithms_1_1_import_bool_value}\index{H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value$<$ Value\+Getter $>$@{H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value$<$ Value\+Getter $>$}}
+}
+
+
+\hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} that stores a boolean value from information in a T\+Tree.  
+
+
+
+
+{\ttfamily \#include $<$Import\+Value.\+h$>$}
+
+Inheritance diagram for H\+A\+L\+:\+:Algorithms\+:\+:Import\+Bool\+Value$<$ Value\+Getter $>$\+:\begin{figure}[H]
+\begin{center}
+\leavevmode
+\includegraphics[height=3.000000cm]{class_h_a_l_1_1_algorithms_1_1_import_bool_value}
+\end{center}
+\end{figure}
+\subsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hyperlink{class_h_a_l_1_1_algorithms_1_1_import_bool_value_a06b77726d1cfcd155fb7e28ee304a917}{Import\+Bool\+Value} (T\+String name, T\+String title)
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Protected Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_import_bool_value_a71a3ae1f800a947904fdf0d1c7af4c17}{virtual bool {\bfseries Get\+Value} ()}\label{class_h_a_l_1_1_algorithms_1_1_import_bool_value_a71a3ae1f800a947904fdf0d1c7af4c17}
+
+\end{DoxyCompactItemize}
+\subsection*{Protected Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_import_bool_value_a8113934acb2bd48e34891d956f52c497}{Value\+Getter $\ast$ {\bfseries f\+Value\+Getter\+Ptr}}\label{class_h_a_l_1_1_algorithms_1_1_import_bool_value_a8113934acb2bd48e34891d956f52c497}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\subsubsection*{template$<$class Value\+Getter = H\+A\+L\+::\+Analysis\+Tree\+Reader$>$class H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value$<$ Value\+Getter $>$}
+
+\hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} that stores a boolean value from information in a T\+Tree. 
+
+This algorithm imports the information to store a boolean value from a specified branch in a T\+Tree. The value from this algorithm is stored in a \hyperlink{class_h_a_l_1_1_generic_data}{Generic\+Data} object in the User\+Data under the algorithm's name and $<$name$>$\+:value.~\newline
+~\newline
+{\bfseries Explaination of the branch map\+:}~\newline
+The required map is just one that points to the relavent boolean value. $<$name$>$ refers to the name given to this algorithm's constructor.~\newline
+{\itshape Required Branch Map\+:} \begin{TabularC}{2}
+\hline
+\rowcolor{lightgray}{\bf }&\PBS\centering {\bf Boolean value  }\\\cline{1-2}
+&\PBS\centering $<$name$>$\+:bool \\\cline{1-2}
+\end{TabularC}
+{\bfseries Note\+:} A custom value fetching class may be passed as a template arguement. This class must have constructor that accepts the T\+Tree as an arguement and overloads the () operator that accepts the entry number as an arguement. For example\+: 
+\begin{DoxyCode}
+\textcolor{preprocessor}{#include "TTreeReader.h"} \textcolor{comment}{// ROOT 6 tree reading class}
+\textcolor{keyword}{class }MyTreeReader \{
+\textcolor{keyword}{public}:
+ \textcolor{comment}{// Needs a constructor like this}
+ MyTreeReader (TTree *t) : tr(t), value(tr, \textcolor{stringliteral}{"my\_branch"}) \{\}
+ \textcolor{comment}{// Needs operator() overloaded like this}
+ \textcolor{keywordtype}{bool} operator (Long64\_t entry) \{
+   tr.SetEntry(entry);
+   \textcolor{keywordflow}{return} value;
+ \}
+\textcolor{keyword}{private}:
+ TTreeReader tr;
+ TTreeReaderValue<Bool\_t> value;
+\};
+\end{DoxyCode}
+ {\bfseries Examples\+:}~\newline
+In your analysis file, do the following to import a trigger flag\+:
+
+
+\begin{DoxyCode}
+\hyperlink{class_h_a_l_1_1_analysis}{HAL::Analysis} a(\textcolor{stringliteral}{"sample analysis"}, \textcolor{stringliteral}{""}, \textcolor{stringliteral}{"truth"});
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_bool_value}{HAL::Algorithms::ImportBool}(\textcolor{stringliteral}{"lepton trigger"}, \textcolor{stringliteral}{"import the lepton
+       trigger"}));
+
+\textcolor{comment}{//...}
+
+a.MapBranch(\textcolor{stringliteral}{"some\_trigger\_branch"}, \textcolor{stringliteral}{"lepton trigger:bool"});
+\end{DoxyCode}
+ To import a value with a custom tree reading class, do the following\+:
+
+
+\begin{DoxyCode}
+\textcolor{preprocessor}{#include "MyTreeReader.h"}
+\hyperlink{class_h_a_l_1_1_analysis}{HAL::Analysis} a(\textcolor{stringliteral}{"sample analysis"}, \textcolor{stringliteral}{""}, \textcolor{stringliteral}{"truth"});
+
+a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_bool_value}{HAL::Algorithms::ImportBoolValue<MyTreeReader>}(\textcolor{stringliteral}{
+      "lepton trigger"}, 
+                                                             \textcolor{stringliteral}{"import the lepton trigger"}));
+\end{DoxyCode}
+ 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_import_bool_value_a06b77726d1cfcd155fb7e28ee304a917}{\index{H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value@{H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value}!Import\+Bool\+Value@{Import\+Bool\+Value}}
+\index{Import\+Bool\+Value@{Import\+Bool\+Value}!H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value@{H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value}}
+\subsubsection[{Import\+Bool\+Value}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Value\+Getter  = H\+A\+L\+::\+Analysis\+Tree\+Reader$>$ {\bf H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value}$<$ Value\+Getter $>$\+::{\bf Import\+Bool\+Value} (
+\begin{DoxyParamCaption}
+\item[{T\+String}]{name, }
+\item[{T\+String}]{title}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithms_1_1_import_bool_value_a06b77726d1cfcd155fb7e28ee304a917}
+
+
+Constructor. 
+
+Initializes the algorithm 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the algorithm. This can be used as the input to other algorithms. \\
+\hline
+\mbox{\tt in}  & {\em title} & Description of the algorithm. Can be an empty string. \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\hyperlink{class_h_a_l_1_1_algorithms_1_1_import_particle}{Import\+Particle}, Import\+Integer, Import\+Counting, Import\+Decimal 
+\end{DoxySeeAlso}
+
+
+The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
+\item 
+/\+Users/jhetherly/src/\+H\+A\+L-\/\+R\+O\+O\+T/include/\+H\+A\+L/\+Algorithms/\hyperlink{_import_value_8h}{Import\+Value.\+h}\end{DoxyCompactItemize}

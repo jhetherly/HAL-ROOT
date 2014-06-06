@@ -4,7 +4,7 @@ lib/*.so
 *.swp
 lib/python/*.pyc
 tests/*.pyc
-src/HAL_dict.*
+src/HAL_dict*
 */test.root
 bin/*
 */bin/*

@@ -21,19 +21,25 @@ var hierarchy =
       [ "HAL::internal::ImportParticleAlgo", null, [
         [ "HAL::Algorithms::ImportParticle", "class_h_a_l_1_1_algorithms_1_1_import_particle.html", null ]
       ] ],
-      [ "HAL::internal::ImportValueAlgo", null, [
-        [ "HAL::Algorithms::ImportBool", "class_h_a_l_1_1_algorithms_1_1_import_bool.html", null ],
-        [ "HAL::Algorithms::ImportCounting", "class_h_a_l_1_1_algorithms_1_1_import_counting.html", null ],
-        [ "HAL::Algorithms::ImportDecimal", "class_h_a_l_1_1_algorithms_1_1_import_decimal.html", null ],
-        [ "HAL::Algorithms::ImportInteger", "class_h_a_l_1_1_algorithms_1_1_import_integer.html", null ]
-      ] ],
       [ "HAL::internal::NthElementAlgo", null, [
         [ "HAL::Algorithms::ParticleRankSelection", "class_h_a_l_1_1_algorithms_1_1_particle_rank_selection.html", null ]
       ] ],
       [ "HAL::internal::ParticlesTLVStore", null, [
         [ "HAL::Algorithms::StoreParticle", "class_h_a_l_1_1_algorithms_1_1_store_particle.html", null ]
       ] ],
-      [ "HAL::PythonAlgorithm", "class_h_a_l_1_1_python_algorithm.html", null ]
+      [ "HAL::PythonAlgorithm", "class_h_a_l_1_1_python_algorithm.html", null ],
+      [ "HAL::internal::ImportValueAlgo< bool >", null, [
+        [ "HAL::Algorithms::ImportBoolValue< ValueGetter >", "class_h_a_l_1_1_algorithms_1_1_import_bool_value.html", null ]
+      ] ],
+      [ "HAL::internal::ImportValueAlgo< long double >", null, [
+        [ "HAL::Algorithms::ImportDecimalValue< ValueGetter >", "class_h_a_l_1_1_algorithms_1_1_import_decimal_value.html", null ]
+      ] ],
+      [ "HAL::internal::ImportValueAlgo< long long >", null, [
+        [ "HAL::Algorithms::ImportIntegerValue< ValueGetter >", "class_h_a_l_1_1_algorithms_1_1_import_integer_value.html", null ]
+      ] ],
+      [ "HAL::internal::ImportValueAlgo< unsigned long long >", null, [
+        [ "HAL::Algorithms::ImportCountingValue< ValueGetter >", "class_h_a_l_1_1_algorithms_1_1_import_counting_value.html", null ]
+      ] ]
     ] ],
     [ "HAL::Analysis", "class_h_a_l_1_1_analysis.html", null ],
     [ "HAL::CutOptimizer", "class_h_a_l_1_1_cut_optimizer.html", null ],

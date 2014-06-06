@@ -18,6 +18,7 @@ var class_h_a_l_1_1_analysis_tree_reader =
     [ "GetString", "class_h_a_l_1_1_analysis_tree_reader.html#a75c0fe7d907ac8f1792ff496e4cf0b73", null ],
     [ "GetTree", "class_h_a_l_1_1_analysis_tree_reader.html#a6ad8933bd6c8cc2b17179c96fd3bfcb1", null ],
     [ "Init", "class_h_a_l_1_1_analysis_tree_reader.html#ab17ea6c10da56d9282d60d9507e01ef9", null ],
+    [ "Notify", "class_h_a_l_1_1_analysis_tree_reader.html#adfe7aa4110b150fb1c7e80580a775a82", null ],
     [ "SetBranchMap", "class_h_a_l_1_1_analysis_tree_reader.html#ae3dcc57b2cc27431e89edd341b300eb6", null ],
     [ "SetEntry", "class_h_a_l_1_1_analysis_tree_reader.html#a1a9c8bc30141df5fab1163f006fb08e3", null ],
     [ "SetTree", "class_h_a_l_1_1_analysis_tree_reader.html#a031181c782d3620d271a92cef995d998", null ],

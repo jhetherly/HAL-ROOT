@@ -1,6 +1,17 @@
 #include <HAL/Common.h>
-#include <HAL/Algorithms.h>
 #include <HAL/Algorithm.h>
+#include <HAL/Algorithms/AttachAttribute.h>
+#include <HAL/Algorithms/Cut.h>
+#include <HAL/Algorithms/ImportParticle.h>
+#include <HAL/Algorithms/ImportValue.h>
+#include <HAL/Algorithms/MinChiSquaredSelection.h>
+#include <HAL/Algorithms/Monitor.h>
+#include <HAL/Algorithms/SelectLineage.h>
+#include <HAL/Algorithms/SelectParticle.h>
+#include <HAL/Algorithms/SelectRank.h>
+#include <HAL/Algorithms/SelectRefParticle.h>
+#include <HAL/Algorithms/StoreParticle.h>
+#include <HAL/Algorithms/VecAddReco.h>
 #include <HAL/Analysis.h>
 #include <HAL/AnalysisData.h>
 #include <HAL/AnalysisTreeReader.h>
@@ -45,3 +56,9 @@
  * but with advanage of ample code reuse.\n
  * */
 
+/// \todo Generic Algorithms: Add chi-squared minimization algorithm
+/// \todo Generic Algorithms: Add parent selection algorithm
+/// \todo Generic Algorithms: Add merging algorithm
+/// \todo Generic Algorithms: Add monitor for UserData algorithm
+/// \todo Generic Algorithms: Add parent/child traversal algorithms
+/// \todo Generic Algorithms: Make error messages more informative

@@ -1,5 +1,23 @@
-#ifndef HAL_ALGORITHM
-#define HAL_ALGORITHM
+// @(#)hal
+// Author: Jeff Hetherly   5/6/14
+
+/*************************************************************************
+ * Copyright (C) 2014, Jeff Hetherly.                                    *
+ * All rights reserved.                                                  *
+ *                                                                       *
+ * For the licensing terms see $ROOTSYS/LICENSE.                         *
+ *************************************************************************/
+
+// Doxygen
+/*!
+ * \file
+ * \author  Jeff Hetherly <jhetherly@smu.edu>
+ *
+ * \section LICENSE
+ */
+
+#ifndef HAL_Algorithm
+#define HAL_Algorithm
 
 #include <TString.h>
 #include <TNamed.h>
@@ -12,9 +30,9 @@
 #include <HAL/Exceptions.h>
 #include <HAL/AnalysisData.h>
 
+// forward declaration(s)
 namespace HAL
 {
-//class AnalysisData;
 class AnalysisTreeReader;
 class AnalysisTreeWriter;
 } /* HAL */ 
@@ -22,6 +40,15 @@ class AnalysisTreeWriter;
 namespace HAL
 {
 
+//! Base class for all analysis algorithms
+/*!
+ * This class serves as the parent class for all HAL::Analysis and user-defined
+ * algorithms. It contains hooks for all parts of the calling TSelector, i.e.
+ * SlaveBegin, Process (through Exec and Clear), Terminate, etc. It also has
+ * methods for keeping track of how many objects it creates. Most importantly,
+ * this class can pass information to other algorithms through a common data 
+ * store accessed through string names and a few specilized methods.
+ */
 class Algorithm {
 public:
   // (Almost) carbon copy from the TTask class
@@ -30,12 +57,35 @@ public:
   //  rootcint)
   
   // Constructor(s)/Destructor -----------------
+  
+  //! Constructor
+  /*!
+   * Initializes the algorithm with a name and optional title
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \sa CutAlgorithm
+   */
   Algorithm(TString name = "", TString title = "");
+  //! Copy Constructor
+  /*!
+   * Copies relavent data from another Algorithm
+   * \param[in] algo Algorithm to be copied
+   */
   Algorithm (const Algorithm &algo);
   virtual ~Algorithm();
   // -------------------------------------------
 
   // Setup -------------------------------------
+  
+  //! Attach another algorithm to this one.
+  /*!
+   * Attaches an algorithm to this algorithm's list of sub-algorithms.
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \sa CutAlgorithm
+   */
   void          Add (Algorithm *algo) { fAlgorithms.push_back(algo); }
   void          ls ();
   void          CounterSummary ();

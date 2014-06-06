@@ -1,4 +1,4 @@
-CompileSource (Bool_t debug = kFALSE)
+void CompileSource (Bool_t debug = kFALSE)
 {
   TString currentDir(gSystem->pwd());
   TString incDir("include");
@@ -19,7 +19,8 @@ CompileSource (Bool_t debug = kFALSE)
   TString linkdefFile("HAL/HAL_LinkDef.h");
   TString buildOS(gSystem->GetBuildArch());
   TString linkingInstruction;
-  TString runCintCommand("rootcint -f $BuildDir/HAL_dict.cxx -c -p $IncludePath ");
+  TString runCintCommand("cd include; rootcint -f $BuildDir/HAL_dict.cxx -c -p $IncludePath ");
+  //TString runCintCommand("rootcint -f $BuildDir/HAL_dict.cxx -c -p $IncludePath ");
   TString makeLibCommands(gSystem->GetMakeSharedLib());
   TString runCintResult;
   TString makeLibResult;
@@ -36,10 +37,11 @@ CompileSource (Bool_t debug = kFALSE)
   includePathFlag = includePathString;
   includePathFlag.Prepend("-I");
   linkedLibFlag = gSystem->GetFromPipe("root-config --glibs");
-  //linkedLibFlag.Append(" -lTreePlayer "); // This is required for the ROOT branch proxies
+  linkedLibFlag.Append(" -lTreePlayer "); // This is required for the ROOT branch proxies and TTreeReader in ROOT 6
   if (hasPython) {
+    TString lib("lib");
     TString pyLinker(gSystem->GetFromPipe("python-config --prefix"));
-    pyLinker = gSystem->PrependPathName(pyLinker.Data(), "lib");
+    pyLinker = gSystem->PrependPathName(pyLinker.Data(), lib);
     linkedLibFlag.Append(" -L");
     linkedLibFlag.Append(pyLinker.Data());
     linkedLibFlag.Append(" ");
@@ -77,7 +79,7 @@ CompileSource (Bool_t debug = kFALSE)
   else
     gSystem->Setenv("Opt", "");
 
-  // Create list of include files for cint
+  // Create list of include files for cint/cling
   TSystemDirectory dir(includePathString.Data(), includePathString.Data());
   files = dir.GetListOfFiles();
   if (files) {
@@ -100,8 +102,9 @@ CompileSource (Bool_t debug = kFALSE)
   runCintCommand = runCintCommand.Append(includeListString.Data());
 
   // Make dictionary
-  std::cout << std::endl << "Building HAL's CINT dictionary..." << std::endl;
+  std::cout << std::endl << "Building HAL's dictionary..." << std::endl;
   runCintResult = gSystem->GetFromPipe(gSystem->ExpandPathName(runCintCommand.Data()));
+  
   //if (runCintResult.CompareTo("")) {
   //  std::cout << "Something prevented rootcint from making dictionary smoothly." <<
   //    " I will try to make the shared library regardless." << std::endl;

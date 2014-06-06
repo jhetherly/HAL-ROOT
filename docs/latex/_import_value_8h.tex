@@ -1,0 +1,55 @@
+\hypertarget{_import_value_8h}{\section{/\+Users/jhetherly/src/\+H\+A\+L-\/\+R\+O\+O\+T/include/\+H\+A\+L/\+Algorithms/\+Import\+Value.h File Reference}
+\label{_import_value_8h}\index{/\+Users/jhetherly/src/\+H\+A\+L-\/\+R\+O\+O\+T/include/\+H\+A\+L/\+Algorithms/\+Import\+Value.\+h@{/\+Users/jhetherly/src/\+H\+A\+L-\/\+R\+O\+O\+T/include/\+H\+A\+L/\+Algorithms/\+Import\+Value.\+h}}
+}
+{\ttfamily \#include $<$T\+String.\+h$>$}\\*
+{\ttfamily \#include $<$iostream$>$}\\*
+{\ttfamily \#include $<$H\+A\+L/\+Common.\+h$>$}\\*
+{\ttfamily \#include $<$H\+A\+L/\+Exceptions.\+h$>$}\\*
+{\ttfamily \#include $<$H\+A\+L/\+Algorithm.\+h$>$}\\*
+{\ttfamily \#include $<$H\+A\+L/\+Analysis\+Data.\+h$>$}\\*
+{\ttfamily \#include $<$H\+A\+L/\+Analysis\+Tree\+Reader.\+h$>$}\\*
+{\ttfamily \#include $<$H\+A\+L/\+Generic\+Data.\+h$>$}\\*
+\subsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+class \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_bool_value}{H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value$<$ Value\+Getter $>$}
+\begin{DoxyCompactList}\small\item\em \hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} that stores a boolean value from information in a T\+Tree. \end{DoxyCompactList}\item 
+class \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_integer_value}{H\+A\+L\+::\+Algorithms\+::\+Import\+Integer\+Value$<$ Value\+Getter $>$}
+\begin{DoxyCompactList}\small\item\em \hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} that stores an integer value from information in a T\+Tree. \end{DoxyCompactList}\item 
+class \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_counting_value}{H\+A\+L\+::\+Algorithms\+::\+Import\+Counting\+Value$<$ Value\+Getter $>$}
+\begin{DoxyCompactList}\small\item\em \hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} that stores a counting value from information in a T\+Tree. \end{DoxyCompactList}\item 
+class \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_decimal_value}{H\+A\+L\+::\+Algorithms\+::\+Import\+Decimal\+Value$<$ Value\+Getter $>$}
+\begin{DoxyCompactList}\small\item\em \hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} that stores a decimal value from information in a T\+Tree. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\subsection*{Namespaces}
+\begin{DoxyCompactItemize}
+\item 
+ \hyperlink{namespace_h_a_l}{H\+A\+L}
+\end{DoxyCompactItemize}
+\subsection*{Typedefs}
+\begin{DoxyCompactItemize}
+\item 
+\hypertarget{namespace_h_a_l_1_1_algorithms_abe687e5e38a721682f287f739175b0fb}{typedef Import\+Bool\+Value\\*
+$<$ \hyperlink{class_h_a_l_1_1_analysis_tree_reader}{H\+A\+L\+::\+Analysis\+Tree\+Reader} $>$ {\bfseries H\+A\+L\+::\+Algorithms\+::\+Import\+Bool}}\label{namespace_h_a_l_1_1_algorithms_abe687e5e38a721682f287f739175b0fb}
+
+\item 
+\hypertarget{namespace_h_a_l_1_1_algorithms_afbd89787dc26ba248a9cafba04af24da}{typedef Import\+Integer\+Value\\*
+$<$ \hyperlink{class_h_a_l_1_1_analysis_tree_reader}{H\+A\+L\+::\+Analysis\+Tree\+Reader} $>$ {\bfseries H\+A\+L\+::\+Algorithms\+::\+Import\+Integer}}\label{namespace_h_a_l_1_1_algorithms_afbd89787dc26ba248a9cafba04af24da}
+
+\item 
+\hypertarget{namespace_h_a_l_1_1_algorithms_a450ab6266caa910be0246895f41eab27}{typedef Import\+Counting\+Value\\*
+$<$ \hyperlink{class_h_a_l_1_1_analysis_tree_reader}{H\+A\+L\+::\+Analysis\+Tree\+Reader} $>$ {\bfseries H\+A\+L\+::\+Algorithms\+::\+Import\+Counting}}\label{namespace_h_a_l_1_1_algorithms_a450ab6266caa910be0246895f41eab27}
+
+\item 
+\hypertarget{namespace_h_a_l_1_1_algorithms_ac20284d93fa14f67f9413f9905c4dbde}{typedef Import\+Decimal\+Value\\*
+$<$ \hyperlink{class_h_a_l_1_1_analysis_tree_reader}{H\+A\+L\+::\+Analysis\+Tree\+Reader} $>$ {\bfseries H\+A\+L\+::\+Algorithms\+::\+Import\+Decimal}}\label{namespace_h_a_l_1_1_algorithms_ac20284d93fa14f67f9413f9905c4dbde}
+
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+\begin{DoxyAuthor}{Author}
+Jeff Hetherly \href{mailto:jhetherly@smu.edu}{\tt jhetherly@smu.\+edu}
+\end{DoxyAuthor}
+\hypertarget{_python_algorithm_8h_LICENSE}{}\subsection{L\+I\+C\+E\+N\+S\+E}\label{_python_algorithm_8h_LICENSE}
+\hypertarget{_python_algorithm_8h_Description}{}\subsection{Description}\label{_python_algorithm_8h_Description}
+These classes are part of the generic algorithm framework. They do common tasks in H.\+E.\+P. analysis and aid in fast development of an analysis. Only importing and reconstruction algorithms will create particles; the others algorithms just suffle pointers to particles around. 

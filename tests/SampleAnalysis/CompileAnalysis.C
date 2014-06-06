@@ -40,34 +40,71 @@
  *
  * */
 
-CompileAnalysis (TString HAL_dir,             // Directory of HAL framework
-                 TString analysis_src,        // Analysis source file (include extension)
-                 TString exe_name = "",       // Executable name
-                 TString user_inc_flag = "",  // Additional user include flag(s)
-                 TString user_lib_flag = "",  // Additional user library flag(s)
-                 TString header_suffix = "",  // Header files suffix
-                 TString source_suffix = "",  // Source files suffix
-                 TString include_dir = "",    // Header files directory
-                 TString source_dir = "",     // Source files directory
-                 TString analyses_dir = "",   // Directory of analyses sources
-                 TString output_dir = "",     // Directory to build executable
-                 Bool_t debug = kFALSE)       // Add debug flags
+void CompileAnalysis (TString HAL_dir,             // Directory of HAL framework
+                      TString analysis_src,        // Analysis source file (include extension)
+                      TString exe_name = "",       // Executable name
+                      TString user_inc_flag = "",  // Additional user include flag(s)
+                      TString user_lib_flag = "",  // Additional user library flag(s)
+                      TString header_suffix = "",  // Header files suffix
+                      TString source_suffix = "",  // Source files suffix
+                      TString include_dir = "",    // Header files directory
+                      TString source_dir = "",     // Source files directory
+                      TString analyses_dir = "",   // Directory of analyses sources
+                      TString output_dir = "",     // Directory to build executable
+                      Bool_t debug = kFALSE)       // Add debug flags
 {
   // HAL framework information
   TString HAL_Dir(HAL_dir);
-  TString HAL_LibDir(gSystem->PrependPathName(HAL_Dir.Data(), "lib"));
-  TString HAL_IncDir(gSystem->PrependPathName(HAL_Dir.Data(), "include"));
+  TString lib("lib");
+  TString src("src");
+  TString include("include");
+  TString algo("algorithms");
+  TString HAL_LibDir(gSystem->PrependPathName(HAL_Dir.Data(), lib));
+  TString HAL_IncDir(gSystem->PrependPathName(HAL_Dir.Data(), include));
+  lib = "lib";
+  include = "include";
   // User specific information
   TString currentDir(gSystem->pwd());
-  TString incDir(include_dir.EqualTo("") ? gSystem->PrependPathName("algorithms", "include") : include_dir);
-  TString srcDir(source_dir.EqualTo("") ? gSystem->PrependPathName("algorithms", "src") : source_dir);
-  TString buildDir(output_dir.EqualTo("") ? "bin" : output_dir);
-  TString analysesDir(analyses_dir.EqualTo("") ? "analyses" : analyses_dir);
-  TString incSuffix(header_suffix.EqualTo("") ? "h" : header_suffix);
-  TString srcSuffix(source_suffix.EqualTo("") ? "cxx" : source_suffix);
+  TString algoDir(gSystem->PrependPathName(currentDir, algo));
+  TString incDir;
+  if (include_dir.EqualTo(""))
+    incDir = gSystem->PrependPathName(algoDir, include);
+  else
+    incDir = include_dir;
+  TString srcDir;
+  if (source_dir.EqualTo(""))
+    srcDir = gSystem->PrependPathName(algoDir, src);
+  else
+    srcDir = source_dir;
+  include = "include";
+  src = "src";
+  TString buildDir;
+  if (output_dir.EqualTo(""))
+    buildDir = "bin";
+  else
+    buildDir = output_dir;
+  TString analysesDir;
+  if (analyses_dir.EqualTo(""))
+    analysesDir = "analyses";
+  else 
+    analysesDir = analyses_dir;
+  TString incSuffix;
+  if (header_suffix.EqualTo(""))
+    incSuffix = "h";
+  else
+    incSuffix = header_suffix;
+  TString srcSuffix;
+  if (source_suffix.EqualTo(""))
+    srcSuffix = "cxx";
+  else
+    srcSuffix = source_suffix;
   TString objSuffix("o");
   TString temp(analysis_src);
-  TString exeName(exe_name.EqualTo("") ? temp.Remove(temp.Last('.'), temp.Length()) : exe_name);
+  TString exeName;
+  if (exe_name.EqualTo(""))
+    exeName = temp.Remove(temp.Last('.'), temp.Length());
+  else
+    exeName = exe_name;
   TString linkPathFlag;
   TString includePathString;
   TString analysesPathString;
@@ -91,12 +128,11 @@ CompileAnalysis (TString HAL_dir,             // Directory of HAL framework
   srcPathString = srcDir;
   srcPathString = gSystem->PrependPathName(currentDir.Data(), srcPathString);
   includePathString = incDir;
-  includePathString = gSystem->PrependPathName(currentDir.Data(), includePathString);
   includePathFlag = includePathString;
   includePathFlag.Prepend("-I");
   HAL_IncDir.Prepend(" -I");
   includePathFlag.Append(HAL_IncDir.Data());
-  if (user_inc_flag.CompareTo(""))
+  if (user_inc_flag.CompareTo("")) // evaluates to false is user_inc_flag != ""
     includePathFlag.Prepend(" ").Prepend(user_inc_flag);
   buildPathString = buildDir;
   buildPathString = gSystem->PrependPathName(currentDir.Data(), buildPathString);
@@ -171,3 +207,4 @@ CompileAnalysis (TString HAL_dir,             // Directory of HAL framework
   //  std::cout << "Success!" << std::endl;
 
 }
+

@@ -33,35 +33,35 @@ int main(int argc, char *argv[]) {
   //      "pyalgo", 
   //      "PythonAlgo"));
   a.AddAlgo(new HAL::Algorithms::ImportParticle("jets", "import basic jet objects"));
-  //a.AddAlgo(new HAL::Algorithms::ImportParticle("mc", "import basic Monte Carlo objects"));
-  //a.AddAlgo(new HAL::Algorithms::AttachAttribute("mc charge att", "attach charge to mc particles", 
-  //                                               "mc", 
-  //                                               "mc_test_charge"));
+  a.AddAlgo(new HAL::Algorithms::ImportParticle("mc", "import basic Monte Carlo objects"));
+  a.AddAlgo(new HAL::Algorithms::AttachAttribute("mc charge att", "attach charge to mc particles", 
+                                                 "mc", 
+                                                 "mc_test_charge"));
 
   a.AddAlgo(new HAL::Algorithms::EmptyCut("number of events", "baseline event number"));
 
-  //a.AddAlgo(new HAL::Algorithms::SelectParticle("mc without charge", "filter on mc without charge", 
-  //                                              "mc charge att", // input algorithm
-  //                                              "mc_test_charge", "==", 0));
-  //a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_5GeV", "filter on mc pt >= 5GeV", 
-  //                                              "mc without charge", // input algorithm
-  //                                              "pt", ">=", 5*GeV)); // pT value
+  a.AddAlgo(new HAL::Algorithms::SelectParticle("mc without charge", "filter on mc without charge", 
+                                                "mc charge att", // input algorithm
+                                                "mc_test_charge", "==", 0));
+  a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_5GeV", "filter on mc pt >= 5GeV", 
+                                                "mc without charge", // input algorithm
+                                                "pt", ">=", 5*GeV)); // pT value
 
-  //a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_neutrinos", "filter on mc id to get neutrinos", 
-  //                                              "mc_5GeV", // input algorithm
-  //                                              "id", 6,
-  //                                              -16, -14, -12, 12, 14, 16)); // id values
+  a.AddAlgo(new HAL::Algorithms::SelectParticle("mc_neutrinos", "filter on mc id to get neutrinos", 
+                                                "mc_5GeV", // input algorithm
+                                                "id", 6,
+                                                -16, -14, -12, 12, 14, 16)); // id values
 
-  //a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("leading pt neutrino", "find highest pt neutrino", 
-  //                                                     "mc_neutrinos", // input algorithm
-  //                                                     1, "pt")); // rank in pt
+  a.AddAlgo(new HAL::Algorithms::SelectRank("leading pt neutrino", "find highest pt neutrino", 
+                                            "mc_neutrinos", // input algorithm
+                                            1, "pt")); // rank in pt
 
-  a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("leading pt jet", "find highest pt jet", 
-                                                       "jets", // input algorithm
-                                                       1, "pt")); // rank in pt
-  a.AddAlgo(new HAL::Algorithms::ParticleRankSelection("subleading pt jet", "find 2nd highest pt jet", 
-                                                       "jets", // input algorithm
-                                                       2, "pt")); // rank in pt
+  a.AddAlgo(new HAL::Algorithms::SelectRank("leading pt jet", "find highest pt jet", 
+                                            "jets", // input algorithm
+                                            1, "pt")); // rank in pt
+  a.AddAlgo(new HAL::Algorithms::SelectRank("subleading pt jet", "find 2nd highest pt jet", 
+                                            "jets", // input algorithm
+                                            2, "pt")); // rank in pt
   a.AddAlgo(new HAL::Algorithms::AttachAttribute("jet pT rank att", "attach pt rank to jets", 
                                                  "jets", 
                                                  "jets_pT_rank", "rank_pt"));
@@ -84,10 +84,10 @@ int main(int argc, char *argv[]) {
                                                    "di-jetfinal", "jets", // input, reference algorithms
                                                    0.4)); // Delta R value
 
-  //a.AddAlgo(new HAL::Algorithms::Cut("di-jet and neutrino existence cut", "make sure 1 dijet exists", 
-  //                                   "and", 2, // logic, number of cuts
-  //                                   "mc_neutrinos", "particle", ">=", 1,
-  //                                   "di-jetfinal", "particle", "==", 1));
+  a.AddAlgo(new HAL::Algorithms::Cut("di-jet and neutrino existence cut", "make sure 1 dijet exists", 
+                                     "and", 2, // logic, number of cuts
+                                     "mc_neutrinos", "particle", ">=", 1,
+                                     "di-jetfinal", "particle", "==", 1));
 
   a.AddAlgo(new HAL::Algorithms::StoreParticle("store di-jet mass", "store the mass of the di-jet system", 
                                                "di-jetfinal", "m", "dijet_mass")); // input, type, branch
@@ -95,8 +95,8 @@ int main(int argc, char *argv[]) {
                                                "di-jetfinal", "all", "dijet")); // input, type, branch
   a.AddAlgo(new HAL::Algorithms::StoreParticle("store jets", "store jets", 
                                                "jet pT rank att", "all", "jets", "exam")); // input, type, branch, tree
-  //a.AddAlgo(new HAL::Algorithms::StoreParticle("store neutrinos", "store Monte Carlo neutrinos", 
-  //                                             "mc_neutrinos", "all", "neutrinos", "test")); // input, type, branch, tree
+  a.AddAlgo(new HAL::Algorithms::StoreParticle("store neutrinos", "store Monte Carlo neutrinos", 
+                                               "mc_neutrinos", "all", "neutrinos", "test")); // input, type, branch, tree
   
   // Assign any branch maps
   //a.MapBranch("jet_AntiKt4TruthJets_n", "jets:nentries");
@@ -118,13 +118,13 @@ int main(int argc, char *argv[]) {
   a.MapBranch("Jet.Phi", "jets:phi");
   a.MapBranch("Jet.Mass", "jets:m");
   //a.MapBranch("Particle_size", "mc:nentries");
-  //a.MapBranch("Particle.PT", "mc:pt");
-  //a.MapBranch("Particle.Eta", "mc:eta");
-  //a.MapBranch("Particle.Phi", "mc:phi");
-  //a.MapBranch("Particle.Mass", "mc:m");
-  //a.MapBranch("Particle.PID", "mc:id");
-  //a.MapBranch("Particle.Charge", "mc:charge");
-  //a.MapBranch("Particle.Charge", "mc charge att:value");
+  a.MapBranch("Particle.PT", "mc:pt");
+  a.MapBranch("Particle.Eta", "mc:eta");
+  a.MapBranch("Particle.Phi", "mc:phi");
+  a.MapBranch("Particle.Mass", "mc:m");
+  a.MapBranch("Particle.PID", "mc:id");
+  a.MapBranch("Particle.Charge", "mc:charge");
+  a.MapBranch("Particle.Charge", "mc charge att:value");
 
   //a.MapBranch("pt_j", "jets:pT");
   //a.MapBranch("eta_j", "jets:eta");
