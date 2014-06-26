@@ -22,7 +22,7 @@ var hierarchy =
         [ "HAL::Algorithms::ImportParticle", "class_h_a_l_1_1_algorithms_1_1_import_particle.html", null ]
       ] ],
       [ "HAL::internal::NthElementAlgo", null, [
-        [ "HAL::Algorithms::ParticleRankSelection", "class_h_a_l_1_1_algorithms_1_1_particle_rank_selection.html", null ]
+        [ "HAL::Algorithms::SelectRank", "class_h_a_l_1_1_algorithms_1_1_select_rank.html", null ]
       ] ],
       [ "HAL::internal::ParticlesTLVStore", null, [
         [ "HAL::Algorithms::StoreParticle", "class_h_a_l_1_1_algorithms_1_1_store_particle.html", null ]
@@ -58,8 +58,5 @@ var hierarchy =
       [ "HAL::AnalysisTreeReader", "class_h_a_l_1_1_analysis_tree_reader.html", null ],
       [ "HAL::GenericData", "class_h_a_l_1_1_generic_data.html", null ],
       [ "HAL::GenericParticle", "class_h_a_l_1_1_generic_particle.html", null ]
-    ] ],
-    [ "TSelector", null, [
-      [ "HAL::AnalysisSelector", "class_h_a_l_1_1_analysis_selector.html", null ]
     ] ]
 ];

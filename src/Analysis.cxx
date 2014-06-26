@@ -1,71 +1,142 @@
 #include <HAL/Analysis.h>
+#include <TChain.h>
+#include <TTree.h>
+#include <TLeaf.h>
+#include <TObjString.h>
+#include <TMap.h>
+#include <HAL/Algorithm.h>
+#include <HAL/AnalysisSelector.h>
 
 ClassImp(HAL::Analysis);
 
 namespace HAL
 {
 
+//______________________________________________________________________________
 Analysis::Analysis (TString name, TString title, TString treeName) : 
   fChain(new TChain()), fAnalysisFlow(new Algorithm(name.Data(), title.Data())), 
-  fAnalizer(new AnalysisSelector(fAnalysisFlow)), fBranchMap(new TMap()) {
+  fAnalizer(new AnalysisSelector(fAnalysisFlow)), fBranchMap(new TMap()) 
+{
   fChain->SetName(treeName.Data());
-  fAnalizer->fChain = fChain;
+  fAnalizer->SetTree(fChain);
 }
 
-Analysis::~Analysis () {
+//______________________________________________________________________________
+Analysis::~Analysis () 
+{
   fAnalysisFlow->DeleteAlgos();
   delete fAnalysisFlow;
   delete fAnalizer;
   delete fBranchMap;
 }
 
-void Analysis::AddAlgo (Algorithm *a) {
+//______________________________________________________________________________
+void Analysis::AddAlgo (Algorithm *a) 
+{
   fAnalysisFlow->Add(a);
 }
 
-void Analysis::PrintAnalysisFlow () {
+//______________________________________________________________________________
+void Analysis::PrintAnalysisFlow () 
+{
   fAnalysisFlow->ls();
 }
 
-void Analysis::SetTreeObjectName (TString name) {
+//______________________________________________________________________________
+void Analysis::PrintCounterSummary () 
+{
+  fAnalysisFlow->CounterSummary();
+}
+
+//______________________________________________________________________________
+void Analysis::PrintCutReport () 
+{
+  fAnalysisFlow->CutReport();
+}
+
+//______________________________________________________________________________
+void Analysis::SetTreeObjectName (TString name) 
+{
   fChain->SetName(name.Data());
 }
 
-void Analysis::SetAnalysisName (TString name) {
+//______________________________________________________________________________
+void Analysis::SetAnalysisName (TString name) 
+{
   fAnalysisFlow->SetName(name.Data());
 }
 
-void Analysis::SetAnalysisTitle (TString title) {
+//______________________________________________________________________________
+void Analysis::SetAnalysisTitle (TString title) 
+{
   fAnalysisFlow->SetTitle(title.Data());
 }
 
-Int_t Analysis::AddFiles (TString fnames, Long64_t nentries) {
+//______________________________________________________________________________
+Int_t Analysis::AddFiles (TString fnames, Long64_t nentries) 
+{
   return fChain->Add(fnames.Data(), nentries);
 }
 
-Int_t Analysis::AddFiles (TChain *fchain) {
+//______________________________________________________________________________
+Int_t Analysis::AddFiles (TChain *fchain) 
+{
   return fChain->Add(fchain);
 }
 
-void Analysis::PrintTree (Option_t *option) {
+//______________________________________________________________________________
+void Analysis::SetOutputFileName (TString fname) 
+{
+  fAnalizer->SetOutputFileName(fname);
+}
+
+//______________________________________________________________________________
+void Analysis::SetOutputTreeName (TString tname) 
+{
+  fAnalizer->SetOutputTreeName(tname);
+}
+
+//______________________________________________________________________________
+void Analysis::SetOutputTreeDescription (TString tdescription) 
+{
+  fAnalizer->SetOutputTreeDescription(tdescription);
+}
+
+//______________________________________________________________________________
+void Analysis::SetMessagePeriod (unsigned p) 
+{
+  fAnalizer->SetMessagePeriod(p);
+}
+
+//______________________________________________________________________________
+void Analysis::PrintTree (Option_t *option) 
+{
   fChain->Print(option);
 }
 
-const char* Analysis::GetLeafType (TString leafname) {
-  return fChain->GetLeaf(leafname.Data())->GetTypeName();
+//______________________________________________________________________________
+TString Analysis::GetLeafType (TString leafname) 
+{
+  return TString(fChain->GetLeaf(leafname.Data())->GetTypeName());
 }
 
-const char* Analysis::GetLeafType (TString branchname, TString leafname) {
-  return fChain->GetLeaf(branchname.Data(), leafname.Data())->GetTypeName();
+//______________________________________________________________________________
+TString Analysis::GetLeafType (TString branchname, TString leafname) 
+{
+  return TString(fChain->GetLeaf(branchname.Data(), leafname.Data())->GetTypeName());
 }
 
-void Analysis::MapBranch (TString branchname, TString nickname) {
+//______________________________________________________________________________
+void Analysis::MapBranch (TString branchname, TString nickname) 
+{
   fBranchMap->Add(new TObjString(nickname.Data()), new TObjString(branchname.Data()));
 }
 
+//______________________________________________________________________________
 Long64_t Analysis::Process (Option_t* option, 
-    Long64_t nentries, Long64_t firstentry) {
-  fAnalizer->fBranchMap = fBranchMap;
+                            Long64_t nentries, Long64_t firstentry) 
+{
+  fAnalizer->SetBranchMap(fBranchMap);
   PrintAnalysisFlow();
   return fChain->Process(fAnalizer, option, nentries, firstentry);
 }

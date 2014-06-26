@@ -1,12 +1,18 @@
 #include <HAL/GenericParticle.h>
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+#include <aux/boost/foreach.hpp>
+#endif
+#include <TLorentzVector.h>
 
 ClassImp(HAL::GenericParticle);
 
 namespace HAL
 {
 
+//______________________________________________________________________________
 HAL::GenericParticle::GenericParticle (const TString &owner, const TString &origin, const TString &name) : 
-  fOwner(owner), fOwnerIndex(0), fOriginIndex(0), fID(0), fCharge(0.0), fP(NULL) {
+  fOwner(owner), fOwnerIndex(0), fOriginIndex(0), fID(0), fCharge(0.0), fP(nullptr) 
+{
 
   if(origin.EqualTo("")) 
     fOrigin = fOwner;
@@ -16,8 +22,10 @@ HAL::GenericParticle::GenericParticle (const TString &owner, const TString &orig
     SetName(name.Data());
 }
 
+//______________________________________________________________________________
 HAL::GenericParticle::GenericParticle (const GenericParticle &particle) : 
-  TNamed() {
+  TNamed() 
+{
   fOwner = particle.fOwner;
   fOrigin = particle.fOrigin;
   fOwnerIndex = particle.fOwnerIndex;
@@ -29,17 +37,23 @@ HAL::GenericParticle::GenericParticle (const GenericParticle &particle) :
   f1DParticles = particle.f1DParticles;
 }
 
-HAL::GenericParticle::~GenericParticle () {
+//______________________________________________________________________________
+HAL::GenericParticle::~GenericParticle () 
+{
   if (fP) delete fP;
 }
 
-void HAL::GenericParticle::SetAttribute (const TString &name, const long double &value) {
+//______________________________________________________________________________
+void HAL::GenericParticle::SetAttribute (const TString &name, const long double &value) 
+{
   fScalarAttributes[name] = value;
 }
 
+//______________________________________________________________________________
 void HAL::GenericParticle::SetParticle (const TString &name, 
                                         GenericParticle *particle, 
-                                        const long long &index) {
+                                        const long long &index) 
+{
   if (index == -1)
     f1DParticles[name].push_back(particle);
   else
@@ -47,12 +61,16 @@ void HAL::GenericParticle::SetParticle (const TString &name,
   std::stable_sort(f1DParticles[name].begin(), f1DParticles[name].end());
 }
 
-void HAL::GenericParticle::SetParticles (const TString &name, std::vector<GenericParticle*> &particles) {
+//______________________________________________________________________________
+void HAL::GenericParticle::SetParticles (const TString &name, std::vector<GenericParticle*> &particles) 
+{
   f1DParticles[name] = particles;
   std::stable_sort(f1DParticles[name].begin(), f1DParticles[name].end());
 }
 
-bool HAL::GenericParticle::HasSameParticles (const TString &name, ParticlePtr particle) {
+//______________________________________________________________________________
+bool HAL::GenericParticle::HasSameParticles (const TString &name, ParticlePtr particle) 
+{
   size_t n = GetNParticles(name);
   size_t m = particle->GetNParticles(name);
 
@@ -65,13 +83,15 @@ bool HAL::GenericParticle::HasSameParticles (const TString &name, ParticlePtr pa
   return false;
 }
 
-std::ostream& operator<<(std::ostream& os, const HAL::GenericParticle &particle) {
+//______________________________________________________________________________
+std::ostream& operator<<(std::ostream& os, const HAL::GenericParticle &particle) 
+{
   os << "Origin: " << particle.fOrigin << "\t\tIndex: " << particle.fOriginIndex << std::endl;
   os << "Owner: " << particle.fOwner << "\t\tIndex: " << particle.fOwnerIndex << std::endl;
   os << "ID: " << particle.fID << "\t\tCharge: " << particle.fCharge << std::endl;
   os.precision(4);
   os << std::scientific;
-  if (particle.fP != NULL) {
+  if (particle.fP != nullptr) {
     os << "4-vector properties:\n\tpT\t\teta\t\tphi\t\tmass\t\tenergy\n"
        << "\t" << particle.fP->Pt() << "\t" << particle.fP->Eta() << "\t" << particle.fP->Phi()
        << "\t" << particle.fP->M() << "\t" << particle.fP->E() << "\n";

@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['vecaddreco',['VecAddReco',['../class_h_a_l_1_1_algorithms_1_1_vec_add_reco.html',1,'HAL::Algorithms']]],
-  ['vecaddreco',['VecAddReco',['../class_h_a_l_1_1_algorithms_1_1_vec_add_reco.html#a50faa627aa37f90ac35eccb3f24fb851',1,'HAL::Algorithms::VecAddReco']]],
-  ['vecaddreco_2eh',['VecAddReco.h',['../_vec_add_reco_8h.html',1,'']]]
+  ['terminate',['Terminate',['../class_h_a_l_1_1_algorithm.html#ab974f3b6336b7b1002c72c04ad2b59cb',1,'HAL::Algorithm']]],
+  ['todo_20list',['Todo List',['../todo.html',1,'']]]
 ];

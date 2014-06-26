@@ -13,16 +13,76 @@ Inheritance diagram for H\+A\+L\+:\+:Python\+Algorithm\+:\begin{figure}[H]
 \hypertarget{class_h_a_l_1_1_python_algorithm_a91ca9d7b2a002013b5dd27951aca3678}{{\bfseries Python\+Algorithm} (T\+String name=\char`\"{}\char`\"{}, T\+String title=\char`\"{}\char`\"{}, T\+String Py\+Path=\char`\"{}\char`\"{}, T\+String Py\+File=\char`\"{}\char`\"{}, T\+String Py\+Class=\char`\"{}\char`\"{}, Py\+Object $\ast$self=0)}\label{class_h_a_l_1_1_python_algorithm_a91ca9d7b2a002013b5dd27951aca3678}
 
 \item 
-\hypertarget{class_h_a_l_1_1_python_algorithm_a951c827d0f926b5096f7e59accc1e007}{virtual void {\bfseries Init} (Option\+\_\+t $\ast$options=\char`\"{}\char`\"{})}\label{class_h_a_l_1_1_python_algorithm_a951c827d0f926b5096f7e59accc1e007}
-
-\item 
-\hypertarget{class_h_a_l_1_1_python_algorithm_a64a70202dd5da390ab6654a7e33c5976}{virtual void {\bfseries Exec} (Option\+\_\+t $\ast$options=\char`\"{}\char`\"{})}\label{class_h_a_l_1_1_python_algorithm_a64a70202dd5da390ab6654a7e33c5976}
-
-\item 
-\hypertarget{class_h_a_l_1_1_python_algorithm_aac72e398eadd979cf62617fe2fbe1a01}{virtual void {\bfseries Clear} (Option\+\_\+t $\ast$options=\char`\"{}\char`\"{})}\label{class_h_a_l_1_1_python_algorithm_aac72e398eadd979cf62617fe2fbe1a01}
-
-\end{DoxyCompactItemize}
+virtual void \hyperlink{class_h_a_l_1_1_python_algorithm_a951c827d0f926b5096f7e59accc1e007}{Init} (Option\+\_\+t $\ast$options=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Init method. \end{DoxyCompactList}\item 
+virtual void \hyperlink{class_h_a_l_1_1_python_algorithm_a64a70202dd5da390ab6654a7e33c5976}{Exec} (Option\+\_\+t $\ast$options=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Process method. \end{DoxyCompactList}\item 
+virtual void \hyperlink{class_h_a_l_1_1_python_algorithm_aac72e398eadd979cf62617fe2fbe1a01}{Clear} (Option\+\_\+t $\ast$options=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Process method. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Additional Inherited Members}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_h_a_l_1_1_python_algorithm_aac72e398eadd979cf62617fe2fbe1a01}{\index{H\+A\+L\+::\+Python\+Algorithm@{H\+A\+L\+::\+Python\+Algorithm}!Clear@{Clear}}
+\index{Clear@{Clear}!H\+A\+L\+::\+Python\+Algorithm@{H\+A\+L\+::\+Python\+Algorithm}}
+\subsubsection[{Clear}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Python\+Algorithm\+::\+Clear (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{ = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{class_h_a_l_1_1_python_algorithm_aac72e398eadd979cf62617fe2fbe1a01}
+
+
+Hook into the T\+Selector\+::\+Process method. 
+
+This method allows the algorithm operate at the second part of the 'Process' stage of processing a T\+Tree. This is meant for any per-\/event memory management. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \hyperlink{class_h_a_l_1_1_algorithm_a2a26a5549e92efaa968763ac51e6758a}{H\+A\+L\+::\+Algorithm}.
+
+\hypertarget{class_h_a_l_1_1_python_algorithm_a64a70202dd5da390ab6654a7e33c5976}{\index{H\+A\+L\+::\+Python\+Algorithm@{H\+A\+L\+::\+Python\+Algorithm}!Exec@{Exec}}
+\index{Exec@{Exec}!H\+A\+L\+::\+Python\+Algorithm@{H\+A\+L\+::\+Python\+Algorithm}}
+\subsubsection[{Exec}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Python\+Algorithm\+::\+Exec (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{ = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{class_h_a_l_1_1_python_algorithm_a64a70202dd5da390ab6654a7e33c5976}
+
+
+Hook into the T\+Selector\+::\+Process method. 
+
+This method allows the algorithm operate at the first part of the 'Process' stage of processing a T\+Tree. This where most of the logic of an algorithm will likely be contained. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \hyperlink{class_h_a_l_1_1_algorithm_a438c5c54698aa014b660474d08703bc2}{H\+A\+L\+::\+Algorithm}.
+
+\hypertarget{class_h_a_l_1_1_python_algorithm_a951c827d0f926b5096f7e59accc1e007}{\index{H\+A\+L\+::\+Python\+Algorithm@{H\+A\+L\+::\+Python\+Algorithm}!Init@{Init}}
+\index{Init@{Init}!H\+A\+L\+::\+Python\+Algorithm@{H\+A\+L\+::\+Python\+Algorithm}}
+\subsubsection[{Init}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Python\+Algorithm\+::\+Init (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{ = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [virtual]}}}\label{class_h_a_l_1_1_python_algorithm_a951c827d0f926b5096f7e59accc1e007}
+
+
+Hook into the T\+Selector\+::\+Init method. 
+
+This method allows the algorithm operate at the 'Init' stage of processing a T\+Tree. This method is called when a new T\+Tree is being prepared for processing. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \hyperlink{class_h_a_l_1_1_algorithm_abe2da2ce6a2d3ccfb492d8afd1d07331}{H\+A\+L\+::\+Algorithm}.
+
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

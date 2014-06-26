@@ -1,14 +1,16 @@
-#ifndef HAL_GENERICPARTICLE
-#define HAL_GENERICPARTICLE
+#ifndef HAL_GenericParticle
+#define HAL_GenericParticle
 
-#include <TNamed.h>
-#include <TString.h>
-#include <TLorentzVector.h>
 #include <vector>
 #include <map>
 #include <iostream>
+#include <TNamed.h>
+#include <TString.h>
 #include <HAL/Common.h>
-#include <HAL/Exceptions.h>
+
+// forward declaration(s)
+class TLorentzVector;
+// end forward declaration(s)
 
 namespace HAL
 {
@@ -26,6 +28,17 @@ typedef ParticlePtrs::iterator        ParticlePtrsIt;
 typedef ParticlePtrs::const_iterator  ParticlePtrsConstIt;
 
 class GenericParticle : public TNamed {
+private:
+  TString                                      fOwner; // what algorithm made this particle
+  TString                                      fOrigin; // what algorithm first made this particle
+  size_t                                       fOwnerIndex, fOriginIndex;
+  int                                          fID;
+  float                                        fCharge;
+  TLorentzVector                              *fP;
+  std::map<TString, long double, internal::string_cmp>    fScalarAttributes;
+  // the following is for parent/child lists etc...
+  std::map<TString, ParticlePtrs, internal::string_cmp>   f1DParticles;
+
 public:
   GenericParticle (const TString &owner, const TString &origin = "", const TString &name = "");
   GenericParticle (const GenericParticle &particle);
@@ -63,17 +76,6 @@ public:
   friend std::ostream& operator<<(std::ostream& os, const GenericParticle &particle);
   
   ClassDef(GenericParticle, 0);
-
-private:
-  TString                                      fOwner; // what algorithm made this particle
-  TString                                      fOrigin; // what algorithm first made this particle
-  size_t                                       fOwnerIndex, fOriginIndex;
-  int                                          fID;
-  float                                        fCharge;
-  TLorentzVector                              *fP;
-  std::map<TString, long double, internal::string_cmp>    fScalarAttributes;
-  // the following is for parent/child lists etc...
-  std::map<TString, ParticlePtrs, internal::string_cmp>   f1DParticles;
 };
 
 std::ostream& operator<<(std::ostream& os, const HAL::GenericParticle &particle);

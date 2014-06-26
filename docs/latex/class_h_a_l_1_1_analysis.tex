@@ -1,6 +1,15 @@
 \hypertarget{class_h_a_l_1_1_analysis}{\section{H\+A\+L\+:\+:Analysis Class Reference}
 \label{class_h_a_l_1_1_analysis}\index{H\+A\+L\+::\+Analysis@{H\+A\+L\+::\+Analysis}}
 }
+
+
+Main class that organizes and drives the analysis.  
+
+
+
+
+{\ttfamily \#include $<$Analysis.\+h$>$}
+
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
@@ -49,10 +58,10 @@
 \hypertarget{class_h_a_l_1_1_analysis_afccfbae795035cfe75578fa805aefa93}{void {\bfseries Print\+Tree} (Option\+\_\+t $\ast$option=\char`\"{}\char`\"{})}\label{class_h_a_l_1_1_analysis_afccfbae795035cfe75578fa805aefa93}
 
 \item 
-\hypertarget{class_h_a_l_1_1_analysis_a7c6603a4cc7b74591f5c0427f59023d5}{const char $\ast$ {\bfseries Get\+Leaf\+Type} (T\+String leafname)}\label{class_h_a_l_1_1_analysis_a7c6603a4cc7b74591f5c0427f59023d5}
+\hypertarget{class_h_a_l_1_1_analysis_a0ec08d57790b889e20df8c0076b89858}{T\+String {\bfseries Get\+Leaf\+Type} (T\+String leafname)}\label{class_h_a_l_1_1_analysis_a0ec08d57790b889e20df8c0076b89858}
 
 \item 
-\hypertarget{class_h_a_l_1_1_analysis_a8410426a53f7828270531f1ec56340b8}{const char $\ast$ {\bfseries Get\+Leaf\+Type} (T\+String branchname, T\+String leafname)}\label{class_h_a_l_1_1_analysis_a8410426a53f7828270531f1ec56340b8}
+\hypertarget{class_h_a_l_1_1_analysis_af4078713adc278e90495f61fa8759b83}{T\+String {\bfseries Get\+Leaf\+Type} (T\+String branchname, T\+String leafname)}\label{class_h_a_l_1_1_analysis_af4078713adc278e90495f61fa8759b83}
 
 \item 
 \hypertarget{class_h_a_l_1_1_analysis_a6e11fa65e712377587ed4b6a1a62c8aa}{void {\bfseries Map\+Branch} (T\+String branchname, T\+String nickname)}\label{class_h_a_l_1_1_analysis_a6e11fa65e712377587ed4b6a1a62c8aa}
@@ -60,9 +69,17 @@
 \item 
 \hypertarget{class_h_a_l_1_1_analysis_a4278a2e961076913371dec71da389701}{Long64\+\_\+t {\bfseries Process} (Option\+\_\+t $\ast$option=\char`\"{}\char`\"{}, Long64\+\_\+t nentries=1234567890, Long64\+\_\+t firstentry=0)}\label{class_h_a_l_1_1_analysis_a4278a2e961076913371dec71da389701}
 
+\item 
+\hypertarget{class_h_a_l_1_1_analysis_a93329a47d272937c655b41a414ff307e}{{\bfseries Class\+Def\+N\+V} (\hyperlink{class_h_a_l_1_1_analysis}{Analysis}, 0)}\label{class_h_a_l_1_1_analysis_a93329a47d272937c655b41a414ff307e}
+
 \end{DoxyCompactItemize}
 
 
+\subsection{Detailed Description}
+Main class that organizes and drives the analysis. 
+
+This class is the main interface for configuring the analysis. The user can specify the input tree name, the files to process, the output file name, the default output tree name, any required branch maps, and the processing details. This class can also print the input tree, configure the processing messages, and print the data type of a leaf. Most inportantly, this class loads the algorithms that will be processes. 
+
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/\+Users/jhetherly/src/\+H\+A\+L-\/\+R\+O\+O\+T/include/\+H\+A\+L/Analysis.\+h\end{DoxyCompactItemize}
+/\+Users/jhetherly/src/\+H\+A\+L-\/\+R\+O\+O\+T/include/\+H\+A\+L/\hyperlink{_analysis_8h}{Analysis.\+h}\end{DoxyCompactItemize}

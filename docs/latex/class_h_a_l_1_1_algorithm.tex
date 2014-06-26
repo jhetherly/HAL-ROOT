@@ -1,6 +1,15 @@
 \hypertarget{class_h_a_l_1_1_algorithm}{\section{H\+A\+L\+:\+:Algorithm Class Reference}
 \label{class_h_a_l_1_1_algorithm}\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
 }
+
+
+Base class for all analysis algorithms.  
+
+
+
+
+{\ttfamily \#include $<$Algorithm.\+h$>$}
+
 Inheritance diagram for H\+A\+L\+:\+:Algorithm\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -10,132 +19,60 @@ Inheritance diagram for H\+A\+L\+:\+:Algorithm\+:\begin{figure}[H]
 \subsection*{Public Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{class_h_a_l_1_1_algorithm_a50506c07b5959ecd740f5683bf50ea93}{{\bfseries Algorithm} (T\+String name=\char`\"{}\char`\"{}, T\+String title=\char`\"{}\char`\"{})}\label{class_h_a_l_1_1_algorithm_a50506c07b5959ecd740f5683bf50ea93}
+\hyperlink{class_h_a_l_1_1_algorithm_a50506c07b5959ecd740f5683bf50ea93}{Algorithm} (T\+String name=\char`\"{}\char`\"{}, T\+String title=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Constructor. \end{DoxyCompactList}\item 
+\hyperlink{class_h_a_l_1_1_algorithm_a77b66292cc2f8e021ed819daebbd7c51}{Algorithm} (const \hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} \&algo)
+\begin{DoxyCompactList}\small\item\em Copy Constructor. \end{DoxyCompactList}\item 
+void \hyperlink{class_h_a_l_1_1_algorithm_a6e6834d936897cd573ce858d9b26150e}{Add} (\hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} $\ast$algo)
+\begin{DoxyCompactList}\small\item\em Attach another algorithm to this one. \end{DoxyCompactList}\item 
+void \hyperlink{class_h_a_l_1_1_algorithm_a0b2b7e0a90824e7c2ed31fd8fc299d61}{Abort} ()
+\begin{DoxyCompactList}\small\item\em Cease further sub-\/algorithm execution. \end{DoxyCompactList}\item 
+void \hyperlink{class_h_a_l_1_1_algorithm_a7fd35cf6dc1962b58e48905b178c1747}{Add\+Data} (T\+String name, T\+Object $\ast$obj)
+\begin{DoxyCompactList}\small\item\em Attach an object to the common data store. \end{DoxyCompactList}\item 
+T\+Object $\ast$ \hyperlink{class_h_a_l_1_1_algorithm_ae9b228550b42524824f7119604df1add}{Get\+Data} (T\+String name)
+\begin{DoxyCompactList}\small\item\em Retrieve an object to the common data store. \end{DoxyCompactList}\item 
+Bool\+\_\+t \hyperlink{class_h_a_l_1_1_algorithm_a6609ea9ac6dbc42adb5b110a41201c9a}{Check\+Data} (T\+String name)
+\begin{DoxyCompactList}\small\item\em Check the on object of a given name is stored in the common data store. \end{DoxyCompactList}\item 
+void \hyperlink{class_h_a_l_1_1_algorithm_af0211270f880699c5a260754bbaa9640}{Delete\+Data} (T\+String name)
+\begin{DoxyCompactList}\small\item\em Remove an object from the common data store. \end{DoxyCompactList}\item 
+\hyperlink{class_h_a_l_1_1_analysis_tree_reader}{Analysis\+Tree\+Reader} $\ast$ \hyperlink{class_h_a_l_1_1_algorithm_ae80d02cd08ddc48a82f217af77ffde20}{Get\+Raw\+Data} ()
+\begin{DoxyCompactList}\small\item\em Convenience function for retrieving the \hyperlink{class_h_a_l_1_1_analysis_tree_reader}{Analysis\+Tree\+Reader} object. \end{DoxyCompactList}\item 
+\hyperlink{class_h_a_l_1_1_analysis_data}{Analysis\+Data} $\ast$ \hyperlink{class_h_a_l_1_1_algorithm_ae9b7d3532acfaed9b502bd462bd22c94}{Get\+User\+Data} ()
+\begin{DoxyCompactList}\small\item\em Convenience function for retrieving the \hyperlink{class_h_a_l_1_1_analysis_data}{Analysis\+Data} object. \end{DoxyCompactList}\item 
+\hyperlink{class_h_a_l_1_1_analysis_tree_writer}{Analysis\+Tree\+Writer} $\ast$ \hyperlink{class_h_a_l_1_1_algorithm_af6233cfbe13ce76207a98b12d4da6f16}{Get\+User\+Output} ()
+\begin{DoxyCompactList}\small\item\em Convenience function for retrieving the \hyperlink{class_h_a_l_1_1_analysis_tree_writer}{Analysis\+Tree\+Writer} object. \end{DoxyCompactList}\item 
+\hypertarget{class_h_a_l_1_1_algorithm_a0a3b6fa6eb3cf0063187c2b442f64ae8}{T\+String \hyperlink{class_h_a_l_1_1_algorithm_a0a3b6fa6eb3cf0063187c2b442f64ae8}{Get\+Name} ()}\label{class_h_a_l_1_1_algorithm_a0a3b6fa6eb3cf0063187c2b442f64ae8}
 
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a77b66292cc2f8e021ed819daebbd7c51}{{\bfseries Algorithm} (const \hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} \&algo)}\label{class_h_a_l_1_1_algorithm_a77b66292cc2f8e021ed819daebbd7c51}
+\begin{DoxyCompactList}\small\item\em Retrieves the name of this algorithm. \end{DoxyCompactList}\item 
+\hypertarget{class_h_a_l_1_1_algorithm_a9245bfda990ffdbde86cc56bcacd5b72}{T\+String \hyperlink{class_h_a_l_1_1_algorithm_a9245bfda990ffdbde86cc56bcacd5b72}{Get\+Title} ()}\label{class_h_a_l_1_1_algorithm_a9245bfda990ffdbde86cc56bcacd5b72}
 
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a6e6834d936897cd573ce858d9b26150e}{void {\bfseries Add} (\hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} $\ast$algo)}\label{class_h_a_l_1_1_algorithm_a6e6834d936897cd573ce858d9b26150e}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_aaadc2f897f854c3808753fe8bdc88507}{void {\bfseries ls} ()}\label{class_h_a_l_1_1_algorithm_aaadc2f897f854c3808753fe8bdc88507}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_ac6dda46e3df39cc169aaf95ced0507df}{void {\bfseries Counter\+Summary} ()}\label{class_h_a_l_1_1_algorithm_ac6dda46e3df39cc169aaf95ced0507df}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_ae989038537a82ae182821bf32036a15b}{void {\bfseries Cut\+Report} ()}\label{class_h_a_l_1_1_algorithm_ae989038537a82ae182821bf32036a15b}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a5a25656c41939992b7a701f9f6c22476}{void {\bfseries Delete\+Algos} ()}\label{class_h_a_l_1_1_algorithm_a5a25656c41939992b7a701f9f6c22476}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a7815cd340c0800cd2b5567814bbcc40a}{void {\bfseries Set\+Name} (T\+String name)}\label{class_h_a_l_1_1_algorithm_a7815cd340c0800cd2b5567814bbcc40a}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_aa225c7fa0c6fdef7a2807c3eaa225d83}{void {\bfseries Set\+Title} (T\+String title)}\label{class_h_a_l_1_1_algorithm_aa225c7fa0c6fdef7a2807c3eaa225d83}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_ae30243bd1c0691a003d33ba6b02518cc}{void {\bfseries Set\+Output\+File\+Name} (T\+String filename)}\label{class_h_a_l_1_1_algorithm_ae30243bd1c0691a003d33ba6b02518cc}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a0b2b7e0a90824e7c2ed31fd8fc299d61}{void {\bfseries Abort} ()}\label{class_h_a_l_1_1_algorithm_a0b2b7e0a90824e7c2ed31fd8fc299d61}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a77516eeeffb62ed507616ddd006e023c}{void {\bfseries Clean\+Algos} ()}\label{class_h_a_l_1_1_algorithm_a77516eeeffb62ed507616ddd006e023c}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a64a01d69f068ef29f19057d9f4c1b172}{void {\bfseries Execute\+Algo} (Option\+\_\+t $\ast$option=\char`\"{}0\char`\"{})}\label{class_h_a_l_1_1_algorithm_a64a01d69f068ef29f19057d9f4c1b172}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_aaf9d9ecdf99c327ec4de93cd5930d3c4}{void {\bfseries Execute\+Algos} (Option\+\_\+t $\ast$option)}\label{class_h_a_l_1_1_algorithm_aaf9d9ecdf99c327ec4de93cd5930d3c4}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_aeb9b42850a64b3c25e7035e04c68a508}{void {\bfseries Initialize\+Algo} (Option\+\_\+t $\ast$option)}\label{class_h_a_l_1_1_algorithm_aeb9b42850a64b3c25e7035e04c68a508}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_af988397097b2a83fae058744d3a909a6}{void {\bfseries Begin\+Algo} (Option\+\_\+t $\ast$option)}\label{class_h_a_l_1_1_algorithm_af988397097b2a83fae058744d3a909a6}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a82cc758128d3745ba8c91f38c4aa4d15}{void {\bfseries Slave\+Begin\+Algo} (Option\+\_\+t $\ast$option)}\label{class_h_a_l_1_1_algorithm_a82cc758128d3745ba8c91f38c4aa4d15}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a205e6c98e7b7dfca647edadaa1d159e8}{void {\bfseries Notify\+Algo} (Option\+\_\+t $\ast$option)}\label{class_h_a_l_1_1_algorithm_a205e6c98e7b7dfca647edadaa1d159e8}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_ae9b629cebefe6ac8629dd6a2e66d05d6}{void {\bfseries Slave\+Terminate\+Algo} (Option\+\_\+t $\ast$option)}\label{class_h_a_l_1_1_algorithm_ae9b629cebefe6ac8629dd6a2e66d05d6}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a085a431010582d5040e51ef91e1140f1}{void {\bfseries Terminate\+Algo} (Option\+\_\+t $\ast$option)}\label{class_h_a_l_1_1_algorithm_a085a431010582d5040e51ef91e1140f1}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a7fd35cf6dc1962b58e48905b178c1747}{void {\bfseries Add\+Data} (T\+String name, T\+Object $\ast$obj)}\label{class_h_a_l_1_1_algorithm_a7fd35cf6dc1962b58e48905b178c1747}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_ae9b228550b42524824f7119604df1add}{T\+Object $\ast$ {\bfseries Get\+Data} (T\+String name)}\label{class_h_a_l_1_1_algorithm_ae9b228550b42524824f7119604df1add}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a6609ea9ac6dbc42adb5b110a41201c9a}{Bool\+\_\+t {\bfseries Check\+Data} (T\+String name)}\label{class_h_a_l_1_1_algorithm_a6609ea9ac6dbc42adb5b110a41201c9a}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_af0211270f880699c5a260754bbaa9640}{void {\bfseries Delete\+Data} (T\+String name)}\label{class_h_a_l_1_1_algorithm_af0211270f880699c5a260754bbaa9640}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_aaae65cc70d75b35bbf4a4c987ee5fb46}{void {\bfseries Assign\+Data\+List} (T\+List $\ast$list)}\label{class_h_a_l_1_1_algorithm_aaae65cc70d75b35bbf4a4c987ee5fb46}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_ae80d02cd08ddc48a82f217af77ffde20}{\hyperlink{class_h_a_l_1_1_analysis_tree_reader}{Analysis\+Tree\+Reader} $\ast$ {\bfseries Get\+Raw\+Data} ()}\label{class_h_a_l_1_1_algorithm_ae80d02cd08ddc48a82f217af77ffde20}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_ae9b7d3532acfaed9b502bd462bd22c94}{\hyperlink{class_h_a_l_1_1_analysis_data}{Analysis\+Data} $\ast$ {\bfseries Get\+User\+Data} ()}\label{class_h_a_l_1_1_algorithm_ae9b7d3532acfaed9b502bd462bd22c94}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_af6233cfbe13ce76207a98b12d4da6f16}{\hyperlink{class_h_a_l_1_1_analysis_tree_writer}{Analysis\+Tree\+Writer} $\ast$ {\bfseries Get\+User\+Output} ()}\label{class_h_a_l_1_1_algorithm_af6233cfbe13ce76207a98b12d4da6f16}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a0a3b6fa6eb3cf0063187c2b442f64ae8}{T\+String {\bfseries Get\+Name} ()}\label{class_h_a_l_1_1_algorithm_a0a3b6fa6eb3cf0063187c2b442f64ae8}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a9245bfda990ffdbde86cc56bcacd5b72}{T\+String {\bfseries Get\+Title} ()}\label{class_h_a_l_1_1_algorithm_a9245bfda990ffdbde86cc56bcacd5b72}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_abcc3c96084def439a83bdeb0a86cb1ae}{T\+String {\bfseries Get\+Output\+File\+Name} ()}\label{class_h_a_l_1_1_algorithm_abcc3c96084def439a83bdeb0a86cb1ae}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_ad5a29ecf5e77004fdd807352a15fc730}{void {\bfseries Increase\+Counter} (long long n=1)}\label{class_h_a_l_1_1_algorithm_ad5a29ecf5e77004fdd807352a15fc730}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_ad155a2508e2329c4be12fbe5ec55734a}{long long {\bfseries Get\+Counter} ()}\label{class_h_a_l_1_1_algorithm_ad155a2508e2329c4be12fbe5ec55734a}
+\begin{DoxyCompactList}\small\item\em Retrieves the title of this algorithm. \end{DoxyCompactList}\item 
+\hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} $\ast$ \hyperlink{class_h_a_l_1_1_algorithm_aa7412319fa47fedf880a7d276484d5b3}{Get\+Algorithm} (T\+String name)
+\begin{DoxyCompactList}\small\item\em Retrieves the algorithm or sub-\/algorithm of given name. \end{DoxyCompactList}\item 
+void \hyperlink{class_h_a_l_1_1_algorithm_ac5cb321a9513f6a58312747eb74cf0cb}{Increase\+Counter} (Long64\+\_\+t n=1)
+\begin{DoxyCompactList}\small\item\em Increments the object creation counter for this algorithm. \end{DoxyCompactList}\item 
+\hypertarget{class_h_a_l_1_1_algorithm_a09511e688e6b469d6ab2757728e35960}{{\bfseries Class\+Def} (\hyperlink{class_h_a_l_1_1_algorithm}{Algorithm}, 0)}\label{class_h_a_l_1_1_algorithm_a09511e688e6b469d6ab2757728e35960}
 
 \end{DoxyCompactItemize}
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{class_h_a_l_1_1_algorithm_a6273512af97092a7e50955cb69776d82}{virtual void {\bfseries Begin} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})}\label{class_h_a_l_1_1_algorithm_a6273512af97092a7e50955cb69776d82}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a468feb5807252729c62cce7db7d60b1d}{virtual void {\bfseries Slave\+Begin} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})}\label{class_h_a_l_1_1_algorithm_a468feb5807252729c62cce7db7d60b1d}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_abe2da2ce6a2d3ccfb492d8afd1d07331}{virtual void {\bfseries Init} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})}\label{class_h_a_l_1_1_algorithm_abe2da2ce6a2d3ccfb492d8afd1d07331}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_acbbfee57e6c71ab04047dca6636f2c4f}{virtual void {\bfseries Notify} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})}\label{class_h_a_l_1_1_algorithm_acbbfee57e6c71ab04047dca6636f2c4f}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a438c5c54698aa014b660474d08703bc2}{virtual void {\bfseries Exec} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})}\label{class_h_a_l_1_1_algorithm_a438c5c54698aa014b660474d08703bc2}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a2a26a5549e92efaa968763ac51e6758a}{virtual void {\bfseries Clear} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})}\label{class_h_a_l_1_1_algorithm_a2a26a5549e92efaa968763ac51e6758a}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_a9735cc4d7ef34d440aff116c8dbf5cbb}{virtual void {\bfseries Slave\+Terminate} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})}\label{class_h_a_l_1_1_algorithm_a9735cc4d7ef34d440aff116c8dbf5cbb}
-
-\item 
-\hypertarget{class_h_a_l_1_1_algorithm_ab974f3b6336b7b1002c72c04ad2b59cb}{virtual void {\bfseries Terminate} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})}\label{class_h_a_l_1_1_algorithm_ab974f3b6336b7b1002c72c04ad2b59cb}
-
-\end{DoxyCompactItemize}
+virtual void \hyperlink{class_h_a_l_1_1_algorithm_a6273512af97092a7e50955cb69776d82}{Begin} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Begin method. \end{DoxyCompactList}\item 
+virtual void \hyperlink{class_h_a_l_1_1_algorithm_a468feb5807252729c62cce7db7d60b1d}{Slave\+Begin} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Slave\+Begin method. \end{DoxyCompactList}\item 
+virtual void \hyperlink{class_h_a_l_1_1_algorithm_abe2da2ce6a2d3ccfb492d8afd1d07331}{Init} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Init method. \end{DoxyCompactList}\item 
+virtual void \hyperlink{class_h_a_l_1_1_algorithm_acbbfee57e6c71ab04047dca6636f2c4f}{Notify} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Notify method. \end{DoxyCompactList}\item 
+virtual void \hyperlink{class_h_a_l_1_1_algorithm_a438c5c54698aa014b660474d08703bc2}{Exec} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Process method. \end{DoxyCompactList}\item 
+virtual void \hyperlink{class_h_a_l_1_1_algorithm_a2a26a5549e92efaa968763ac51e6758a}{Clear} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Process method. \end{DoxyCompactList}\item 
+virtual void \hyperlink{class_h_a_l_1_1_algorithm_a9735cc4d7ef34d440aff116c8dbf5cbb}{Slave\+Terminate} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Slave\+Terminate method. \end{DoxyCompactList}\item 
+virtual void \hyperlink{class_h_a_l_1_1_algorithm_ab974f3b6336b7b1002c72c04ad2b59cb}{Terminate} (Option\+\_\+t $\ast$=\char`\"{}\char`\"{})
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Terminate method. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
@@ -145,11 +82,361 @@ Inheritance diagram for H\+A\+L\+:\+:Algorithm\+:\begin{figure}[H]
 \hypertarget{class_h_a_l_1_1_algorithm_a15bbd1834a2413957b2946e051584d49}{T\+String {\bfseries f\+Algorithm\+Type}}\label{class_h_a_l_1_1_algorithm_a15bbd1834a2413957b2946e051584d49}
 
 \item 
-\hypertarget{class_h_a_l_1_1_algorithm_a91a834bebb25ccc2e4324fcaf51bf294}{long long {\bfseries f\+Counter}}\label{class_h_a_l_1_1_algorithm_a91a834bebb25ccc2e4324fcaf51bf294}
+\hypertarget{class_h_a_l_1_1_algorithm_aa1b8acbcfb1019c60a09fec83c979e9a}{Long64\+\_\+t {\bfseries f\+Counter}}\label{class_h_a_l_1_1_algorithm_aa1b8acbcfb1019c60a09fec83c979e9a}
 
 \end{DoxyCompactItemize}
 
 
+\subsection{Detailed Description}
+Base class for all analysis algorithms. 
+
+This class serves as the parent class for all \hyperlink{namespace_h_a_l}{H\+A\+L} analysis and user-\/defined algorithms. It contains hooks for all parts of the calling T\+Selector, i.\+e. Slave\+Begin, Process (through Exec and Clear), Terminate, etc. It also has methods for keeping track of how many objects it creates. Most importantly, this class can pass information to other algorithms through a common data store accessed through string names and a few specilized methods. 
+
+\subsection{Constructor \& Destructor Documentation}
+\hypertarget{class_h_a_l_1_1_algorithm_a50506c07b5959ecd740f5683bf50ea93}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Algorithm@{Algorithm}}
+\index{Algorithm@{Algorithm}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Algorithm}]{\setlength{\rightskip}{0pt plus 5cm}H\+A\+L\+::\+Algorithm\+::\+Algorithm (
+\begin{DoxyParamCaption}
+\item[{T\+String}]{name = {\ttfamily \char`\"{}\char`\"{}}, }
+\item[{T\+String}]{title = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithm_a50506c07b5959ecd740f5683bf50ea93}
+
+
+Constructor. 
+
+Initializes the algorithm with a name and optional title 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the algorithm. This can be used as the input to other algorithms. \\
+\hline
+\mbox{\tt in}  & {\em title} & Description of the algorithm. Can be an empty string. \\
+\hline
+\end{DoxyParams}
+\begin{DoxySeeAlso}{See also}
+\hyperlink{class_h_a_l_1_1_cut_algorithm}{Cut\+Algorithm} 
+\end{DoxySeeAlso}
+\hypertarget{class_h_a_l_1_1_algorithm_a77b66292cc2f8e021ed819daebbd7c51}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Algorithm@{Algorithm}}
+\index{Algorithm@{Algorithm}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Algorithm}]{\setlength{\rightskip}{0pt plus 5cm}H\+A\+L\+::\+Algorithm\+::\+Algorithm (
+\begin{DoxyParamCaption}
+\item[{const {\bf Algorithm} \&}]{algo}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithm_a77b66292cc2f8e021ed819daebbd7c51}
+
+
+Copy Constructor. 
+
+Copies relavent data from another \hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em algo} & \hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} to be copied \\
+\hline
+\end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_h_a_l_1_1_algorithm_a0b2b7e0a90824e7c2ed31fd8fc299d61}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Abort@{Abort}}
+\index{Abort@{Abort}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Abort}]{\setlength{\rightskip}{0pt plus 5cm}void H\+A\+L\+::\+Algorithm\+::\+Abort (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithm_a0b2b7e0a90824e7c2ed31fd8fc299d61}
+
+
+Cease further sub-\/algorithm execution. 
+
+This function flags the algorithm flow to cease and calls the Clear method for the previously executed algorithms. Calling algorithm should take care to clean up its own memory if necessary. \hypertarget{class_h_a_l_1_1_algorithm_a6e6834d936897cd573ce858d9b26150e}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Add@{Add}}
+\index{Add@{Add}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Add}]{\setlength{\rightskip}{0pt plus 5cm}void H\+A\+L\+::\+Algorithm\+::\+Add (
+\begin{DoxyParamCaption}
+\item[{{\bf Algorithm} $\ast$}]{algo}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithm_a6e6834d936897cd573ce858d9b26150e}
+
+
+Attach another algorithm to this one. 
+
+Attaches an algorithm to this algorithm's list of sub-\/algorithms. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the algorithm. This can be used as the input to other algorithms. \\
+\hline
+\mbox{\tt in}  & {\em title} & Description of the algorithm. Can be an empty string. \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_h_a_l_1_1_algorithm_a7fd35cf6dc1962b58e48905b178c1747}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Add\+Data@{Add\+Data}}
+\index{Add\+Data@{Add\+Data}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Add\+Data}]{\setlength{\rightskip}{0pt plus 5cm}void H\+A\+L\+::\+Algorithm\+::\+Add\+Data (
+\begin{DoxyParamCaption}
+\item[{T\+String}]{name, }
+\item[{T\+Object $\ast$}]{obj}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithm_a7fd35cf6dc1962b58e48905b178c1747}
+
+
+Attach an object to the common data store. 
+
+Attach an object inheriting from T\+Object to the common data store. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the data. This can be used to later retrieve the object. \\
+\hline
+\mbox{\tt in}  & {\em obj} & Pointer to object to store. \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_h_a_l_1_1_algorithm_a6273512af97092a7e50955cb69776d82}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Begin@{Begin}}
+\index{Begin@{Begin}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Begin}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Algorithm\+::\+Begin (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{ = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{class_h_a_l_1_1_algorithm_a6273512af97092a7e50955cb69776d82}
+
+
+Hook into the T\+Selector\+::\+Begin method. 
+
+This method allows the algorithm operate at the 'Begin' stage of processing a T\+Tree. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_h_a_l_1_1_algorithm_a6609ea9ac6dbc42adb5b110a41201c9a}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Check\+Data@{Check\+Data}}
+\index{Check\+Data@{Check\+Data}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Check\+Data}]{\setlength{\rightskip}{0pt plus 5cm}Bool\+\_\+t H\+A\+L\+::\+Algorithm\+::\+Check\+Data (
+\begin{DoxyParamCaption}
+\item[{T\+String}]{name}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithm_a6609ea9ac6dbc42adb5b110a41201c9a}
+
+
+Check the on object of a given name is stored in the common data store. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the data to check. \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_h_a_l_1_1_algorithm_a2a26a5549e92efaa968763ac51e6758a}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Clear@{Clear}}
+\index{Clear@{Clear}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Clear}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Algorithm\+::\+Clear (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{ = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{class_h_a_l_1_1_algorithm_a2a26a5549e92efaa968763ac51e6758a}
+
+
+Hook into the T\+Selector\+::\+Process method. 
+
+This method allows the algorithm operate at the second part of the 'Process' stage of processing a T\+Tree. This is meant for any per-\/event memory management. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented in \hyperlink{class_h_a_l_1_1_algorithms_1_1_vec_add_reco_afcf9f83e8165c1cbd7a193ab8f9c8445}{H\+A\+L\+::\+Algorithms\+::\+Vec\+Add\+Reco}, and \hyperlink{class_h_a_l_1_1_python_algorithm_aac72e398eadd979cf62617fe2fbe1a01}{H\+A\+L\+::\+Python\+Algorithm}.
+
+\hypertarget{class_h_a_l_1_1_algorithm_af0211270f880699c5a260754bbaa9640}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Delete\+Data@{Delete\+Data}}
+\index{Delete\+Data@{Delete\+Data}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Delete\+Data}]{\setlength{\rightskip}{0pt plus 5cm}void H\+A\+L\+::\+Algorithm\+::\+Delete\+Data (
+\begin{DoxyParamCaption}
+\item[{T\+String}]{name}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithm_af0211270f880699c5a260754bbaa9640}
+
+
+Remove an object from the common data store. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the data to remove. \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_h_a_l_1_1_algorithm_a438c5c54698aa014b660474d08703bc2}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Exec@{Exec}}
+\index{Exec@{Exec}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Exec}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Algorithm\+::\+Exec (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{ = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{class_h_a_l_1_1_algorithm_a438c5c54698aa014b660474d08703bc2}
+
+
+Hook into the T\+Selector\+::\+Process method. 
+
+This method allows the algorithm operate at the first part of the 'Process' stage of processing a T\+Tree. This where most of the logic of an algorithm will likely be contained. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented in \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_particle_a1e5924b9deb6c7d1c1d1734b8cb510cb}{H\+A\+L\+::\+Algorithms\+::\+Import\+Particle}, \hyperlink{class_h_a_l_1_1_algorithms_1_1_cut_aa1257616a4912852aa4ce2eb849e2ead}{H\+A\+L\+::\+Algorithms\+::\+Cut}, \hyperlink{class_h_a_l_1_1_algorithms_1_1_monitor_user_data_aea4229dea8ffbd7edfa8a4108e72205c}{H\+A\+L\+::\+Algorithms\+::\+Monitor\+User\+Data}, \hyperlink{class_h_a_l_1_1_algorithms_1_1_vec_add_reco_a63f7458fec37ae553418b15a375dafa0}{H\+A\+L\+::\+Algorithms\+::\+Vec\+Add\+Reco}, \hyperlink{class_h_a_l_1_1_algorithms_1_1_monitor_algorithm_ae1efc679e7dcbc8692a6b37dca0517c3}{H\+A\+L\+::\+Algorithms\+::\+Monitor\+Algorithm}, \hyperlink{class_h_a_l_1_1_algorithms_1_1_empty_cut_a39235392c1b3a0f8253114dbcdf0a8a6}{H\+A\+L\+::\+Algorithms\+::\+Empty\+Cut}, and \hyperlink{class_h_a_l_1_1_python_algorithm_a64a70202dd5da390ab6654a7e33c5976}{H\+A\+L\+::\+Python\+Algorithm}.
+
+\hypertarget{class_h_a_l_1_1_algorithm_aa7412319fa47fedf880a7d276484d5b3}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Get\+Algorithm@{Get\+Algorithm}}
+\index{Get\+Algorithm@{Get\+Algorithm}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Get\+Algorithm}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Algorithm}$\ast$ H\+A\+L\+::\+Algorithm\+::\+Get\+Algorithm (
+\begin{DoxyParamCaption}
+\item[{T\+String}]{name}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithm_aa7412319fa47fedf880a7d276484d5b3}
+
+
+Retrieves the algorithm or sub-\/algorithm of given name. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of algorithm to return. \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_h_a_l_1_1_algorithm_ae9b228550b42524824f7119604df1add}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Get\+Data@{Get\+Data}}
+\index{Get\+Data@{Get\+Data}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Get\+Data}]{\setlength{\rightskip}{0pt plus 5cm}T\+Object$\ast$ H\+A\+L\+::\+Algorithm\+::\+Get\+Data (
+\begin{DoxyParamCaption}
+\item[{T\+String}]{name}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithm_ae9b228550b42524824f7119604df1add}
+
+
+Retrieve an object to the common data store. 
+
+Retrieve an object inheriting from T\+Object to the common data store. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em name} & Name of the data to retrieve. Remember to cast object from T\+Object. \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_h_a_l_1_1_algorithm_ae80d02cd08ddc48a82f217af77ffde20}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Get\+Raw\+Data@{Get\+Raw\+Data}}
+\index{Get\+Raw\+Data@{Get\+Raw\+Data}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Get\+Raw\+Data}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Analysis\+Tree\+Reader}$\ast$ H\+A\+L\+::\+Algorithm\+::\+Get\+Raw\+Data (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithm_ae80d02cd08ddc48a82f217af77ffde20}
+
+
+Convenience function for retrieving the \hyperlink{class_h_a_l_1_1_analysis_tree_reader}{Analysis\+Tree\+Reader} object. 
+
+Convenience function for retrieving the \hyperlink{class_h_a_l_1_1_analysis_tree_reader}{Analysis\+Tree\+Reader} object from the common data store. This is meant as an easy, universal way of accessing the data in a T\+Tree. \hypertarget{class_h_a_l_1_1_algorithm_ae9b7d3532acfaed9b502bd462bd22c94}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Get\+User\+Data@{Get\+User\+Data}}
+\index{Get\+User\+Data@{Get\+User\+Data}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Get\+User\+Data}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Analysis\+Data}$\ast$ H\+A\+L\+::\+Algorithm\+::\+Get\+User\+Data (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithm_ae9b7d3532acfaed9b502bd462bd22c94}
+
+
+Convenience function for retrieving the \hyperlink{class_h_a_l_1_1_analysis_data}{Analysis\+Data} object. 
+
+Convenience function for retrieving the \hyperlink{class_h_a_l_1_1_analysis_data}{Analysis\+Data} object from the common data store. This is meant as an easy, universal way to pass data from one algorithm to another. \hypertarget{class_h_a_l_1_1_algorithm_af6233cfbe13ce76207a98b12d4da6f16}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Get\+User\+Output@{Get\+User\+Output}}
+\index{Get\+User\+Output@{Get\+User\+Output}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Get\+User\+Output}]{\setlength{\rightskip}{0pt plus 5cm}{\bf Analysis\+Tree\+Writer}$\ast$ H\+A\+L\+::\+Algorithm\+::\+Get\+User\+Output (
+\begin{DoxyParamCaption}
+{}
+\end{DoxyParamCaption}
+)}}\label{class_h_a_l_1_1_algorithm_af6233cfbe13ce76207a98b12d4da6f16}
+
+
+Convenience function for retrieving the \hyperlink{class_h_a_l_1_1_analysis_tree_writer}{Analysis\+Tree\+Writer} object. 
+
+Convenience function for retrieving the \hyperlink{class_h_a_l_1_1_analysis_tree_writer}{Analysis\+Tree\+Writer} object from the common data store. This is meant as an easy, universal way of writing the output of an algorithm to a T\+Tree in a bin-\/less fashion. \hypertarget{class_h_a_l_1_1_algorithm_ac5cb321a9513f6a58312747eb74cf0cb}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Increase\+Counter@{Increase\+Counter}}
+\index{Increase\+Counter@{Increase\+Counter}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Increase\+Counter}]{\setlength{\rightskip}{0pt plus 5cm}void H\+A\+L\+::\+Algorithm\+::\+Increase\+Counter (
+\begin{DoxyParamCaption}
+\item[{Long64\+\_\+t}]{n = {\ttfamily 1}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}}}\label{class_h_a_l_1_1_algorithm_ac5cb321a9513f6a58312747eb74cf0cb}
+
+
+Increments the object creation counter for this algorithm. 
+
+
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em n} & Number by which to increment. \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_h_a_l_1_1_algorithm_abe2da2ce6a2d3ccfb492d8afd1d07331}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Init@{Init}}
+\index{Init@{Init}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Init}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Algorithm\+::\+Init (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{ = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{class_h_a_l_1_1_algorithm_abe2da2ce6a2d3ccfb492d8afd1d07331}
+
+
+Hook into the T\+Selector\+::\+Init method. 
+
+This method allows the algorithm operate at the 'Init' stage of processing a T\+Tree. This method is called when a new T\+Tree is being prepared for processing. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented in \hyperlink{class_h_a_l_1_1_algorithms_1_1_store_particle_af2e287e256a0d7803c68a62bbb254302}{H\+A\+L\+::\+Algorithms\+::\+Store\+Particle}, and \hyperlink{class_h_a_l_1_1_python_algorithm_a951c827d0f926b5096f7e59accc1e007}{H\+A\+L\+::\+Python\+Algorithm}.
+
+\hypertarget{class_h_a_l_1_1_algorithm_acbbfee57e6c71ab04047dca6636f2c4f}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Notify@{Notify}}
+\index{Notify@{Notify}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Notify}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Algorithm\+::\+Notify (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{ = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{class_h_a_l_1_1_algorithm_acbbfee57e6c71ab04047dca6636f2c4f}
+
+
+Hook into the T\+Selector\+::\+Notify method. 
+
+This method allows the algorithm operate at the 'Notify' stage of processing a T\+Tree. This method is called when a new T\+Tree has been loaded for processing. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_h_a_l_1_1_algorithm_a468feb5807252729c62cce7db7d60b1d}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Slave\+Begin@{Slave\+Begin}}
+\index{Slave\+Begin@{Slave\+Begin}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Slave\+Begin}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Algorithm\+::\+Slave\+Begin (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{ = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{class_h_a_l_1_1_algorithm_a468feb5807252729c62cce7db7d60b1d}
+
+
+Hook into the T\+Selector\+::\+Slave\+Begin method. 
+
+This method allows the algorithm operate at the 'Slave\+Begin' stage of processing a T\+Tree. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_h_a_l_1_1_algorithm_a9735cc4d7ef34d440aff116c8dbf5cbb}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Slave\+Terminate@{Slave\+Terminate}}
+\index{Slave\+Terminate@{Slave\+Terminate}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Slave\+Terminate}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Algorithm\+::\+Slave\+Terminate (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{ = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{class_h_a_l_1_1_algorithm_a9735cc4d7ef34d440aff116c8dbf5cbb}
+
+
+Hook into the T\+Selector\+::\+Slave\+Terminate method. 
+
+This method allows the algorithm operate at the 'Slave\+Terminate' stage of processing a T\+Tree. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+\hypertarget{class_h_a_l_1_1_algorithm_ab974f3b6336b7b1002c72c04ad2b59cb}{\index{H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}!Terminate@{Terminate}}
+\index{Terminate@{Terminate}!H\+A\+L\+::\+Algorithm@{H\+A\+L\+::\+Algorithm}}
+\subsubsection[{Terminate}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Algorithm\+::\+Terminate (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{ = {\ttfamily \char`\"{}\char`\"{}}}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{class_h_a_l_1_1_algorithm_ab974f3b6336b7b1002c72c04ad2b59cb}
+
+
+Hook into the T\+Selector\+::\+Terminate method. 
+
+This method allows the algorithm operate at the 'Terminate' stage of processing a T\+Tree. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+
+
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/\+Users/jhetherly/src/\+H\+A\+L-\/\+R\+O\+O\+T/include/\+H\+A\+L/Algorithm.\+h\end{DoxyCompactItemize}
+/\+Users/jhetherly/src/\+H\+A\+L-\/\+R\+O\+O\+T/include/\+H\+A\+L/\hyperlink{_algorithm_8h}{Algorithm.\+h}\end{DoxyCompactItemize}

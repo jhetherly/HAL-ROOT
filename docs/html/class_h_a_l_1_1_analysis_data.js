@@ -1,6 +1,7 @@
 var class_h_a_l_1_1_analysis_data =
 [
-    [ "ClassDefNV", "class_h_a_l_1_1_analysis_data.html#a0d63364d678190ac69e46922ad445b8a", null ],
+    [ "~AnalysisData", "class_h_a_l_1_1_analysis_data.html#acd1c0c49d46819272460ae4f7afcdf31", null ],
+    [ "ClassDef", "class_h_a_l_1_1_analysis_data.html#aeaaa3a24ced30e96d90725174a98544b", null ],
     [ "CopyValues", "class_h_a_l_1_1_analysis_data.html#a02f185a0bb593efe8f1e1605a8db7212", null ],
     [ "Exists", "class_h_a_l_1_1_analysis_data.html#a88485900b08fc820b2021234699d72d9", null ],
     [ "GetBool", "class_h_a_l_1_1_analysis_data.html#a281cfe7bf707071ac81004f415842f50", null ],

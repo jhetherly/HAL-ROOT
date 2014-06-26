@@ -83,7 +83,7 @@ $(document).ready(function(){initNavTree('class_h_a_l_1_1_analysis_tree_writer.h
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -100,6 +100,11 @@ $(document).ready(function(){initNavTree('class_h_a_l_1_1_analysis_tree_writer.h
 <div class="title">HAL::AnalysisTreeWriter Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Class for writing data to a TTree in a bin-less manner.  
+ <a href="class_h_a_l_1_1_analysis_tree_writer.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_analysis_tree_writer_8h_source.html">AnalysisTreeWriter.h</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for HAL::AnalysisTreeWriter:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -108,7 +113,7 @@ $(document).ready(function(){initNavTree('class_h_a_l_1_1_analysis_tree_writer.h
  <div class="center">
   <img src="class_h_a_l_1_1_analysis_tree_writer.png" usemap="#HAL::AnalysisTreeWriter_map" alt=""/>
   <map id="HAL::AnalysisTreeWriter_map" name="HAL::AnalysisTreeWriter_map">
-<area href="class_h_a_l_1_1_analysis_data.html" alt="HAL::AnalysisData" shape="rect" coords="0,56,151,80"/>
+<area href="class_h_a_l_1_1_analysis_data.html" title="Class for storage and sharing of data referenced by strings. " alt="HAL::AnalysisData" shape="rect" coords="0,56,151,80"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -349,109 +354,112 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>RemoveData</b> (const
 <tr class="memitem:a9e60f6b78b29280597ac991cf378f4f3 inherit pub_methods_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9e60f6b78b29280597ac991cf378f4f3"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>RemoveAllAssociatedData</b> (const TString &amp;)</td></tr>
 <tr class="separator:a9e60f6b78b29280597ac991cf378f4f3 inherit pub_methods_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d63364d678190ac69e46922ad445b8a inherit pub_methods_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0d63364d678190ac69e46922ad445b8a"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ClassDefNV</b> (<a class="el" href="class_h_a_l_1_1_analysis_data.html">AnalysisData</a>, 0)</td></tr>
-<tr class="separator:a0d63364d678190ac69e46922ad445b8a inherit pub_methods_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeaaa3a24ced30e96d90725174a98544b inherit pub_methods_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aeaaa3a24ced30e96d90725174a98544b"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ClassDef</b> (<a class="el" href="class_h_a_l_1_1_analysis_data.html">AnalysisData</a>, 0)</td></tr>
+<tr class="separator:aeaaa3a24ced30e96d90725174a98544b inherit pub_methods_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pub_attribs_class_h_a_l_1_1_analysis_data"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_class_h_a_l_1_1_analysis_data')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="class_h_a_l_1_1_analysis_data.html">HAL::AnalysisData</a></td></tr>
-<tr class="memitem:adc7232f1a112de23d2b557740422ec9f inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc7232f1a112de23d2b557740422ec9f"></a>
+<tr class="inherit_header pro_attribs_class_h_a_l_1_1_analysis_data"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_h_a_l_1_1_analysis_data')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_h_a_l_1_1_analysis_data.html">HAL::AnalysisData</a></td></tr>
+<tr class="memitem:adc7232f1a112de23d2b557740422ec9f inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc7232f1a112de23d2b557740422ec9f"></a>
 std::map&lt; std::string, bool, <br class="typebreak" />
 internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fBoolMap</b></td></tr>
-<tr class="separator:adc7232f1a112de23d2b557740422ec9f inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79170e31902d40d73d6838b816e74dc8 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a79170e31902d40d73d6838b816e74dc8"></a>
+<tr class="separator:adc7232f1a112de23d2b557740422ec9f inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79170e31902d40d73d6838b816e74dc8 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a79170e31902d40d73d6838b816e74dc8"></a>
 std::map&lt; std::string, long <br class="typebreak" />
 double, internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fDecimalMap</b></td></tr>
-<tr class="separator:a79170e31902d40d73d6838b816e74dc8 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5487671b851b8ce89298d7f770ab8f34 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5487671b851b8ce89298d7f770ab8f34"></a>
+<tr class="separator:a79170e31902d40d73d6838b816e74dc8 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5487671b851b8ce89298d7f770ab8f34 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5487671b851b8ce89298d7f770ab8f34"></a>
 std::map&lt; std::string, long <br class="typebreak" />
 long, internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fIntegerMap</b></td></tr>
-<tr class="separator:a5487671b851b8ce89298d7f770ab8f34 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f29542f7f2cd7e7377c56ac54592dd5 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6f29542f7f2cd7e7377c56ac54592dd5"></a>
+<tr class="separator:a5487671b851b8ce89298d7f770ab8f34 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f29542f7f2cd7e7377c56ac54592dd5 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6f29542f7f2cd7e7377c56ac54592dd5"></a>
 std::map&lt; std::string, <br class="typebreak" />
 unsigned long long, <br class="typebreak" />
 internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fCountingMap</b></td></tr>
-<tr class="separator:a6f29542f7f2cd7e7377c56ac54592dd5 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3256b3efc77655ba25cc34a6986c00d5 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3256b3efc77655ba25cc34a6986c00d5"></a>
+<tr class="separator:a6f29542f7f2cd7e7377c56ac54592dd5 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3256b3efc77655ba25cc34a6986c00d5 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3256b3efc77655ba25cc34a6986c00d5"></a>
 std::map&lt; std::string, <br class="typebreak" />
 std::string, <br class="typebreak" />
 internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fStringMap</b></td></tr>
-<tr class="separator:a3256b3efc77655ba25cc34a6986c00d5 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a913d66198c57cc2bd9f0e3e5d904e33f inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a913d66198c57cc2bd9f0e3e5d904e33f"></a>
+<tr class="separator:a3256b3efc77655ba25cc34a6986c00d5 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a913d66198c57cc2bd9f0e3e5d904e33f inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a913d66198c57cc2bd9f0e3e5d904e33f"></a>
 std::map&lt; std::string, TObject <br class="typebreak" />
 *, internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fTObjectMap</b></td></tr>
-<tr class="separator:a913d66198c57cc2bd9f0e3e5d904e33f inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a61184b1f5c3fe3a707ca6636ae9e13b0 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a61184b1f5c3fe3a707ca6636ae9e13b0"></a>
+<tr class="separator:a913d66198c57cc2bd9f0e3e5d904e33f inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a61184b1f5c3fe3a707ca6636ae9e13b0 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a61184b1f5c3fe3a707ca6636ae9e13b0"></a>
 std::map&lt; std::string, <br class="typebreak" />
 std::map&lt; long long, bool &gt;<br class="typebreak" />
 , internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fBoolIntMap</b></td></tr>
-<tr class="separator:a61184b1f5c3fe3a707ca6636ae9e13b0 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af0f5c30034eba37c74179ea605623317 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af0f5c30034eba37c74179ea605623317"></a>
+<tr class="separator:a61184b1f5c3fe3a707ca6636ae9e13b0 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af0f5c30034eba37c74179ea605623317 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af0f5c30034eba37c74179ea605623317"></a>
 std::map&lt; std::string, <br class="typebreak" />
 std::map&lt; long long, long <br class="typebreak" />
 double &gt;, internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fDecimalIntMap</b></td></tr>
-<tr class="separator:af0f5c30034eba37c74179ea605623317 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62e023cb60a954070f043edd7dd77f75 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a62e023cb60a954070f043edd7dd77f75"></a>
+<tr class="separator:af0f5c30034eba37c74179ea605623317 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62e023cb60a954070f043edd7dd77f75 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a62e023cb60a954070f043edd7dd77f75"></a>
 std::map&lt; std::string, <br class="typebreak" />
 std::map&lt; long long, long long &gt;<br class="typebreak" />
 , internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fIntegerIntMap</b></td></tr>
-<tr class="separator:a62e023cb60a954070f043edd7dd77f75 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4f71b630137b5723ded88314a9301a0 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4f71b630137b5723ded88314a9301a0"></a>
+<tr class="separator:a62e023cb60a954070f043edd7dd77f75 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa4f71b630137b5723ded88314a9301a0 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa4f71b630137b5723ded88314a9301a0"></a>
 std::map&lt; std::string, <br class="typebreak" />
 std::map&lt; long long, unsigned <br class="typebreak" />
 long long &gt;<br class="typebreak" />
 , internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fCountingIntMap</b></td></tr>
-<tr class="separator:aa4f71b630137b5723ded88314a9301a0 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68da09e7d00969715c53c1286d480c27 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a68da09e7d00969715c53c1286d480c27"></a>
+<tr class="separator:aa4f71b630137b5723ded88314a9301a0 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68da09e7d00969715c53c1286d480c27 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a68da09e7d00969715c53c1286d480c27"></a>
 std::map&lt; std::string, <br class="typebreak" />
 std::map&lt; long long, <br class="typebreak" />
 std::string &gt;<br class="typebreak" />
 , internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fStringIntMap</b></td></tr>
-<tr class="separator:a68da09e7d00969715c53c1286d480c27 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30331566889aaa845bd3edd475211cfc inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a30331566889aaa845bd3edd475211cfc"></a>
+<tr class="separator:a68da09e7d00969715c53c1286d480c27 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a30331566889aaa845bd3edd475211cfc inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a30331566889aaa845bd3edd475211cfc"></a>
 std::map&lt; std::string, <br class="typebreak" />
 std::map&lt; long long, TObject * &gt;<br class="typebreak" />
 , internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fTObjectIntMap</b></td></tr>
-<tr class="separator:a30331566889aaa845bd3edd475211cfc inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d6c6e21427e94fe1a53f524cf0fbbc5 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4d6c6e21427e94fe1a53f524cf0fbbc5"></a>
+<tr class="separator:a30331566889aaa845bd3edd475211cfc inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d6c6e21427e94fe1a53f524cf0fbbc5 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4d6c6e21427e94fe1a53f524cf0fbbc5"></a>
 std::map&lt; std::string, <br class="typebreak" />
 std::map&lt; long long, std::map<br class="typebreak" />
 &lt; long long, bool &gt;<br class="typebreak" />
  &gt;, internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fBoolIntIntMap</b></td></tr>
-<tr class="separator:a4d6c6e21427e94fe1a53f524cf0fbbc5 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a48a5faced1a93d3f912b95314b0eb9f2 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a48a5faced1a93d3f912b95314b0eb9f2"></a>
+<tr class="separator:a4d6c6e21427e94fe1a53f524cf0fbbc5 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48a5faced1a93d3f912b95314b0eb9f2 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a48a5faced1a93d3f912b95314b0eb9f2"></a>
 std::map&lt; std::string, <br class="typebreak" />
 std::map&lt; long long, std::map<br class="typebreak" />
 &lt; long long, long double &gt;<br class="typebreak" />
  &gt;, internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fDecimalIntIntMap</b></td></tr>
-<tr class="separator:a48a5faced1a93d3f912b95314b0eb9f2 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0a0427f6204ac11136c141f56a8bb03 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae0a0427f6204ac11136c141f56a8bb03"></a>
+<tr class="separator:a48a5faced1a93d3f912b95314b0eb9f2 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0a0427f6204ac11136c141f56a8bb03 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae0a0427f6204ac11136c141f56a8bb03"></a>
 std::map&lt; std::string, <br class="typebreak" />
 std::map&lt; long long, std::map<br class="typebreak" />
 &lt; long long, long long &gt;<br class="typebreak" />
  &gt;, internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fIntegerIntIntMap</b></td></tr>
-<tr class="separator:ae0a0427f6204ac11136c141f56a8bb03 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad50906057dfe2e1cda6756218f549201 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad50906057dfe2e1cda6756218f549201"></a>
+<tr class="separator:ae0a0427f6204ac11136c141f56a8bb03 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad50906057dfe2e1cda6756218f549201 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad50906057dfe2e1cda6756218f549201"></a>
 std::map&lt; std::string, <br class="typebreak" />
 std::map&lt; long long, std::map<br class="typebreak" />
 &lt; long long, unsigned long <br class="typebreak" />
 long &gt; &gt;, internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fCountingIntIntMap</b></td></tr>
-<tr class="separator:ad50906057dfe2e1cda6756218f549201 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac06bbfebb1b319a3b17407c3a5bc17c2 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac06bbfebb1b319a3b17407c3a5bc17c2"></a>
+<tr class="separator:ad50906057dfe2e1cda6756218f549201 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac06bbfebb1b319a3b17407c3a5bc17c2 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac06bbfebb1b319a3b17407c3a5bc17c2"></a>
 std::map&lt; std::string, <br class="typebreak" />
 std::map&lt; long long, std::map<br class="typebreak" />
 &lt; long long, std::string &gt;<br class="typebreak" />
  &gt;, internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fStringIntIntMap</b></td></tr>
-<tr class="separator:ac06bbfebb1b319a3b17407c3a5bc17c2 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac743254719039aa3af1d33b6a2558499 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac743254719039aa3af1d33b6a2558499"></a>
+<tr class="separator:ac06bbfebb1b319a3b17407c3a5bc17c2 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac743254719039aa3af1d33b6a2558499 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac743254719039aa3af1d33b6a2558499"></a>
 std::map&lt; std::string, <br class="typebreak" />
 std::map&lt; long long, std::map<br class="typebreak" />
 &lt; long long, TObject * &gt;<br class="typebreak" />
  &gt;, internal::string_cmp &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>fTObjectIntIntMap</b></td></tr>
-<tr class="separator:ac743254719039aa3af1d33b6a2558499 inherit pub_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:ac743254719039aa3af1d33b6a2558499 inherit pro_attribs_class_h_a_l_1_1_analysis_data"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Class for writing data to a TTree in a bin-less manner. </p>
+<p>This class allows for an easy way to write data to a TTree. The use can specify and default tree name along with separate trees for each branch. The user simply calls a method with the desired branch name and the value to insert. It is important to note that the type of the first value given to these methods is the value type of the branch. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>/Users/jhetherly/src/HAL-ROOT/include/HAL/<a class="el" href="_analysis_tree_writer_8h_source.html">AnalysisTreeWriter.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -460,7 +468,7 @@ std::map&lt; long long, std::map<br class="typebreak" />
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespace_h_a_l.html">HAL</a></li><li class="navelem"><a class="el" href="class_h_a_l_1_1_analysis_tree_writer.html">AnalysisTreeWriter</a></li>
-    <li class="footer">Generated on Thu May 29 2014 21:57:24 for HAL by
+    <li class="footer">Generated on Wed Jun 11 2014 21:57:55 for HAL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

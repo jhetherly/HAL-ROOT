@@ -1,11 +1,17 @@
 #include <HAL/AnalysisData.h>
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+#include <aux/boost/foreach.hpp>
+#endif
+#include <TRegexp.h>
 
 ClassImp(HAL::AnalysisData);
 
 namespace HAL
 {
 
-void AnalysisData::SetValue (const TString &n, const bool &v) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const bool &v) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -17,7 +23,9 @@ void AnalysisData::SetValue (const TString &n, const bool &v) {
   fBoolMap[name] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, const long double &v) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const long double &v) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -33,7 +41,9 @@ void AnalysisData::SetValue (const TString &n, const long double &v) {
   fDecimalMap[name] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, const long long &v) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const long long &v) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -49,7 +59,9 @@ void AnalysisData::SetValue (const TString &n, const long long &v) {
   fIntegerMap[name] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, const unsigned long long &v) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const unsigned long long &v) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -65,7 +77,9 @@ void AnalysisData::SetValue (const TString &n, const unsigned long long &v) {
   fCountingMap[name] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, const std::string &v) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const std::string &v) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -77,7 +91,9 @@ void AnalysisData::SetValue (const TString &n, const std::string &v) {
   fStringMap[name] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, TObject *v) { 
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, TObject *v) 
+{ 
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -89,7 +105,9 @@ void AnalysisData::SetValue (const TString &n, TObject *v) {
   fTObjectMap[name] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, const bool &v, const long long &i) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const bool &v, const long long &i) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -101,7 +119,9 @@ void AnalysisData::SetValue (const TString &n, const bool &v, const long long &i
   fBoolIntMap[name][i] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, const long double &v, const long long &i) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const long double &v, const long long &i) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -117,7 +137,9 @@ void AnalysisData::SetValue (const TString &n, const long double &v, const long 
   fDecimalIntMap[name][i] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, const long long &v, const long long &i) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const long long &v, const long long &i) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -133,7 +155,9 @@ void AnalysisData::SetValue (const TString &n, const long long &v, const long lo
   fIntegerIntMap[name][i] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, const unsigned long long &v, const long long &i) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const unsigned long long &v, const long long &i) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -149,7 +173,9 @@ void AnalysisData::SetValue (const TString &n, const unsigned long long &v, cons
   fCountingIntMap[name][i] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, const std::string &v, const long long &i) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const std::string &v, const long long &i) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -161,7 +187,9 @@ void AnalysisData::SetValue (const TString &n, const std::string &v, const long 
   fStringIntMap[name][i] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, TObject *v, const long long &i) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, TObject *v, const long long &i) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -173,7 +201,9 @@ void AnalysisData::SetValue (const TString &n, TObject *v, const long long &i) {
   fTObjectIntMap[name][i] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, const bool &v, const long long &i, const long long &j) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const bool &v, const long long &i, const long long &j) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -185,7 +215,9 @@ void AnalysisData::SetValue (const TString &n, const bool &v, const long long &i
   fBoolIntIntMap[name][i][j] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, const long double &v, const long long &i, const long long &j) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const long double &v, const long long &i, const long long &j) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -201,7 +233,9 @@ void AnalysisData::SetValue (const TString &n, const long double &v, const long 
   fDecimalIntIntMap[name][i][j] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, const long long &v, const long long &i, const long long &j) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const long long &v, const long long &i, const long long &j) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -217,7 +251,10 @@ void AnalysisData::SetValue (const TString &n, const long long &v, const long lo
   fIntegerIntIntMap[name][i][j] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, const unsigned long long &v, const long long &i, const long long &j) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const unsigned long long &v, 
+                             const long long &i, const long long &j) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -233,7 +270,10 @@ void AnalysisData::SetValue (const TString &n, const unsigned long long &v, cons
   fCountingIntIntMap[name][i][j] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, const std::string &v, const long long &i, const long long &j) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, const std::string &v, 
+                             const long long &i, const long long &j) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -245,7 +285,10 @@ void AnalysisData::SetValue (const TString &n, const std::string &v, const long 
   fStringIntIntMap[name][i][j] = v;
 }
 
-void AnalysisData::SetValue (const TString &n, TObject *v, const long long &i, const long long &j) {
+//______________________________________________________________________________
+void AnalysisData::SetValue (const TString &n, TObject *v, 
+                             const long long &i, const long long &j) 
+{
   std::string name(n.Data());
 
   // check if 'name' already has a container
@@ -257,9 +300,9 @@ void AnalysisData::SetValue (const TString &n, TObject *v, const long long &i, c
   fTObjectIntIntMap[name][i][j] = v;
 }
 
-
-
-bool AnalysisData::GetBool (const TString &n, const long long &i, const long long &j) {
+//______________________________________________________________________________
+bool AnalysisData::GetBool (const TString &n, const long long &i, const long long &j) 
+{
   std::string name(n.Data());
 
   if (fBoolMap.count(name) != 0)
@@ -272,7 +315,10 @@ bool AnalysisData::GetBool (const TString &n, const long long &i, const long lon
   throw HALException(name.insert(0, "Error retrieving data: ").c_str());
 }
 
-long double AnalysisData::GetDecimal (const TString &n, const long long &i, const long long &j) {
+//______________________________________________________________________________
+long double AnalysisData::GetDecimal (const TString &n, const long long &i, 
+                                      const long long &j) 
+{
   std::string name(n.Data());
 
   if (fDecimalMap.count(name) != 0)
@@ -297,7 +343,10 @@ long double AnalysisData::GetDecimal (const TString &n, const long long &i, cons
   throw HALException(name.insert(0, "Error retrieving data: ").c_str());
 }
 
-long long AnalysisData::GetInteger (const TString &n, const long long &i, const long long &j) {
+//______________________________________________________________________________
+long long AnalysisData::GetInteger (const TString &n, const long long &i, 
+                                    const long long &j) 
+{
   std::string name(n.Data());
 
   if (fDecimalMap.count(name) != 0)
@@ -322,7 +371,10 @@ long long AnalysisData::GetInteger (const TString &n, const long long &i, const 
   throw HALException(name.insert(0, "Error retrieving data: ").c_str());
 }
 
-unsigned long long AnalysisData::GetCounting (const TString &n, const long long &i, const long long &j) {
+//______________________________________________________________________________
+unsigned long long AnalysisData::GetCounting (const TString &n, 
+                                              const long long &i, const long long &j) 
+{
   std::string name(n.Data());
 
   if (fDecimalMap.count(name) != 0)
@@ -347,7 +399,10 @@ unsigned long long AnalysisData::GetCounting (const TString &n, const long long 
   throw HALException(name.insert(0, "Error retrieving data: ").c_str());
 }
 
-TString AnalysisData::GetString (const TString &n, const long long &i, const long long &j) {
+//______________________________________________________________________________
+TString AnalysisData::GetString (const TString &n, const long long &i, 
+                                 const long long &j) 
+{
   std::string name(n.Data());
 
   if (fStringMap.count(name) != 0)
@@ -360,7 +415,10 @@ TString AnalysisData::GetString (const TString &n, const long long &i, const lon
   throw HALException(name.insert(0, "Error retrieving data: ").c_str());
 }
 
-TObject* AnalysisData::GetTObject (const TString &n, const long long &i, const long long &j) {
+//______________________________________________________________________________
+TObject* AnalysisData::GetTObject (const TString &n, const long long &i, 
+                                   const long long &j) 
+{
   std::string name(n.Data());
 
   if (fTObjectMap.count(name) != 0)
@@ -373,7 +431,10 @@ TObject* AnalysisData::GetTObject (const TString &n, const long long &i, const l
   throw HALException(name.insert(0, "Error retrieving data: ").c_str());
 }
 
-bool AnalysisData::Exists (const TString &name, const long long &i, const long long &j) {
+//______________________________________________________________________________
+bool AnalysisData::Exists (const TString &name, const long long &i, 
+                           const long long &j) 
+{
   std::string n(name.Data());
 
   if (NameAlreadyStored(n) && i == -1 && j == -1)
@@ -421,7 +482,9 @@ bool AnalysisData::Exists (const TString &name, const long long &i, const long l
   return false;
 }
 
-unsigned AnalysisData::TypeDim (std::string n) {
+//______________________________________________________________________________
+unsigned AnalysisData::TypeDim (std::string n) 
+{
   if (fNameTypeMap[n] == kB || fNameTypeMap[n] == kD ||
       fNameTypeMap[n] == kI || fNameTypeMap[n] == kC ||
       fNameTypeMap[n] == kS || fNameTypeMap[n] == kO)
@@ -437,24 +500,33 @@ unsigned AnalysisData::TypeDim (std::string n) {
   throw HALException("Type dimension couldn't be determined.");
 }
 
-std::vector<TString> AnalysisData::GetSimilarNames (const TString &nn, unsigned min_dim) {
+//______________________________________________________________________________
+std::vector<TString> AnalysisData::GetSimilarNames (const TString &nn, 
+                                                    unsigned min_dim) 
+{
   std::string n(nn.Data());
 
   std::vector<TString> names;
-  std::map<std::string, StorageType, internal::string_cmp>::iterator  it;
-  // pick out ^<name>:
-  TRegexp pat(n.substr(0, n.find_first_of(':')).insert(0, "^").c_str());
+  TRegexp pat(n.substr(0, n.find_first_of(':')).insert(0, "^").c_str()); // pick out ^<name>:
 
-  for (it = fNameTypeMap.begin(); it != fNameTypeMap.end(); ++it) {
-    TString name(it->first.c_str());
-    if (name.Contains(pat) && TypeDim(it->first) >= min_dim && it->first != n)
-      names.push_back(it->first);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  std::pair<std::string, StorageType> it;
+  BOOST_FOREACH( it, fNameTypeMap )
+#else
+  for (auto it: fNameTypeMap)
+#endif
+  {
+    TString name(it.first.c_str());
+    if (name.Contains(pat) && TypeDim(it.first) >= min_dim && it.first != n)
+      names.push_back(it.first);
   }
   
   return names;
 }
 
-void AnalysisData::CopyValues (const TString &f, const TString &t) {
+//______________________________________________________________________________
+void AnalysisData::CopyValues (const TString &f, const TString &t) 
+{
   std::string from(f.Data());
   std::string to(t.Data());
 
@@ -502,7 +574,9 @@ void AnalysisData::CopyValues (const TString &f, const TString &t) {
   }
 }
 
-void AnalysisData::SwapValues (const TString &name, long long i, long long j) {
+//______________________________________________________________________________
+void AnalysisData::SwapValues (const TString &name, long long i, long long j) 
+{
   std::string n(name.Data());
 
   if (TypeDim(n) == 1) {
@@ -553,7 +627,9 @@ void AnalysisData::SwapValues (const TString &name, long long i, long long j) {
   }
 }
 
-void AnalysisData::Reset () {
+//______________________________________________________________________________
+void AnalysisData::Reset () 
+{
   fBoolMap.clear();
   fDecimalMap.clear();
   fIntegerMap.clear();
@@ -575,14 +651,18 @@ void AnalysisData::Reset () {
   fNameTypeMap.clear();
 }
 
-void AnalysisData::RemoveNameAndData (const TString &name) {
+//______________________________________________________________________________
+void AnalysisData::RemoveNameAndData (const TString &name) 
+{
   std::string n(name.Data());
 
   RemoveData(name);
   fNameTypeMap.erase(n);
 }
 
-void AnalysisData::RemoveData (const TString &name) {
+//______________________________________________________________________________
+void AnalysisData::RemoveData (const TString &name) 
+{
   std::string n(name.Data());
 
   if (fNameTypeMap[n] == kB)
@@ -623,22 +703,32 @@ void AnalysisData::RemoveData (const TString &name) {
     fTObjectIntIntMap.erase(n);
 }
 
-void AnalysisData::RemoveAllAssociatedData (const TString &nn) {
+//______________________________________________________________________________
+void AnalysisData::RemoveAllAssociatedData (const TString &nn) 
+{
   std::string n(nn.Data());
 
   TRegexp prefix(TString::Format("^%s:*.*", n.c_str()));
   std::vector<std::string> names;
 
-  for (std::map<std::string, StorageType, internal::string_cmp>::iterator name = fNameTypeMap.begin();
-       name != fNameTypeMap.end(); ++name) {
-    if (TString(name->first.c_str()).Contains(prefix)) {
-      RemoveData(name->first);
-      names.push_back(name->first);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  std::pair<std::string, StorageType> name;
+  BOOST_FOREACH( name, fNameTypeMap )
+#else
+  for (auto name: fNameTypeMap)
+#endif
+  {
+    if (TString(name.first.c_str()).Contains(prefix)) {
+      RemoveData(name.first);
+      names.push_back(name.first);
     }
   }
-  for (std::vector<std::string>::iterator name = names.begin();
-       name != names.end(); ++name)
-    fNameTypeMap.erase(*name);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( std::string name, names )
+#else
+  for (auto name: names)
+#endif
+    fNameTypeMap.erase(name);
 }
 
 } /*  HAL */ 

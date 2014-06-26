@@ -138,6 +138,24 @@ protected:
   ValueGetter   *fValueGetterPtr;
 };
 
+template<>
+class ImportBoolValue<HAL::AnalysisTreeReader> : public HAL::internal::ImportValueAlgo<bool> {
+public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \sa ImportParticle, ImportInteger, ImportCounting, ImportDecimal
+   */
+  ImportBoolValue (TString name, TString title);
+  virtual ~ImportBoolValue () {}
+
+protected:
+  virtual bool   GetValue ();
+};
+
 
 //! Algorithm that stores an integer value from information in a TTree.
 /*!
@@ -214,6 +232,24 @@ protected:
   ValueGetter   *fValueGetterPtr;
 };
 
+template<>
+class ImportIntegerValue<HAL::AnalysisTreeReader> : public HAL::internal::ImportValueAlgo<long long> {
+public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \sa ImportBool, ImportParticle, ImportCounting, ImportDecimal
+   */
+  ImportIntegerValue (TString name, TString title);
+  virtual ~ImportIntegerValue () {}
+
+protected:
+  virtual long long  GetValue ();
+};
+
 
 //! Algorithm that stores a counting value from information in a TTree.
 /*!
@@ -282,12 +318,30 @@ public:
    * \sa ImportBool, ImportInteger, ImportParticle, ImportDecimal
    */
   ImportCountingValue (TString name, TString title);
-  virtual ~ImportCountingValue () {}
+  virtual ~ImportCountingValue () {if (fValueGetterPtr != NULL) delete fValueGetterPtr;}
 
 protected:
   virtual unsigned long long  GetValue ();
 
   ValueGetter   *fValueGetterPtr;
+};
+
+template<>
+class ImportCountingValue<HAL::AnalysisTreeReader> : public HAL::internal::ImportValueAlgo<unsigned long long> {
+public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \sa ImportBool, ImportInteger, ImportParticle, ImportDecimal
+   */
+  ImportCountingValue (TString name, TString title);
+  virtual ~ImportCountingValue () {}
+
+protected:
+  virtual unsigned long long  GetValue ();
 };
 
 
@@ -358,7 +412,7 @@ public:
    * \sa ImportBool, ImportInteger, ImportCounting, ImportParticle
    */
   ImportDecimalValue (TString name, TString title);
-  virtual ~ImportDecimalValue () {}
+  virtual ~ImportDecimalValue () {if (fValueGetterPtr != NULL) delete fValueGetterPtr;}
 
 protected:
   virtual long double  GetValue ();
@@ -366,8 +420,27 @@ protected:
   ValueGetter   *fValueGetterPtr;
 };
 
+template<>
+class ImportDecimalValue<HAL::AnalysisTreeReader> : public HAL::internal::ImportValueAlgo<long double> {
+public:
+  //! Constructor
+  /*!
+   * Initializes the algorithm
+   * \param[in] name Name of the algorithm. This can be used as the input to other 
+   * algorithms.
+   * \param[in] title Description of the algorithm. Can be an empty string.
+   * \sa ImportBool, ImportInteger, ImportCounting, ImportParticle
+   */
+  ImportDecimalValue (TString name, TString title);
+  virtual ~ImportDecimalValue () {}
+
+protected:
+  virtual long double  GetValue ();
+};
+
 } /* Algorithms */ 
 
+} /* HAL */ 
 
 #ifndef __CINT__
 
@@ -375,14 +448,14 @@ protected:
  * Generic class
  * */
 template<typename ValueType>
-internal::ImportValueAlgo<ValueType>::ImportValueAlgo (TString name, TString title) :
+HAL::internal::ImportValueAlgo<ValueType>::ImportValueAlgo (TString name, TString title) :
   HAL::Algorithm(name, title) {
 
   fUserDataLabel = TString::Format("%s:value", name.Data());
 }
 
 template<typename ValueType>
-void  internal::ImportValueAlgo<ValueType>::Exec (Option_t* /*option*/) {
+void  HAL::internal::ImportValueAlgo<ValueType>::Exec (Option_t* /*option*/) {
   HAL::AnalysisData *data = GetUserData();
   HAL::GenericData *gen_data = new GenericData(GetName());
 
@@ -396,7 +469,7 @@ void  internal::ImportValueAlgo<ValueType>::Exec (Option_t* /*option*/) {
 }
 
 template<typename ValueType>
-void  internal::ImportValueAlgo<ValueType>::Clear (Option_t* /*option*/) {
+void  HAL::internal::ImportValueAlgo<ValueType>::Clear (Option_t* /*option*/) {
   delete GetUserData()->GetTObject(GetName());
 }
 
@@ -404,84 +477,104 @@ void  internal::ImportValueAlgo<ValueType>::Clear (Option_t* /*option*/) {
 
 
 template<class ValueGetter>
-Algorithms::ImportBoolValue<ValueGetter>::ImportBoolValue (TString name, TString title) : 
-  ImportValueAlgo<bool>(name, title), fValueGetterPtr(NULL) {
+HAL::Algorithms::ImportBoolValue<ValueGetter>::ImportBoolValue (TString name, TString title) : 
+  HAL::internal::ImportValueAlgo<bool>(name, title), fValueGetterPtr(NULL) {
   fRefName = "bool";
   fValueLabel = TString::Format("%s:%s", name.Data(), fRefName.Data());
 }
 
 template<class ValueGetter>
-inline bool Algorithms::ImportBoolValue<ValueGetter>::GetValue () {
+inline bool HAL::Algorithms::ImportBoolValue<ValueGetter>::GetValue () {
   if (fValueGetterPtr == NULL) 
     fValueGetterPtr = new ValueGetter(GetRawData()->GetTree());
   return (*fValueGetterPtr)(GetRawData()->GetEntryNumber());
 }
 
-template<>
-inline bool Algorithms::ImportBoolValue<HAL::AnalysisTreeReader>::GetValue () {
-  return GetRawData()->GetBool(fValueLabel);
-}
+//HAL::Algorithms::ImportBoolValue<HAL::AnalysisTreeReader>::ImportBoolValue (TString name, TString title) : 
+//  HAL::internal::ImportValueAlgo<bool>(name, title) {
+//  fRefName = "bool";
+//  fValueLabel = TString::Format("%s:%s", name.Data(), fRefName.Data());
+//}
+//
+//inline bool HAL::Algorithms::ImportBoolValue<HAL::AnalysisTreeReader>::GetValue () {
+//  return GetRawData()->GetBool(fValueLabel);
+//}
 
 template<class ValueGetter>
-Algorithms::ImportIntegerValue<ValueGetter>::ImportIntegerValue (TString name, TString title) : 
-  ImportValueAlgo<long long>(name, title), fValueGetterPtr(NULL) {
+HAL::Algorithms::ImportIntegerValue<ValueGetter>::ImportIntegerValue (TString name, TString title) : 
+  HAL::internal::ImportValueAlgo<long long>(name, title), fValueGetterPtr(NULL) {
   fRefName = "integer";
   fValueLabel = TString::Format("%s:%s", name.Data(), fRefName.Data());
 }
 
 template<class ValueGetter>
-inline long long Algorithms::ImportIntegerValue<ValueGetter>::GetValue () {
+inline long long HAL::Algorithms::ImportIntegerValue<ValueGetter>::GetValue () {
   if (fValueGetterPtr == NULL) 
     fValueGetterPtr = new ValueGetter(GetRawData()->GetTree());
   return (*fValueGetterPtr)(GetRawData()->GetEntryNumber());
 }
 
-template<>
-inline long long Algorithms::ImportIntegerValue<HAL::AnalysisTreeReader>::GetValue () {
-  return GetRawData()->GetInteger(fValueLabel);
-}
+//HAL::Algorithms::ImportIntegerValue<HAL::AnalysisTreeReader>::ImportIntegerValue (TString name, TString title) : 
+//  HAL::internal::ImportValueAlgo<long long>(name, title) {
+//  fRefName = "integer";
+//  fValueLabel = TString::Format("%s:%s", name.Data(), fRefName.Data());
+//}
+//
+//inline long long HAL::Algorithms::ImportIntegerValue<HAL::AnalysisTreeReader>::GetValue () {
+//  return GetRawData()->GetInteger(fValueLabel);
+//}
 
 template<class ValueGetter>
-Algorithms::ImportCountingValue<ValueGetter>::ImportCountingValue (TString name, TString title) : 
-  ImportValueAlgo<unsigned long long>(name, title), fValueGetterPtr(NULL) {
+HAL::Algorithms::ImportCountingValue<ValueGetter>::ImportCountingValue (TString name, TString title) : 
+  HAL::internal::ImportValueAlgo<unsigned long long>(name, title), fValueGetterPtr(NULL) {
   fRefName = "counting";
   fValueLabel = TString::Format("%s:%s", name.Data(), fRefName.Data());
 }
 
 template<class ValueGetter>
-inline unsigned long long Algorithms::ImportCountingValue<ValueGetter>::GetValue () {
+inline unsigned long long HAL::Algorithms::ImportCountingValue<ValueGetter>::GetValue () {
   if (fValueGetterPtr == NULL) 
     fValueGetterPtr = new ValueGetter(GetRawData()->GetTree());
   return (*fValueGetterPtr)(GetRawData()->GetEntryNumber());
 }
 
-template<>
-inline unsigned long long Algorithms::ImportCountingValue<HAL::AnalysisTreeReader>::GetValue () {
-  return GetRawData()->GetCounting(fValueLabel);
-}
+//HAL::Algorithms::ImportCountingValue<HAL::AnalysisTreeReader>::ImportCountingValue (TString name, TString title) : 
+//  HAL::internal::ImportValueAlgo<unsigned long long>(name, title) {
+//  fRefName = "counting";
+//  fValueLabel = TString::Format("%s:%s", name.Data(), fRefName.Data());
+//}
+//
+//inline unsigned long long HAL::Algorithms::ImportCountingValue<HAL::AnalysisTreeReader>::GetValue () {
+//  return GetRawData()->GetCounting(fValueLabel);
+//}
 
 template<class ValueGetter>
-Algorithms::ImportDecimalValue<ValueGetter>::ImportDecimalValue (TString name, TString title) : 
-  ImportValueAlgo<long double>(name, title), fValueGetterPtr(NULL) {
+HAL::Algorithms::ImportDecimalValue<ValueGetter>::ImportDecimalValue (TString name, TString title) : 
+  HAL::internal::ImportValueAlgo<long double>(name, title), fValueGetterPtr(NULL) {
   fRefName = "decimal";
   fValueLabel = TString::Format("%s:%s", name.Data(), fRefName.Data());
 }
 
 template<class ValueGetter>
-inline long double Algorithms::ImportDecimalValue<ValueGetter>::GetValue () {
+inline long double HAL::Algorithms::ImportDecimalValue<ValueGetter>::GetValue () {
   if (fValueGetterPtr == NULL) 
     fValueGetterPtr = new ValueGetter(GetRawData()->GetTree());
   return (*fValueGetterPtr)(GetRawData()->GetEntryNumber());
 }
 
-template<>
-inline long double Algorithms::ImportDecimalValue<HAL::AnalysisTreeReader>::GetValue () {
-  return GetRawData()->GetDecimal(fValueLabel);
-}
+//HAL::Algorithms::ImportDecimalValue<HAL::AnalysisTreeReader>::ImportDecimalValue (TString name, TString title) : 
+//  HAL::internal::ImportValueAlgo<long double>(name, title) {
+//  fRefName = "decimal";
+//  fValueLabel = TString::Format("%s:%s", name.Data(), fRefName.Data());
+//}
+//
+//inline long double HAL::Algorithms::ImportDecimalValue<HAL::AnalysisTreeReader>::GetValue () {
+//  return GetRawData()->GetDecimal(fValueLabel);
+//}
 
 #endif
 
-} /* HAL */ 
+//} /* HAL */ 
 
 #endif /* end of include guard: HAL_ALGORITHM_IMPORT_VALUE */
 

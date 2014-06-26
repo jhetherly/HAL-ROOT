@@ -3,7 +3,7 @@
 }
 
 
-Generic algorithm class that serves as a baseline algorithm for any subsequent \hyperlink{class_h_a_l_1_1_algorithms_1_1_cut}{Cut} algorithms.  
+\hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} that serves as a baseline algorithm for any subsequent \hyperlink{class_h_a_l_1_1_algorithms_1_1_cut}{Cut} algorithms.  
 
 
 
@@ -24,14 +24,13 @@ Inheritance diagram for H\+A\+L\+:\+:Algorithms\+:\+:Empty\+Cut\+:\begin{figure}
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{class_h_a_l_1_1_algorithms_1_1_empty_cut_a39235392c1b3a0f8253114dbcdf0a8a6}{virtual void {\bfseries Exec} (Option\+\_\+t $\ast$)}\label{class_h_a_l_1_1_algorithms_1_1_empty_cut_a39235392c1b3a0f8253114dbcdf0a8a6}
-
-\end{DoxyCompactItemize}
+virtual void \hyperlink{class_h_a_l_1_1_algorithms_1_1_empty_cut_a39235392c1b3a0f8253114dbcdf0a8a6}{Exec} (Option\+\_\+t $\ast$)
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Process method. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Additional Inherited Members}
 
 
 \subsection{Detailed Description}
-Generic algorithm class that serves as a baseline algorithm for any subsequent \hyperlink{class_h_a_l_1_1_algorithms_1_1_cut}{Cut} algorithms. 
+\hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} that serves as a baseline algorithm for any subsequent \hyperlink{class_h_a_l_1_1_algorithms_1_1_cut}{Cut} algorithms. 
 
 This algorithm passes all events. It can serve as a baseline cut in an analysis. {\bfseries Example\+:}~\newline
 In your analysis file, do the following to create a baseline cut\+:
@@ -68,6 +67,29 @@ Initializes the algorithm
 \begin{DoxySeeAlso}{See also}
 \hyperlink{class_h_a_l_1_1_algorithms_1_1_cut}{Cut} 
 \end{DoxySeeAlso}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_empty_cut_a39235392c1b3a0f8253114dbcdf0a8a6}{\index{H\+A\+L\+::\+Algorithms\+::\+Empty\+Cut@{H\+A\+L\+::\+Algorithms\+::\+Empty\+Cut}!Exec@{Exec}}
+\index{Exec@{Exec}!H\+A\+L\+::\+Algorithms\+::\+Empty\+Cut@{H\+A\+L\+::\+Algorithms\+::\+Empty\+Cut}}
+\subsubsection[{Exec}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Algorithms\+::\+Empty\+Cut\+::\+Exec (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [inline]}, {\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{class_h_a_l_1_1_algorithms_1_1_empty_cut_a39235392c1b3a0f8253114dbcdf0a8a6}
+
+
+Hook into the T\+Selector\+::\+Process method. 
+
+This method allows the algorithm operate at the first part of the 'Process' stage of processing a T\+Tree. This where most of the logic of an algorithm will likely be contained. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \hyperlink{class_h_a_l_1_1_algorithm_a438c5c54698aa014b660474d08703bc2}{H\+A\+L\+::\+Algorithm}.
+
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

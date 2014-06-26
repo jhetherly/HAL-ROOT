@@ -83,7 +83,7 @@ $(document).ready(function(){initNavTree('class_h_a_l_1_1_analysis.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -100,6 +100,11 @@ $(document).ready(function(){initNavTree('class_h_a_l_1_1_analysis.html','');});
 <div class="title">HAL::Analysis Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Main class that organizes and drives the analysis.  
+ <a href="class_h_a_l_1_1_analysis.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_analysis_8h_source.html">Analysis.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -148,20 +153,26 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>SetMessagePeriod</b> 
 <tr class="memitem:afccfbae795035cfe75578fa805aefa93"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afccfbae795035cfe75578fa805aefa93"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>PrintTree</b> (Option_t *option=&quot;&quot;)</td></tr>
 <tr class="separator:afccfbae795035cfe75578fa805aefa93"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7c6603a4cc7b74591f5c0427f59023d5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7c6603a4cc7b74591f5c0427f59023d5"></a>
-const char *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLeafType</b> (TString leafname)</td></tr>
-<tr class="separator:a7c6603a4cc7b74591f5c0427f59023d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8410426a53f7828270531f1ec56340b8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8410426a53f7828270531f1ec56340b8"></a>
-const char *&#160;</td><td class="memItemRight" valign="bottom"><b>GetLeafType</b> (TString branchname, TString leafname)</td></tr>
-<tr class="separator:a8410426a53f7828270531f1ec56340b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0ec08d57790b889e20df8c0076b89858"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ec08d57790b889e20df8c0076b89858"></a>
+TString&#160;</td><td class="memItemRight" valign="bottom"><b>GetLeafType</b> (TString leafname)</td></tr>
+<tr class="separator:a0ec08d57790b889e20df8c0076b89858"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af4078713adc278e90495f61fa8759b83"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4078713adc278e90495f61fa8759b83"></a>
+TString&#160;</td><td class="memItemRight" valign="bottom"><b>GetLeafType</b> (TString branchname, TString leafname)</td></tr>
+<tr class="separator:af4078713adc278e90495f61fa8759b83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e11fa65e712377587ed4b6a1a62c8aa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6e11fa65e712377587ed4b6a1a62c8aa"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>MapBranch</b> (TString branchname, TString nickname)</td></tr>
 <tr class="separator:a6e11fa65e712377587ed4b6a1a62c8aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4278a2e961076913371dec71da389701"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4278a2e961076913371dec71da389701"></a>
 Long64_t&#160;</td><td class="memItemRight" valign="bottom"><b>Process</b> (Option_t *option=&quot;&quot;, Long64_t nentries=1234567890, Long64_t firstentry=0)</td></tr>
 <tr class="separator:a4278a2e961076913371dec71da389701"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a93329a47d272937c655b41a414ff307e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a93329a47d272937c655b41a414ff307e"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ClassDefNV</b> (<a class="el" href="class_h_a_l_1_1_analysis.html">Analysis</a>, 0)</td></tr>
+<tr class="separator:a93329a47d272937c655b41a414ff307e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Main class that organizes and drives the analysis. </p>
+<p>This class is the main interface for configuring the analysis. The user can specify the input tree name, the files to process, the output file name, the default output tree name, any required branch maps, and the processing details. This class can also print the input tree, configure the processing messages, and print the data type of a leaf. Most inportantly, this class loads the algorithms that will be processes. </p>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>/Users/jhetherly/src/HAL-ROOT/include/HAL/<a class="el" href="_analysis_8h_source.html">Analysis.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -170,7 +181,7 @@ Long64_t&#160;</td><td class="memItemRight" valign="bottom"><b>Process</b> (Opti
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespace_h_a_l.html">HAL</a></li><li class="navelem"><a class="el" href="class_h_a_l_1_1_analysis.html">Analysis</a></li>
-    <li class="footer">Generated on Thu May 29 2014 21:57:24 for HAL by
+    <li class="footer">Generated on Wed Jun 11 2014 21:57:55 for HAL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

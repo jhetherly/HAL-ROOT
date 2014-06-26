@@ -24,9 +24,8 @@ Inheritance diagram for H\+A\+L\+:\+:Algorithms\+:\+:Import\+Particle\+:\begin{f
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{class_h_a_l_1_1_algorithms_1_1_import_particle_a1e5924b9deb6c7d1c1d1734b8cb510cb}{virtual void {\bfseries Exec} (Option\+\_\+t $\ast$)}\label{class_h_a_l_1_1_algorithms_1_1_import_particle_a1e5924b9deb6c7d1c1d1734b8cb510cb}
-
-\item 
+virtual void \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_particle_a1e5924b9deb6c7d1c1d1734b8cb510cb}{Exec} (Option\+\_\+t $\ast$)
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Process method. \end{DoxyCompactList}\item 
 \hypertarget{class_h_a_l_1_1_algorithms_1_1_import_particle_abad1a5a9b44becfae4e4a7113edc80eb}{virtual T\+Lorentz\+Vector $\ast$ {\bfseries Make\+T\+L\+V} (unsigned)}\label{class_h_a_l_1_1_algorithms_1_1_import_particle_abad1a5a9b44becfae4e4a7113edc80eb}
 
 \end{DoxyCompactItemize}
@@ -113,6 +112,29 @@ Initializes the algorithm
 \begin{DoxySeeAlso}{See also}
 Import\+Bool, Import\+Integer, Import\+Counting, Import\+Decimal 
 \end{DoxySeeAlso}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_import_particle_a1e5924b9deb6c7d1c1d1734b8cb510cb}{\index{H\+A\+L\+::\+Algorithms\+::\+Import\+Particle@{H\+A\+L\+::\+Algorithms\+::\+Import\+Particle}!Exec@{Exec}}
+\index{Exec@{Exec}!H\+A\+L\+::\+Algorithms\+::\+Import\+Particle@{H\+A\+L\+::\+Algorithms\+::\+Import\+Particle}}
+\subsubsection[{Exec}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Algorithms\+::\+Import\+Particle\+::\+Exec (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{class_h_a_l_1_1_algorithms_1_1_import_particle_a1e5924b9deb6c7d1c1d1734b8cb510cb}
+
+
+Hook into the T\+Selector\+::\+Process method. 
+
+This method allows the algorithm operate at the first part of the 'Process' stage of processing a T\+Tree. This where most of the logic of an algorithm will likely be contained. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \hyperlink{class_h_a_l_1_1_algorithm_a438c5c54698aa014b660474d08703bc2}{H\+A\+L\+::\+Algorithm}.
+
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

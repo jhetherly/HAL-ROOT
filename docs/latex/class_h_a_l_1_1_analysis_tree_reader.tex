@@ -1,6 +1,15 @@
 \hypertarget{class_h_a_l_1_1_analysis_tree_reader}{\section{H\+A\+L\+:\+:Analysis\+Tree\+Reader Class Reference}
 \label{class_h_a_l_1_1_analysis_tree_reader}\index{H\+A\+L\+::\+Analysis\+Tree\+Reader@{H\+A\+L\+::\+Analysis\+Tree\+Reader}}
 }
+
+
+Class for the easy extraction of data from a T\+Tree.  
+
+
+
+
+{\ttfamily \#include $<$Analysis\+Tree\+Reader.\+h$>$}
+
 Inheritance diagram for H\+A\+L\+:\+:Analysis\+Tree\+Reader\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -23,6 +32,9 @@ Inheritance diagram for H\+A\+L\+:\+:Analysis\+Tree\+Reader\+:\begin{figure}[H]
 
 \item 
 \hypertarget{class_h_a_l_1_1_analysis_tree_reader_a6ad8933bd6c8cc2b17179c96fd3bfcb1}{T\+Tree $\ast$ {\bfseries Get\+Tree} ()}\label{class_h_a_l_1_1_analysis_tree_reader_a6ad8933bd6c8cc2b17179c96fd3bfcb1}
+
+\item 
+\hypertarget{class_h_a_l_1_1_analysis_tree_reader_a85f301e0ef78fdf1f239b36a030fb023}{T\+String {\bfseries Get\+Branch\+Name} (const T\+String \&name)}\label{class_h_a_l_1_1_analysis_tree_reader_a85f301e0ef78fdf1f239b36a030fb023}
 
 \item 
 \hypertarget{class_h_a_l_1_1_analysis_tree_reader_ab17ea6c10da56d9282d60d9507e01ef9}{void {\bfseries Init} ()}\label{class_h_a_l_1_1_analysis_tree_reader_ab17ea6c10da56d9282d60d9507e01ef9}
@@ -76,11 +88,26 @@ Inheritance diagram for H\+A\+L\+:\+:Analysis\+Tree\+Reader\+:\begin{figure}[H]
 \subsection*{Friends}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{class_h_a_l_1_1_analysis_tree_reader_a3b527c540b6431b5700a6d002214747c}{class {\bfseries Branch\+Manager}}\label{class_h_a_l_1_1_analysis_tree_reader_a3b527c540b6431b5700a6d002214747c}
+\hypertarget{class_h_a_l_1_1_analysis_tree_reader_a3da00472573022c08436f19e0a48d8de}{class {\bfseries internal\+::\+Branch\+Manager}}\label{class_h_a_l_1_1_analysis_tree_reader_a3da00472573022c08436f19e0a48d8de}
 
 \end{DoxyCompactItemize}
 
 
+\subsection{Detailed Description}
+Class for the easy extraction of data from a T\+Tree. 
+
+This class allows for the easy retrieval of data stored in a T\+Tree. Through normal function calls the user can access data stored as scalars, C-\/arrays, S\+T\+L vectors, 2\+D C-\/arrays, and S\+T\+L vectors of vectors. A listing of the allowable types is given below. If a class that is stored in the T\+Tree can be decomposed in 'Make\+Class\+Mode,' this class can read it as well. The user should not need to worry about allocating memory or setting branch addresses. There are hard limits to the lengths of a C-\/array and 2\+D C-\/array that can be read. They are 10000 and 10000x100 respectively. If \hyperlink{namespace_h_a_l}{H\+A\+L} is compiled with R\+O\+O\+T version 6 or later, this restriction is lifted.~\newline
+{\itshape Data Types That Can be Read\+:} \begin{TabularC}{6}
+\hline
+\rowcolor{lightgray}\PBS\centering {\bf Boolean }&\PBS\centering {\bf Integer }&\PBS\centering {\bf Counting }&\PBS\centering {\bf Decimal }&\PBS\centering {\bf String }&\PBS\centering {\bf Misc  }\\\cline{1-6}
+\PBS\centering bool/\+Bool\+\_\+t &\PBS\centering int/\+Int\+\_\+t &\PBS\centering unsigned int/\+U\+Int\+\_\+t &\PBS\centering float/\+Float\+\_\+t/\+Float16\+\_\+t/\+Real\+\_\+t &\PBS\centering char/\+Char\+\_\+t/\+Text\+\_\+t &\PBS\centering T\+Obj\+Array \\\cline{1-6}
+\PBS\centering &\PBS\centering short/\+Short\+\_\+t &\PBS\centering unsigned short/\+U\+Short\+\_\+t &\PBS\centering double/\+Double\+\_\+t/\+Double32\+\_\+t &\PBS\centering char$\ast$ &\PBS\centering T\+Clones\+Array \\\cline{1-6}
+\PBS\centering &\PBS\centering long/\+Long\+\_\+t &\PBS\centering unsigned long/\+U\+Long\+\_\+t &\PBS\centering long double/\+Long\+Double\+\_\+t &\PBS\centering T\+String &\PBS\centering T\+Ref \\\cline{1-6}
+\PBS\centering &\PBS\centering long long/\+Long64\+\_\+t &\PBS\centering unsigned long long/\+U\+Long64\+\_\+t &\PBS\centering &\PBS\centering T\+Obj\+String &\PBS\centering T\+Ref\+Array \\\cline{1-6}
+\PBS\centering &\PBS\centering signed char &\PBS\centering unsigned char &\PBS\centering &\PBS\centering std\+::string &\PBS\centering T\+Ref\+Array \\\cline{1-6}
+\end{TabularC}
+
+
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/\+Users/jhetherly/src/\+H\+A\+L-\/\+R\+O\+O\+T/include/\+H\+A\+L/Analysis\+Tree\+Reader.\+h\end{DoxyCompactItemize}
+/\+Users/jhetherly/src/\+H\+A\+L-\/\+R\+O\+O\+T/include/\+H\+A\+L/\hyperlink{_analysis_tree_reader_8h}{Analysis\+Tree\+Reader.\+h}\end{DoxyCompactItemize}

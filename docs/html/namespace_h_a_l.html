@@ -83,7 +83,7 @@ $(document).ready(function(){initNavTree('namespace_h_a_l.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -105,16 +105,21 @@ $(document).ready(function(){initNavTree('namespace_h_a_l.html','');});
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_a_l_1_1_algorithm.html">Algorithm</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base class for all analysis algorithms.  <a href="class_h_a_l_1_1_algorithm.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_a_l_1_1_analysis.html">Analysis</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Main class that organizes and drives the analysis.  <a href="class_h_a_l_1_1_analysis.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_a_l_1_1_analysis_data.html">AnalysisData</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class for storage and sharing of data referenced by strings.  <a href="class_h_a_l_1_1_analysis_data.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_a_l_1_1_analysis_selector.html">AnalysisSelector</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><b>AnalysisSelector</b></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_a_l_1_1_analysis_tree_reader.html">AnalysisTreeReader</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class for the easy extraction of data from a TTree.  <a href="class_h_a_l_1_1_analysis_tree_reader.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_a_l_1_1_analysis_tree_writer.html">AnalysisTreeWriter</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Class for writing data to a TTree in a bin-less manner.  <a href="class_h_a_l_1_1_analysis_tree_writer.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_a_l_1_1_cut_algorithm.html">CutAlgorithm</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -228,13 +233,7 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 <p>Generic Algorithms: Add parent/child traversal algorithms </p>
 <p class="enddd">Generic Algorithms: Make error messages more informative </p>
 </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd><p class="startdd">Generic Algorithms: Add chi-squared minimization algorithm </p>
-<p>Generic Algorithms: Add parent selection algorithm </p>
-<p>Generic Algorithms: Add merging algorithm </p>
-<p>Generic Algorithms: Add monitor for UserData algorithm </p>
-<p>Generic Algorithms: Add parent/child traversal algorithms </p>
-<p class="enddd">Generic Algorithms: Make error messages more informative </p>
-</dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000002">Todo:</a></b></dt><dd>Generic Algorithms: Make error messages more informative </dd></dl>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000003">Todo:</a></b></dt><dd><p class="startdd">Generic Algorithms: Add chi-squared minimization algorithm </p>
 <p>Generic Algorithms: Add parent selection algorithm </p>
 <p>Generic Algorithms: Add merging algorithm </p>
@@ -242,7 +241,13 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 <p>Generic Algorithms: Add parent/child traversal algorithms </p>
 <p class="enddd">Generic Algorithms: Make error messages more informative </p>
 </dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd>Generic Algorithms: Make error messages more informative </dd></dl>
+<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000004">Todo:</a></b></dt><dd><p class="startdd">Generic Algorithms: Add chi-squared minimization algorithm </p>
+<p>Generic Algorithms: Add parent selection algorithm </p>
+<p>Generic Algorithms: Add merging algorithm </p>
+<p>Generic Algorithms: Add monitor for UserData algorithm </p>
+<p>Generic Algorithms: Add parent/child traversal algorithms </p>
+<p class="enddd">Generic Algorithms: Make error messages more informative </p>
+</dd></dl>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000005">Todo:</a></b></dt><dd><p class="startdd">Generic Algorithms: Add chi-squared minimization algorithm </p>
 <p>Generic Algorithms: Add parent selection algorithm </p>
 <p>Generic Algorithms: Add merging algorithm </p>
@@ -279,20 +284,6 @@ std::ostream &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>operato
 <p class="enddd">Generic Algorithms: Make error messages more informative </p>
 </dd></dl>
 <dl class="todo"><dt><b><a class="el" href="todo.html#_todo000010">Todo:</a></b></dt><dd><p class="startdd">Generic Algorithms: Add chi-squared minimization algorithm </p>
-<p>Generic Algorithms: Add parent selection algorithm </p>
-<p>Generic Algorithms: Add merging algorithm </p>
-<p>Generic Algorithms: Add monitor for UserData algorithm </p>
-<p>Generic Algorithms: Add parent/child traversal algorithms </p>
-<p class="enddd">Generic Algorithms: Make error messages more informative </p>
-</dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000011">Todo:</a></b></dt><dd><p class="startdd">Generic Algorithms: Add chi-squared minimization algorithm </p>
-<p>Generic Algorithms: Add parent selection algorithm </p>
-<p>Generic Algorithms: Add merging algorithm </p>
-<p>Generic Algorithms: Add monitor for UserData algorithm </p>
-<p>Generic Algorithms: Add parent/child traversal algorithms </p>
-<p class="enddd">Generic Algorithms: Make error messages more informative </p>
-</dd></dl>
-<dl class="todo"><dt><b><a class="el" href="todo.html#_todo000012">Todo:</a></b></dt><dd><p class="startdd">Generic Algorithms: Add chi-squared minimization algorithm </p>
 <p>Generic Algorithms: Add parent selection algorithm </p>
 <p>Generic Algorithms: Add merging algorithm </p>
 <p>Generic Algorithms: Add monitor for UserData algorithm </p>
@@ -1830,7 +1821,7 @@ template&lt;class T &gt; </div>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespace_h_a_l.html">HAL</a></li>
-    <li class="footer">Generated on Thu May 29 2014 21:57:24 for HAL by
+    <li class="footer">Generated on Wed Jun 11 2014 21:57:54 for HAL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

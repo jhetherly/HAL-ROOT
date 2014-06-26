@@ -83,7 +83,7 @@ $(document).ready(function(){initNavTree('_monitor_8h_source.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -118,12 +118,12 @@ $(document).ready(function(){initNavTree('_monitor_8h_source.html','');});
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#include &lt;HAL/Common.h&gt;</span></div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#include &lt;HAL/Exceptions.h&gt;</span></div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisUtils.h&gt;</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#include &lt;HAL/Algorithm.h&gt;</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_algorithm_8h.html">HAL/Algorithm.h</a>&gt;</span></div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#include &lt;HAL/CutAlgorithm.h&gt;</span></div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisUtils.h&gt;</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisData.h&gt;</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisTreeReader.h&gt;</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisTreeWriter.h&gt;</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_analysis_data_8h.html">HAL/AnalysisData.h</a>&gt;</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_analysis_tree_reader_8h.html">HAL/AnalysisTreeReader.h</a>&gt;</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_analysis_tree_writer_8h.html">HAL/AnalysisTreeWriter.h</a>&gt;</span></div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#include &lt;HAL/GenericParticle.h&gt;</span></div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">#include &lt;HAL/GenericData.h&gt;</span></div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
@@ -148,7 +148,7 @@ $(document).ready(function(){initNavTree('_monitor_8h_source.html','');});
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;  <span class="keyword">virtual</span> ~<a class="code" href="class_h_a_l_1_1_algorithms_1_1_monitor_algorithm.html">MonitorAlgorithm</a> () {}</div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> Exec (Option_t* <span class="comment">/*option*/</span>);</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_h_a_l_1_1_algorithms_1_1_monitor_algorithm.html#ae1efc679e7dcbc8692a6b37dca0517c3">Exec</a> (Option_t* <span class="comment">/*option*/</span>);</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;<span class="keyword">private</span>:</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;  <span class="keywordtype">long</span> <span class="keywordtype">long</span>      fN;</div>
@@ -163,11 +163,11 @@ $(document).ready(function(){initNavTree('_monitor_8h_source.html','');});
 <div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="class_h_a_l_1_1_algorithms_1_1_monitor_user_data.html">  112</a></span>&#160;<span class="keyword">class </span><a class="code" href="class_h_a_l_1_1_algorithms_1_1_monitor_user_data.html">MonitorUserData</a> : <span class="keyword">public</span> <a class="code" href="class_h_a_l_1_1_algorithm.html">HAL::Algorithm</a> {</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="keyword">public</span>:</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;  <a class="code" href="class_h_a_l_1_1_algorithms_1_1_monitor_user_data.html">MonitorUserData</a> (TString name, TString title, std::ostream &amp;os = std::cout) :</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <a class="code" href="class_h_a_l_1_1_algorithm.html">Algorithm</a>(name, title), fOS(&amp;os) {}</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    <a class="code" href="class_h_a_l_1_1_algorithm.html#a50506c07b5959ecd740f5683bf50ea93">Algorithm</a>(name, title), fOS(&amp;os) {}</div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keyword">virtual</span> ~<a class="code" href="class_h_a_l_1_1_algorithms_1_1_monitor_user_data.html">MonitorUserData</a> () {}</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> Exec (Option_t* <span class="comment">/*option*/</span>);</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_h_a_l_1_1_algorithms_1_1_monitor_user_data.html#aea4229dea8ffbd7edfa8a4108e72205c">Exec</a> (Option_t* <span class="comment">/*option*/</span>);</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="keyword">private</span>:</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;  std::ostream  *fOS;</div>
@@ -179,9 +179,16 @@ $(document).ready(function(){initNavTree('_monitor_8h_source.html','');});
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* end of include guard: HAL_ALGORITHM_MONITOR */</span><span class="preprocessor"></span></div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;</div>
-<div class="ttc" id="class_h_a_l_1_1_algorithm_html"><div class="ttname"><a href="class_h_a_l_1_1_algorithm.html">HAL::Algorithm</a></div><div class="ttdef"><b>Definition:</b> Algorithm.h:25</div></div>
+<div class="ttc" id="class_h_a_l_1_1_algorithm_html"><div class="ttname"><a href="class_h_a_l_1_1_algorithm.html">HAL::Algorithm</a></div><div class="ttdoc">Base class for all analysis algorithms. </div><div class="ttdef"><b>Definition:</b> Algorithm.h:38</div></div>
+<div class="ttc" id="class_h_a_l_1_1_algorithms_1_1_monitor_algorithm_html_ae1efc679e7dcbc8692a6b37dca0517c3"><div class="ttname"><a href="class_h_a_l_1_1_algorithms_1_1_monitor_algorithm.html#ae1efc679e7dcbc8692a6b37dca0517c3">HAL::Algorithms::MonitorAlgorithm::Exec</a></div><div class="ttdeci">virtual void Exec(Option_t *)</div><div class="ttdoc">Hook into the TSelector::Process method. </div></div>
+<div class="ttc" id="_analysis_data_8h_html"><div class="ttname"><a href="_analysis_data_8h.html">AnalysisData.h</a></div></div>
 <div class="ttc" id="class_h_a_l_1_1_algorithms_1_1_monitor_algorithm_html_ac37ea6c50b23dbb49b63d9fe551554a7"><div class="ttname"><a href="class_h_a_l_1_1_algorithms_1_1_monitor_algorithm.html#ac37ea6c50b23dbb49b63d9fe551554a7">HAL::Algorithms::MonitorAlgorithm::MonitorAlgorithm</a></div><div class="ttdeci">MonitorAlgorithm(TString name, TString title, TString input, long long period=1, std::ostream &amp;os=std::cout)</div><div class="ttdoc">Constructor. </div><div class="ttdef"><b>Definition:</b> Monitor.h:95</div></div>
-<div class="ttc" id="class_h_a_l_1_1_algorithms_1_1_monitor_algorithm_html"><div class="ttname"><a href="class_h_a_l_1_1_algorithms_1_1_monitor_algorithm.html">HAL::Algorithms::MonitorAlgorithm</a></div><div class="ttdoc">Generic algorithm class that prints the content of an algorithm to a given ostream. </div><div class="ttdef"><b>Definition:</b> Monitor.h:83</div></div>
+<div class="ttc" id="class_h_a_l_1_1_algorithm_html_a50506c07b5959ecd740f5683bf50ea93"><div class="ttname"><a href="class_h_a_l_1_1_algorithm.html#a50506c07b5959ecd740f5683bf50ea93">HAL::Algorithm::Algorithm</a></div><div class="ttdeci">Algorithm(TString name=&quot;&quot;, TString title=&quot;&quot;)</div><div class="ttdoc">Constructor. </div></div>
+<div class="ttc" id="_algorithm_8h_html"><div class="ttname"><a href="_algorithm_8h.html">Algorithm.h</a></div></div>
+<div class="ttc" id="_analysis_tree_reader_8h_html"><div class="ttname"><a href="_analysis_tree_reader_8h.html">AnalysisTreeReader.h</a></div></div>
+<div class="ttc" id="_analysis_tree_writer_8h_html"><div class="ttname"><a href="_analysis_tree_writer_8h.html">AnalysisTreeWriter.h</a></div></div>
+<div class="ttc" id="class_h_a_l_1_1_algorithms_1_1_monitor_algorithm_html"><div class="ttname"><a href="class_h_a_l_1_1_algorithms_1_1_monitor_algorithm.html">HAL::Algorithms::MonitorAlgorithm</a></div><div class="ttdoc">Algorithm that prints the content of an algorithm to a given ostream. </div><div class="ttdef"><b>Definition:</b> Monitor.h:83</div></div>
+<div class="ttc" id="class_h_a_l_1_1_algorithms_1_1_monitor_user_data_html_aea4229dea8ffbd7edfa8a4108e72205c"><div class="ttname"><a href="class_h_a_l_1_1_algorithms_1_1_monitor_user_data.html#aea4229dea8ffbd7edfa8a4108e72205c">HAL::Algorithms::MonitorUserData::Exec</a></div><div class="ttdeci">virtual void Exec(Option_t *)</div><div class="ttdoc">Hook into the TSelector::Process method. </div></div>
 <div class="ttc" id="class_h_a_l_1_1_algorithms_1_1_monitor_user_data_html"><div class="ttname"><a href="class_h_a_l_1_1_algorithms_1_1_monitor_user_data.html">HAL::Algorithms::MonitorUserData</a></div><div class="ttdef"><b>Definition:</b> Monitor.h:112</div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
@@ -189,7 +196,7 @@ $(document).ready(function(){initNavTree('_monitor_8h_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_8ef0be067feaf12c29bf8a1b5685ef25.html">HAL</a></li><li class="navelem"><a class="el" href="dir_250e678fa9892d1a56c5a07962a3afe8.html">Algorithms</a></li><li class="navelem"><a class="el" href="_monitor_8h.html">Monitor.h</a></li>
-    <li class="footer">Generated on Thu May 29 2014 21:57:24 for HAL by
+    <li class="footer">Generated on Wed Jun 11 2014 21:57:54 for HAL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

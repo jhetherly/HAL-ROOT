@@ -1,20 +1,40 @@
 #include <HAL/Algorithm.h>
+#include <iostream>
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+#include <aux/boost/foreach.hpp>
+#endif
+#include <TMath.h>
+#include <TObject.h>
+#include <TNamed.h>
+#include <TList.h>
+#include <HAL/AnalysisData.h>
+#include <HAL/AnalysisTreeReader.h>
+#include <HAL/AnalysisTreeWriter.h>
 
 ClassImp(HAL::Algorithm);
 
-namespace HAL {
+namespace HAL 
+{
 
+//______________________________________________________________________________
 Algorithm::Algorithm (TString name, TString title) : 
-  fDataList(0), fAlgorithmType(""), fCounter(0), fName(name), fTitle(title), 
-  fPrintCounter(false), fAlgorithms(), fHasExecuted(kFALSE), fAbort(kFALSE) {
+  fPrintCounter(kFALSE), fAlgorithms(), fName(name), fTitle(title), 
+  fHasExecuted(kFALSE), fAbort(kFALSE), fDataList(nullptr), fAlgorithmType(""),  fCounter(0) 
+{
 }
 
-Algorithm::Algorithm (const Algorithm &other) {
-  // Copy constructor. 
+//______________________________________________________________________________
+Algorithm::Algorithm (const Algorithm &other) 
+{
   DeleteAlgos();
-  for (std::list<Algorithm*>::const_iterator algo = other.fAlgorithms.begin();
-       algo != other.fAlgorithms.end(); ++algo)
-    fAlgorithms.push_back(*algo);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, other.fAlgorithms )
+#else
+  for (auto algo: other.fAlgorithms)
+#endif
+  {
+    fAlgorithms.push_back(algo);
+  }
   fName = other.fName;
   fTitle = other.fTitle;
   fDataList = other.fDataList; 
@@ -24,63 +44,114 @@ Algorithm::Algorithm (const Algorithm &other) {
   fAbort = kFALSE;
 }
 
-Algorithm::~Algorithm() {
+//______________________________________________________________________________
+Algorithm::~Algorithm() 
+{
 }
 
-void Algorithm::SetOutputFileName (TString filename) {
+//______________________________________________________________________________
+void Algorithm::Add (Algorithm *algo) 
+{ 
+  fAlgorithms.push_back(algo); 
+}
+
+//______________________________________________________________________________
+void Algorithm::SetOutputFileName (TString filename) 
+{
+  // User should never call this.
+  
   fOutputFileName = filename;
-  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
-       algo != fAlgorithms.end(); ++algo)
-    (*algo)->SetOutputFileName(filename);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    algo->SetOutputFileName(filename);
+  }
 }
 
-void Algorithm::ls () {
+//______________________________________________________________________________
+void Algorithm::ls () 
+{
+  // User should never call this.
+
   TString indent("");
-  ls(indent);
+  PrintAlgorithmHierarchy(indent);
 }
 
-void Algorithm::CounterSummary () {
+//______________________________________________________________________________
+void Algorithm::CounterSummary () 
+{
+  // User should never call this.
+
   TString indent("");
   std::cout << "Object Creation Summary:" << std::endl;
-  counter_summary(indent);
+  CounterSummaryHelper(indent);
   std::cout << "End of Object Summary" << std::endl << std::endl;
 }
 
-void Algorithm::CutReport () {
+//______________________________________________________________________________
+void Algorithm::CutReport () 
+{
+  // User should never call this.
+
   TString indent("");
   long long base_number = -1;
   long long prev_number = -1;
   std::cout << "Efficiency Report (absolute and relative):" << std::endl;
-  cut_report(indent, base_number, prev_number);
+  CutReportHelper(indent, base_number, prev_number);
   std::cout << "End of Efficiency Report" << std::endl << std::endl;
 }
 
-void Algorithm::DeleteAlgos () {
-  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
-       algo != fAlgorithms.end(); ++algo) {
-    (*algo)->DeleteAlgos();
-    delete *algo;
+//______________________________________________________________________________
+void Algorithm::DeleteAlgos () 
+{
+  // User should never call this.
+
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    algo->DeleteAlgos();
+    delete algo;
+    algo = nullptr;
   }
   fAlgorithms.clear(); // may double delete
 }
 
-// Be sure the calling method cleans its own memory
-void Algorithm::Abort () {
+//______________________________________________________________________________
+void Algorithm::Abort () 
+{
   fAbort = kTRUE;
   fHasExecuted = kFALSE;
 }
 
-void  Algorithm::CleanAlgos () {
-  for (std::list<Algorithm*>::reverse_iterator algo = fAlgorithms.rbegin();
-       algo != fAlgorithms.rend(); ++algo)
-    (*algo)->CleanAlgos();
+//______________________________________________________________________________
+void  Algorithm::CleanAlgos () 
+{
+  // User should never call this.
+
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    algo->CleanAlgos();
+  }
   if (fHasExecuted)
     Clear();
   fHasExecuted = kFALSE;
   fAbort = kFALSE;
 }
 
-void  Algorithm::ExecuteAlgo (Option_t *option) {
+//______________________________________________________________________________
+void  Algorithm::ExecuteAlgo (Option_t *option) 
+{
+  // User should never call this.
 
   fOption = option;
 
@@ -92,87 +163,164 @@ void  Algorithm::ExecuteAlgo (Option_t *option) {
   CleanAlgos();
 }
 
-void  Algorithm::ExecuteAlgos (Option_t *option) {
+//______________________________________________________________________________
+void  Algorithm::ExecuteAlgos (Option_t *option) 
+{
+  // User should never call this.
 
-  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
-       algo != fAlgorithms.end(); ++algo) {
-
-    if ((*algo)->fHasExecuted) {
-      (*algo)->ExecuteAlgos(option);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    if (algo->fHasExecuted) {
+      algo->ExecuteAlgos(option);
       continue;
     }
 
-    (*algo)->Exec(option);
-    if ((*algo)->fAbort) break;
-    (*algo)->fHasExecuted = kTRUE;
-    (*algo)->ExecuteAlgos(option);
+    algo->Exec(option);
+    if (algo->fAbort) break;
+    algo->fHasExecuted = kTRUE;
+    algo->ExecuteAlgos(option);
   }
 }
 
-void  Algorithm::InitializeAlgo (Option_t *option) {
+//______________________________________________________________________________
+void  Algorithm::InitializeAlgo (Option_t *option) 
+{
+  // User should never call this.
+
   Init(option);
-  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
-       algo != fAlgorithms.end(); ++algo)
-    (*algo)->InitializeAlgo(option);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    algo->InitializeAlgo(option);
+  }
 }
 
-void Algorithm::BeginAlgo (Option_t *option) {
+//______________________________________________________________________________
+void Algorithm::BeginAlgo (Option_t *option) 
+{
+  // User should never call this.
+
   Begin(option);
-  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
-       algo != fAlgorithms.end(); ++algo)
-    (*algo)->BeginAlgo(option);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    algo->BeginAlgo(option);
+  }
 }
 
-void Algorithm::SlaveBeginAlgo (Option_t *option) {
+//______________________________________________________________________________
+void Algorithm::SlaveBeginAlgo (Option_t *option) 
+{
+  // User should never call this.
+
   SlaveBegin(option);
-  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
-       algo != fAlgorithms.end(); ++algo)
-    (*algo)->SlaveBeginAlgo(option);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    algo->SlaveBeginAlgo(option);
+  }
 }
 
-void Algorithm::NotifyAlgo (Option_t *option) {
+//______________________________________________________________________________
+void Algorithm::NotifyAlgo (Option_t *option) 
+{
+  // User should never call this.
+
   Notify(option);
-  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
-       algo != fAlgorithms.end(); ++algo)
-    (*algo)->NotifyAlgo(option);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    algo->NotifyAlgo(option);
+  }
 }
 
-void Algorithm::SlaveTerminateAlgo (Option_t *option) {
-  for (std::list<Algorithm*>::reverse_iterator algo = fAlgorithms.rbegin();
-       algo != fAlgorithms.rend(); ++algo)
-    (*algo)->SlaveTerminateAlgo(option);
+//______________________________________________________________________________
+void Algorithm::SlaveTerminateAlgo (Option_t *option) 
+{
+  // User should never call this.
+
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    algo->SlaveTerminateAlgo(option);
+  }
   SlaveTerminate(option);
 }
 
-void Algorithm::TerminateAlgo (Option_t *option) {
-  for (std::list<Algorithm*>::reverse_iterator algo = fAlgorithms.rbegin();
-       algo != fAlgorithms.rend(); ++algo)
-    (*algo)->TerminateAlgo(option);
+//______________________________________________________________________________
+void Algorithm::TerminateAlgo (Option_t *option) 
+{
+  // User should never call this.
+
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    algo->TerminateAlgo(option);
+  }
   Terminate(option);
 }
 
-void Algorithm::AddData (TString name, TObject *obj) {
-  ((TNamed*)obj)->SetName(name.Data());
+//______________________________________________________________________________
+void Algorithm::AddData (TString name, TObject *obj) 
+{
+  static_cast<TNamed*>(obj)->SetName(name.Data());
   fDataList->AddLast(obj);
 }
 
-TObject* Algorithm::GetData (TString name) {
+//______________________________________________________________________________
+TObject* Algorithm::GetData (TString name) 
+{
   return fDataList->FindObject(name.Data());
 }
 
-Bool_t Algorithm::CheckData (TString name) {
+//______________________________________________________________________________
+Bool_t Algorithm::CheckData (TString name) 
+{
   return fDataList->FindObject(name.Data()) ? kTRUE : kFALSE;
 }
 
-void Algorithm::AssignDataList (TList *list) {
+//______________________________________________________________________________
+void Algorithm::AssignDataList (TList *list) 
+{
+  // User should never call this.
+
   fDataList = list;
   // Assign data to all sub-algorithms
-  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
-       algo != fAlgorithms.end(); ++algo)
-    (*algo)->AssignDataList(list);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    algo->AssignDataList(list);
+  }
 }
 
-void Algorithm::DeleteData (TString name) {
+//______________________________________________________________________________
+void Algorithm::DeleteData (TString name) 
+{
   TObject *obj = fDataList->FindObject(name.Data());
   if (obj == 0)
     throw HALException(name.Prepend("Couldn't find and delete data "));
@@ -180,24 +328,77 @@ void Algorithm::DeleteData (TString name) {
   delete obj;
 }
 
-void Algorithm::ls (TString indent) {
-  std::cout << indent << fName << ": " << fTitle << std::endl;
-  indent.Prepend("  ");
-  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
-       algo != fAlgorithms.end(); ++algo)
-    (*algo)->ls(indent);
+//______________________________________________________________________________
+AnalysisTreeReader* Algorithm::GetRawData () 
+{
+  return static_cast<AnalysisTreeReader*>(fDataList->FindObject("RawData"));
 }
 
-void Algorithm::counter_summary(TString indent) {
+//______________________________________________________________________________
+AnalysisData* Algorithm::GetUserData () 
+{
+  return static_cast<AnalysisData*>(fDataList->FindObject("UserData"));
+}
+
+//______________________________________________________________________________
+AnalysisTreeWriter* Algorithm::GetUserOutput () 
+{
+  return static_cast<AnalysisTreeWriter*>(fDataList->FindObject("UserOutput"));
+}
+
+//______________________________________________________________________________
+Algorithm* Algorithm::GetAlgorithm (TString name) 
+{
+  Algorithm *a = nullptr;
+
+  if (this->GetName().EqualTo(name))
+    return this;
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    a = algo->GetAlgorithm(name);
+    if (a != nullptr) return a;
+  }
+  return a;
+}
+
+//______________________________________________________________________________
+void Algorithm::PrintAlgorithmHierarchy (TString indent) 
+{
+  std::cout << indent << fName << ": " << fTitle << std::endl;
+  indent.Prepend("  ");
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    algo->PrintAlgorithmHierarchy(indent);
+  }
+}
+
+//______________________________________________________________________________
+void Algorithm::CounterSummaryHelper (TString indent) 
+{
   if (fPrintCounter)
     std::cout << indent << fName << ": " << fCounter << std::endl;
   indent.Prepend("  ");
-  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
-       algo != fAlgorithms.end(); ++algo)
-    (*algo)->counter_summary(indent);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    algo->CounterSummaryHelper(indent);
+  }
 }
 
-void Algorithm::cut_report(TString indent, long long &bn, long long &pn) {
+//______________________________________________________________________________
+void Algorithm::CutReportHelper (TString indent, Long64_t &bn, Long64_t &pn) 
+{
   if (fAlgorithmType.EqualTo("cut", TString::kIgnoreCase)) {
     if (bn == -1 && fCounter != 0)
       bn = fCounter;
@@ -210,9 +411,14 @@ void Algorithm::cut_report(TString indent, long long &bn, long long &pn) {
       pn = fCounter;
   }
   indent.Prepend("  ");
-  for (std::list<Algorithm*>::iterator algo = fAlgorithms.begin();
-       algo != fAlgorithms.end(); ++algo)
-    (*algo)->cut_report(indent, bn, pn);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  BOOST_FOREACH( Algorithm *algo, fAlgorithms )
+#else
+  for (auto algo: fAlgorithms)
+#endif
+  {
+    algo->CutReportHelper (indent, bn, pn);
+  }
 }
 
 } /* HAL */ 

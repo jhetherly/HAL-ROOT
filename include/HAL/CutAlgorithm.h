@@ -1,5 +1,10 @@
-#ifndef HAL_CUT_ALGORITHM
-#define HAL_CUT_ALGORITHM
+/*!
+ * \file
+ * \author  Jeff Hetherly <jhetherly@smu.edu>
+ */
+
+#ifndef HAL_CutAlgorithm
+#define HAL_CutAlgorithm
 
 #include <TString.h>
 #include <HAL/Common.h>

@@ -1,13 +1,21 @@
-#ifndef HAL_CUTOPTIMIZER
-#define HAL_CUTOPTIMIZER
+/*!
+ * \file
+ * \author  Jeff Hetherly <jhetherly@smu.edu>
+ */
 
-#include <TString.h>
+#ifndef HAL_CutOptimizer
+#define HAL_CutOptimizer
+
 #include <TMath.h>
 #include <TMatrixD.h>
-#include <TArrayD.h>
-#include <TH1.h>
 #include <TF2.h>
 #include <HAL/Common.h>
+
+// forward declaration(s)
+class TString;
+class TArrayD;
+class TH1;
+// end forward declaration(s)
 
 /*
  * This class is designed to perform an n-sided optimization given the signal and
@@ -61,25 +69,26 @@
 namespace HAL {
 
 class CutOptimizer {
+private:
+  TF2 *f; // fitness function
+  Double_t ComputeMaxStatistic (TH1*, TH1*, Int_t, TString,
+                                Double_t, Double_t, TMatrixD**);
+  Bool_t MoveXArray (TArrayD&);
+
 public:
-  CutOptimizer (TF2 *st = NULL) {
-    if (st == NULL)
+  CutOptimizer (TF2 *st = nullptr) {
+    if (st == nullptr)
       // default is the ATLAS test statistic (x=signal, y=background)
       f = new TF2("co-default", "sqrt(2.0*((x + y)*log(1.0 + x/y) - x))", 0, 10, 0, 10);
     else
       f = st;
   }
   ~CutOptimizer () {TString fName("co-default"); if (f->GetName() == fName) {delete f;}}
-  void SetFitnessFunction (TF2 *st = NULL) {if (st != NULL) f = st;}
+  void SetFitnessFunction (TF2 *st = nullptr) {if (st != nullptr) f = st;}
   TF2* GetFitnessFunction () {return f;}
   TMatrixD* Optimize (TH1 *sig, TH1 *bkg, Int_t n, TString side = "both", 
                       Int_t rebin = 1, Double_t x_min = TMath::QuietNaN(),
                       Double_t x_max = TMath::QuietNaN());
-private:
-  TF2 *f; // fitness function
-  Double_t ComputeMaxStatistic (TH1*, TH1*, Int_t, TString,
-                                Double_t, Double_t, TMatrixD**);
-  Bool_t MoveXArray (TArrayD&);
 }; // end class CutOptimizer
 
 } // end namespace HAL

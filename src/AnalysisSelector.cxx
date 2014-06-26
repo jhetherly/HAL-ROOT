@@ -1,10 +1,42 @@
 #include <HAL/AnalysisSelector.h>
+#include <iostream>
+#include <TObjString.h>
+#include <TTree.h>
+#include <TList.h>
+#include <TMap.h>
+#include <TFile.h>
+#include <HAL/Algorithm.h>
+#include <HAL/AnalysisData.h>
+#include <HAL/AnalysisTreeReader.h>
+#include <HAL/AnalysisTreeWriter.h>
 
 ClassImp(HAL::AnalysisSelector);
 
 namespace HAL {
 
-void AnalysisSelector::Init (TTree *tree) {
+//______________________________________________________________________________
+AnalysisSelector::AnalysisSelector (Algorithm *af, TTree*) : 
+  fMessagePeriod(0), fAnalysisFlow(af), fChain(nullptr)  
+{
+  fInput = new TList();
+}
+
+//______________________________________________________________________________
+AnalysisSelector::~AnalysisSelector () 
+{
+  fInput->Delete("slow"); 
+  delete fInput; 
+}
+
+//______________________________________________________________________________
+Int_t AnalysisSelector::GetEntry (Long64_t entry, Int_t getall) 
+{ 
+  return (fChain != nullptr) ? fChain->GetTree()->GetEntry(entry, getall) : 0; 
+}
+
+//______________________________________________________________________________
+void AnalysisSelector::Init (TTree *tree) 
+{
   // The Init() function is called when the selector needs to initialize
   // a new tree or chain.
   // Init() will be called many times when running on PROOF
@@ -12,29 +44,34 @@ void AnalysisSelector::Init (TTree *tree) {
 
   if (!tree) return;
 
-  ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetTree(tree);
-  ((AnalysisTreeReader*)fInput->FindObject("RawData"))->Init();
+  static_cast<AnalysisTreeReader*>(fInput->FindObject("RawData"))->SetTree(tree);
+  static_cast<AnalysisTreeReader*>(fInput->FindObject("RawData"))->Init();
 
   fAnalysisFlow->InitializeAlgo(GetOption());
 }
 
-Bool_t AnalysisSelector::Notify () {
+//______________________________________________________________________________
+Bool_t AnalysisSelector::Notify () 
+{
   // The Notify() function is called when a new file is opened. This
   // can be either for a new TTree in a TChain or when when a new TTree
   // is started when using PROOF. 
   // The return value is currently not used.
 
   if (fChain->GetCurrentFile()) {
-    std::cout << "\n\nProcessing file: " << fChain->GetCurrentFile()->GetName() << std::endl;
+    std::cout << "\n\nProcessing file: " << fChain->GetCurrentFile()->GetName() 
+              << std::endl;
     fAnalysisFlow->NotifyAlgo(GetOption());
-    ((AnalysisTreeReader*)fInput->FindObject("RawData"))->Notify();
+    static_cast<AnalysisTreeReader*>(fInput->FindObject("RawData"))->Notify();
   }
   if (fMessagePeriod != 0)
     std::cout << std::endl;
   return kTRUE;
 }
 
-void AnalysisSelector::Begin (TTree * /*tree*/) {
+//______________________________________________________________________________
+void AnalysisSelector::Begin (TTree * /*tree*/) 
+{
   // The Begin() function is called at the start of the query.
   // When running with PROOF Begin() is only called on the client.
   // The tree argument is deprecated (on PROOF 0 is passed).
@@ -42,7 +79,9 @@ void AnalysisSelector::Begin (TTree * /*tree*/) {
   fAnalysisFlow->BeginAlgo(GetOption());
 }
 
-void AnalysisSelector::SlaveBegin (TTree * /*tree*/) {
+//______________________________________________________________________________
+void AnalysisSelector::SlaveBegin (TTree * /*tree*/) 
+{
   // The SlaveBegin() function is called after the Begin() function.
   // When running with PROOF SlaveBegin() is called on each slave server.
   // The tree argument is deprecated (on PROOF 0 is passed).
@@ -68,7 +107,9 @@ void AnalysisSelector::SlaveBegin (TTree * /*tree*/) {
   fAnalysisFlow->SlaveBeginAlgo(GetOption());
 }
 
-Bool_t AnalysisSelector::Process (Long64_t entry) {
+//______________________________________________________________________________
+Bool_t AnalysisSelector::Process (Long64_t entry) 
+{
   // The Process() function is called for each entry in the tree (or possibly
   // keyed object in the case of PROOF) to be processed. The entry argument
   // specifies which entry in the currently loaded tree is to be processed.
@@ -92,8 +133,8 @@ Bool_t AnalysisSelector::Process (Long64_t entry) {
     std::cout << "\r" << "Processing event: " << entry + 1;
   }
 
-  ((AnalysisTreeReader*)fInput->FindObject("RawData"))->SetEntry(entry);
-  ((AnalysisTreeWriter*)fInput->FindObject("UserOutput"))->IncrementCount();
+  static_cast<AnalysisTreeReader*>(fInput->FindObject("RawData"))->SetEntry(entry);
+  static_cast<AnalysisTreeWriter*>(fInput->FindObject("UserOutput"))->IncrementCount();
 
   // Execute (and then implicitly clean) all algorithms
   fAnalysisFlow->ExecuteAlgo(GetOption());
@@ -101,7 +142,9 @@ Bool_t AnalysisSelector::Process (Long64_t entry) {
   return kTRUE;
 }
 
-void AnalysisSelector::SlaveTerminate () {
+//______________________________________________________________________________
+void AnalysisSelector::SlaveTerminate () 
+{
   // The SlaveTerminate() function is called after all entries or objects
   // have been processed. When running with PROOF SlaveTerminate() is called
   // on each slave server.
@@ -112,10 +155,12 @@ void AnalysisSelector::SlaveTerminate () {
   fAnalysisFlow->DeleteData("RawData");
 
   fAnalysisFlow->SlaveTerminateAlgo(GetOption());
-  ((AnalysisTreeWriter*)fAnalysisFlow->GetData("UserOutput"))->WriteData();
+  static_cast<AnalysisTreeWriter*>(fAnalysisFlow->GetData("UserOutput"))->WriteData();
 }
 
-void AnalysisSelector::Terminate () {
+//______________________________________________________________________________
+void AnalysisSelector::Terminate () 
+{
   // The Terminate() function is the last function to be called during
   // a query. It always runs on the client, it can be used to present
   // the results graphically or save the results to file.

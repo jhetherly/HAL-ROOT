@@ -1,13 +1,20 @@
-#ifndef HAL_COMMON
-#define HAL_COMMON
+#ifndef HAL_Common
+#define HAL_Common
 
-#include <RVersion.h>
-#include <TString.h>
+#ifndef __CINT__
+#include <aux/boost/config.hpp>
+#endif
 #include <cstring>
 #include <string>
+#include <RVersion.h>
+#include <TString.h>
 
 #if ROOT_VERSION_CODE < ROOT_VERSION(5,34,17)
-typedef double     LongDouble_t;
+typedef double  LongDouble_t;
+#endif
+
+#ifdef BOOST_NO_CXX11_NULLPTR
+const int       nullptr = NULL;
 #endif
 
 namespace HAL
@@ -16,6 +23,7 @@ namespace HAL
 namespace internal
 {
 
+// CHANGE TO fast_string_cmp
 class string_cmp {
 public:
   bool operator() (const char *a, const char *b) const {

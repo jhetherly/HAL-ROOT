@@ -12,8 +12,8 @@ var namespace_h_a_l =
       [ "MinChiSquaredSelection", "class_h_a_l_1_1_algorithms_1_1_min_chi_squared_selection.html", "class_h_a_l_1_1_algorithms_1_1_min_chi_squared_selection" ],
       [ "MonitorAlgorithm", "class_h_a_l_1_1_algorithms_1_1_monitor_algorithm.html", "class_h_a_l_1_1_algorithms_1_1_monitor_algorithm" ],
       [ "MonitorUserData", "class_h_a_l_1_1_algorithms_1_1_monitor_user_data.html", "class_h_a_l_1_1_algorithms_1_1_monitor_user_data" ],
-      [ "ParticleRankSelection", "class_h_a_l_1_1_algorithms_1_1_particle_rank_selection.html", "class_h_a_l_1_1_algorithms_1_1_particle_rank_selection" ],
       [ "SelectParticle", "class_h_a_l_1_1_algorithms_1_1_select_particle.html", "class_h_a_l_1_1_algorithms_1_1_select_particle" ],
+      [ "SelectRank", "class_h_a_l_1_1_algorithms_1_1_select_rank.html", "class_h_a_l_1_1_algorithms_1_1_select_rank" ],
       [ "SelectRefParticle", "class_h_a_l_1_1_algorithms_1_1_select_ref_particle.html", "class_h_a_l_1_1_algorithms_1_1_select_ref_particle" ],
       [ "StoreParticle", "class_h_a_l_1_1_algorithms_1_1_store_particle.html", "class_h_a_l_1_1_algorithms_1_1_store_particle" ],
       [ "VecAddReco", "class_h_a_l_1_1_algorithms_1_1_vec_add_reco.html", "class_h_a_l_1_1_algorithms_1_1_vec_add_reco" ]
@@ -21,7 +21,6 @@ var namespace_h_a_l =
     [ "Algorithm", "class_h_a_l_1_1_algorithm.html", "class_h_a_l_1_1_algorithm" ],
     [ "Analysis", "class_h_a_l_1_1_analysis.html", "class_h_a_l_1_1_analysis" ],
     [ "AnalysisData", "class_h_a_l_1_1_analysis_data.html", "class_h_a_l_1_1_analysis_data" ],
-    [ "AnalysisSelector", "class_h_a_l_1_1_analysis_selector.html", "class_h_a_l_1_1_analysis_selector" ],
     [ "AnalysisTreeReader", "class_h_a_l_1_1_analysis_tree_reader.html", "class_h_a_l_1_1_analysis_tree_reader" ],
     [ "AnalysisTreeWriter", "class_h_a_l_1_1_analysis_tree_writer.html", "class_h_a_l_1_1_analysis_tree_writer" ],
     [ "CutAlgorithm", "class_h_a_l_1_1_cut_algorithm.html", "class_h_a_l_1_1_cut_algorithm" ],

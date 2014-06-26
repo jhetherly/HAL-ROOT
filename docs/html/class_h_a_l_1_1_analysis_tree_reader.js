@@ -5,6 +5,7 @@ var class_h_a_l_1_1_analysis_tree_reader =
     [ "CheckBranchMapNickname", "class_h_a_l_1_1_analysis_tree_reader.html#afa371719adcfa583fe29ea0f468b9ea8", null ],
     [ "ClassDef", "class_h_a_l_1_1_analysis_tree_reader.html#ad8be72de7b7f4ae5ced82c636ac91dd1", null ],
     [ "GetBool", "class_h_a_l_1_1_analysis_tree_reader.html#a8a76466f4746d4764b0fa97416182267", null ],
+    [ "GetBranchName", "class_h_a_l_1_1_analysis_tree_reader.html#a85f301e0ef78fdf1f239b36a030fb023", null ],
     [ "GetClonesArray", "class_h_a_l_1_1_analysis_tree_reader.html#ae9115ce6bba555009b6b21eca20339c9", null ],
     [ "GetCounting", "class_h_a_l_1_1_analysis_tree_reader.html#aa4d264484021ba0912f6254aeacc784f", null ],
     [ "GetDecimal", "class_h_a_l_1_1_analysis_tree_reader.html#a4a3dd2065768228ab817575307c4691e", null ],
@@ -22,5 +23,5 @@ var class_h_a_l_1_1_analysis_tree_reader =
     [ "SetBranchMap", "class_h_a_l_1_1_analysis_tree_reader.html#ae3dcc57b2cc27431e89edd341b300eb6", null ],
     [ "SetEntry", "class_h_a_l_1_1_analysis_tree_reader.html#a1a9c8bc30141df5fab1163f006fb08e3", null ],
     [ "SetTree", "class_h_a_l_1_1_analysis_tree_reader.html#a031181c782d3620d271a92cef995d998", null ],
-    [ "BranchManager", "class_h_a_l_1_1_analysis_tree_reader.html#a3b527c540b6431b5700a6d002214747c", null ]
+    [ "internal::BranchManager", "class_h_a_l_1_1_analysis_tree_reader.html#a3da00472573022c08436f19e0a48d8de", null ]
 ];

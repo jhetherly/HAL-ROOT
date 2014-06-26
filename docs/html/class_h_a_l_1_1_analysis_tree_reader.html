@@ -83,7 +83,7 @@ $(document).ready(function(){initNavTree('class_h_a_l_1_1_analysis_tree_reader.h
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -94,7 +94,6 @@ $(document).ready(function(){initNavTree('class_h_a_l_1_1_analysis_tree_reader.h
 
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#friends">Friends</a> &#124;
 <a href="class_h_a_l_1_1_analysis_tree_reader-members.html">List of all members</a>  </div>
@@ -102,6 +101,11 @@ $(document).ready(function(){initNavTree('class_h_a_l_1_1_analysis_tree_reader.h
 <div class="title">HAL::AnalysisTreeReader Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Class for the easy extraction of data from a TTree.  
+ <a href="class_h_a_l_1_1_analysis_tree_reader.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_analysis_tree_reader_8h_source.html">AnalysisTreeReader.h</a>&gt;</code></p>
 <div id="dynsection-0" onclick="return toggleVisibility(this)" class="dynheader closed" style="cursor:pointer;">
   <img id="dynsection-0-trigger" src="closed.png" alt="+"/> Inheritance diagram for HAL::AnalysisTreeReader:</div>
 <div id="dynsection-0-summary" class="dynsummary" style="display:block;">
@@ -130,6 +134,9 @@ Long64_t&#160;</td><td class="memItemRight" valign="bottom"><b>GetEntryNumber</b
 <tr class="memitem:a6ad8933bd6c8cc2b17179c96fd3bfcb1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6ad8933bd6c8cc2b17179c96fd3bfcb1"></a>
 TTree *&#160;</td><td class="memItemRight" valign="bottom"><b>GetTree</b> ()</td></tr>
 <tr class="separator:a6ad8933bd6c8cc2b17179c96fd3bfcb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85f301e0ef78fdf1f239b36a030fb023"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a85f301e0ef78fdf1f239b36a030fb023"></a>
+TString&#160;</td><td class="memItemRight" valign="bottom"><b>GetBranchName</b> (const TString &amp;name)</td></tr>
+<tr class="separator:a85f301e0ef78fdf1f239b36a030fb023"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab17ea6c10da56d9282d60d9507e01ef9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab17ea6c10da56d9282d60d9507e01ef9"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> ()</td></tr>
 <tr class="separator:ab17ea6c10da56d9282d60d9507e01ef9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -181,11 +188,28 @@ TRefArray &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>GetRefArra
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
 Friends</h2></td></tr>
-<tr class="memitem:a3b527c540b6431b5700a6d002214747c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3b527c540b6431b5700a6d002214747c"></a>
-class&#160;</td><td class="memItemRight" valign="bottom"><b>BranchManager</b></td></tr>
-<tr class="separator:a3b527c540b6431b5700a6d002214747c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3da00472573022c08436f19e0a48d8de"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3da00472573022c08436f19e0a48d8de"></a>
+class&#160;</td><td class="memItemRight" valign="bottom"><b>internal::BranchManager</b></td></tr>
+<tr class="separator:a3da00472573022c08436f19e0a48d8de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Class for the easy extraction of data from a TTree. </p>
+<p>This class allows for the easy retrieval of data stored in a TTree. Through normal function calls the user can access data stored as scalars, C-arrays, STL vectors, 2D C-arrays, and STL vectors of vectors. A listing of the allowable types is given below. If a class that is stored in the TTree can be decomposed in 'MakeClassMode,' this class can read it as well. The user should not need to worry about allocating memory or setting branch addresses. There are hard limits to the lengths of a C-array and 2D C-array that can be read. They are 10000 and 10000x100 respectively. If <a class="el" href="namespace_h_a_l.html">HAL</a> is compiled with ROOT version 6 or later, this restriction is lifted.<br />
+<em>Data Types That Can be Read:</em> </p><table class="doxtable">
+<tr>
+<th align="center">Boolean </th><th align="center">Integer </th><th align="center">Counting </th><th align="center">Decimal </th><th align="center">String </th><th align="center">Misc  </th></tr>
+<tr>
+<td align="center">bool/Bool_t </td><td align="center">int/Int_t </td><td align="center">unsigned int/UInt_t </td><td align="center">float/Float_t/Float16_t/Real_t </td><td align="center">char/Char_t/Text_t </td><td align="center">TObjArray </td></tr>
+<tr>
+<td align="center"></td><td align="center">short/Short_t </td><td align="center">unsigned short/UShort_t </td><td align="center">double/Double_t/Double32_t </td><td align="center">char* </td><td align="center">TClonesArray </td></tr>
+<tr>
+<td align="center"></td><td align="center">long/Long_t </td><td align="center">unsigned long/ULong_t </td><td align="center">long double/LongDouble_t </td><td align="center">TString </td><td align="center">TRef </td></tr>
+<tr>
+<td align="center"></td><td align="center">long long/Long64_t </td><td align="center">unsigned long long/ULong64_t </td><td align="center"></td><td align="center">TObjString </td><td align="center">TRefArray </td></tr>
+<tr>
+<td align="center"></td><td align="center">signed char </td><td align="center">unsigned char </td><td align="center"></td><td align="center">std::string </td><td align="center">TRefArray </td></tr>
+</table>
+</div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>/Users/jhetherly/src/HAL-ROOT/include/HAL/<a class="el" href="_analysis_tree_reader_8h_source.html">AnalysisTreeReader.h</a></li>
 </ul>
 </div><!-- contents -->
@@ -194,7 +218,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>BranchManager</b></t
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespace_h_a_l.html">HAL</a></li><li class="navelem"><a class="el" href="class_h_a_l_1_1_analysis_tree_reader.html">AnalysisTreeReader</a></li>
-    <li class="footer">Generated on Thu May 29 2014 21:57:24 for HAL by
+    <li class="footer">Generated on Wed Jun 11 2014 21:57:55 for HAL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

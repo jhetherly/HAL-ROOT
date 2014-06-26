@@ -1,6 +1,15 @@
 \hypertarget{class_h_a_l_1_1_analysis_data}{\section{H\+A\+L\+:\+:Analysis\+Data Class Reference}
 \label{class_h_a_l_1_1_analysis_data}\index{H\+A\+L\+::\+Analysis\+Data@{H\+A\+L\+::\+Analysis\+Data}}
 }
+
+
+Class for storage and sharing of data referenced by strings.  
+
+
+
+
+{\ttfamily \#include $<$Analysis\+Data.\+h$>$}
+
 Inheritance diagram for H\+A\+L\+:\+:Analysis\+Data\+:\begin{figure}[H]
 \begin{center}
 \leavevmode
@@ -220,10 +229,10 @@ Inheritance diagram for H\+A\+L\+:\+:Analysis\+Data\+:\begin{figure}[H]
 \hypertarget{class_h_a_l_1_1_analysis_data_a9e60f6b78b29280597ac991cf378f4f3}{void {\bfseries Remove\+All\+Associated\+Data} (const T\+String \&)}\label{class_h_a_l_1_1_analysis_data_a9e60f6b78b29280597ac991cf378f4f3}
 
 \item 
-\hypertarget{class_h_a_l_1_1_analysis_data_a0d63364d678190ac69e46922ad445b8a}{{\bfseries Class\+Def\+N\+V} (\hyperlink{class_h_a_l_1_1_analysis_data}{Analysis\+Data}, 0)}\label{class_h_a_l_1_1_analysis_data_a0d63364d678190ac69e46922ad445b8a}
+\hypertarget{class_h_a_l_1_1_analysis_data_aeaaa3a24ced30e96d90725174a98544b}{{\bfseries Class\+Def} (\hyperlink{class_h_a_l_1_1_analysis_data}{Analysis\+Data}, 0)}\label{class_h_a_l_1_1_analysis_data_aeaaa3a24ced30e96d90725174a98544b}
 
 \end{DoxyCompactItemize}
-\subsection*{Public Attributes}
+\subsection*{Protected Attributes}
 \begin{DoxyCompactItemize}
 \item 
 \hypertarget{class_h_a_l_1_1_analysis_data_adc7232f1a112de23d2b557740422ec9f}{std\+::map$<$ std\+::string, bool, \\*
@@ -322,6 +331,11 @@ $<$ long long, T\+Object $\ast$ $>$\\*
 \end{DoxyCompactItemize}
 
 
+\subsection{Detailed Description}
+Class for storage and sharing of data referenced by strings. 
+
+This class aids in passing data between algorithms. The common data store is a T\+List. This causes problems when algorithms must pass plain old data (P\+O\+D) between each other as a T\+List may only hold object deriving from T\+Object. This class provides a way for P\+O\+D to be stored and retrieved by strings. 
+
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}
 \item 
-/\+Users/jhetherly/src/\+H\+A\+L-\/\+R\+O\+O\+T/include/\+H\+A\+L/Analysis\+Data.\+h\end{DoxyCompactItemize}
+/\+Users/jhetherly/src/\+H\+A\+L-\/\+R\+O\+O\+T/include/\+H\+A\+L/\hyperlink{_analysis_data_8h}{Analysis\+Data.\+h}\end{DoxyCompactItemize}

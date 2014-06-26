@@ -16,10 +16,32 @@ Inheritance diagram for H\+A\+L\+:\+:Algorithms\+:\+:Monitor\+User\+Data\+:\begi
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{class_h_a_l_1_1_algorithms_1_1_monitor_user_data_aea4229dea8ffbd7edfa8a4108e72205c}{virtual void {\bfseries Exec} (Option\+\_\+t $\ast$)}\label{class_h_a_l_1_1_algorithms_1_1_monitor_user_data_aea4229dea8ffbd7edfa8a4108e72205c}
-
-\end{DoxyCompactItemize}
+virtual void \hyperlink{class_h_a_l_1_1_algorithms_1_1_monitor_user_data_aea4229dea8ffbd7edfa8a4108e72205c}{Exec} (Option\+\_\+t $\ast$)
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Process method. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Additional Inherited Members}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_monitor_user_data_aea4229dea8ffbd7edfa8a4108e72205c}{\index{H\+A\+L\+::\+Algorithms\+::\+Monitor\+User\+Data@{H\+A\+L\+::\+Algorithms\+::\+Monitor\+User\+Data}!Exec@{Exec}}
+\index{Exec@{Exec}!H\+A\+L\+::\+Algorithms\+::\+Monitor\+User\+Data@{H\+A\+L\+::\+Algorithms\+::\+Monitor\+User\+Data}}
+\subsubsection[{Exec}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Algorithms\+::\+Monitor\+User\+Data\+::\+Exec (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{class_h_a_l_1_1_algorithms_1_1_monitor_user_data_aea4229dea8ffbd7edfa8a4108e72205c}
+
+
+Hook into the T\+Selector\+::\+Process method. 
+
+This method allows the algorithm operate at the first part of the 'Process' stage of processing a T\+Tree. This where most of the logic of an algorithm will likely be contained. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \hyperlink{class_h_a_l_1_1_algorithm_a438c5c54698aa014b660474d08703bc2}{H\+A\+L\+::\+Algorithm}.
+
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

@@ -3,7 +3,7 @@
 }
 
 
-Generic algorithm class that cuts on particle multiplicity, bool, integer, counting, and decimal values.  
+\hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} that cuts on particle multiplicity, bool, integer, counting, and decimal values.  
 
 
 
@@ -24,14 +24,13 @@ Inheritance diagram for H\+A\+L\+:\+:Algorithms\+:\+:Cut\+:\begin{figure}[H]
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{class_h_a_l_1_1_algorithms_1_1_cut_aa1257616a4912852aa4ce2eb849e2ead}{virtual void {\bfseries Exec} (Option\+\_\+t $\ast$)}\label{class_h_a_l_1_1_algorithms_1_1_cut_aa1257616a4912852aa4ce2eb849e2ead}
-
-\end{DoxyCompactItemize}
+virtual void \hyperlink{class_h_a_l_1_1_algorithms_1_1_cut_aa1257616a4912852aa4ce2eb849e2ead}{Exec} (Option\+\_\+t $\ast$)
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Process method. \end{DoxyCompactList}\end{DoxyCompactItemize}
 \subsection*{Additional Inherited Members}
 
 
 \subsection{Detailed Description}
-Generic algorithm class that cuts on particle multiplicity, bool, integer, counting, and decimal values. 
+\hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} that cuts on particle multiplicity, bool, integer, counting, and decimal values. 
 
 This algorithm provides a general mechanism to cut on several different algorithms. An important aspect of this algorithm is its ability to either \char`\"{}and\char`\"{} or \char`\"{}or\char`\"{} different predicates together. Combined with the proper selection algorithms, a cut on particle multiplicity is sufficient for most situations. The relational operators and types needed to specify a cut are listed below.~\newline
 {\itshape Available Types of Cuts\+:} \begin{TabularC}{5}
@@ -69,12 +68,10 @@ a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_sel
                                               \textcolor{stringliteral}{"id"}, 6,
                                               -16, -14, -12, 12, 14, 16));
 
-a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection}{HAL::Algorithms::ParticleRankSelection}(\textcolor{stringliteral}{"leading pt jet"}
-      , \textcolor{stringliteral}{"find highest pt jet"}, 
+a.AddAlgo(\textcolor{keyword}{new} HAL::Algorithms::ParticleRankSelection(\textcolor{stringliteral}{"leading pt jet"}, \textcolor{stringliteral}{"find highest pt jet"}, 
                                                      \textcolor{stringliteral}{"jets"},
                                                      1, \textcolor{stringliteral}{"pt"}));
-a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_particle_rank_selection}{HAL::Algorithms::ParticleRankSelection}(\textcolor{stringliteral}{"subleading pt
-       jet"}, \textcolor{stringliteral}{"find 2nd highest pt jet"}, 
+a.AddAlgo(\textcolor{keyword}{new} HAL::Algorithms::ParticleRankSelection(\textcolor{stringliteral}{"subleading pt jet"}, \textcolor{stringliteral}{"find 2nd highest pt jet"}, 
                                                      \textcolor{stringliteral}{"jets"},
                                                      2, \textcolor{stringliteral}{"pt"}));
 
@@ -132,6 +129,29 @@ Initializes the algorithm. The variable length argument at the end should confor
 \begin{DoxySeeAlso}{See also}
 \hyperlink{class_h_a_l_1_1_algorithms_1_1_empty_cut}{Empty\+Cut} 
 \end{DoxySeeAlso}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_cut_aa1257616a4912852aa4ce2eb849e2ead}{\index{H\+A\+L\+::\+Algorithms\+::\+Cut@{H\+A\+L\+::\+Algorithms\+::\+Cut}!Exec@{Exec}}
+\index{Exec@{Exec}!H\+A\+L\+::\+Algorithms\+::\+Cut@{H\+A\+L\+::\+Algorithms\+::\+Cut}}
+\subsubsection[{Exec}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Algorithms\+::\+Cut\+::\+Exec (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{class_h_a_l_1_1_algorithms_1_1_cut_aa1257616a4912852aa4ce2eb849e2ead}
+
+
+Hook into the T\+Selector\+::\+Process method. 
+
+This method allows the algorithm operate at the first part of the 'Process' stage of processing a T\+Tree. This where most of the logic of an algorithm will likely be contained. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \hyperlink{class_h_a_l_1_1_algorithm_a438c5c54698aa014b660474d08703bc2}{H\+A\+L\+::\+Algorithm}.
+
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

@@ -83,7 +83,7 @@ $(document).ready(function(){initNavTree('class_h_a_l_1_1_algorithms_1_1_store_p
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -102,7 +102,7 @@ $(document).ready(function(){initNavTree('class_h_a_l_1_1_algorithms_1_1_store_p
 </div><!--header-->
 <div class="contents">
 
-<p>Generic algorithm class that stores the properties of particles to a TTree.  
+<p><a class="el" href="class_h_a_l_1_1_algorithm.html" title="Base class for all analysis algorithms. ">Algorithm</a> that stores the properties of particles to a TTree.  
  <a href="class_h_a_l_1_1_algorithms_1_1_store_particle.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_store_particle_8h_source.html">StoreParticle.h</a>&gt;</code></p>
@@ -114,7 +114,7 @@ $(document).ready(function(){initNavTree('class_h_a_l_1_1_algorithms_1_1_store_p
  <div class="center">
   <img src="class_h_a_l_1_1_algorithms_1_1_store_particle.png" usemap="#HAL::Algorithms::StoreParticle_map" alt=""/>
   <map id="HAL::Algorithms::StoreParticle_map" name="HAL::Algorithms::StoreParticle_map">
-<area href="class_h_a_l_1_1_algorithm.html" alt="HAL::Algorithm" shape="rect" coords="0,0,193,24"/>
+<area href="class_h_a_l_1_1_algorithm.html" title="Base class for all analysis algorithms. " alt="HAL::Algorithm" shape="rect" coords="0,0,193,24"/>
 </map>
  </div></div>
 <table class="memberdecls">
@@ -126,15 +126,15 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:af2e287e256a0d7803c68a62bbb254302"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af2e287e256a0d7803c68a62bbb254302"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>Init</b> (Option_t *)</td></tr>
+<tr class="memitem:af2e287e256a0d7803c68a62bbb254302"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_a_l_1_1_algorithms_1_1_store_particle.html#af2e287e256a0d7803c68a62bbb254302">Init</a> (Option_t *)</td></tr>
+<tr class="memdesc:af2e287e256a0d7803c68a62bbb254302"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hook into the TSelector::Init method.  <a href="#af2e287e256a0d7803c68a62bbb254302">More...</a><br /></td></tr>
 <tr class="separator:af2e287e256a0d7803c68a62bbb254302"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf9039e1285e48324c378295cf4cea3b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="acf9039e1285e48324c378295cf4cea3b"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>StoreValue</b> (<a class="el" href="class_h_a_l_1_1_analysis_tree_writer.html">HAL::AnalysisTreeWriter</a> *, long long, <a class="el" href="class_h_a_l_1_1_generic_particle.html">HAL::ParticlePtr</a>)</td></tr>
 <tr class="separator:acf9039e1285e48324c378295cf4cea3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Generic algorithm class that stores the properties of particles to a TTree. </p>
+<div class="textblock"><p><a class="el" href="class_h_a_l_1_1_algorithm.html" title="Base class for all analysis algorithms. ">Algorithm</a> that stores the properties of particles to a TTree. </p>
 <p>This algorithm stores particles or specific parts of particles in a specified TTree. The user needs only supply a branch name, property, and a tree name (optional). If the "all" property is given, the branch name given will act as the base for all other properties, i.e. if branch name is "jets", the branches written will be "jets_pt", "jets_eta", etc. <em>Available Properties:</em> </p><table class="doxtable">
 <tr>
 <th align="center">\( p_T \) </th><th align="center">\( E_T \) </th><th align="center">Mass </th><th align="center">Energy </th><th align="center">\( \left|\overrightarrow{p}\right| \) </th><th align="center">\( \eta \) </th><th align="center">\( \phi \) </th><th align="center">ID </th><th align="center">Charge </th><th align="center">Full Particle </th><th align="center">All Attributes  </th></tr>
@@ -213,6 +213,41 @@ In your analysis file, do the following to store jet particles:</p>
 
 </div>
 </div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="af2e287e256a0d7803c68a62bbb254302"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void HAL::Algorithms::StoreParticle::Init </td>
+          <td>(</td>
+          <td class="paramtype">Option_t *&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Hook into the TSelector::Init method. </p>
+<p>This method allows the algorithm operate at the 'Init' stage of processing a TTree. This method is called when a new TTree is being prepared for processing. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">option</td><td>Option string passed to all algorithms from the Analysis::Process call </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented from <a class="el" href="class_h_a_l_1_1_algorithm.html#abe2da2ce6a2d3ccfb492d8afd1d07331">HAL::Algorithm</a>.</p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>/Users/jhetherly/src/HAL-ROOT/include/HAL/Algorithms/<a class="el" href="_store_particle_8h_source.html">StoreParticle.h</a></li>
 </ul>
@@ -222,7 +257,7 @@ In your analysis file, do the following to store jet particles:</p>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="namespace_h_a_l.html">HAL</a></li><li class="navelem"><b>Algorithms</b></li><li class="navelem"><a class="el" href="class_h_a_l_1_1_algorithms_1_1_store_particle.html">StoreParticle</a></li>
-    <li class="footer">Generated on Thu May 29 2014 21:57:24 for HAL by
+    <li class="footer">Generated on Wed Jun 11 2014 21:57:55 for HAL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

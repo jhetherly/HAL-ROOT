@@ -1,21 +1,68 @@
-#ifndef HAL_ANALYSISDATA
-#define HAL_ANALYSISDATA
+/*!
+ * \file
+ * \author  Jeff Hetherly <jhetherly@smu.edu>
+ */
 
+#ifndef HAL_AnalysisData
+#define HAL_AnalysisData
+
+#include <string>
+#include <vector>
+#include <map>
 #include <TNamed.h>
 #include <TString.h>
-#include <TRegexp.h>
-#include <string>
-#include <map>
-#include <vector>
-#include <iostream>
 #include <HAL/Common.h>
 #include <HAL/Exceptions.h>
 
 namespace HAL
 {
 
+//! Class for storage and sharing of data referenced by strings
+/*!
+ * This class aids in passing data between algorithms.
+ * The common data store is a TList. This causes problems
+ * when algorithms must pass plain old data (POD) between
+ * each other as a TList may only hold object deriving from
+ * TObject. This class provides a way for POD to be stored
+ * and retrieved by strings.
+ */
 class AnalysisData : public TNamed {
+
+private:
+  enum StorageType {kB, kD, kI, kC, kS, kO,
+                    kIB, kID, kII, kIC, kIS, kIO,
+                    kIIB, kIID, kIII, kIIC, kIIS, kIIO};
+
+  std::map<std::string, StorageType, internal::string_cmp>  fNameTypeMap;
+
+  inline bool NameAlreadyStored (const std::string &n) {return fNameTypeMap.count(n) != 0 ? true : false;}
+
+protected:
+  std::map<std::string, bool, internal::string_cmp>                                 fBoolMap;
+  std::map<std::string, long double, internal::string_cmp>                          fDecimalMap;
+  std::map<std::string, long long, internal::string_cmp>                            fIntegerMap;
+  std::map<std::string, unsigned long long, internal::string_cmp>                   fCountingMap;
+  std::map<std::string, std::string, internal::string_cmp>                          fStringMap;
+  std::map<std::string, TObject*, internal::string_cmp>                             fTObjectMap;
+  // the integer maps mimic the "index" of the element
+  // this allows for disjoint indices without wasted space
+  std::map<std::string, std::map<long long, bool>, internal::string_cmp >               fBoolIntMap;
+  std::map<std::string, std::map<long long, long double>, internal::string_cmp >        fDecimalIntMap;
+  std::map<std::string, std::map<long long, long long>, internal::string_cmp >          fIntegerIntMap;
+  std::map<std::string, std::map<long long, unsigned long long>, internal::string_cmp > fCountingIntMap;
+  std::map<std::string, std::map<long long, std::string>, internal::string_cmp >        fStringIntMap;
+  std::map<std::string, std::map<long long, TObject*>, internal::string_cmp >           fTObjectIntMap;
+  // for 2D "indexing"
+  std::map<std::string, std::map<long long, std::map<long long, bool> >, internal::string_cmp >               fBoolIntIntMap;
+  std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >        fDecimalIntIntMap;
+  std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >          fIntegerIntIntMap;
+  std::map<std::string, std::map<long long, std::map<long long, unsigned long long> >, internal::string_cmp > fCountingIntIntMap;
+  std::map<std::string, std::map<long long, std::map<long long, std::string> >, internal::string_cmp >        fStringIntIntMap;
+  std::map<std::string, std::map<long long, std::map<long long, TObject*> >, internal::string_cmp >           fTObjectIntIntMap;
+
 public:
+  virtual ~AnalysisData () {}
+
   // Bool values
   virtual void SetValue (const TString&, const bool&);
   // Decimal values
@@ -111,39 +158,8 @@ public:
   void                      RemoveData (const TString&);
   void                      RemoveAllAssociatedData (const TString&);
 
-public:
-  std::map<std::string, bool, internal::string_cmp>                                 fBoolMap;
-  std::map<std::string, long double, internal::string_cmp>                          fDecimalMap;
-  std::map<std::string, long long, internal::string_cmp>                            fIntegerMap;
-  std::map<std::string, unsigned long long, internal::string_cmp>                   fCountingMap;
-  std::map<std::string, std::string, internal::string_cmp>                          fStringMap;
-  std::map<std::string, TObject*, internal::string_cmp>                             fTObjectMap;
-  // the integer maps are the "index" of the element
-  // this allows for disjoint indices without wasted space
-  std::map<std::string, std::map<long long, bool>, internal::string_cmp >               fBoolIntMap;
-  std::map<std::string, std::map<long long, long double>, internal::string_cmp >        fDecimalIntMap;
-  std::map<std::string, std::map<long long, long long>, internal::string_cmp >          fIntegerIntMap;
-  std::map<std::string, std::map<long long, unsigned long long>, internal::string_cmp > fCountingIntMap;
-  std::map<std::string, std::map<long long, std::string>, internal::string_cmp >        fStringIntMap;
-  std::map<std::string, std::map<long long, TObject*>, internal::string_cmp >           fTObjectIntMap;
-  // for 2D "indexing"
-  std::map<std::string, std::map<long long, std::map<long long, bool> >, internal::string_cmp >               fBoolIntIntMap;
-  std::map<std::string, std::map<long long, std::map<long long, long double> >, internal::string_cmp >        fDecimalIntIntMap;
-  std::map<std::string, std::map<long long, std::map<long long, long long> >, internal::string_cmp >          fIntegerIntIntMap;
-  std::map<std::string, std::map<long long, std::map<long long, unsigned long long> >, internal::string_cmp > fCountingIntIntMap;
-  std::map<std::string, std::map<long long, std::map<long long, std::string> >, internal::string_cmp >        fStringIntIntMap;
-  std::map<std::string, std::map<long long, std::map<long long, TObject*> >, internal::string_cmp >           fTObjectIntIntMap;
+  ClassDef(AnalysisData, 0);
 
-  ClassDefNV(AnalysisData, 0);
-
-private:
-  enum StorageType {kB, kD, kI, kC, kS, kO,
-                    kIB, kID, kII, kIC, kIS, kIO,
-                    kIIB, kIID, kIII, kIIC, kIIS, kIIO};
-
-  std::map<std::string, StorageType, internal::string_cmp>  fNameTypeMap;
-
-  inline bool NameAlreadyStored (const std::string &n) {return fNameTypeMap.count(n) != 0 ? true : false;}
 };
 
 } /*  HAL */ 

@@ -1,87 +1,73 @@
-/*
- *
- * This is a general purpose TTree reading class. This class is designed
- * to handle the most popular types of data that are stored in TTree's
- * for physics analysis. In particular it can handle scalars, c-arrays,
- * std::vectors, 2D c-arrays, and std::vectors of std::vectors of the
- * following types:
- *
- *     Bool: bool, Bool_t
- *  Integer: int, Int_t, short, Short_t, long, Long_t, long long, Long64_t, signed char
- * Counting: unsigned int, UInt_t, unsigned short, UShort_t, unsigned long, ULong_t, unsigned long long, ULong64_t, unsigned char, Byte_t
- *  Decimal: float, Float_t, Float16_t, Real_t, double, Double_t, Double32_t, long double, LongDouble_t
- *   String: char, Char_t, char*, Text_t, TString, std::string
- *     Misc: TObjArray, TClonesArray, TRef, TRefArray
- *
- * NOTE: This class can only handle TObjArrays, TClonesArrays, and
- *       TRefArrays stored as scalars, c-arrays, and std::vectors.
- *
- * */
-#ifndef HAL_ANALYSIS_TREE_READER
-#define HAL_ANALYSIS_TREE_READER
+/*!
+ * \file
+ * \author  Jeff Hetherly <jhetherly@smu.edu>
+ */
+
+#ifndef HAL_AnalysisTreeReader
+#define HAL_AnalysisTreeReader
 
 #include <RVersion.h>
 
+// For ROOT 6 HAL uses TTreeReader
 //#if ROOT_VERSION_CODE < ROOT_VERSION(6,0,0)
 
-#include <TTree.h>
-#include <TBranch.h>
-#include <TFile.h>
-#include <TLeaf.h>
-#include <TRegexp.h>
-#include <TString.h>
-#include <TObjString.h>
-#include <TObjArray.h>
-#include <TClonesArray.h>
-#include <TRef.h>
-#include <TRefArray.h>
-#include <TNamed.h>
-#include <TMap.h>
 #include <string>
 #include <deque>
 #include <vector>
 #include <set>
 #include <map>
+#include <TNamed.h>
+#include <TString.h>
+#include <TRegexp.h>
+#include <TTree.h>
+#include <TObjString.h>
+#include <TObjArray.h>
+#include <TClonesArray.h>
+#include <TRef.h>
+#include <TRefArray.h>
 #include <HAL/Common.h>
-#include <HAL/Exceptions.h>
 
-namespace HAL {
+// forward declaration(s)
+class TBranch;
+class TFile;
+class TLeaf;
+class TMap;
 
+namespace HAL 
+{
 namespace internal 
 {
-
-// forward declare helper class
 class BranchManager;
-
 }
+}
+// end forward declaration(s)
 
+namespace HAL 
+{
+
+//! Class for the easy extraction of data from a TTree
+/*!
+ * This class allows for the easy retrieval of data stored in a TTree.
+ * Through normal function calls the user can access data stored as
+ * scalars, C-arrays, STL vectors, 2D C-arrays, and STL vectors of
+ * vectors. A listing of the allowable types is given below. If a
+ * class that is stored in the TTree can be decomposed in 
+ * 'MakeClassMode,' this class can read it as well. The user should
+ * not need to worry about allocating memory or setting branch 
+ * addresses. There are hard limits to the lengths of a C-array and
+ * 2D C-array that can be read. They are 10000 and 10000x100 
+ * respectively. If HAL is compiled with ROOT version 6 or later, 
+ * this restriction is lifted.\n
+ * _Data Types That Can be Read:_
+ * | Boolean | Integer | Counting | Decimal | String | Misc |
+ * | :-----: | :-----: | :------: | :-----: | :----: | :--: |
+ * | bool/Bool_t | int/Int_t | unsigned int/UInt_t | float/Float_t/Float16_t/Real_t | char/Char_t/Text_t | TObjArray |
+ * |  | short/Short_t | unsigned short/UShort_t | double/Double_t/Double32_t | char* | TClonesArray |
+ * |  | long/Long_t | unsigned long/ULong_t | long double/LongDouble_t | TString | TRef |
+ * |  | long long/Long64_t | unsigned long long/ULong64_t |  | TObjString | TRefArray |
+ * |  | signed char | unsigned char |  | std::string | TRefArray |
+ */
 class AnalysisTreeReader : public TNamed {
-public:
-  AnalysisTreeReader (TTree *tree = 0);
-  virtual ~AnalysisTreeReader ();
-  void      SetTree (TTree *tree) {fChain = tree; fChain->SetMakeClass(1);}
-  void      SetEntry (Long64_t entry);
-  Long64_t  GetEntryNumber () {return fEntry;}
-  TTree*    GetTree () {return fChain;}
-  TString   GetBranchName (const TString &name);
-  void      Init ();
-  Bool_t    Notify ();
-  void      SetBranchMap (TMap *m) {fBranchMap = m;}
-  bool      CheckBranchMapNickname (const TString &name);
-
-  unsigned int              GetRank (const TString &branchname);
-  unsigned int              GetDim (const TString &branchname, const long long &idx_1 = -1);
-  bool                      GetBool (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
-  long long                 GetInteger (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
-  unsigned long long        GetCounting (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
-  long double               GetDecimal (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
-  TString                   GetString (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
-  TObjArray&                GetObjArray (const TString &branchname, const long long &idx_1 = -1);
-  TClonesArray&             GetClonesArray (const TString &branchname, const long long &idx_1 = -1);
-  TRef&                     GetRef (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
-  TRefArray&                GetRefArray (const TString &branchname, const long long &idx_1 = -1);
-
-  ClassDef(AnalysisTreeReader, 0);
 
 private:
 
@@ -141,6 +127,35 @@ private:
   std::vector<internal::BranchManager*>                               fBranchManagers;
   std::map<TString, internal::BranchManager*, internal::string_cmp>   fNickNameBranchMap;
   internal::BranchManager*        GetBranchManager (const TString&);
+
+public:
+
+  AnalysisTreeReader (TTree *tree = 0);
+  virtual ~AnalysisTreeReader ();
+  void      SetTree (TTree *tree) {fChain = tree; fChain->SetMakeClass(1);}
+  void      SetEntry (Long64_t entry);
+  Long64_t  GetEntryNumber () {return fEntry;}
+  TTree*    GetTree () {return fChain;}
+  TString   GetBranchName (const TString &name);
+  void      Init ();
+  Bool_t    Notify ();
+  void      SetBranchMap (TMap *m) {fBranchMap = m;}
+  bool      CheckBranchMapNickname (const TString &name);
+
+  unsigned int              GetRank (const TString &branchname);
+  unsigned int              GetDim (const TString &branchname, const long long &idx_1 = -1);
+  bool                      GetBool (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
+  long long                 GetInteger (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
+  unsigned long long        GetCounting (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
+  long double               GetDecimal (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
+  TString                   GetString (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
+  TObjArray&                GetObjArray (const TString &branchname, const long long &idx_1 = -1);
+  TClonesArray&             GetClonesArray (const TString &branchname, const long long &idx_1 = -1);
+  TRef&                     GetRef (const TString &branchname, const long long &idx_1 = -1, const long long &idx_2 = -1);
+  TRefArray&                GetRefArray (const TString &branchname, const long long &idx_1 = -1);
+
+  ClassDef(AnalysisTreeReader, 0);
+
 };
 
 namespace internal {

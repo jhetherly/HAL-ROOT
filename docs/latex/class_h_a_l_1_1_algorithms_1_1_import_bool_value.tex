@@ -24,7 +24,10 @@ Inheritance diagram for H\+A\+L\+:\+:Algorithms\+:\+:Import\+Bool\+Value$<$ Valu
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{class_h_a_l_1_1_algorithms_1_1_import_bool_value_a71a3ae1f800a947904fdf0d1c7af4c17}{virtual bool {\bfseries Get\+Value} ()}\label{class_h_a_l_1_1_algorithms_1_1_import_bool_value_a71a3ae1f800a947904fdf0d1c7af4c17}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_import_bool_value_a2d2a95c446cfc0ada77c88abb0079ada}{virtual bool {\bfseries Get\+Value} ()}\label{class_h_a_l_1_1_algorithms_1_1_import_bool_value_a2d2a95c446cfc0ada77c88abb0079ada}
+
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_import_bool_value_a1c252b82af1631b4a460c2dde78961e5}{{\footnotesize template$<$$>$ }\\bool {\bfseries Get\+Value} ()}\label{class_h_a_l_1_1_algorithms_1_1_import_bool_value_a1c252b82af1631b4a460c2dde78961e5}
 
 \end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
@@ -52,6 +55,8 @@ The required map is just one that points to the relavent boolean value. $<$name$
 {\bfseries Note\+:} A custom value fetching class may be passed as a template arguement. This class must have constructor that accepts the T\+Tree as an arguement and overloads the () operator that accepts the entry number as an arguement. For example\+: 
 \begin{DoxyCode}
 \textcolor{preprocessor}{#include "TTreeReader.h"} \textcolor{comment}{// ROOT 6 tree reading class}
+\textcolor{preprocessor}{#include "TTreeReaderValue.h"}
+
 \textcolor{keyword}{class }MyTreeReader \{
 \textcolor{keyword}{public}:
  \textcolor{comment}{// Needs a constructor like this}
@@ -59,7 +64,7 @@ The required map is just one that points to the relavent boolean value. $<$name$
  \textcolor{comment}{// Needs operator() overloaded like this}
  \textcolor{keywordtype}{bool} operator (Long64\_t entry) \{
    tr.SetEntry(entry);
-   \textcolor{keywordflow}{return} value;
+   \textcolor{keywordflow}{return} *value;
  \}
 \textcolor{keyword}{private}:
  TTreeReader tr;
@@ -73,8 +78,7 @@ In your analysis file, do the following to import a trigger flag\+:
 \begin{DoxyCode}
 \hyperlink{class_h_a_l_1_1_analysis}{HAL::Analysis} a(\textcolor{stringliteral}{"sample analysis"}, \textcolor{stringliteral}{""}, \textcolor{stringliteral}{"truth"});
 
-a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_bool_value}{HAL::Algorithms::ImportBool}(\textcolor{stringliteral}{"lepton trigger"}, \textcolor{stringliteral}{"import the lepton
-       trigger"}));
+a.AddAlgo(\textcolor{keyword}{new} HAL::Algorithms::ImportBool(\textcolor{stringliteral}{"lepton trigger"}, \textcolor{stringliteral}{"import the lepton trigger"}));
 
 \textcolor{comment}{//...}
 
@@ -96,7 +100,7 @@ a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_imp
 \subsection{Constructor \& Destructor Documentation}
 \hypertarget{class_h_a_l_1_1_algorithms_1_1_import_bool_value_a06b77726d1cfcd155fb7e28ee304a917}{\index{H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value@{H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value}!Import\+Bool\+Value@{Import\+Bool\+Value}}
 \index{Import\+Bool\+Value@{Import\+Bool\+Value}!H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value@{H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value}}
-\subsubsection[{Import\+Bool\+Value}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Value\+Getter  = H\+A\+L\+::\+Analysis\+Tree\+Reader$>$ {\bf H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value}$<$ Value\+Getter $>$\+::{\bf Import\+Bool\+Value} (
+\subsubsection[{Import\+Bool\+Value}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Value\+Getter $>$ {\bf H\+A\+L\+::\+Algorithms\+::\+Import\+Bool\+Value}$<$ Value\+Getter $>$\+::{\bf Import\+Bool\+Value} (
 \begin{DoxyParamCaption}
 \item[{T\+String}]{name, }
 \item[{T\+String}]{title}

@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['begin',['Begin',['../class_h_a_l_1_1_algorithm.html#a6273512af97092a7e50955cb69776d82',1,'HAL::Algorithm']]],
   ['buildth1',['buildTH1',['../namespace_h_a_l.html#afa5eba945570c465a048a363bf4393ae',1,'HAL']]],
   ['buildth1c',['buildTH1C',['../namespace_h_a_l.html#aecb2c6913e187ade28fdd059bb9c0ed1',1,'HAL']]],
   ['buildth1d',['buildTH1D',['../namespace_h_a_l.html#af95b935ec6a0d83d3361e2e6dac98466',1,'HAL']]],

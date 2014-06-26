@@ -1,5 +1,10 @@
-#ifndef HAL_EXCEPTIONS
-#define HAL_EXCEPTIONS
+/*!
+ * \file
+ * \author  Jeff Hetherly <jhetherly@smu.edu>
+ */
+
+#ifndef HAL_Exceptions
+#define HAL_Exceptions
 
 #include <TString.h>
 #include <exception>
@@ -21,4 +26,5 @@ private:
 };
 
 } /* HAL */ 
+
 #endif

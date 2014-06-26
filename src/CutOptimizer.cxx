@@ -1,18 +1,18 @@
 #include <HAL/CutOptimizer.h>
-
-// /////////////////////////////////////
-// Definitions
-// /////////////////////////////////////
+#include <TString.h>
+#include <TArrayD.h>
+#include <TH1.h>
 
 namespace HAL {
 
 #ifndef __CINT__
 
+//______________________________________________________________________________
 TMatrixD* CutOptimizer::Optimize (TH1 *sig, TH1 *bkg, Int_t n, TString side, 
                                   Int_t rebin, Double_t x_min, Double_t x_max) {
   TH1 *s, *b;
-  TMatrixD *mat = NULL;
-  TMatrixD *temp_mat = NULL;
+  TMatrixD *mat = nullptr;
+  TMatrixD *temp_mat = nullptr;
   Double_t max_stat = 0.0;
   side.ToLower();
 
@@ -35,7 +35,7 @@ TMatrixD* CutOptimizer::Optimize (TH1 *sig, TH1 *bkg, Int_t n, TString side,
     Double_t stat = ComputeMaxStatistic(s, b, i+1, side, x_min, x_max, &temp_mat);
     if (stat >= max_stat) {
       max_stat = stat;
-      if (mat != NULL)
+      if (mat != nullptr)
         delete mat;
       mat = temp_mat;
     }
@@ -55,6 +55,7 @@ TMatrixD* CutOptimizer::Optimize (TH1 *sig, TH1 *bkg, Int_t n, TString side,
   return mat;
 }
 
+//______________________________________________________________________________
 Double_t CutOptimizer::ComputeMaxStatistic(TH1 *s, TH1 *b, Int_t n, TString side,
                                            Double_t x_min, Double_t x_max, TMatrixD **mat) {
   Double_t max_statistic = 0.0;
@@ -129,6 +130,7 @@ Double_t CutOptimizer::ComputeMaxStatistic(TH1 *s, TH1 *b, Int_t n, TString side
   return max_statistic;
 }
 
+//______________________________________________________________________________
 Bool_t CutOptimizer::MoveXArray (TArrayD &x_array) {
   Int_t array_size = x_array.GetSize();
   Int_t n = array_size - 2;

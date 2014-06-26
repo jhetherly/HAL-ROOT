@@ -1,4 +1,5 @@
 #include <HAL/Algorithms/ImportParticle.h>
+#include <iostream>
 
 namespace HAL
 {

@@ -1,19 +1,28 @@
 #include <HAL/AnalysisTreeReader.h>
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+#include <aux/boost/foreach.hpp>
+#endif
+#include <TBranch.h>
+#include <TFile.h>
+#include <TLeaf.h>
+#include <TMap.h>
+#include <HAL/Exceptions.h>
 
 ClassImp(HAL::AnalysisTreeReader);
 
 namespace HAL {
 
+// For ROOT 6 HAL uses TTreeReader
 //#if ROOT_VERSION_CODE < ROOT_VERSION(6,0,0)
 
+//______________________________________________________________________________
 AnalysisTreeReader::AnalysisTreeReader (TTree *t) : fChain(t), 
   fScalar("^[a-zA-Z][a-zA-Z0-9_]+$"),
   fVector("^vector[ ]*<[ ]*[a-zA-Z][a-zA-Z0-9_]+[ ]*>$"), // vector<scalar>
   fVector2D("^vector[ ]*<[ ]*vector[ ]*<[ ]*[a-zA-Z][a-zA-Z0-9_]+[ ]*>[ ]*>$"), // vector<vector<scalar> >
   fArray("^[a-zA-Z_][a-zA-Z0-9_]*[[a-zA-Z0-9_]+]$"), // name[i]
   fArray2D("^[a-zA-Z_][a-zA-Z0-9_]*[[a-zA-Z0-9_]+][[a-zA-Z0-9_]+]$") /* name[i][j] */ 
-  { 
-
+{ 
   // bool types
   fBool.insert("Bool_t");
   fBool.insert("bool");
@@ -70,55 +79,82 @@ AnalysisTreeReader::AnalysisTreeReader (TTree *t) : fChain(t),
   fChar.insert("char");
 }
 
-AnalysisTreeReader::~AnalysisTreeReader () {
+//______________________________________________________________________________
+AnalysisTreeReader::~AnalysisTreeReader () 
+{
 }
 
-void AnalysisTreeReader::SetEntry (Long64_t entry) {
+//______________________________________________________________________________
+void AnalysisTreeReader::SetEntry (Long64_t entry) 
+{
   std::set<internal::BranchManager*> unique_bms;
 
   fEntry = entry;
 
   // Update all branches
-  for (std::map<TString, internal::BranchManager*>::iterator bm = fNickNameBranchMap.begin(); 
-       bm != fNickNameBranchMap.end(); ++bm) {
-    if (unique_bms.insert(bm->second).second)
-      bm->second->SetEntry(entry);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  std::pair<TString, internal::BranchManager*> bm;
+  BOOST_FOREACH( bm, fNickNameBranchMap )
+#else
+  for (auto bm: fNickNameBranchMap)
+#endif
+  {
+    if (unique_bms.insert(bm.second).second)
+      bm.second->SetEntry(entry);
   }
 }
 
-TString AnalysisTreeReader::GetBranchName (const TString &name) {
-  TPair *kv_pair = (TPair*)fBranchMap->FindObject(name.Data());
-  if (kv_pair == NULL)
+//______________________________________________________________________________
+TString AnalysisTreeReader::GetBranchName (const TString &name) 
+{
+  TPair *kv_pair = static_cast<TPair*>(fBranchMap->FindObject(name.Data()));
+  if (kv_pair == nullptr)
     return name;
-  return ((TObjString*)kv_pair->Value())->GetString();
+  return static_cast<TObjString*>(kv_pair->Value())->GetString();
 }
 
-void AnalysisTreeReader::Init () {
+//______________________________________________________________________________
+void AnalysisTreeReader::Init () 
+{
   std::set<internal::BranchManager*> unique_bms;
 
   // Init all branches
-  for (std::map<TString, internal::BranchManager*>::iterator bm = fNickNameBranchMap.begin(); 
-       bm != fNickNameBranchMap.end(); ++bm) {
-    if (unique_bms.insert(bm->second).second)
-      bm->second->Init();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  std::pair<TString, internal::BranchManager*> bm;
+  BOOST_FOREACH( bm, fNickNameBranchMap )
+#else
+  for (auto bm: fNickNameBranchMap)
+#endif
+  {
+    if (unique_bms.insert(bm.second).second)
+      bm.second->Init();
   }
 }
 
-Bool_t AnalysisTreeReader::Notify () {
+//______________________________________________________________________________
+Bool_t AnalysisTreeReader::Notify () 
+{
   std::set<internal::BranchManager*> unique_bms;
 
   // Init all branches
-  for (std::map<TString, internal::BranchManager*>::iterator bm = fNickNameBranchMap.begin(); 
-       bm != fNickNameBranchMap.end(); ++bm) {
-    if (unique_bms.insert(bm->second).second)
-      bm->second->Init();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+  std::pair<TString, internal::BranchManager*> bm;
+  BOOST_FOREACH( bm, fNickNameBranchMap )
+#else
+  for (auto bm: fNickNameBranchMap)
+#endif
+  {
+    if (unique_bms.insert(bm.second).second)
+      bm.second->Init();
   }
   return kTRUE;
 }
 
-bool AnalysisTreeReader::CheckBranchMapNickname (const TString &name) {
+//______________________________________________________________________________
+bool AnalysisTreeReader::CheckBranchMapNickname (const TString &name) 
+{
   TMapIter next(fBranchMap);
-  while(TObjString *key = (TObjString*)next()){
+  while(TObjString *key = static_cast<TObjString*>(next())){
     TString nn = key->String();
 
     if (name.EqualTo(nn, TString::kIgnoreCase))
@@ -127,7 +163,9 @@ bool AnalysisTreeReader::CheckBranchMapNickname (const TString &name) {
   return false;
 }
 
-TString AnalysisTreeReader::GetFullBranchName (TString name) {
+//______________________________________________________________________________
+TString AnalysisTreeReader::GetFullBranchName (TString name) 
+{
   // Remove any leading or trailing whitespace
   name.Strip(TString::kBoth);
 
@@ -139,9 +177,9 @@ TString AnalysisTreeReader::GetFullBranchName (TString name) {
 
   // Substitute branch mapping
   TMapIter next(fBranchMap);
-  while(TObjString *key = (TObjString*)next()){
+  while(TObjString *key = static_cast<TObjString*>(next())){
     TString nn = key->String();
-    TString bn = ((TObjString*)(fBranchMap->GetValue(key)))->String();
+    TString bn = static_cast<TObjString*>(fBranchMap->GetValue(key))->String();
     TString oldname = name;
 
     if (name.BeginsWith(nn, TString::kIgnoreCase)) {
@@ -159,11 +197,13 @@ TString AnalysisTreeReader::GetFullBranchName (TString name) {
   throw HALException(name.Prepend("Couldn't find branch: ").Data());
 }
 
-unsigned int AnalysisTreeReader::GetRank (const TString &branchname) {
-  internal::BranchManager *branchmanager = NULL;
+//______________________________________________________________________________
+unsigned int AnalysisTreeReader::GetRank (const TString &branchname) 
+{
+  internal::BranchManager *branchmanager = nullptr;
 
   branchmanager = GetBranchManager(branchname);
-  if (branchmanager == NULL)
+  if (branchmanager == nullptr)
     throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->IsScalar())
@@ -176,11 +216,13 @@ unsigned int AnalysisTreeReader::GetRank (const TString &branchname) {
   throw HALException(branchmanager->GetName().Prepend("Couldn't find rank for branch: ").Data());
 }
 
-unsigned int AnalysisTreeReader::GetDim (const TString &branchname, const long long &idx_1) {
-  internal::BranchManager *branchmanager = NULL;
+//______________________________________________________________________________
+unsigned int AnalysisTreeReader::GetDim (const TString &branchname, const long long &idx_1) 
+{
+  internal::BranchManager *branchmanager = nullptr;
 
   branchmanager = GetBranchManager(branchname);
-  if (branchmanager == NULL)
+  if (branchmanager == nullptr)
     throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kOA)
@@ -252,11 +294,14 @@ unsigned int AnalysisTreeReader::GetDim (const TString &branchname, const long l
   throw HALException(GetFullBranchName( branchname ).Prepend("Error in finding dimensions in branch: ").Data());
 }
 
-bool AnalysisTreeReader::GetBool (const TString &branchname, const long long &idx_1, const long long &idx_2) {
-  internal::BranchManager *branchmanager = NULL;
+//______________________________________________________________________________
+bool AnalysisTreeReader::GetBool (const TString &branchname, 
+                                  const long long &idx_1, const long long &idx_2) 
+{
+  internal::BranchManager *branchmanager = nullptr;
 
   branchmanager = GetBranchManager(branchname);
-  if (branchmanager == NULL)
+  if (branchmanager == nullptr)
     throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kB)
@@ -287,11 +332,15 @@ bool AnalysisTreeReader::GetBool (const TString &branchname, const long long &id
   throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find bool data in branch: ").Data());
 }
 
-long long AnalysisTreeReader::GetInteger (const TString &branchname, const long long &idx_1, const long long &idx_2) {
-  internal::BranchManager *branchmanager = NULL;
+//______________________________________________________________________________
+long long AnalysisTreeReader::GetInteger (const TString &branchname, 
+                                          const long long &idx_1, 
+                                          const long long &idx_2) 
+{
+  internal::BranchManager *branchmanager = nullptr;
 
   branchmanager = GetBranchManager(branchname);
-  if (branchmanager == NULL)
+  if (branchmanager == nullptr)
     throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kI)
@@ -325,11 +374,15 @@ long long AnalysisTreeReader::GetInteger (const TString &branchname, const long 
   throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find integer number data in branch: ").Data());
 }
 
-unsigned long long AnalysisTreeReader::GetCounting (const TString &branchname, const long long &idx_1, const long long &idx_2) {
-  internal::BranchManager *branchmanager = NULL;
+//______________________________________________________________________________
+unsigned long long AnalysisTreeReader::GetCounting (const TString &branchname, 
+                                                    const long long &idx_1, 
+                                                    const long long &idx_2) 
+{
+  internal::BranchManager *branchmanager = nullptr;
 
   branchmanager = GetBranchManager(branchname);
-  if (branchmanager == NULL)
+  if (branchmanager == nullptr)
     throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kC)
@@ -360,11 +413,15 @@ unsigned long long AnalysisTreeReader::GetCounting (const TString &branchname, c
   throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find counting number data in branch: ").Data());
 }
 
-long double AnalysisTreeReader::GetDecimal (const TString &branchname, const long long &idx_1, const long long &idx_2) {
-  internal::BranchManager *branchmanager = NULL;
+//______________________________________________________________________________
+long double AnalysisTreeReader::GetDecimal (const TString &branchname, 
+                                            const long long &idx_1, 
+                                            const long long &idx_2) 
+{
+  internal::BranchManager *branchmanager = nullptr;
 
   branchmanager = GetBranchManager(branchname);
-  if (branchmanager == NULL)
+  if (branchmanager == nullptr)
     throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kD)
@@ -395,11 +452,15 @@ long double AnalysisTreeReader::GetDecimal (const TString &branchname, const lon
   throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find decimal number data in branch: ").Data());
 }
 
-TString AnalysisTreeReader::GetString (const TString &branchname, const long long &idx_1, const long long &idx_2) {
-  internal::BranchManager *branchmanager = NULL;
+//______________________________________________________________________________
+TString AnalysisTreeReader::GetString (const TString &branchname, 
+                                       const long long &idx_1, 
+                                       const long long &idx_2) 
+{
+  internal::BranchManager *branchmanager = nullptr;
 
   branchmanager = GetBranchManager(branchname);
-  if (branchmanager == NULL)
+  if (branchmanager == nullptr)
     throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kS)
@@ -408,9 +469,12 @@ TString AnalysisTreeReader::GetString (const TString &branchname, const long lon
       fvS[branchmanager->GetStorageIndex()].back().Length() == 1 && 
       fvS[branchmanager->GetStorageIndex()].back()[0] == '\0') {
     TString s("");
-    for (std::vector<TString>::iterator it = fvS[branchmanager->GetStorageIndex()].begin();
-         it != fvS[branchmanager->GetStorageIndex()].end(); ++it)
-      s.Prepend(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+    BOOST_FOREACH( TString c, fvS[branchmanager->GetStorageIndex()] )
+#else
+    for (auto c: fvS[branchmanager->GetStorageIndex()])
+#endif
+      s.Prepend(c);
     return s;
   }
   if (branchmanager->GetStorageType() == kvS)
@@ -419,9 +483,12 @@ TString AnalysisTreeReader::GetString (const TString &branchname, const long lon
       fvvS[branchmanager->GetStorageIndex()][idx_1].back().Length() == 1 && 
       fvvS[branchmanager->GetStorageIndex()][idx_1].back()[0] == '\0') {
     TString s("");
-    for (std::vector<TString>::iterator it = fvvS[branchmanager->GetStorageIndex()][idx_1].begin();
-         it != fvvS[branchmanager->GetStorageIndex()][idx_1].end(); ++it)
-      s.Prepend(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+    BOOST_FOREACH( TString c, fvvS[branchmanager->GetStorageIndex()][idx_1] )
+#else
+    for (auto c: fvvS[branchmanager->GetStorageIndex()][idx_1])
+#endif
+      s.Prepend(c);
     return s;
   }
   if (branchmanager->GetStorageType() == kvvS)
@@ -431,10 +498,10 @@ TString AnalysisTreeReader::GetString (const TString &branchname, const long lon
 }
 
 TObjArray& AnalysisTreeReader::GetObjArray (const TString &branchname, const long long &idx_1) {
-  internal::BranchManager *branchmanager = NULL;
+  internal::BranchManager *branchmanager = nullptr;
 
   branchmanager = GetBranchManager(branchname);
-  if (branchmanager == NULL)
+  if (branchmanager == nullptr)
     throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kOA)
@@ -445,11 +512,14 @@ TObjArray& AnalysisTreeReader::GetObjArray (const TString &branchname, const lon
   throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find TObjArray data in branch: ").Data());
 }
 
-TClonesArray& AnalysisTreeReader::GetClonesArray (const TString &branchname, const long long &idx_1) {
-  internal::BranchManager *branchmanager = NULL;
+//______________________________________________________________________________
+TClonesArray& AnalysisTreeReader::GetClonesArray (const TString &branchname, 
+                                                  const long long &idx_1) 
+{
+  internal::BranchManager *branchmanager = nullptr;
 
   branchmanager = GetBranchManager(branchname);
-  if (branchmanager == NULL)
+  if (branchmanager == nullptr)
     throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kCA)
@@ -460,11 +530,14 @@ TClonesArray& AnalysisTreeReader::GetClonesArray (const TString &branchname, con
   throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find TClonesArray data in branch: ").Data());
 }
 
-TRef& AnalysisTreeReader::GetRef (const TString &branchname, const long long &idx_1, const long long &idx_2) {
-  internal::BranchManager *branchmanager = NULL;
+//______________________________________________________________________________
+TRef& AnalysisTreeReader::GetRef (const TString &branchname, 
+                                  const long long &idx_1, const long long &idx_2) 
+{
+  internal::BranchManager *branchmanager = nullptr;
 
   branchmanager = GetBranchManager(branchname);
-  if (branchmanager == NULL)
+  if (branchmanager == nullptr)
     throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kR)
@@ -477,11 +550,14 @@ TRef& AnalysisTreeReader::GetRef (const TString &branchname, const long long &id
   throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find TRef data in branch: ").Data());
 }
 
-TRefArray& AnalysisTreeReader::GetRefArray (const TString &branchname, const long long &idx_1) {
-  internal::BranchManager *branchmanager = NULL;
+//______________________________________________________________________________
+TRefArray& AnalysisTreeReader::GetRefArray (const TString &branchname, 
+                                            const long long &idx_1) 
+{
+  internal::BranchManager *branchmanager = nullptr;
 
   branchmanager = GetBranchManager(branchname);
-  if (branchmanager == NULL)
+  if (branchmanager == nullptr)
     throw HALException(branchname.Copy().Prepend("Couldn't configure branch: ").Data());
 
   if (branchmanager->GetStorageType() == kRA)
@@ -492,24 +568,28 @@ TRefArray& AnalysisTreeReader::GetRefArray (const TString &branchname, const lon
   throw HALException(GetFullBranchName( branchname ).Prepend("Couldn't find TRefArray data in branch: ").Data());
 }
 
+//______________________________________________________________________________
 internal::BranchManager* AnalysisTreeReader::GetBranchManager (const TString &branchname) {
-  internal::BranchManager *branchmanager = NULL;
+  internal::BranchManager *branchmanager = nullptr;
 
   if (fNickNameBranchMap.count(branchname) == 0) {
     bool already_stored = false;
     TString bname = GetFullBranchName( branchname );
-    //for (std::map<TString, BranchManager*>::iterator bm = fNickNameBranchMap.begin(); 
-    for (std::map<TString, internal::BranchManager*>::iterator bm = fNickNameBranchMap.begin(); 
-         bm != fNickNameBranchMap.end(); ++bm) {
-      if (bm->second->GetName().EqualTo(bname)) {
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+    std::pair<TString, internal::BranchManager*> bm;
+    BOOST_FOREACH( bm, fNickNameBranchMap )
+#else
+    for (auto bm: fNickNameBranchMap)
+#endif
+    {
+      if (bm.second->GetName().EqualTo(bname)) {
         already_stored = true;
-        fNickNameBranchMap[branchname] = bm->second;
-        branchmanager = bm->second;
+        fNickNameBranchMap[branchname] = bm.second;
+        branchmanager = bm.second;
         break;
       }
     }
     if (!already_stored) {
-      //branchmanager = new BranchManager(this);
       branchmanager = new internal::BranchManager(this);
       if (branchmanager->Create(bname))
         fNickNameBranchMap[branchname] = branchmanager;
@@ -530,23 +610,23 @@ internal::BranchManager* AnalysisTreeReader::GetBranchManager (const TString &br
 
 internal::BranchManager::BranchManager (AnalysisTreeReader *tr) : 
   fScalar(kFALSE), fCArray1D(kFALSE), fCArray2D(kFALSE), 
-  fVec1D(kFALSE), fVec2D(kFALSE), fBranch(NULL), fTreeReader(tr),
-  fcB(NULL), fcSC(NULL), fcI(NULL), fcSI(NULL), fcL(NULL), fcLL(NULL),
-  fcUC(NULL), fcUI(NULL), fcUSI(NULL), fcUL(NULL), fcULL(NULL), fcF(NULL),
-  fcD(NULL), fcLD(NULL), fcC(NULL), fcTS(NULL), fcTOS(NULL), fcstdS(NULL),
-  fcTOA(NULL), fcTCA(NULL), fcTR(NULL), fcTRA(NULL),
-  fccB(NULL), fccSC(NULL), fccI(NULL), fccSI(NULL), fccL(NULL), fccLL(NULL),
-  fccUC(NULL), fccUI(NULL), fccUSI(NULL), fccUL(NULL), fccULL(NULL), fccF(NULL),
-  fccD(NULL), fccLD(NULL), fccC(NULL), fccTS(NULL), fccTOS(NULL), fccstdS(NULL),
-  fccTR(NULL),
-  fvB(NULL), fvSC(NULL), fvI(NULL), fvSI(NULL), fvL(NULL), fvLL(NULL),
-  fvUC(NULL), fvUI(NULL), fvUSI(NULL), fvUL(NULL), fvULL(NULL), fvF(NULL),
-  fvD(NULL), fvLD(NULL), fvC(NULL), fvTS(NULL), fvTOS(NULL), fvstdS(NULL),
-  fvTOA(NULL), fvTCA(NULL), fvTR(NULL), fvTRA(NULL),
-  fvvB(NULL), fvvSC(NULL), fvvI(NULL), fvvSI(NULL), fvvL(NULL), fvvLL(NULL),
-  fvvUC(NULL), fvvUI(NULL), fvvUSI(NULL), fvvUL(NULL), fvvULL(NULL), fvvF(NULL),
-  fvvD(NULL), fvvLD(NULL), fvvC(NULL), fvvTS(NULL), fvvTOS(NULL), fvvstdS(NULL),
-  fvvTR(NULL), 
+  fVec1D(kFALSE), fVec2D(kFALSE), fBranch(nullptr), fTreeReader(tr),
+  fcB(nullptr), fcSC(nullptr), fcI(nullptr), fcSI(nullptr), fcL(nullptr), fcLL(nullptr),
+  fcUC(nullptr), fcUI(nullptr), fcUSI(nullptr), fcUL(nullptr), fcULL(nullptr), fcF(nullptr),
+  fcD(nullptr), fcLD(nullptr), fcC(nullptr), fcTS(nullptr), fcTOS(nullptr), fcstdS(nullptr),
+  fcTOA(nullptr), fcTCA(nullptr), fcTR(nullptr), fcTRA(nullptr),
+  fccB(nullptr), fccSC(nullptr), fccI(nullptr), fccSI(nullptr), fccL(nullptr), fccLL(nullptr),
+  fccUC(nullptr), fccUI(nullptr), fccUSI(nullptr), fccUL(nullptr), fccULL(nullptr), fccF(nullptr),
+  fccD(nullptr), fccLD(nullptr), fccC(nullptr), fccTS(nullptr), fccTOS(nullptr), fccstdS(nullptr),
+  fccTR(nullptr),
+  fvB(nullptr), fvSC(nullptr), fvI(nullptr), fvSI(nullptr), fvL(nullptr), fvLL(nullptr),
+  fvUC(nullptr), fvUI(nullptr), fvUSI(nullptr), fvUL(nullptr), fvULL(nullptr), fvF(nullptr),
+  fvD(nullptr), fvLD(nullptr), fvC(nullptr), fvTS(nullptr), fvTOS(nullptr), fvstdS(nullptr),
+  fvTOA(nullptr), fvTCA(nullptr), fvTR(nullptr), fvTRA(nullptr),
+  fvvB(nullptr), fvvSC(nullptr), fvvI(nullptr), fvvSI(nullptr), fvvL(nullptr), fvvLL(nullptr),
+  fvvUC(nullptr), fvvUI(nullptr), fvvUSI(nullptr), fvvUL(nullptr), fvvULL(nullptr), fvvF(nullptr),
+  fvvD(nullptr), fvvLD(nullptr), fvvC(nullptr), fvvTS(nullptr), fvvTOS(nullptr), fvvstdS(nullptr),
+  fvvTR(nullptr), 
   fIsB (false), fIsSC(false), fIsI(false), fIsSI(false), 
   fIsL(false), fIsLL(false), fIsUC(false), fIsUI(false), fIsUSI(false), 
   fIsUL(false), fIsULL(false), fIsF(false), fIsD(false), fIsLD(false), 
@@ -563,7 +643,7 @@ Bool_t internal::BranchManager::Create (TString branchname) {
   fBranchName = branchname;
 
   fBranch = fTreeReader->fChain->GetBranch(fBranchName.Data());
-  if (fBranch == NULL)
+  if (fBranch == nullptr)
     return kFALSE;
 
   fBranchTitle = fBranch->GetTitle();
@@ -900,7 +980,7 @@ Bool_t internal::BranchManager::Create (TString branchname) {
 void internal::BranchManager::Init () {
 
   fBranch = fTreeReader->fChain->GetBranch(fBranchName.Data());
-  if (fBranch == NULL)
+  if (fBranch == nullptr)
     throw HALException(fBranchName.Prepend("Couldn't find branch: "));
   fFileName = fTreeReader->fChain->GetCurrentFile()->GetName();
 
@@ -959,7 +1039,7 @@ void internal::BranchManager::Init () {
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcB, &fBranch);
     }
     else if (fIsI) {
-      //fcI = NULL;
+      //fcI = nullptr;
       fcI = new int[fMaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcI, &fBranch);
     }
@@ -1000,7 +1080,7 @@ void internal::BranchManager::Init () {
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcUC, &fBranch);
     }
     else if (fIsF) {
-      //fcF = NULL;
+      //fcF = nullptr;
       fcF = new float[fMaxBufferLength];
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), fcF, &fBranch);
     }
@@ -1150,91 +1230,91 @@ void internal::BranchManager::Init () {
   // //////////////////////////////////////////////////////////////
   else if (fVec1D) {
     if (fIsB) {
-      fvB = NULL;
+      fvB = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvB, &fBranch);
     }
     else if (fIsI) {
-      fvI = NULL;
+      fvI = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvI, &fBranch);
     }
     else if (fIsSI) {
-      fvSI = NULL;
+      fvSI = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvSI, &fBranch);
     }
     else if (fIsL) {
-      fvL = NULL;
+      fvL = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvL, &fBranch);
     }
     else if (fIsLL) {
-      fvLL = NULL;
+      fvLL = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvLL, &fBranch);
     }
     else if (fIsSC) {
-      fvSC = NULL;
+      fvSC = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvSC, &fBranch);
     }
     else if (fIsUI) {
-      fvUI = NULL;
+      fvUI = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvUI, &fBranch);
     }
     else if (fIsUSI) {
-      fvUSI = NULL;
+      fvUSI = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvUSI, &fBranch);
     }
     else if (fIsUL) {
-      fvUL = NULL;
+      fvUL = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvUL, &fBranch);
     }
     else if (fIsULL) {
-      fvULL = NULL;
+      fvULL = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvULL, &fBranch);
     }
     else if (fIsUC) {
-      fvUC = NULL;
+      fvUC = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvUC, &fBranch);
     }
     else if (fIsF) {
-      fvF = NULL;
+      fvF = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvF, &fBranch);
     }
     else if (fIsD) {
-      fvD = NULL;
+      fvD = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvD, &fBranch);
     }
     else if (fIsLD) {
-      fvLD = NULL;
+      fvLD = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvLD, &fBranch);
     }
     else if (fIsC) {
-      fvC = NULL;
+      fvC = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvC, &fBranch);
     }
     else if (fIsstdS) {
-      fvstdS = NULL;
+      fvstdS = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvstdS, &fBranch);
     }
     else if (fIsTS) {
-      fvTS = NULL;
+      fvTS = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvTS, &fBranch);
     }
     else if (fIsTOS) {
-      fvTOS = NULL;
+      fvTOS = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvTOS, &fBranch);
     }
     else if (fIsTOA) {
-      fvTOA = NULL;
+      fvTOA = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvTOA, &fBranch);
     }
     else if (fIsTCA) {
-      fvTCA = NULL;
+      fvTCA = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvTCA, &fBranch);
     }
     else if (fIsTR) {
-      fvTR = NULL;
+      fvTR = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvTR, &fBranch);
     }
     else if (fIsTRA) {
-      fvTRA = NULL;
+      fvTRA = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvTRA, &fBranch);
     }
   } // end if 1D vector
@@ -1243,79 +1323,79 @@ void internal::BranchManager::Init () {
   // //////////////////////////////////////////////////////////////
   else if (fVec2D) {
     if (fIsB) {
-      fvvB = NULL;
+      fvvB = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvB, &fBranch);
     }
     else if (fIsI) {
-      fvvI = NULL;
+      fvvI = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvI, &fBranch);
     }
     else if (fIsSI) {
-      fvvSI = NULL;
+      fvvSI = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvSI, &fBranch);
     }
     else if (fIsL) {
-      fvvL = NULL;
+      fvvL = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvL, &fBranch);
     }
     else if (fIsLL) {
-      fvvLL = NULL;
+      fvvLL = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvLL, &fBranch);
     }
     else if (fIsSC) {
-      fvvSC = NULL;
+      fvvSC = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvSC, &fBranch);
     }
     else if (fIsUI) {
-      fvvUI = NULL;
+      fvvUI = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvUI, &fBranch);
     }
     else if (fIsUSI) {
-      fvvUSI = NULL;
+      fvvUSI = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvUSI, &fBranch);
     }
     else if (fIsUL) {
-      fvvUL = NULL;
+      fvvUL = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvUL, &fBranch);
     }
     else if (fIsULL) {
-      fvvULL = NULL;
+      fvvULL = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvULL, &fBranch);
     }
     else if (fIsUC) {
-      fvvUC = NULL;
+      fvvUC = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvUC, &fBranch);
     }
     else if (fIsF) {
-      fvvF = NULL;
+      fvvF = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvF, &fBranch);
     }
     else if (fIsD) {
-      fvvD = NULL;
+      fvvD = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvD, &fBranch);
     }
     else if (fIsLD) {
-      fvvLD = NULL;
+      fvvLD = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvLD, &fBranch);
     }
     else if (fIsC) {
-      fvvC = NULL;
+      fvvC = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvC, &fBranch);
     }
     else if (fIsstdS) {
-      fvvstdS = NULL;
+      fvvstdS = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvstdS, &fBranch);
     }
     else if (fIsTS) {
-      fvvTS = NULL;
+      fvvTS = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvTS, &fBranch);
     }
     else if (fIsTOS) {
-      fvvTOS = NULL;
+      fvvTOS = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvTOS, &fBranch);
     }
     else if (fIsTR) {
-      fvvTR = NULL;
+      fvvTR = nullptr;
       fTreeReader->fChain->SetBranchAddress(fBranchName.Data(), &fvvTR, &fBranch);
     }
   } // end if 2D vector
@@ -1386,7 +1466,7 @@ void internal::BranchManager::SetEntry (Long64_t entry) {
         fTreeReader->fvB[fStorageIndex].push_back(fcB[i]);
     }
     else if (fIsI) {
-      //if (fcI == NULL) {
+      //if (fcI == nullptr) {
       //  if (n != 0) n *= 50;
       //  else n = fMaxBufferLength;
       //  fcI = new int[n];
@@ -1463,7 +1543,7 @@ void internal::BranchManager::SetEntry (Long64_t entry) {
         fTreeReader->fvC[fStorageIndex].push_back(fcUC[i]);
     }
     else if (fIsF) {
-      //if (fcF == NULL) {
+      //if (fcF == nullptr) {
       //  if (n != 0) n *= 50;
       //  else n = fMaxBufferLength;
       //  fcF = new float[n];
@@ -1791,155 +1871,243 @@ void internal::BranchManager::SetEntry (Long64_t entry) {
       unsigned n = fvB->size();
       fTreeReader->fvB[fStorageIndex].clear();
       fTreeReader->fvB[fStorageIndex].reserve(n);
-      for (std::vector<bool>::iterator it = fvB->begin(); it != fvB->end(); ++it)
-        fTreeReader->fvB[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( bool it, *fvB )
+#else
+      for (auto it: *fvB)
+#endif
+        fTreeReader->fvB[fStorageIndex].push_back(it);
     }
     else if (fIsI) {
       unsigned n = fvI->size();
       fTreeReader->fvI[fStorageIndex].clear();
       fTreeReader->fvI[fStorageIndex].reserve(n);
-      for (std::vector<int>::iterator it = fvI->begin(); it != fvI->end(); ++it)
-        fTreeReader->fvI[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( int it, *fvI )
+#else
+      for (auto it: *fvI)
+#endif
+        fTreeReader->fvI[fStorageIndex].push_back(it);
     }
     else if (fIsSI) {
       unsigned n = fvSI->size();
       fTreeReader->fvI[fStorageIndex].clear();
       fTreeReader->fvI[fStorageIndex].reserve(n);
-      for (std::vector<short int>::iterator it = fvSI->begin(); it != fvSI->end(); ++it)
-        fTreeReader->fvI[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( short int it, *fvSI )
+#else
+      for (auto it: *fvSI)
+#endif
+        fTreeReader->fvI[fStorageIndex].push_back(it);
     }
     else if (fIsL) {
       unsigned n = fvL->size();
       fTreeReader->fvI[fStorageIndex].clear();
       fTreeReader->fvI[fStorageIndex].reserve(n);
-      for (std::vector<long int>::iterator it = fvL->begin(); it != fvL->end(); ++it)
-        fTreeReader->fvI[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( long int it, *fvL )
+#else
+      for (auto it: *fvL)
+#endif
+        fTreeReader->fvI[fStorageIndex].push_back(it);
     }
     else if (fIsLL) {
       unsigned n = fvLL->size();
       fTreeReader->fvI[fStorageIndex].clear();
       fTreeReader->fvI[fStorageIndex].reserve(n);
-      for (std::vector<long long int>::iterator it = fvLL->begin(); it != fvLL->end(); ++it)
-        fTreeReader->fvI[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( long long int it, *fvLL )
+#else
+      for (auto it: *fvLL)
+#endif
+        fTreeReader->fvI[fStorageIndex].push_back(it);
     }
     else if (fIsSC) {
       unsigned n = fvSC->size();
       fTreeReader->fvI[fStorageIndex].clear();
       fTreeReader->fvI[fStorageIndex].reserve(n);
-      for (std::vector<signed char>::iterator it = fvSC->begin(); it != fvSC->end(); ++it)
-        fTreeReader->fvI[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( signed char it, *fvSC )
+#else
+      for (auto it: *fvSC)
+#endif
+        fTreeReader->fvI[fStorageIndex].push_back(it);
     }
     else if (fIsUI) {
       unsigned n = fvUI->size();
       fTreeReader->fvC[fStorageIndex].clear();
       fTreeReader->fvC[fStorageIndex].reserve(n);
-      for (std::vector<unsigned int>::iterator it = fvUI->begin(); it != fvUI->end(); ++it)
-        fTreeReader->fvC[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( unsigned int it, *fvUI )
+#else
+      for (auto it: *fvUI)
+#endif
+        fTreeReader->fvC[fStorageIndex].push_back(it);
     }
     else if (fIsUSI) {
       unsigned n = fvUSI->size();
       fTreeReader->fvC[fStorageIndex].clear();
       fTreeReader->fvC[fStorageIndex].reserve(n);
-      for (std::vector<unsigned short int>::iterator it = fvUSI->begin(); it != fvUSI->end(); ++it)
-        fTreeReader->fvC[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( unsigned short int it, *fvUSI )
+#else
+      for (auto it: *fvUSI)
+#endif
+        fTreeReader->fvC[fStorageIndex].push_back(it);
     }
     else if (fIsUL) {
       unsigned n = fvUL->size();
       fTreeReader->fvC[fStorageIndex].clear();
       fTreeReader->fvC[fStorageIndex].reserve(n);
-      for (std::vector<unsigned long int>::iterator it = fvUL->begin(); it != fvUL->end(); ++it)
-        fTreeReader->fvC[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( unsigned long int it, *fvUL )
+#else
+      for (auto it: *fvUL)
+#endif
+        fTreeReader->fvC[fStorageIndex].push_back(it);
     }
     else if (fIsULL) {
       unsigned n = fvULL->size();
       fTreeReader->fvC[fStorageIndex].clear();
       fTreeReader->fvC[fStorageIndex].reserve(n);
-      for (std::vector<unsigned long long int>::iterator it = fvULL->begin(); it != fvULL->end(); ++it)
-        fTreeReader->fvC[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( unsigned long long int it, *fvULL )
+#else
+      for (auto it: *fvULL)
+#endif
+        fTreeReader->fvC[fStorageIndex].push_back(it);
     }
     else if (fIsUC) {
       unsigned n = fvUC->size();
       fTreeReader->fvC[fStorageIndex].clear();
       fTreeReader->fvC[fStorageIndex].reserve(n);
-      for (std::vector<unsigned char>::iterator it = fvUC->begin(); it != fvUC->end(); ++it)
-        fTreeReader->fvC[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( unsigned char it, *fvUC )
+#else
+      for (auto it: *fvUC)
+#endif
+        fTreeReader->fvC[fStorageIndex].push_back(it);
     }
     else if (fIsF) {
       unsigned n = fvF->size();
       fTreeReader->fvD[fStorageIndex].clear();
       fTreeReader->fvD[fStorageIndex].reserve(n);
-      for (std::vector<float>::iterator it = fvF->begin(); it != fvF->end(); ++it)
-        fTreeReader->fvD[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( float it, *fvF )
+#else
+      for (auto it: *fvF)
+#endif
+        fTreeReader->fvD[fStorageIndex].push_back(it);
     }
     else if (fIsD) {
       unsigned n = fvD->size();
       fTreeReader->fvD[fStorageIndex].clear();
       fTreeReader->fvD[fStorageIndex].reserve(n);
-      for (std::vector<double>::iterator it = fvD->begin(); it != fvD->end(); ++it)
-        fTreeReader->fvD[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( double it, *fvD )
+#else
+      for (auto it: *fvD)
+#endif
+        fTreeReader->fvD[fStorageIndex].push_back(it);
     }
     else if (fIsLD) {
       unsigned n = fvLD->size();
       fTreeReader->fvD[fStorageIndex].clear();
       fTreeReader->fvD[fStorageIndex].reserve(n);
-      for (std::vector<long double>::iterator it = fvLD->begin(); it != fvLD->end(); ++it)
-        fTreeReader->fvD[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( long double it, *fvLD )
+#else
+      for (auto it: *fvLD)
+#endif
+        fTreeReader->fvD[fStorageIndex].push_back(it);
     }
     else if (fIsC) {
       unsigned n = fvC->size();
       fTreeReader->fvS[fStorageIndex].clear();
       fTreeReader->fvS[fStorageIndex].reserve(n);
-      for (std::vector<char>::iterator it = fvC->begin(); it != fvC->end(); ++it)
-        fTreeReader->fvS[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( char it, *fvC )
+#else
+      for (auto it: *fvC)
+#endif
+        fTreeReader->fvS[fStorageIndex].push_back(it);
     }
     else if (fIsstdS) {
       unsigned n = fvstdS->size();
       fTreeReader->fvS[fStorageIndex].clear();
       fTreeReader->fvS[fStorageIndex].reserve(n);
-      for (std::vector<std::string>::iterator it = fvstdS->begin(); it != fvstdS->end(); ++it)
-        fTreeReader->fvS[fStorageIndex].push_back((*it).c_str());
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::string it, *fvstdS )
+#else
+      for (auto it: *fvstdS)
+#endif
+        fTreeReader->fvS[fStorageIndex].push_back(it.c_str());
     }
     else if (fIsTS) {
       unsigned n = fvTS->size();
       fTreeReader->fvS[fStorageIndex].clear();
       fTreeReader->fvS[fStorageIndex].reserve(n);
-      for (std::vector<TString>::iterator it = fvTS->begin(); it != fvTS->end(); ++it)
-        fTreeReader->fvS[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( TString it, *fvTS )
+#else
+      for (auto it: *fvTS)
+#endif
+        fTreeReader->fvS[fStorageIndex].push_back(it);
     }
     else if (fIsTOS) {
       unsigned n = fvTOS->size();
       fTreeReader->fvS[fStorageIndex].clear();
       fTreeReader->fvS[fStorageIndex].reserve(n);
-      for (std::vector<TObjString>::iterator it = fvTOS->begin(); it != fvTOS->end(); ++it)
-        fTreeReader->fvS[fStorageIndex].push_back((*it).String());
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( TObjString it, *fvTOS )
+#else
+      for (auto it: *fvTOS)
+#endif
+        fTreeReader->fvS[fStorageIndex].push_back(it.String());
     }
     else if (fIsTOA) {
       unsigned n = fvTOA->size();
       fTreeReader->fvOA[fStorageIndex].clear();
       fTreeReader->fvOA[fStorageIndex].reserve(n);
-      for (std::vector<TObjArray>::iterator it = fvTOA->begin(); it != fvTOA->end(); ++it)
-        fTreeReader->fvOA[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( TObjArray it, *fvTOA )
+#else
+      for (auto it: *fvTOA)
+#endif
+        fTreeReader->fvOA[fStorageIndex].push_back(it);
     }
     else if (fIsTCA) {
       unsigned n = fvTCA->size();
       fTreeReader->fvCA[fStorageIndex].clear();
       fTreeReader->fvCA[fStorageIndex].reserve(n);
-      for (std::vector<TClonesArray>::iterator it = fvTCA->begin(); it != fvTCA->end(); ++it)
-        fTreeReader->fvCA[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( TClonesArray it, *fvTCA )
+#else
+      for (auto it: *fvTCA)
+#endif
+        fTreeReader->fvCA[fStorageIndex].push_back(it);
     }
     else if (fIsTR) {
       unsigned n = fvTR->size();
       fTreeReader->fvR[fStorageIndex].clear();
       fTreeReader->fvR[fStorageIndex].reserve(n);
-      for (std::vector<TRef>::iterator it = fvTR->begin(); it != fvTR->end(); ++it)
-        fTreeReader->fvR[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( TRef it, *fvTR )
+#else
+      for (auto it: *fvTR)
+#endif
+        fTreeReader->fvR[fStorageIndex].push_back(it);
     }
     else if (fIsTRA) {
       unsigned n = fvTRA->size();
       fTreeReader->fvRA[fStorageIndex].clear();
       fTreeReader->fvRA[fStorageIndex].reserve(n);
-      for (std::vector<TRefArray>::iterator it = fvTRA->begin(); it != fvTRA->end(); ++it)
-        fTreeReader->fvRA[fStorageIndex].push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( TRefArray it, *fvTRA )
+#else
+      for (auto it: *fvTRA)
+#endif
+        fTreeReader->fvRA[fStorageIndex].push_back(it);
     }
   } // end if 1D vector
   // //////////////////////////////////////////////////////////////
@@ -1951,247 +2119,418 @@ void internal::BranchManager::SetEntry (Long64_t entry) {
       unsigned n = fvvB->size();
       fTreeReader->fvvB[fStorageIndex].clear();
       fTreeReader->fvvB[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<bool> >::iterator iit = fvvB->begin(); iit != fvvB->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<bool> iit, *fvvB )
+#else
+      for (auto iit: *fvvB)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<bool> row;
         fTreeReader->fvvB[fStorageIndex].push_back(row);
         fTreeReader->fvvB[fStorageIndex].back().reserve(m);
-        for (std::vector<bool>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvB[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( bool it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvB[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsI) {
       unsigned n = fvvI->size();
       fTreeReader->fvvI[fStorageIndex].clear();
       fTreeReader->fvvI[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<int> >::iterator iit = fvvI->begin(); iit != fvvI->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<int> iit, *fvvI )
+#else
+      for (auto iit: *fvvI)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         fTreeReader->fvvI[fStorageIndex].back().reserve(m);
-        for (std::vector<int>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvI[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( int it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvI[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsSI) {
       unsigned n = fvvSI->size();
       fTreeReader->fvvI[fStorageIndex].clear();
       fTreeReader->fvvI[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<short int> >::iterator iit = fvvSI->begin(); iit != fvvSI->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<short int> iit, *fvvSI )
+#else
+      for (auto iit: *fvvSI)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         fTreeReader->fvvI[fStorageIndex].back().reserve(m);
-        for (std::vector<short int>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvI[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( short int it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvI[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsL) {
       unsigned n = fvvL->size();
       fTreeReader->fvvI[fStorageIndex].clear();
       fTreeReader->fvvI[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<long int> >::iterator iit = fvvL->begin(); iit != fvvL->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<long int> iit, *fvvL )
+#else
+      for (auto iit: *fvvL)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         fTreeReader->fvvI[fStorageIndex].back().reserve(m);
-        for (std::vector<long int>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvI[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( long int it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvI[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsLL) {
       unsigned n = fvvLL->size();
       fTreeReader->fvvI[fStorageIndex].clear();
       fTreeReader->fvvI[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<long long int> >::iterator iit = fvvLL->begin(); iit != fvvLL->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<long long int> iit, *fvvLL )
+#else
+      for (auto iit: *fvvLL)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         fTreeReader->fvvI[fStorageIndex].back().reserve(m);
-        for (std::vector<long long int>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvI[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( long long int it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvI[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsSC) {
       unsigned n = fvvSC->size();
       fTreeReader->fvvI[fStorageIndex].clear();
       fTreeReader->fvvI[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<signed char> >::iterator iit = fvvSC->begin(); iit != fvvSC->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<signed char> iit, *fvvSC )
+#else
+      for (auto iit: *fvvSC)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<long long> row;
         fTreeReader->fvvI[fStorageIndex].push_back(row);
         fTreeReader->fvvI[fStorageIndex].back().reserve(m);
-        for (std::vector<signed char>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvI[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( signed char it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvI[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsUI) {
       unsigned n = fvvUI->size();
       fTreeReader->fvvC[fStorageIndex].clear();
       fTreeReader->fvvC[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<unsigned int> >::iterator iit = fvvUI->begin(); iit != fvvUI->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<unsigned int> iit, *fvvUI )
+#else
+      for (auto iit: *fvvUI)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         fTreeReader->fvvC[fStorageIndex].back().reserve(m);
-        for (std::vector<unsigned int>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvC[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( unsigned int it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvC[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsUSI) {
       unsigned n = fvvUSI->size();
       fTreeReader->fvvC[fStorageIndex].clear();
       fTreeReader->fvvC[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<unsigned short int> >::iterator iit = fvvUSI->begin(); iit != fvvUSI->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<unsigned short int> iit, *fvvUSI )
+#else
+      for (auto iit: *fvvUSI)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         fTreeReader->fvvC[fStorageIndex].back().reserve(m);
-        for (std::vector<unsigned short int>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvC[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( unsigned short int it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvC[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsUL) {
       unsigned n = fvvUL->size();
       fTreeReader->fvvC[fStorageIndex].clear();
       fTreeReader->fvvC[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<unsigned long int> >::iterator iit = fvvUL->begin(); iit != fvvUL->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<unsigned long int> iit, *fvvUL )
+#else
+      for (auto iit: *fvvUL)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         fTreeReader->fvvC[fStorageIndex].back().reserve(m);
-        for (std::vector<unsigned long int>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvC[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( unsigned long int it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvC[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsULL) {
       unsigned n = fvvULL->size();
       fTreeReader->fvvC[fStorageIndex].clear();
       fTreeReader->fvvC[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<unsigned long long int> >::iterator iit = fvvULL->begin(); iit != fvvULL->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<unsigned long long int> iit, *fvvULL )
+#else
+      for (auto iit: *fvvULL)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         fTreeReader->fvvC[fStorageIndex].back().reserve(m);
-        for (std::vector<unsigned long long int>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvC[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( unsigned long long int it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvC[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsUC) {
       unsigned n = fvvUC->size();
       fTreeReader->fvvC[fStorageIndex].clear();
       fTreeReader->fvvC[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<unsigned char> >::iterator iit = fvvUC->begin(); iit != fvvUC->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<unsigned char> iit, *fvvUC )
+#else
+      for (auto iit: *fvvUC)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<unsigned long long> row;
         fTreeReader->fvvC[fStorageIndex].push_back(row);
         fTreeReader->fvvC[fStorageIndex].back().reserve(m);
-        for (std::vector<unsigned char>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvC[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( unsigned char it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvC[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsF) {
       unsigned n = fvvF->size();
       fTreeReader->fvvD[fStorageIndex].clear();
       fTreeReader->fvvD[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<float> >::iterator iit = fvvF->begin(); iit != fvvF->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<float> iit, *fvvF )
+#else
+      for (auto iit: *fvvF)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<long double> row;
         fTreeReader->fvvD[fStorageIndex].push_back(row);
         fTreeReader->fvvD[fStorageIndex].back().reserve(m);
-        for (std::vector<float>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvD[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( float it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvD[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsD) {
       unsigned n = fvvD->size();
       fTreeReader->fvvD[fStorageIndex].clear();
       fTreeReader->fvvD[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<double> >::iterator iit = fvvD->begin(); iit != fvvD->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<double> iit, *fvvD )
+#else
+      for (auto iit: *fvvD)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<long double> row;
         fTreeReader->fvvD[fStorageIndex].push_back(row);
         fTreeReader->fvvD[fStorageIndex].back().reserve(m);
-        for (std::vector<double>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvD[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( double it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvD[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsLD) {
       unsigned n = fvvLD->size();
       fTreeReader->fvvD[fStorageIndex].clear();
       fTreeReader->fvvD[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<long double> >::iterator iit = fvvLD->begin(); iit != fvvLD->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<long double> iit, *fvvLD )
+#else
+      for (auto iit: *fvvLD)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<long double> row;
         fTreeReader->fvvD[fStorageIndex].push_back(row);
         fTreeReader->fvvD[fStorageIndex].back().reserve(m);
-        for (std::vector<long double>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvD[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( long double it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvD[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsC) {
       unsigned n = fvvC->size();
       fTreeReader->fvvS[fStorageIndex].clear();
       fTreeReader->fvvS[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<char> >::iterator iit = fvvC->begin(); iit != fvvC->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<char> iit, *fvvC )
+#else
+      for (auto iit: *fvvC)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<TString> row;
         fTreeReader->fvvS[fStorageIndex].push_back(row);
         fTreeReader->fvvS[fStorageIndex].back().reserve(m);
-        for (std::vector<char>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvS[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( char it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvS[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsstdS) {
       unsigned n = fvvstdS->size();
       fTreeReader->fvvS[fStorageIndex].clear();
       fTreeReader->fvvS[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<std::string> >::iterator iit = fvvstdS->begin(); iit != fvvstdS->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<std::string> iit, *fvvstdS )
+#else
+      for (auto iit: *fvvstdS)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<TString> row;
         fTreeReader->fvvS[fStorageIndex].push_back(row);
         fTreeReader->fvvS[fStorageIndex].back().reserve(m);
-        for (std::vector<std::string>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvS[fStorageIndex].back().push_back(it->c_str());
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( std::string it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvS[fStorageIndex].back().push_back(it.c_str());
       }
     }
     else if (fIsTS) {
       unsigned n = fvvTS->size();
       fTreeReader->fvvS[fStorageIndex].clear();
       fTreeReader->fvvS[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<TString> >::iterator iit = fvvTS->begin(); iit != fvvTS->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<TString> iit, *fvvTS )
+#else
+      for (auto iit: *fvvTS)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<TString> row;
         fTreeReader->fvvS[fStorageIndex].push_back(row);
         fTreeReader->fvvS[fStorageIndex].back().reserve(m);
-        for (std::vector<TString>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvS[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( TString it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvS[fStorageIndex].back().push_back(it);
       }
     }
     else if (fIsTOS) {
       unsigned n = fvvTOS->size();
       fTreeReader->fvvS[fStorageIndex].clear();
       fTreeReader->fvvS[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<TObjString> >::iterator iit = fvvTOS->begin(); iit != fvvTOS->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<TObjString> iit, *fvvTOS )
+#else
+      for (auto iit: *fvvTOS)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<TString> row;
         fTreeReader->fvvS[fStorageIndex].push_back(row);
         fTreeReader->fvvS[fStorageIndex].back().reserve(m);
-        for (std::vector<TObjString>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvS[fStorageIndex].back().push_back(it->String());
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( TObjString it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvS[fStorageIndex].back().push_back(it.String());
       }
     }
     else if (fIsTR) {
       unsigned n = fvvTR->size();
       fTreeReader->fvvR[fStorageIndex].clear();
       fTreeReader->fvvR[fStorageIndex].reserve(n);
-      for (std::vector<std::vector<TRef> >::iterator iit = fvvTR->begin(); iit != fvvTR->end(); ++iit) {
-        unsigned m = iit->size();
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+      BOOST_FOREACH( std::vector<TRef> iit, *fvvTR )
+#else
+      for (auto iit: *fvvTR)
+#endif
+      {
+        unsigned m = iit.size();
         std::vector<TRef> row;
         fTreeReader->fvvR[fStorageIndex].push_back(row);
         fTreeReader->fvvR[fStorageIndex].back().reserve(m);
-        for (std::vector<TRef>::iterator it = iit->begin(); it != iit->end(); ++it)
-          fTreeReader->fvvR[fStorageIndex].back().push_back(*it);
+#ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
+        BOOST_FOREACH( TRef it, iit )
+#else
+        for (auto it: iit)
+#endif
+          fTreeReader->fvvR[fStorageIndex].back().push_back(it);
       }
     }
   } // end if 2D vector
@@ -2244,7 +2583,7 @@ Int_t internal::BranchManager::GetMaxArrayLength (Int_t rank) {
 }
 
 void internal::BranchManager::FindTypeInformation() {
-  TLeaf *l = NULL;
+  TLeaf *l = nullptr;
 
   // branch name = leaf name
   if (fBranch->FindLeaf(fBranchName.Data()))
@@ -2253,7 +2592,7 @@ void internal::BranchManager::FindTypeInformation() {
     TObjArray *ll = fBranch->GetListOfLeaves();
     if (ll->GetEntries() != 1)
       throw HALException(fBranchName.Append(": This branch has too many leaves. Can't find data."));
-    l = (TLeaf*)ll->At(0);
+    l = static_cast<TLeaf*>(ll->At(0));
   }
   
   fType = l->GetTypeName();

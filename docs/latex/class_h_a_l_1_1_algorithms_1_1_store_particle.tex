@@ -3,7 +3,7 @@
 }
 
 
-Generic algorithm class that stores the properties of particles to a T\+Tree.  
+\hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} that stores the properties of particles to a T\+Tree.  
 
 
 
@@ -24,16 +24,15 @@ Inheritance diagram for H\+A\+L\+:\+:Algorithms\+:\+:Store\+Particle\+:\begin{fi
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{class_h_a_l_1_1_algorithms_1_1_store_particle_af2e287e256a0d7803c68a62bbb254302}{virtual void {\bfseries Init} (Option\+\_\+t $\ast$)}\label{class_h_a_l_1_1_algorithms_1_1_store_particle_af2e287e256a0d7803c68a62bbb254302}
-
-\item 
+virtual void \hyperlink{class_h_a_l_1_1_algorithms_1_1_store_particle_af2e287e256a0d7803c68a62bbb254302}{Init} (Option\+\_\+t $\ast$)
+\begin{DoxyCompactList}\small\item\em Hook into the T\+Selector\+::\+Init method. \end{DoxyCompactList}\item 
 \hypertarget{class_h_a_l_1_1_algorithms_1_1_store_particle_acf9039e1285e48324c378295cf4cea3b}{virtual void {\bfseries Store\+Value} (\hyperlink{class_h_a_l_1_1_analysis_tree_writer}{H\+A\+L\+::\+Analysis\+Tree\+Writer} $\ast$, long long, \hyperlink{class_h_a_l_1_1_generic_particle}{H\+A\+L\+::\+Particle\+Ptr})}\label{class_h_a_l_1_1_algorithms_1_1_store_particle_acf9039e1285e48324c378295cf4cea3b}
 
 \end{DoxyCompactItemize}
 
 
 \subsection{Detailed Description}
-Generic algorithm class that stores the properties of particles to a T\+Tree. 
+\hyperlink{class_h_a_l_1_1_algorithm}{Algorithm} that stores the properties of particles to a T\+Tree. 
 
 This algorithm stores particles or specific parts of particles in a specified T\+Tree. The user needs only supply a branch name, property, and a tree name (optional). If the \char`\"{}all\char`\"{} property is given, the branch name given will act as the base for all other properties, i.\+e. if branch name is \char`\"{}jets\char`\"{}, the branches written will be \char`\"{}jets\+\_\+pt\char`\"{}, \char`\"{}jets\+\_\+eta\char`\"{}, etc. {\itshape Available Properties\+:} \begin{TabularC}{11}
 \hline
@@ -87,6 +86,29 @@ Initializes the algorithm.
 \mbox{\tt in}  & {\em tname} & Tree to store in. \\
 \hline
 \end{DoxyParams}
+
+
+\subsection{Member Function Documentation}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_store_particle_af2e287e256a0d7803c68a62bbb254302}{\index{H\+A\+L\+::\+Algorithms\+::\+Store\+Particle@{H\+A\+L\+::\+Algorithms\+::\+Store\+Particle}!Init@{Init}}
+\index{Init@{Init}!H\+A\+L\+::\+Algorithms\+::\+Store\+Particle@{H\+A\+L\+::\+Algorithms\+::\+Store\+Particle}}
+\subsubsection[{Init}]{\setlength{\rightskip}{0pt plus 5cm}virtual void H\+A\+L\+::\+Algorithms\+::\+Store\+Particle\+::\+Init (
+\begin{DoxyParamCaption}
+\item[{Option\+\_\+t $\ast$}]{}
+\end{DoxyParamCaption}
+)\hspace{0.3cm}{\ttfamily [protected]}, {\ttfamily [virtual]}}}\label{class_h_a_l_1_1_algorithms_1_1_store_particle_af2e287e256a0d7803c68a62bbb254302}
+
+
+Hook into the T\+Selector\+::\+Init method. 
+
+This method allows the algorithm operate at the 'Init' stage of processing a T\+Tree. This method is called when a new T\+Tree is being prepared for processing. 
+\begin{DoxyParams}[1]{Parameters}
+\mbox{\tt in}  & {\em option} & Option string passed to all algorithms from the Analysis\+::\+Process call \\
+\hline
+\end{DoxyParams}
+
+
+Reimplemented from \hyperlink{class_h_a_l_1_1_algorithm_abe2da2ce6a2d3ccfb492d8afd1d07331}{H\+A\+L\+::\+Algorithm}.
+
 
 
 The documentation for this class was generated from the following file\+:\begin{DoxyCompactItemize}

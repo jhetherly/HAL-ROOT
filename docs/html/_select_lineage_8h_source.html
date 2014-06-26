@@ -83,7 +83,7 @@ $(document).ready(function(){initNavTree('_select_lineage_8h_source.html','');})
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -118,12 +118,12 @@ $(document).ready(function(){initNavTree('_select_lineage_8h_source.html','');})
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#include &lt;HAL/Common.h&gt;</span></div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#include &lt;HAL/Exceptions.h&gt;</span></div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisUtils.h&gt;</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#include &lt;HAL/Algorithm.h&gt;</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_algorithm_8h.html">HAL/Algorithm.h</a>&gt;</span></div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#include &lt;HAL/CutAlgorithm.h&gt;</span></div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisUtils.h&gt;</span></div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisData.h&gt;</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisTreeReader.h&gt;</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisTreeWriter.h&gt;</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_analysis_data_8h.html">HAL/AnalysisData.h</a>&gt;</span></div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_analysis_tree_reader_8h.html">HAL/AnalysisTreeReader.h</a>&gt;</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_analysis_tree_writer_8h.html">HAL/AnalysisTreeWriter.h</a>&gt;</span></div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#include &lt;HAL/GenericParticle.h&gt;</span></div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">#include &lt;HAL/GenericData.h&gt;</span></div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;</div>
@@ -151,8 +151,8 @@ $(document).ready(function(){initNavTree('_select_lineage_8h_source.html','');})
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">bool</span> FilterPredicate (<span class="keywordtype">long</span> <span class="keywordtype">long</span> in, <span class="keywordtype">long</span> <span class="keywordtype">long</span> ref) = 0;</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;  </div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> Exec (Option_t* <span class="comment">/*option*/</span>);</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> Clear (Option_t* <span class="comment">/*option*/</span>);</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_h_a_l_1_1_algorithm.html#a438c5c54698aa014b660474d08703bc2">Exec</a> (Option_t* <span class="comment">/*option*/</span>);</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;  <span class="keyword">virtual</span> <span class="keywordtype">void</span> <a class="code" href="class_h_a_l_1_1_algorithm.html#a2a26a5549e92efaa968763ac51e6758a">Clear</a> (Option_t* <span class="comment">/*option*/</span>);</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;  <span class="keyword">const</span> <span class="keywordtype">char</span>          **fRefNames;</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;  <span class="keywordtype">bool</span>                  fExclude;</div>
@@ -174,13 +174,19 @@ $(document).ready(function(){initNavTree('_select_lineage_8h_source.html','');})
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="preprocessor">#endif </span><span class="comment">/* end of include guard: HAL_ALGORITHM_SELECT_LINEAGE */</span><span class="preprocessor"></span></div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;</div>
+<div class="ttc" id="class_h_a_l_1_1_algorithm_html_a438c5c54698aa014b660474d08703bc2"><div class="ttname"><a href="class_h_a_l_1_1_algorithm.html#a438c5c54698aa014b660474d08703bc2">HAL::Algorithm::Exec</a></div><div class="ttdeci">virtual void Exec(Option_t *=&quot;&quot;)</div><div class="ttdoc">Hook into the TSelector::Process method. </div><div class="ttdef"><b>Definition:</b> Algorithm.h:111</div></div>
+<div class="ttc" id="class_h_a_l_1_1_algorithm_html_a2a26a5549e92efaa968763ac51e6758a"><div class="ttname"><a href="class_h_a_l_1_1_algorithm.html#a2a26a5549e92efaa968763ac51e6758a">HAL::Algorithm::Clear</a></div><div class="ttdeci">virtual void Clear(Option_t *=&quot;&quot;)</div><div class="ttdoc">Hook into the TSelector::Process method. </div><div class="ttdef"><b>Definition:</b> Algorithm.h:121</div></div>
+<div class="ttc" id="_analysis_data_8h_html"><div class="ttname"><a href="_analysis_data_8h.html">AnalysisData.h</a></div></div>
+<div class="ttc" id="_algorithm_8h_html"><div class="ttname"><a href="_algorithm_8h.html">Algorithm.h</a></div></div>
+<div class="ttc" id="_analysis_tree_reader_8h_html"><div class="ttname"><a href="_analysis_tree_reader_8h.html">AnalysisTreeReader.h</a></div></div>
+<div class="ttc" id="_analysis_tree_writer_8h_html"><div class="ttname"><a href="_analysis_tree_writer_8h.html">AnalysisTreeWriter.h</a></div></div>
 </div><!-- fragment --></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_8ef0be067feaf12c29bf8a1b5685ef25.html">HAL</a></li><li class="navelem"><a class="el" href="dir_250e678fa9892d1a56c5a07962a3afe8.html">Algorithms</a></li><li class="navelem"><a class="el" href="_select_lineage_8h.html">SelectLineage.h</a></li>
-    <li class="footer">Generated on Thu May 29 2014 21:57:24 for HAL by
+    <li class="footer">Generated on Wed Jun 11 2014 21:57:54 for HAL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>

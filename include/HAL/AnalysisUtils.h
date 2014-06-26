@@ -1,13 +1,19 @@
-#ifndef HAL_ANALYSISUTILS
-#define HAL_ANALYSISUTILS
+/*!
+ * \file
+ * \author  Jeff Hetherly <jhetherly@smu.edu>
+ */
 
-#include <TLorentzVector.h>
-#include <TH1.h>
-#include <TFile.h>
-#include <TString.h>
-#include <TArrayI.h>
+#ifndef HAL_AnalysisUtils
+#define HAL_AnalysisUtils
+
 #include <HAL/Common.h>
-#include <HAL/AnalysisData.h>
+
+// forward declaration(s)
+class TString;
+class TLorentzVector;
+class TH1;
+class TArrayI;
+// end forward declaration(s)
 
 namespace HAL
 {
@@ -50,4 +56,4 @@ TArrayI* getNextCombination (Int_t size, Int_t n, TArrayI *indices = NULL);
 
 } /* HAL */ 
 
-#endif /* end of include guard: HAL_ANALYSISUTILS */
+#endif /* end of include guard: HAL_AnalysisUtils */

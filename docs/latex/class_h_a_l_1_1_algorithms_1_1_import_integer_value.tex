@@ -24,7 +24,10 @@ Inheritance diagram for H\+A\+L\+:\+:Algorithms\+:\+:Import\+Integer\+Value$<$ V
 \subsection*{Protected Member Functions}
 \begin{DoxyCompactItemize}
 \item 
-\hypertarget{class_h_a_l_1_1_algorithms_1_1_import_integer_value_a48b6c6c4e7471ce8aa79f1ed20f7d306}{virtual long long {\bfseries Get\+Value} ()}\label{class_h_a_l_1_1_algorithms_1_1_import_integer_value_a48b6c6c4e7471ce8aa79f1ed20f7d306}
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_import_integer_value_a5f157cd62c21c0421b4c7bbe29fa60ed}{virtual long long {\bfseries Get\+Value} ()}\label{class_h_a_l_1_1_algorithms_1_1_import_integer_value_a5f157cd62c21c0421b4c7bbe29fa60ed}
+
+\item 
+\hypertarget{class_h_a_l_1_1_algorithms_1_1_import_integer_value_a3ebdcf727dfd0e1005f5ca394090e300}{{\footnotesize template$<$$>$ }\\long long {\bfseries Get\+Value} ()}\label{class_h_a_l_1_1_algorithms_1_1_import_integer_value_a3ebdcf727dfd0e1005f5ca394090e300}
 
 \end{DoxyCompactItemize}
 \subsection*{Protected Attributes}
@@ -52,6 +55,8 @@ The required map is just one that points to the relavent integer value. $<$name$
 {\bfseries Note\+:} A custom value fetching class may be passed as a template arguement. This class must have constructor that accepts the T\+Tree as an arguement and overloads the () operator that accepts the entry number as an arguement. For example\+: 
 \begin{DoxyCode}
 \textcolor{preprocessor}{#include "TTreeReader.h"} \textcolor{comment}{// ROOT 6 tree reading class}
+\textcolor{preprocessor}{#include "TTreeReaderValue.h"}
+
 \textcolor{keyword}{class }MyTreeReader \{
 \textcolor{keyword}{public}:
  \textcolor{comment}{// Needs a constructor like this}
@@ -59,7 +64,7 @@ The required map is just one that points to the relavent integer value. $<$name$
  \textcolor{comment}{// Needs operator() overloaded like this}
  \textcolor{keywordtype}{long} \textcolor{keywordtype}{long} operator (Long64\_t entry) \{
    tr.SetEntry(entry);
-   \textcolor{keywordflow}{return} value;
+   \textcolor{keywordflow}{return} *value;
  \}
 \textcolor{keyword}{private}:
  TTreeReader tr;
@@ -73,8 +78,7 @@ In your analysis file, do the following for an integer value\+:
 \begin{DoxyCode}
 \hyperlink{class_h_a_l_1_1_analysis}{HAL::Analysis} a(\textcolor{stringliteral}{"sample analysis"}, \textcolor{stringliteral}{""}, \textcolor{stringliteral}{"truth"});
 
-a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_import_integer_value}{HAL::Algorithms::ImportInteger}(\textcolor{stringliteral}{"integer value"}, \textcolor{stringliteral}{"import an
-       integer value"}));
+a.AddAlgo(\textcolor{keyword}{new} HAL::Algorithms::ImportInteger(\textcolor{stringliteral}{"integer value"}, \textcolor{stringliteral}{"import an integer value"}));
 
 \textcolor{comment}{//...}
 
@@ -96,7 +100,7 @@ a.AddAlgo(\textcolor{keyword}{new} \hyperlink{class_h_a_l_1_1_algorithms_1_1_imp
 \subsection{Constructor \& Destructor Documentation}
 \hypertarget{class_h_a_l_1_1_algorithms_1_1_import_integer_value_a19a3f6712ad9a986d98c6da3a9b196ec}{\index{H\+A\+L\+::\+Algorithms\+::\+Import\+Integer\+Value@{H\+A\+L\+::\+Algorithms\+::\+Import\+Integer\+Value}!Import\+Integer\+Value@{Import\+Integer\+Value}}
 \index{Import\+Integer\+Value@{Import\+Integer\+Value}!H\+A\+L\+::\+Algorithms\+::\+Import\+Integer\+Value@{H\+A\+L\+::\+Algorithms\+::\+Import\+Integer\+Value}}
-\subsubsection[{Import\+Integer\+Value}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Value\+Getter  = H\+A\+L\+::\+Analysis\+Tree\+Reader$>$ {\bf H\+A\+L\+::\+Algorithms\+::\+Import\+Integer\+Value}$<$ Value\+Getter $>$\+::{\bf Import\+Integer\+Value} (
+\subsubsection[{Import\+Integer\+Value}]{\setlength{\rightskip}{0pt plus 5cm}template$<$class Value\+Getter $>$ {\bf H\+A\+L\+::\+Algorithms\+::\+Import\+Integer\+Value}$<$ Value\+Getter $>$\+::{\bf Import\+Integer\+Value} (
 \begin{DoxyParamCaption}
 \item[{T\+String}]{name, }
 \item[{T\+String}]{title}

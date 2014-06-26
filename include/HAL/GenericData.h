@@ -1,13 +1,16 @@
-#ifndef HAL_GENERICDATA
-#define HAL_GENERICDATA
+/*!
+ * \file
+ * \author  Jeff Hetherly <jhetherly@smu.edu>
+ */
 
-#include <TNamed.h>
-#include <TString.h>
-#include <vector>
+#ifndef HAL_GenericData
+#define HAL_GenericData
+
 #include <map>
 #include <iostream>
+#include <TNamed.h>
+#include <TString.h>
 #include <HAL/Common.h>
-#include <HAL/Exceptions.h>
 #include <HAL/GenericParticle.h>
 
 namespace HAL
@@ -18,6 +21,15 @@ namespace HAL
  * */
 
 class GenericData : public TNamed {
+private:
+  bool                                                  fIsOwner;
+  // used if value is stored in 'UserData' (i.e. a trigger boolean)
+  TString                                               fUserDataRefName, fUserDataRefType; 
+  // list of actual particles (and actual owner of memory)
+  ParticlePtrs                                          fParticles;
+  // the following is for sorted lists, etc...
+  std::map<TString, ParticlePtrs, internal::string_cmp> f1DParticles;
+
 public:
   GenericData (const TString &name, bool is_owner = false);
   GenericData (const GenericData &data);
@@ -44,15 +56,6 @@ public:
   friend std::ostream& operator<<(std::ostream& os, GenericData &data);
 
   ClassDef(GenericData, 0);
-
-private:
-  bool                                                  fIsOwner;
-  // used if value is stored in 'UserData' (i.e. a trigger boolean)
-  TString                                               fUserDataRefName, fUserDataRefType; 
-  // list of actual particles (and actual owner of memory)
-  ParticlePtrs                                          fParticles;
-  // the following is for sorted lists, etc...
-  std::map<TString, ParticlePtrs, internal::string_cmp> f1DParticles;
 };
 
 std::ostream& operator<<(std::ostream& os, HAL::GenericData &data);

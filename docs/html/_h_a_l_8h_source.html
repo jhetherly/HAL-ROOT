@@ -83,7 +83,7 @@ $(document).ready(function(){initNavTree('_h_a_l_8h_source.html','');});
      onmouseover="return searchBox.OnSearchSelectShow()"
      onmouseout="return searchBox.OnSearchSelectHide()"
      onkeydown="return searchBox.OnSearchSelectKey(event)">
-<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Variables</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(6)"><span class="SelectionMark">&#160;</span>Pages</a></div>
+<a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(0)"><span class="SelectionMark">&#160;</span>All</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(1)"><span class="SelectionMark">&#160;</span>Classes</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(2)"><span class="SelectionMark">&#160;</span>Namespaces</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(3)"><span class="SelectionMark">&#160;</span>Files</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(4)"><span class="SelectionMark">&#160;</span>Functions</a><a class="SelectItem" href="javascript:void(0)" onclick="searchBox.OnSelectItem(5)"><span class="SelectionMark">&#160;</span>Pages</a></div>
 
 <!-- iframe showing the search results (closed by default) -->
 <div id="MSearchResultsWindow">
@@ -98,43 +98,48 @@ $(document).ready(function(){initNavTree('_h_a_l_8h_source.html','');});
 </div><!--header-->
 <div class="contents">
 <div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="preprocessor">#include &lt;HAL/Common.h&gt;</span></div>
-<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;HAL/Algorithm.h&gt;</span></div>
-<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment">//#include &lt;HAL/Algorithms/Algorithms.h&gt;</span></div>
-<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_attach_attribute_8h.html">HAL/Algorithms/AttachAttribute.h</a>&gt;</span></div>
-<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_cut_8h.html">HAL/Algorithms/Cut.h</a>&gt;</span></div>
-<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_import_particle_8h.html">HAL/Algorithms/ImportParticle.h</a>&gt;</span></div>
-<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_import_value_8h.html">HAL/Algorithms/ImportValue.h</a>&gt;</span></div>
-<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_min_chi_squared_selection_8h.html">HAL/Algorithms/MinChiSquaredSelection.h</a>&gt;</span></div>
-<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_monitor_8h.html">HAL/Algorithms/Monitor.h</a>&gt;</span></div>
-<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_particle_rank_selection_8h.html">HAL/Algorithms/ParticleRankSelection.h</a>&gt;</span></div>
-<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_select_lineage_8h.html">HAL/Algorithms/SelectLineage.h</a>&gt;</span></div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_select_particle_8h.html">HAL/Algorithms/SelectParticle.h</a>&gt;</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_select_ref_particle_8h.html">HAL/Algorithms/SelectRefParticle.h</a>&gt;</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_store_particle_8h.html">HAL/Algorithms/StoreParticle.h</a>&gt;</span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_vec_add_reco_8h.html">HAL/Algorithms/VecAddReco.h</a>&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;HAL/Analysis.h&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisData.h&gt;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisTreeReader.h&gt;</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisTreeWriter.h&gt;</span></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisSelector.h&gt;</span></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisUtils.h&gt;</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;HAL/CutAlgorithm.h&gt;</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;HAL/CutOptimizer.h&gt;</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;HAL/GenericData.h&gt;</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;HAL/GenericParticle.h&gt;</span></div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;HAL/Integrator.h&gt;</span></div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;HAL/Interpolator.h&gt;</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;HAL/PlotUtils.h&gt;</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">//#include &lt;HAL/PythonAlgorithm.h&gt;</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;</div>
-<div class="ttc" id="_select_ref_particle_8h_html"><div class="ttname"><a href="_select_ref_particle_8h.html">SelectRefParticle.h</a></div></div>
+<div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_algorithm_8h.html">HAL/Algorithm.h</a>&gt;</span></div>
+<div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_attach_attribute_8h.html">HAL/Algorithms/AttachAttribute.h</a>&gt;</span></div>
+<div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_cut_8h.html">HAL/Algorithms/Cut.h</a>&gt;</span></div>
+<div class="line"><a name="l00005"></a><span class="lineno">    5</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_import_particle_8h.html">HAL/Algorithms/ImportParticle.h</a>&gt;</span></div>
+<div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_import_value_8h.html">HAL/Algorithms/ImportValue.h</a>&gt;</span></div>
+<div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_min_chi_squared_selection_8h.html">HAL/Algorithms/MinChiSquaredSelection.h</a>&gt;</span></div>
+<div class="line"><a name="l00008"></a><span class="lineno">    8</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_monitor_8h.html">HAL/Algorithms/Monitor.h</a>&gt;</span></div>
+<div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_select_lineage_8h.html">HAL/Algorithms/SelectLineage.h</a>&gt;</span></div>
+<div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_select_particle_8h.html">HAL/Algorithms/SelectParticle.h</a>&gt;</span></div>
+<div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_select_rank_8h.html">HAL/Algorithms/SelectRank.h</a>&gt;</span></div>
+<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_select_ref_particle_8h.html">HAL/Algorithms/SelectRefParticle.h</a>&gt;</span></div>
+<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_store_particle_8h.html">HAL/Algorithms/StoreParticle.h</a>&gt;</span></div>
+<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_vec_add_reco_8h.html">HAL/Algorithms/VecAddReco.h</a>&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_analysis_8h.html">HAL/Analysis.h</a>&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_analysis_data_8h.html">HAL/AnalysisData.h</a>&gt;</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_analysis_tree_reader_8h.html">HAL/AnalysisTreeReader.h</a>&gt;</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_analysis_tree_writer_8h.html">HAL/AnalysisTreeWriter.h</a>&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="_analysis_selector_8h.html">HAL/AnalysisSelector.h</a>&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;HAL/AnalysisUtils.h&gt;</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;HAL/CutAlgorithm.h&gt;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;HAL/CutOptimizer.h&gt;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;HAL/GenericData.h&gt;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;HAL/GenericParticle.h&gt;</span></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;HAL/Integrator.h&gt;</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;HAL/Interpolator.h&gt;</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;HAL/PlotUtils.h&gt;</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">//#include &lt;HAL/PythonAlgorithm.h&gt;</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<div class="ttc" id="_select_ref_particle_8h_html"><div class="ttname"><a href="_select_ref_particle_8h.html">SelectRefParticle.h</a></div></div>
+<div class="ttc" id="_analysis_data_8h_html"><div class="ttname"><a href="_analysis_data_8h.html">AnalysisData.h</a></div></div>
+<div class="ttc" id="_analysis_8h_html"><div class="ttname"><a href="_analysis_8h.html">Analysis.h</a></div></div>
 <div class="ttc" id="_min_chi_squared_selection_8h_html"><div class="ttname"><a href="_min_chi_squared_selection_8h.html">MinChiSquaredSelection.h</a></div></div>
+<div class="ttc" id="_analysis_selector_8h_html"><div class="ttname"><a href="_analysis_selector_8h.html">AnalysisSelector.h</a></div></div>
 <div class="ttc" id="_vec_add_reco_8h_html"><div class="ttname"><a href="_vec_add_reco_8h.html">VecAddReco.h</a></div></div>
+<div class="ttc" id="_algorithm_8h_html"><div class="ttname"><a href="_algorithm_8h.html">Algorithm.h</a></div></div>
+<div class="ttc" id="_analysis_tree_reader_8h_html"><div class="ttname"><a href="_analysis_tree_reader_8h.html">AnalysisTreeReader.h</a></div></div>
 <div class="ttc" id="_select_particle_8h_html"><div class="ttname"><a href="_select_particle_8h.html">SelectParticle.h</a></div></div>
-<div class="ttc" id="_particle_rank_selection_8h_html"><div class="ttname"><a href="_particle_rank_selection_8h.html">ParticleRankSelection.h</a></div></div>
+<div class="ttc" id="_analysis_tree_writer_8h_html"><div class="ttname"><a href="_analysis_tree_writer_8h.html">AnalysisTreeWriter.h</a></div></div>
 <div class="ttc" id="_select_lineage_8h_html"><div class="ttname"><a href="_select_lineage_8h.html">SelectLineage.h</a></div></div>
 <div class="ttc" id="_attach_attribute_8h_html"><div class="ttname"><a href="_attach_attribute_8h.html">AttachAttribute.h</a></div></div>
 <div class="ttc" id="_import_value_8h_html"><div class="ttname"><a href="_import_value_8h.html">ImportValue.h</a></div></div>
+<div class="ttc" id="_select_rank_8h_html"><div class="ttname"><a href="_select_rank_8h.html">SelectRank.h</a></div></div>
 <div class="ttc" id="_store_particle_8h_html"><div class="ttname"><a href="_store_particle_8h.html">StoreParticle.h</a></div></div>
 <div class="ttc" id="_cut_8h_html"><div class="ttname"><a href="_cut_8h.html">Cut.h</a></div></div>
 <div class="ttc" id="_monitor_8h_html"><div class="ttname"><a href="_monitor_8h.html">Monitor.h</a></div></div>
@@ -145,7 +150,7 @@ $(document).ready(function(){initNavTree('_h_a_l_8h_source.html','');});
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><b>HAL.h</b></li>
-    <li class="footer">Generated on Thu May 29 2014 21:57:24 for HAL by
+    <li class="footer">Generated on Wed Jun 11 2014 21:57:54 for HAL by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.7 </li>
   </ul>
