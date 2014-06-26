@@ -724,11 +724,11 @@ void AnalysisData::RemoveAllAssociatedData (const TString &nn)
     }
   }
 #ifdef BOOST_NO_CXX11_RANGE_BASED_FOR
-  BOOST_FOREACH( std::string name, names )
+  BOOST_FOREACH( std::string name2, names )
 #else
-  for (auto name: names)
+  for (auto name2: names)
 #endif
-    fNameTypeMap.erase(name);
+    fNameTypeMap.erase(name2);
 }
 
 } /*  HAL */ 
