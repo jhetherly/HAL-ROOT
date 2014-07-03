@@ -4,9 +4,7 @@
 #include <HAL/Algorithms/Cut.h>
 #include <HAL/Algorithms/ImportParticle.h>
 #include <HAL/Algorithms/ImportValue.h>
-#include <HAL/Algorithms/MinChiSquaredSelection.h>
 #include <HAL/Algorithms/Monitor.h>
-#include <HAL/Algorithms/SelectLineage.h>
 #include <HAL/Algorithms/SelectParticle.h>
 #include <HAL/Algorithms/SelectRank.h>
 #include <HAL/Algorithms/SelectRefParticle.h>
@@ -25,7 +23,6 @@
 #include <HAL/Integrator.h>
 #include <HAL/Interpolator.h>
 #include <HAL/PlotUtils.h>
-//#include <HAL/PythonAlgorithm.h>
 
 /*!
  * \mainpage Welcome, to the HAL code reference.

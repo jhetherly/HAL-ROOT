@@ -12,9 +12,7 @@
 #pragma link C++ defined_in "HAL/Algorithms/Cut.h";
 #pragma link C++ defined_in "HAL/Algorithms/ImportParticle.h";
 #pragma link C++ defined_in "HAL/Algorithms/ImportValue.h";
-#pragma link C++ defined_in "HAL/Algorithms/MinChiSquaredSelection.h";
 #pragma link C++ defined_in "HAL/Algorithms/Monitor.h";
-#pragma link C++ defined_in "HAL/Algorithms/SelectLineage.h";
 #pragma link C++ defined_in "HAL/Algorithms/SelectParticle.h";
 #pragma link C++ defined_in "HAL/Algorithms/SelectRank.h";
 #pragma link C++ defined_in "HAL/Algorithms/SelectRefParticle.h";
@@ -34,7 +32,6 @@
 #pragma link C++ defined_in "HAL/Integrator.h";
 #pragma link C++ defined_in "HAL/Interpolator.h";
 #pragma link C++ defined_in "HAL/PlotUtils.h";
-//#pragma link C++ defined_in "HAL/PythonAlgorithm.h";
 
 // These are needed for the AnalysisTreeWriter class
 #pragma link C++ class vector<bool>+;
