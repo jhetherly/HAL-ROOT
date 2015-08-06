@@ -2,6 +2,7 @@ void CompileSource (Bool_t debug = kFALSE)
 {
   TString currentDir(gSystem->pwd());
   TString incDir("include");
+  TString auxIncDir("aux");
   TString srcDir("src");
   TString buildDir("lib");
   TString incSuffix("h");
@@ -11,6 +12,7 @@ void CompileSource (Bool_t debug = kFALSE)
   TString srcPathString;
   TString buildPathString;
   TString includePathFlag;
+  TString auxIncludePathFlag;
   TString includeListString;
   TString linkedLibFlag;
   TString sourceListString;
@@ -34,8 +36,10 @@ void CompileSource (Bool_t debug = kFALSE)
   srcPathString = gSystem->PrependPathName(currentDir.Data(), srcPathString);
   includePathString = incDir;
   includePathString = gSystem->PrependPathName(currentDir.Data(), includePathString);
+  auxIncludePathFlag = gSystem->PrependPathName(includePathString.Data(), auxIncDir);
   includePathFlag = includePathString;
   includePathFlag.Prepend("-I");
+  includePathFlag.Append(auxIncludePathFlag.Prepend(" -I").Data());
   linkedLibFlag = gSystem->GetFromPipe("root-config --glibs");
   linkedLibFlag.Append(" -lTreePlayer "); // This is required for the ROOT branch proxies and TTreeReader in ROOT 6
   if (hasPython) {
@@ -104,6 +108,11 @@ void CompileSource (Bool_t debug = kFALSE)
   // Make dictionary
   std::cout << std::endl << "Building HAL's dictionary..." << std::endl;
   runCintResult = gSystem->GetFromPipe(gSystem->ExpandPathName(runCintCommand.Data()));
+  if (versionNumber >= 60000) {
+    TString temp = buildPathString;
+    temp.Append("/HAL_dict_rdict.pcm");
+    gSystem->Symlink(gSystem->ExpandPathName("$BuildDir/HAL_dict_rdict.pcm"), temp.Data());
+  }
   
   //if (runCintResult.CompareTo("")) {
   //  std::cout << "Something prevented rootcint from making dictionary smoothly." <<
