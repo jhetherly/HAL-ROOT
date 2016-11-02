@@ -1,0 +1,10 @@
+(dp0
+S'libdir'
+p1
+S'pab'
+p2
+sS'installdir'
+p3
+S'bop'
+p4
+s.
