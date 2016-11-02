@@ -5,4 +5,4 @@ Root.ShowPath:			false
 Root.MemStat:                   1
 Root.ObjectStat:                1
 
-ACLiC.IncludePaths:             -I$(HOME)/src/HAL-ROOT/include
+ACLiC.IncludePaths:             -I$(HOME)/src/HAL-ROOT/include:-I$(HOME)/src/HAL-ROOT/include/aux

@@ -1,5 +1,7 @@
-TestAlgorithms(Int_t size = 4, Int_t n = 2)                                                                                                  
-{                                                                                                                       
+#include <HAL.h>
+
+void TestAlgorithms(Int_t size = 4, Int_t n = 2)
+{
   gSystem->Load("libHAL");
 
   // start testing getNextCombination

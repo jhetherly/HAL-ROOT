@@ -76,7 +76,7 @@ void CompileSource (Bool_t debug = kFALSE)
     TRegexp optFlag("-O[0-9] ");
     long optPosition = makeLibCommands.Index(optFlag);
 
-    if (optPosition >= 0) 
+    if (optPosition >= 0)
       makeLibCommands.Remove(optPosition, 4);
     gSystem->Setenv("Opt", "-g");
   }
@@ -92,7 +92,7 @@ void CompileSource (Bool_t debug = kFALSE)
     TIter next(files);
     while ((file=(TSystemFile*)next())) {
       fname = file->GetName();
-      if (!file->IsDirectory() && fname.EndsWith(incSuffix.Data()) && 
+      if (!file->IsDirectory() && fname.EndsWith(incSuffix.Data()) &&
           !fname.Contains("LinkDef")) {
         if (!hasPython && fname.Contains("Python")) continue;
         else {
@@ -113,7 +113,7 @@ void CompileSource (Bool_t debug = kFALSE)
     temp.Append("/HAL_dict_rdict.pcm");
     gSystem->Symlink(gSystem->ExpandPathName("$BuildDir/HAL_dict_rdict.pcm"), temp.Data());
   }
-  
+
   //if (runCintResult.CompareTo("")) {
   //  std::cout << "Something prevented rootcint from making dictionary smoothly." <<
   //    " I will try to make the shared library regardless." << std::endl;
@@ -121,7 +121,7 @@ void CompileSource (Bool_t debug = kFALSE)
   //}
   //else
   //  std::cout << "Success!" << std::endl;
-  
+
   // Get the list of source (and object) files (files in the src dir and affixed with srcSufix)
   dir.SetDirectory(srcPathString.Data());
   files = dir.GetListOfFiles();
@@ -166,7 +166,7 @@ void CompileSource (Bool_t debug = kFALSE)
   //  std::cout << "Success!" << std::endl;
 
   //if (!runCintResult.CompareTo("") && !makeLibResult.CompareTo("")) {
-  //  std::cout << "All source files compiled successfully!" << std::endl <<"Link to " << 
+  //  std::cout << "All source files compiled successfully!" << std::endl <<"Link to " <<
   //    buildPathString.Data() << " to access the library."  << std::endl;
   //}
   //else {
