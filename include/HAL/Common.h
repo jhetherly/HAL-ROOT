@@ -6,6 +6,8 @@
 #endif
 #include <cstring>
 #include <string>
+#include <tuple>
+#include <type_traits>
 #include <RVersion.h>
 #include <TString.h>
 
@@ -17,7 +19,7 @@ typedef double  LongDouble_t;
 // this is in Rtypes.h in certain versions of ROOT
 #if ROOT_VERSION_CODE < ROOT_VERSION(5,20,0)
 const                        // this is a const object...
-class 
+class
 {
 public:
   template<class T>          // convertible to any type
@@ -73,8 +75,42 @@ public:
   }
 };
 
-} /* internal */ 
+// ---------------------------------------------
+// tuple for_each (iterate over an std::tuple))
+// ---------------------------------------------
+// for_each begin
+// ---------------------------------------------
+template<typename FuncT, std::size_t I = 0, typename ... Tp>
+inline typename std::enable_if<I == sizeof ... (Tp), void>::type
+for_each (std::tuple<Tp ...>&, FuncT&&)
+{}
 
-} /* HAL */ 
+template<typename FuncT, std::size_t I = 0, typename ... Tp>
+inline typename std::enable_if<I == sizeof ... (Tp), void>::type
+for_each (std::tuple<Tp ...>&, const FuncT&)
+{}
+
+template<typename FuncT, std::size_t I = 0, typename ... Tp>
+inline typename std::enable_if < I<sizeof ... (Tp), void>::type
+for_each (std::tuple<Tp ...> &t, FuncT &&f)
+{
+  f(std::get<I>(t));
+  ::HAL::internal::for_each<FuncT, I + 1, Tp ...>(t, std::forward<FuncT>(f));
+}
+
+template<typename FuncT, std::size_t I = 0, typename ... Tp>
+inline typename std::enable_if < I<sizeof ... (Tp), void>::type
+for_each (std::tuple<Tp ...> &t, const FuncT &f)
+{
+  f(std::get<I>(t));
+  ::HAL::internal::for_each<FuncT, I + 1, Tp ...>(t, f);
+}
+// ---------------------------------------------
+// for_each end
+// ---------------------------------------------
+
+} /* internal */
+
+} /* HAL */
 
 #endif

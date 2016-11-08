@@ -6,6 +6,7 @@
 #ifndef HAL_AnalysisData
 #define HAL_AnalysisData
 
+#include <type_traits>
 #include <string>
 #include <vector>
 #include <map>
@@ -162,6 +163,129 @@ public:
 
 };
 
-} /*  HAL */ 
+#ifndef __CLING__
+
+namespace StaticDataMap_internal {
+  // keep in case looping over DataMap needs specialization
+  template<typename FuncT, std::size_t I = 0, typename ... Tp>
+  void
+  for_each_DataMap (std::tuple<Tp ...> &t, FuncT &&f)
+  {
+    f(std::get<I>(t));
+    ::HAL::internal::for_each<FuncT, I + 1, Tp ...>(t, std::forward<FuncT>(f));
+  }
+
+  template<typename FuncT, std::size_t I = 0, typename ... Tp>
+  void
+  for_each_DataMap (std::tuple<Tp ...> &t, const FuncT &f)
+  {
+    f(std::get<I>(t));
+    ::HAL::internal::for_each<FuncT, I + 1, Tp ...>(t, f);
+  }
+
+  template <class Type> using map = std::map<std::string, Type, ::HAL::internal::string_cmp>;
+
+}
+
+
+
+// CRTP: Derived::TupleType_t<Types>
+//        Derived type needs to supply a TupleType_t template that takes one parameter (expanded from variatic Types...); this is the type that will be stored
+//        ex: for just storing single values of a given type - template <class T> using TupleType_t = T;
+//        ex: for storing tuples of values of a given type with a bool - template <class T> using TupleType_t = std::tuple<T, bool>;
+template<class Derived, class ... Types>
+class StaticDataMap {
+private:
+
+  // "type", map
+  std::tuple<StaticDataMap_internal::map<typename Derived::template TupleType_t<Types>>...> m_variableMaps;
+  unsigned long long m_count     = 0;
+
+public:
+  ClassDef(StaticDataMap, 0);
+
+  class StaticDataMap_Proxy {
+    StaticDataMap &m_map;
+    std::string    m_key;
+
+  public:
+
+    StaticDataMap_Proxy (StaticDataMap &map, const std::string &key) :
+      m_map(map), m_key(key) {}
+
+      template<class Ref>
+      operator Ref()
+      {
+        return m_map.get<Ref>(m_key);
+      }
+
+      template<class Ref>
+      StaticDataMap& operator=(const Ref &val)
+      {
+        m_map.set(m_key, val);
+        return m_map;
+      }
+    };
+
+  virtual ~StaticDataMap () {}
+
+  // basic things
+  template<class Ref>
+  auto access(const std::string & name)
+  {
+    return std::get<std::decay<Ref>::decay_t>(m_variableMaps)[name];
+  }
+
+  template<class Ref>
+  Ref get (const std::string &name)
+  {
+    if (!this->exists(name)) Fatal("StaticDataMap::get()" ,"key (%s) does not exist", name.c_str());
+    // return std::get<0>(this->access<Ref>(name));
+    return this->access<Ref>(name);
+  }
+
+  template<class Ref>
+  void get (const std::string &name, Ref &val)
+  {
+    val = this->get<Ref>(name);
+  }
+
+  template<class Ref>
+  void set (const std::string &name, const Ref &val)
+  {
+    // std::get<0>(this->access<Ref>(name)) = val;
+    this->access<Ref>(name) = val;
+  }
+
+  template<class Func>
+  void for_each (const Func &f)
+  {
+    StaticDataMap_internal::for_each_DataMap(m_variableMaps, f);
+  }
+
+  bool exists (const std::string &key)
+  {
+    auto result = false;
+    auto keyCheck = [&result, &key](const auto &t) {
+      if (result) return;
+      for (auto &p : t) {
+        result = result || (key == p.first);
+        if (result) break;
+      }
+    };
+    this->for_each(keyCheck);
+    return result;
+  } // exists
+
+  StaticDataMap_Proxy operator[] (const std::string &key)
+  {
+    return StaticDataMap_Proxy(*this, key);
+  }
+
+};
+
+#endif
+
+} /*  HAL */
 
 #endif

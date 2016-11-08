@@ -1,9 +1,6 @@
 ANALYSIS_NAME := MyAnalysis
 
-# extra directory b/c of change of directory when linking
-# HAL_LDIR		:= ../../../lib
 HAL_LDIR		:= $(shell python ../../lib/HAL-config.py --libdir)
-# HAL_IDIR		:= ../../include
 HAL_IDIR		:= $(shell python ../../lib/HAL-config.py --incdir)
 # DELETE after removing dependency on 'aux' headers
 HAL_IDIR		+= $(HAL_IDIR)/aux
